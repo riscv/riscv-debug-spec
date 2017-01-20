@@ -1,0 +1,519 @@
+<registers name="Debug Module Debug Bus Registers">
+    <register name="Info" short="dminfo" address="0x00">
+        The address of this register will not change in the future, because it
+        contains \Fversion.  It has changed from version 0.11 of this spec.
+
+        <field name="abussize" bits="31:25" access="R" reset="Preset">
+            Width of the address bus in bits. (0 indicates there is no bus
+            access support.)
+        </field>
+        <field name="serialcount" bits="24:21" access="R" reset="Preset">
+            Number of supported serial ports.
+        </field>
+        <field name="access128" bits="20" access="R" reset="Preset">
+            1 when 128-bit bus accesses are supported.
+        </field>
+        <field name="access64" bits="19" access="R" reset="Preset">
+            1 when 64-bit bus accesses are supported.
+        </field>
+        <field name="access32" bits="18" access="R" reset="Preset">
+            1 when 32-bit bus accesses are supported.
+        </field>
+        <field name="access16" bits="17" access="R" reset="Preset">
+            1 when 16-bit bus accesses are supported.
+        </field>
+        <field name="access8" bits="16" access="R" reset="Preset">
+            1 when 8-bit bus accesses are supported.
+        </field>
+        <field name="0" bits="15:14" access="R" reset="0" />
+        <field name="ibufsize" bits="13:10" access="R" reset="Preset">
+            Size of the Instruction Buffer, in 32-bit words.
+
+            A debugger must not access any Instruction Buffer locations that
+            fall outside the range specified here.
+        </field>
+        <field name="dasum" bits="9" access="R" reset="Preset">
+            1 when \Rdasum is implemented.
+        </field>
+        <field name="0" bits="8" access="R" reset="0" />
+        <field name="authenticated" bits="7" access="R" reset="Preset">
+            0 when authentication is required before using the DM.  1 when the
+            authentication check has passed. On components that don't implement
+            authentication, this bit must be preset as 1.
+        </field>
+        <field name="authbusy" bits="6" reset="0" access="R">
+            While 1, writes to \Rauthdatazero and \Rauthdataone may be ignored
+            or may result in authentication failing.  Authentication mechanisms
+            that are slow (or intentionally delayed) must set this bit when
+            they're not ready to process another write.
+        </field>
+        <field name="authtype" bits="5:4" reset="Preset" access="R">
+          Defines the kind of authentication required to use this DM.
+
+	  0: No authentication is required.
+
+          1: A password is required.
+
+	  2: A challenge-response mechanism is in place.
+
+	  3: Reserved for future use.
+        </field>
+        <field name="version" bits="3:0" reset="1" access="R">
+            0: There is no Debug Module present.
+
+            1: There is a Debug Module and it conforms to version 0.12 of this
+            specification.
+
+            Other values are reserved for future use.
+        </field>
+    </register>
+
+    <register name="Control" short="dmcontrol" address="0x01">
+        <field name="halt" bits="31" access="R/W" reset="0">
+            Halt signal for the hart selected by \Fhartid.  Writes apply to the
+            new value of \Fhartid.
+        </field>
+        <field name="0" bits="30:23" access="R" reset="0" />
+        <field name="autoread" bits="22" access="R/W" reset="0">
+            When 1, every write to \Rsbaddresszero automatically triggers a bus
+            read at the new address.
+        </field>
+        <field name="buserror" bits="21:19" access="R/W0" reset="0">
+            When the debug bus master causes a bus error, this field gets set.
+            It remains set until 0 is written to any bit in this field. Until
+            that happens, the bus master is busy and no more accesses can be
+            initiated.
+
+            0: There was no bus error.
+
+            1: There was a timeout.
+
+            2: A bad address was accessed.
+
+            3: There was some other error (eg. alignment).
+
+            4: The bus master was busy when a one of the $|sbaddress|$ or
+            $|sbdata|$ registers was written.
+        </field>
+        <field name="serial" bits="18:16" access="R/W" reset="0">
+            Select which serial port is accessed by \Rserdata.
+        </field>
+        <field name="autoincrement" bits="15" access="R/W" reset="0">
+            When 1, the internal address value (used by the bus master) is
+            incremented by the access size (in bytes) selected in \Faccess after
+            every bus access.
+        </field>
+        <field name="access" bits="14:12" access="R/W" reset="2">
+            Select the access size to use for system bus accesses triggered by
+            writes to the {\tt sbaddress} registers or \Rsbdatazero.
+
+	    0: 8-bit
+
+            1: 16-bit
+
+	    2: 32-bit
+
+	    3: 64-bit
+
+	    4: 128-bit
+
+            If an unsupported access size is written here, the DM may not
+            perform the access, or may perform the access with any access size
+        </field>
+        <field name="hartid" bits="11:2" access="R/W" reset="0">
+            The ID of the hart to select.
+        </field>
+        <field name="0" bits="1" access="R" reset="0" />
+        <field name="reset" bits="0" access="R/W" reset="0">
+            This bit controls the reset signal from the DM to the rest of the
+            system. To perform a reset the debugger writes 1, and then writes 0
+            to deassert the reset.
+        </field>
+    </register>
+
+    <register name="Hart Info" short="hartinfo" address="0x02">
+        This register contains information describing the hart selected by
+        \Fhartid.
+
+        <field name="0" bits="31:13" access="R" reset="0" />
+        <field name="datamode" bits="12" access="R" reset="Preset">
+            0: This hart access the DM through \Rdaccessthirtytwo, and possibly
+            \Rdaccesssixtyfour and \Rdaccessonetwentyeight.
+
+            1: This hart access the DM at a memory address relatively through
+            \Rzero.
+        </field>
+
+        <field name="dataoffset" bits="11:0" access="R" reset="Preset">
+            If \Fdatamode is 1, this field contains the signed base address of
+            the data access section of the DM.
+
+            32-, 64-, and 128-bit accesses are supported assuming the GPRs are
+            at least that wide.
+        </field>
+    </register>
+
+    <register name="Access Status and Control" short="access" address="0x03">
+        <field name="ilength" bits="31:28" access="R/W" reset="3">
+            To accommodate a debugger feeding instructions that aren't 32 bits
+            long, in this field it can write the size of the instruction that
+            it's writing minus one.
+        </field>
+        <field name="0" bits="27" access="R" reset="0" />
+        <field name="ibufend" bits="26:24" access="R/W" reset="0">
+            Index of the last word in the Instruction Buffer that will be fed
+            to the core. The debugger must ensure that $|ibufend| + 1$ is an
+            integer multiple of $\lfloor|ilength| / 4\rfloor + 1$.
+        </field>
+        <field name="ibufenable" bits="23" access="R/W" reset="0">
+            0: Instruction fetches are serviced directly by the debugger. The
+            instruction buffer counter is reset to 0.
+
+            1: When there is an instruction fetch from selected hart, the DM
+            will automatically and quickly service it from the instruction
+            buffer.
+        </field>
+        <field name="ibufaction" bits="22:21" access="R/W" reset="0">
+            0: After the last instruction is fetched from the instruction
+            buffer, \Fibufenable is cleared.
+
+            1: After the last instruction is fetched from the instruction
+            buffer, the instruction buffer counter is reset to 0.
+
+            2: After the last instruction is fetched from the instruction
+            buffer, \Fibufenable and \Fhalt are both cleared.
+        </field>
+        <field name="ioverflow" bits="20" access="R/W0" reset="0">
+            Instruction fetch overflow bit, which is set when the debugger
+            writes an instruction to \Rifetch when there isn't an instruction
+            fetch pending for the currently selected hart.
+        </field>
+        <field name="doverflow" bits="19" access="R/W0" reset="0">
+            Data overflow bit, which is set when the debugger writes \Rdaccess
+            when there isn't a read data access pending. It is cleared by
+            writing 0.
+        </field>
+        <field name="dunderflow" bits="18" access="R/W0" reset="0">
+            Data underflow bit, which is set when the debugger reads \Rdaccess
+            when there isn't a write data access pending. It is cleared by
+            writing 0.
+        </field>
+        <field name="access" bits="17:16" access="R" reset="0">
+            0: There's no access pending.
+
+            1: There's a data read access pending.
+
+            2: There's a data write access pending.
+
+            3: There's an instruction fetch pending.
+        </field>
+        <field name="0" bits="15:2" access="R" reset="0" />
+        <field name="subword" bits="1:0" access="R" reset="0">
+            When a hart performs a greater-than 32-bit data access, the DM may
+            break this access down into any order. This field contains the word
+            index of the access.
+
+            Eg. a 128-bit access will be presented to the debugger as 4
+            consecutive 32-bit accesses. The order could be 0, 1, 2, 3
+            (least-significant word first), most-significant word first, or any
+            other. The order for a given access size on a given hart must
+            remain consistent between resets, so the debugger can learn it.
+        </field>
+    </register>
+
+    <register name="Data Access" short="daccess" address="0x04">
+        If there is a read access pending, the debugger writes the data that
+        should go back to the hart to this register.
+
+        If there is a write access pending, the debugger reads the data that
+        the hart wrote from this register.
+
+        If \Fioverflow, \Fdoverflow, or Fdunderflow are set, all accesses to
+        this register are ignored.
+
+        After this register is accessed, the access is automatically completed.
+
+        If the register is written by the debugger and there is no read access
+        pending, \Fdoverflow is set.
+
+        If the register is read by the debugger and there is no write access
+        pending, \Fdunderflow is set.
+
+        <field name="data" bits="31:0" access="R/W" reset="0" />
+    </register>
+
+    <register name="Instruction Fetch" short="ifetch" address="0x05">
+        If there is an instruction fetch pending, the debugger writes the
+        instruction that should be returned to the hart to this register.
+
+        If \Fioverflow, \Fdoverflow, or Fdunderflow are set, writes to this
+        register are ignored.
+
+        For instructions that aren't 32 bits long, the debugger must set
+        \Filength before writing the instruction here. The instruction must be
+        written in the same order it would appear to a hart when fetching 32
+        bits at a time from memory. Any padding must be valid NOP instructions
+        supported by the hart, although the DM may ignore this data altogether.
+
+        Once a full instruction is written, the DM will cause the core to
+        execute that instruction.
+
+        A debugger must not write instructions that change the PC here (eg.
+        jumps and branches). Doing so results in undefined behavior. To change
+        the PC where execution will resume, the debugger modifies \Rdpc.
+
+        <field name="data" bits="31:0" access="W" reset="-" />
+    </register>
+
+    <register name="Instruction Buffer 0" short="ibuf0" address="0x10">
+        The ibuf registers provide read/write access to the optional
+        instruction buffer.
+
+        <field name="data" bits="31:0" access="R/W" reset="0" />
+    </register>
+
+    <register name="Instruction Buffer 1" short="ibuf1" address="0x11" />
+    <register name="Instruction Buffer 2" short="ibuf2" address="0x12" />
+    <register name="Instruction Buffer 3" short="ibuf3" address="0x13" />
+    <register name="Instruction Buffer 4" short="ibuf4" address="0x14" />
+    <register name="Instruction Buffer 5" short="ibuf5" address="0x15" />
+    <register name="Instruction Buffer 6" short="ibuf6" address="0x16" />
+    <register name="Instruction Buffer 7" short="ibuf7" address="0x17" />
+
+    <register name="Authentication Data 0" short="authdata0" address="0x08">
+        If \Fauthtype is 0, this register is not present.
+
+        If \Fauthtype is 1, writing a correct password to this register and
+        \Rauthdataone enables the DM. The DM is disabled either by writing an
+        invalid password, or by resetting it. 0 must not be used as a password.
+        If an implementation wants to use a well-known password, the
+        recommended value is 0x5551212. Reading from the register returns 0.
+
+        If \Fauthtype is 2, things are a bit more complicated. Reading from the
+        register pair reads the last challenge generated. Writing the correct
+        response to \Rauthdataone and \Rauthdatazero enables the DM. The DM
+        is disabled either by writing an incorrect response, or by resetting
+        it.  Writing to \Rauthdatazero triggers validation, so if a 64-bit
+        value is required then \Rauthdataone must be written first.  If the
+        combined value in \Rauthdatazero and \Rauthdataone is not a valid
+        response after writing \Rauthdatazero, then a new challenge must be
+        generated.  Depending on the implementation, there may not be a valid
+        challenge until the first write to this register.
+
+        <field name="data" bits="31:0" access="R/W" reset="0" />
+    </register>
+
+    <register name="Authentication Data 1" short="authdata1" address="0x09">
+        This register contains the upper 32 bits of a 64-bit password
+        or challenge/response as described in \Rauthdatazero.
+
+        <field name="data" bits="31:0" access="R/W" reset="0" />
+    </register>
+
+    <register name="Serial Data" short="serdata" address="0x0a">
+        If \Fserialcount is 0, this register is not present.
+
+        This register provides access to the data queues of the serial port
+        selected by \Fserial in \Rdmcontrol.
+
+        A read from this register reads the oldest entry in the
+        debugger-to-core queue, and removes that entry from the queue.  If the
+        queue is empty, then the read fails.
+
+        A write to this register adds the written data to the core-to-debugger
+        queue. If that queue is already full or its overflow bit is set, then
+        the write fails and the overflow bit becomes set.
+
+        <field name="data" bits="31:0" access="R/W" reset="0" />
+    </register>
+
+    <register name="Serial Status" short="serstatus" address="0x0b">
+        If \Fserialcount is 0, this register is not present.
+
+        <field name="0" bits="31:16" access="R" reset="0" />
+        <field name="valid7" bits="15" access="R" reset="0" />
+        <field name="full/overflow7" bits="14" access="R/W0" reset="0" />
+        <field name="valid6" bits="13" access="R" reset="0" />
+        <field name="full/overflow6" bits="12" access="R/W0" reset="0" />
+        <field name="valid5" bits="11" access="R" reset="0" />
+        <field name="full/overflow5" bits="10" access="R/W0" reset="0" />
+        <field name="valid4" bits="9" access="R" reset="0" />
+        <field name="full/overflow4" bits="8" access="R/W0" reset="0" />
+        <field name="valid3" bits="7" access="R" reset="0" />
+        <field name="full/overflow3" bits="6" access="R/W0" reset="0" />
+        <field name="valid2" bits="5" access="R" reset="0" />
+        <field name="full/overflow2" bits="4" access="R/W0" reset="0" />
+        <field name="valid1" bits="3" access="R" reset="0" />
+        <field name="full/overflow1" bits="2" access="R/W0" reset="0" />
+        <field name="valid0" bits="1" access="R" reset="0">
+            1 when the core-to-debugger queue for serial port 0 is not empty.
+        </field>
+        <field name="full/overflow0" bits="0" access="R/W0" reset="0">
+            1 when the debugger-to-core queue for serial port 0 is either full,
+            or has overflowed. Overflow state is sticky, and can be reset by
+            writing 0 to this bit.
+        </field>
+    </register>
+
+    <register name="System Bus Address 31:0" short="sbaddress0" address="0x06">
+        If \Fabussize is 0, then this register is not present.
+
+        When the bus master is busy, writes to this register will return error
+        and \Fbuserror is set.
+
+        If \Fbuserror is 0 and \Fautoread is set then the bus master will start
+        to read after updating the address from \Faddress. The access size is
+        controlled by \Faccess in \Rdmcontrol.
+
+        <field name="address" bits="31:0" access="R/W" reset="0">
+            Accesses bits 31:0 of the internal address.
+        </field>
+    </register>
+
+    <register name="System Bus Address 63:32" short="sbaddress1" address="0x0c">
+        <field name="address" bits="31:0" access="R/W" reset="0">
+            Accesses bits 63:32 of the internal address (if the system address
+            bus is that wide).
+        </field>
+    </register>
+
+    <register name="System Bus Data 31:0" short="sbdata0" address="0x07">
+        If all of the {\tt access} bits in \Rdminfo are 0, then this register
+        is not present.
+
+        If \Fbuserror isn't 0 then accesses return error, and don't do anything
+        else.
+
+        If the bus master is busy then accesses set \Fbuserror, return error,
+        and don't do anything else.
+
+        Writes to this register:
+        1. Update internal data.
+        2. Start a bus write of the internal data to the internal address.
+
+        Reads to this register:
+        1. If bits 31:0 of the internal data register haven't been updated
+        since the last time this register was read, then set \Fbuserror, return
+        error, and don't do anything else.
+        2. "Return" the data.
+        3. If \Fautoread is set, start another bus read.
+
+        <field name="data" bits="31:0" access="R/W" reset="0">
+            Accesses bits 31:0 of the internal data.
+        </field>
+    </register>
+
+    <register name="System Bus Data 63:32" short="sbdata1" address="0x0d">
+        If \Faccesssixtyfour and \Faccessonetwentyeight are 0, then this
+        register is not present.
+
+        <field name="data" bits="31:0" access="R/W" reset="0">
+            Accesses bits 63:32 of the internal data (if the system bus is
+            that wide).
+        </field>
+    </register>
+
+    <register name="Data Access Summary" short="dasum" address="0x18">
+        If implemented, this register contains a summary of which harts are
+        ready for an instruction.
+
+        Each of the lower 30 bits contains the logical OR of 32 or 64
+        consecutive instruction fetch bits. When there are a large number of
+        harts in the system, the debugger can first read this register, and
+        then read from the halt region (0x20--0x3f) to determine which hart is
+        the one that is halted.
+
+        <field name="serialfull" bits="31" access="R" reset="0">
+            Logical OR of all the full bits in \Rserstatus.
+
+            TODO: Is this helpful? If a debugger is just writing to one serial
+            port it's pretty easy to check just that one. If it's writing to
+            multiple serial ports, then knowing that one of them is still full
+            isn't super helpful because it may still want to write more data to
+            the other ones.
+        </field>
+        <field name="serialvalid" bits="30" access="R" reset="0">
+            Logical OR of all the valid bits in \Rserstatus.
+        </field>
+        <field name="ack31:0" bits="0" access="R" reset="0" />
+        <field name="ack63:32" bits="1" access="R" reset="0" />
+        <field name="ack95:64" bits="2" access="R" reset="0" />
+        <field name="ack127:96" bits="3" access="R" reset="0" />
+        <field name="ack159:128" bits="4" access="R" reset="0" />
+        <field name="ack191:160" bits="5" access="R" reset="0" />
+        <field name="ack223:192" bits="6" access="R" reset="0" />
+        <field name="ack255:224" bits="7" access="R" reset="0" />
+        <field name="ack287:256" bits="8" access="R" reset="0" />
+        <field name="ack319:288" bits="9" access="R" reset="0" />
+        <field name="ack351:320" bits="10" access="R" reset="0" />
+        <field name="ack383:352" bits="11" access="R" reset="0" />
+        <field name="ack415:384" bits="12" access="R" reset="0" />
+        <field name="ack447:416" bits="13" access="R" reset="0" />
+        <field name="ack479:448" bits="14" access="R" reset="0" />
+        <field name="ack511:480" bits="15" access="R" reset="0" />
+        <field name="ack543:512" bits="16" access="R" reset="0" />
+        <field name="ack575:544" bits="17" access="R" reset="0" />
+        <field name="ack607:576" bits="18" access="R" reset="0" />
+        <field name="ack639:608" bits="19" access="R" reset="0" />
+        <field name="ack671:640" bits="20" access="R" reset="0" />
+        <field name="ack703:672" bits="21" access="R" reset="0" />
+        <field name="ack735:704" bits="22" access="R" reset="0" />
+        <field name="ack767:736" bits="23" access="R" reset="0" />
+        <field name="ack799:768" bits="24" access="R" reset="0" />
+        <field name="ack831:800" bits="25" access="R" reset="0" />
+        <field name="ack863:832" bits="26" access="R" reset="0" />
+        <field name="ack895:864" bits="27" access="R" reset="0" />
+        <field name="ack959:896" bits="28" access="R" reset="0" />
+        <field name="ack1023:960" bits="29" access="R" reset="0" />
+    </register>
+
+    <register name="System Bus Address 91:61" short="sbaddress2" address="0x1a">
+        If \Fabussize is less than 65, then this register is not present.
+
+        <field name="busy" bits="31" access="R" reset="0">
+            The same as \Fbusy in \Rsbaddresszero.
+        </field>
+        <field name="address" bits="30:0" access="R/W" reset="0">
+            Accesses bits 91:61 of the internal address (if the system address
+            bus is that wide).
+        </field>
+    </register>
+
+    <register name="System Bus Data 95:64" short="sbdata2" address="0x1b">
+        This register only exists if \Faccessonetwentyeight is 1.
+
+        <field name="write/busy" bits="33" access="R/W" reset="0">
+            The same as \Fwritebusy in \Rsbdatazero, except if an access is
+            triggered the access size is 128 bits instead of what \Faccess
+            selects.
+        </field>
+        <field name="read/valid" bits="32" access="R/W" reset="0">
+            The same as \Freadvalid in \Rsbdatazero, except if an access is
+            triggered the access size is 128 bits instead of what \Faccess
+            selects.
+        </field>
+        <field name="data" bits="31:0" access="R/W" reset="0">
+            Accesses bits 95:64 of the internal data (if the system bus is
+            that wide).
+        </field>
+    </register>
+
+    <register name="System Bus Data 127:96" short="sbdata3" address="0x1c">
+        This register only exists if \Faccessonetwentyeight is 1.
+
+        <field name="write/busy" bits="33" access="R/W" reset="0">
+            The same as \Fwritebusy in \Rsbdatazero, except if an access is
+            triggered the access size is 128 bits instead of what \Faccess
+            selects.
+        </field>
+        <field name="read/valid" bits="32" access="R/W" reset="0">
+            The same as \Freadvalid in \Rsbdatazero, except if an access is
+            triggered the access size is 128 bits instead of what \Faccess
+            selects.
+        </field>
+        <field name="data" bits="31:0" access="R/W" reset="0">
+            Accesses bits 127:96 of the internal data (if the system bus is
+            that wide).
+        </field>
+    </register>
+</registers>

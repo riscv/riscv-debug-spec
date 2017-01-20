@@ -1,0 +1,89 @@
+<registers name="Trace Registers">
+    <register name="Trace" short="trace" address="0x728">
+        <field name="0" bits="31:25" access="R" reset="0" />
+        <field name="wrapped" bits="24" access="R" reset="0">
+            1 if the trace buffer has wrapped since the last time \Fdiscard was
+            written. 0 otherwise.
+        </field>
+        <field name="emittimestamp" bits="23" access="R/W" reset="0">
+            Emit Timestamp trace sequences.
+        </field>
+        <field name="emitstoredata" bits="22" access="R/W" reset="0">
+            Emit Store Data trace sequences.
+        </field>
+        <field name="emitloaddata" bits="21" access="R/W" reset="0">
+            Emit Load Data trace sequences.
+        </field>
+        <field name="emitstoreaddr" bits="20" access="R/W" reset="0">
+            Emit Store Address trace sequences.
+        </field>
+        <field name="emitloadaddr" bits="19" access="R/W" reset="0">
+            Emit Load Address trace sequences.
+        </field>
+        <field name="emitpriv" bits="18" access="R/W" reset="0">
+            Emit Privilege Level trace sequences.
+        </field>
+        <field name="emitbranch" bits="17" access="R/W" reset="0">
+            Emit Branch Taken and Branch Not Taken trace sequences.
+        </field>
+        <field name="emitpc" bits="16" access="R/W" reset="0">
+            Emit PC trace sequences.
+        </field>
+        <field name="0" bits="15:10" access="R" reset="0" />
+        <field name="fullaction" bits="9:8" access="R/W" reset="0">
+            Determine what happens when the trace buffer is full.  0 means wrap
+            and overwrite. 1 means turn off trace until \Fdiscard is written as 1.
+            2 means cause a trace full exception. 3 is reserved for future use.
+        </field>
+        <field name="0" bits="7:6" access="R" reset="0" />
+        <field name="destination" bits="5:4" access="R/W" reset="Preset">
+            0: Trace to a dedicated on-core RAM (which is not further defined in
+            this spec).
+            
+            1: Trace to RAM on the system bus.
+
+            2: Send trace data to a dedicated off-chip interface (which is not
+            defined in this spec). This does not affect execution speed.
+
+            3: Reserved for future use.
+
+            Options 0 and 1 slow down execution (eg. because of system bus
+            contention).
+        </field>
+        <field name="0" bits="3" access="R" reset="0" />
+        <field name="stall" bits="2" access="R/W" reset="1">
+            When 1, the trace logic may stall processor execution to ensure it
+            can emit all the trace sequences required. When 0 individual trace
+            sequences may be dropped.
+        </field>
+        <field name="discard" bits="1" access="W1" reset="0">
+            Writing 1 to this bit tells the trace logic that any trace
+            collected is no longer required. When tracing to RAM, it resets the
+            trace write pointer to the start of the memory, as well as
+            \Fwrapped.
+        </field>
+        <field name="supported" bits="0" access="R" reset="Preset" />
+    </register>
+
+    <register name="Trace Buffer Start" short="tbufstart" address="0x729">
+        If \Fdestination is 1, this register contains the start address of block
+        of RAM reserved for trace data.
+
+        <field name="address" define="0" bits="XLEN-1:0" />
+    </register>
+
+    <register name="Trace Buffer End" short="tbufend" address="0x72a">
+        If \Fdestination is 1, this register contains the end address (exclusive)
+        of block of RAM reserved for trace data.
+
+        <field name="address" define="0" bits="XLEN-1:0" />
+    </register>
+
+    <register name="Trace Buffer Write" short="tbufwrite" address="0x72b">
+        If \Fdestination is 1, this read-only register contains the address that
+        the next trace packet will be written to.
+
+        <field name="address" define="0" bits="XLEN-1:0" />
+    </register>
+
+</registers>

@@ -1,0 +1,258 @@
+<registers name="Trigger Registers">
+    The trigger registers are only accessible in machine and debug mode to
+    prevent untrusted user code from causing entry into Debug Mode without the
+    OS's permission.
+
+    <register name="Trigger Select" short="tselect" address="0x7a0">
+        This register determines which trigger is accessible through the other
+        trigger registers. The set of accessible triggers must start at 0, and
+        be contiguous.
+
+        Writes of values greater than or equal to the number of supported
+        triggers result in an undefined value in \Rtselect. Debuggers should
+        read back the value to confirm that what they wrote was a valid index.
+
+        Since triggers can be used both by Debug Mode and M Mode, the debugger
+        must restore this register if it modifies it.
+
+        <field name="index" bits="XLEN-1:0" access="R/W" reset="0" />
+    </register>
+
+    <register name="Trigger Data 1" short="tdata1" address="0x7a1">
+        <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="Preset">
+            0: There is no trigger at this \Rtselect.
+
+            1: The trigger is a legacy SiFive address match trigger. These
+            should not be implemented and aren't further documented here.
+
+            2: The trigger is an address/data match trigger.
+
+            3: The trigger is an instruction count trigger.
+
+            15: This trigger exists (so enumeration shouldn't terminate), but
+            is not currently available.
+
+            Other values are reserved for future use.
+        </field>
+        <field name="dmode" bits="XLEN-5" access="R/W" reset="0">
+            0: Both Debug and M Mode can write the {\tt tdata} registers at the
+            selected \Rtselect.
+
+            1: Only Debug Mode can write the {\tt tdata} registers at the
+            selected \Rtselect.  Writes from other modes are ignored.
+
+            This bit is only writable from Debug Mode.
+        </field>
+        <field name="data" bits="XLEN-6:0" access="R/W" reset="Preset">
+            Trigger-specific data.
+        </field>
+    </register>
+
+    <register name="Trigger Data 2" short="tdata2" address="0x7a2">
+        Trigger-specific data.
+        <field name="data" bits="XLEN-1:0" access="R/W" reset="Preset" />
+    </register>
+
+    <register name="Trigger Data 3" short="tdata3" address="0x7a3">
+        Trigger-specific data.
+        <field name="data" bits="XLEN-1:0" access="R/W" reset="Preset" />
+    </register>
+
+    <register name="Match Control" short="mcontrol" address="0x7a1">
+        This register is accessible as \Rtdataone when \Ftype is 2.
+
+        Writing unsupported values to any field in this register results in the
+        reset value being written instead. When a debugger wants to use a
+        feature, it must write the appropriate value and then read back the
+        register to determine whether it is supported.
+
+        Address and data trigger implementation are heavily dependent on how
+        the processor core is implemented. To accommodate various
+        implementations, load and store address and data triggers may fire at
+        whatever point in time is most convenient for the implementation.
+        Following the suggestions in the definitions of \Fstore and \Fload will
+        lead to the best user experience, however.
+
+        <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="2" />
+        <field name="dmode" bits="XLEN-5" access="R/W" reset="0" />
+        <field name="maskmax" bits="XLEN-6:XLEN-11" access="R" reset="0">
+            Specifies the largest naturally aligned powers-of-two (NAPOT) range
+            supported by the hardware. The value is the logarithm base 2 of the
+            number of bytes in that range.  A value of 0 indicates that only
+            exact value matches are supported (one byte range). A value of 63
+            corresponds to the maximum NAPOT range, which is $2^{63}$ bytes in
+            size.
+        </field>
+        <field name="0" bits="XLEN-12:20" access="R" reset="0" />
+        <field name="select" bits="19" access="R/W" reset="0">
+            0: Perform a match on the address.
+
+            1: Perform a match on the data value loaded/stored, or the
+            instruction executed.
+        </field>
+        <field name="timing" bits="18" access="R/W" reset="0">
+            0: The action for this trigger will be taken just before the
+            instruction that triggered it is executed, but after all preceding
+            instructions are are committed.
+
+            1: The action for this trigger will be taken after the instruction
+            that triggered it is executed. It should be taken before the next
+            instruction is executed, but it is better to implement triggers and
+            not implement that suggestion than to not implement them at all.
+
+            Most hardware will only implement one timing or the other, possibly
+            dependent on \Fselect, \Fexecute, \Fload, and \Fstore. This bit
+            primarily exists for the hardware to communicate to the debugger
+            what will happen. Hardware may implement the bit fully writable, in
+            which case the debugger has a little more control.
+
+            Data load triggers with \Ftiming of 0 will result in the same load
+            happening again when the debugger lets the core run. For data load
+            triggers debuggers must first attempt to set the breakpoint with
+            \Ftiming of 1.
+
+            A chain of triggers that don't all have the same \Ftiming value
+            will never fire (unless consecutive instructions match the
+            appropriate triggers).
+        </field>
+        <field name="action" bits="17:12" access="R/W" reset="0">
+            Determines what happens when this trigger matches.
+
+            0: Raise a debug exception. (Used when software wants to use the
+            trigger module without an external debugger attached.)
+
+            1: Enter Debug Mode. (Only supported when \Fdmode is 1.)
+
+	    2: Start tracing.
+
+            3: Stop tracing.
+
+	    4: Emit trace data for this match. If it is a data access match,
+            emit appropriate Load/Store Address/Data. If it is an instruction
+            execution, emit its PC.
+
+	    Other values are reserved for future use.
+        </field>
+        <field name="chain" bits="11" access="R/W" reset="0">
+            0: When this trigger matches, the configured action is taken.
+
+            1: While this trigger does not match, it prevents the trigger with
+            the next index from matching.
+        </field>
+        <field name="match" bits="10:7" access="R/W" reset="0">
+            0: Matches when the value equals \Rtdatatwo.
+
+            1: Matches when the top M bits of the value match the top M bits of
+            \Rtdatatwo. M is XLEN-1 minus the index of the least-significant
+            bit containing 0 in \Rtdatatwo.
+
+            2: Matches when the value is greater than or equal to \Rtdatatwo.
+
+            3: Matches when the value is less than \Rtdatatwo.
+
+            4: Matches when the lower half of the value equals the lower half
+            of \Rtdatatwo after the lower half of the value is ANDed with the
+            upper half of \Rtdatatwo.
+
+            5: Matches when the upper half of the value equals the lower half
+            of \Rtdatatwo after the upper half of the value is ANDed with the
+            upper half of \Rtdatatwo.
+
+	    Other values are reserved for future use.
+        </field>
+        <field name="m" bits="6" access="R/W" reset="0">
+            When set, enable this trigger in M mode.
+        </field>
+        <field name="h" bits="5" access="R/W" reset="0">
+            When set, enable this trigger in H mode.
+        </field>
+        <field name="s" bits="4" access="R/W" reset="0">
+            When set, enable this trigger in S mode.
+        </field>
+        <field name="u" bits="3" access="R/W" reset="0">
+            When set, enable this trigger in U mode.
+        </field>
+        <field name="execute" bits="2" access="R/W" reset="0">
+            When set, the trigger fires on the address or opcode of an
+            instruction that is executed.
+        </field>
+        <field name="store" bits="1" access="R/W" reset="0">
+            When set, the trigger fires on the address or data of a store.
+        </field>
+        <field name="load" bits="0" access="R/W" reset="0">
+            When set, the trigger fires on the address or data of a load.
+        </field>
+    </register>
+
+    <register name="Instruction Count" short="icount" address="0x7a1">
+        This register is accessible as \Rtdataone when \Ftype is 3.
+
+        {\bf Warning! \Ricount is just a proposal. So far nobody has commented
+        on it, so it could very easily be removed or changed in the future.}
+
+        Writing unsupported values to any field in this register results in the
+        reset value being written instead. When a debugger wants to use a
+        feature, it must write the appropriate value and then read back the
+        register to determine whether it is supported.
+
+        \begin{commentary} This trigger type is intended to be used as a single
+        step that's useful both for external debuggers and for software monitor
+        programs. As such it is not necessary to support \Fcount greater than
+        1. The only two combinations of the mode bits that are useful in those
+        scenarios are \Fu by itself, or \Fm, \Fh, \Fs, and \Fu all set.
+
+        If the hardware limits \Fcount to 1, and changes mode bits instead of
+        decrementing \Fcount, this register can be implemented with just 2
+        bits. One for \Fu, and one for \Fm, \Fh, and \Fs tied together.  If
+        only the external debugger or only a software monitor needs to be
+        supported, a single bit is enough.
+        \end{commentary}
+
+        <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="3" />
+        <field name="dmode" bits="XLEN-5" access="R/W" reset="0" />
+        <field name="0" bits="XLEN-6:24" access="R" reset="0" />
+
+        <field name="count" bits="23:10" access="R/W" reset="1">
+            When count is decremented to 0, the trigger fires. Instead of
+            changing \Fcount from 1 to 0, it is also acceptable for hardware to
+            clear \Fm, \Fh, \Fs, and \Fu. This allows \Fcount to be hard-wired
+            to 1 if this register just exists for single step.
+        </field>
+
+        <field name="m" bits="9" access="R/W" reset="0">
+            When set, every instruction completed in M mode decrements \Fcount
+            by 1.
+        </field>
+        <field name="h" bits="8" access="R/W" reset="0">
+            When set, every instruction completed in H mode decrements \Fcount
+            by 1.
+        </field>
+        <field name="s" bits="7" access="R/W" reset="0">
+            When set, every instruction completed in S mode decrements \Fcount
+            by 1.
+        </field>
+        <field name="u" bits="6" access="R/W" reset="0">
+            When set, every instruction completed in U mode decrements \Fcount
+            by 1.
+        </field>
+
+        <field name="action" bits="5:0" access="R/W" reset="0">
+            Determines what happens when this trigger matches.
+
+            0: Raise a debug exception. (Used when software wants to use the
+            trigger module without an external debugger attached.)
+
+            1: Enter Debug Mode. (Only supported when \Fdmode is 1.)
+
+	    2: Start tracing.
+
+            3: Stop tracing.
+
+	    4: Emit trace data for this match. If it is a data access match,
+            emit appropriate Load/Store Address/Data. If it is an instruction
+            execution, emit its PC.
+
+	    Other values are reserved for future use.
+        </field>
+    </register>
+</registers>

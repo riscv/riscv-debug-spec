@@ -1,0 +1,171 @@
+<registers name="JTAG TAP Registers" label="table:jtag_registers">
+    <!-- JTAG standard registers, everything starting with 0 -->
+    <register name="BYPASS" address="00000" sdesc="JTAG recommends this encoding"/>
+    <register name="IDCODE" address="00001" sdesc="JTAG recommends this encoding">
+        This register is selected (in IR) when the TAP state machine is reset.
+        Its definition is exactly as defined in IEEE Std 1149.1-2013.
+
+        <field name="Version" bits="31:28" access="R" reset="Preset">
+            Identifies the release version of this part.
+        </field>
+        <field name="PartNumber" bits="27:12" access="R" reset="Preset">
+            Identifies the designer's part number of this part.
+        </field>
+        <field name="ManufId" bits="11:1" access="R" reset="Preset">
+            Identifies the designer/manufacturer of this part. Bits 6:0 must be
+            bits 6:0 of the designer/manufacturer's Identification Code as
+            assigned by JEDEC Standard JEP106. Bits 10:7 contain the modulo-16
+            count of the number of continuation characters (0x7f) in that same
+            Identification Code.
+        </field>
+        <field name="1" bits="0" access="R" reset="1"></field>
+    </register>
+
+    <register name="SAMPLE" address="00010" sdesc="JTAG requires this instruction" />
+    <register name="PRELOAD" address="00011" sdesc="JTAG requires this instruction" />
+    <register name="EXTEST" address="00100" sdesc="JTAG requires this instruction" />
+    <register name="CLAMP" address="00101" sdesc="JTAG recommends this instruction"/>
+    <register name="CLAMP\_HOLD" address="00110" sdesc="JTAG recommends this instruction"/>
+    <register name="CLAMP\_RELEASE" address="00111" sdesc="JTAG recommends this instruction"/>
+    <register name="HIGHZ" address="01000" sdesc="JTAG recommends this instruction"/>
+    <register name="IC\_RESET" address="01001" sdesc="JTAG recommends this instruction"/>
+    <register name="TMP\_STATUS" address="01010" sdesc="JTAG recommends this instruction"/>
+    <register name="INIT\_SETUP" address="01011" sdesc="JTAG recommends this instruction"/>
+    <register name="INIT\_SETUP\_CLAMP" address="01100" sdesc="JTAG recommends this instruction"/>
+    <register name="INIT\_RUN" address="01101" sdesc="JTAG recommends this instruction"/>
+    <register name="Unused (BYPASS)" address="01110" sdesc="Reserved for future JTAG"/>
+    <register name="Unused (BYPASS)" address="01111" sdesc="Reserved for future JTAG"/>
+
+    <!-- All our registers start with 1. -->
+
+    <register name="DTM Control" short="dtmcontrol" address="10000"
+        sdesc="For Debugging" define="1">
+        The size of this register will remain constant in future versions so
+        that a debugger can always determine the version of the DTM.
+        <field name="0" bits="31:17" access="R" reset="0" />
+        <field name="dbusreset" bits="16" access="W1" reset="0">
+            Writing 1 to this bit resets the dbus controller, clearing any
+            sticky error state.
+        </field>
+        <field name="0" bits="15" access="R" reset="0" />
+        <field name="hiabits" bits="14:13" access="R" reset="Preset">
+            Bits 5:4 of $|abits|$, which describes the size of \Faddress in
+            \Rdbus.
+        </field>
+        <field name="idle" bits="12:10" access="R" reset="Preset">
+            The number of cycles a debugger needs to send the target through
+            Run-Test/Idle after every dbus scan.
+
+            0: It's not necessary to enter Run-Test/Idle at all.
+
+            1: Enter Run-Test/Idle and leave it immediately.
+
+            2: Enter Run-Test/Idle and stay there for 1 cycle before leaving.
+
+            And so on.
+        </field>
+        <field name="dbusstat" bits="9:8" access="R" reset="0">
+            0: No error.
+
+            2: An operation failed.
+
+            3: An operation was attempted while a bus access was still in
+            progress.
+        </field>
+        <field name="loabits" bits="7:4" access="R" reset="Preset">
+            Bits 3:0 of $|abits|$, which describes the size of \Faddress in
+            \Rdbus.
+        </field>
+        <field name="version" bits="3:0" access="R" reset="1">
+            0: Version described in spec version 0.11.
+
+            1: Version described in spec version 0.12 (and later?), which
+            reduces the Debug Bus width to 32 bits.
+
+            Other values are reserved for future use.
+        </field>
+    </register>
+
+    <register name="Debug Bus Access" short="dbus" address="10001"
+        sdesc="For Debugging">
+        This register allows access to the Debug Bus.
+
+        In Update-DR, the DTM starts the operation specified in \Fop unless the
+        current status reported in \Fop is sticky.
+
+        In Capture-DR, the DTM updates \Fdata with the result from that
+        operation, updating \Fop if the current \Fop isn't sticky.
+
+        See Section~\ref{dbusaccess} and Table~\ref{tab:memread} for examples
+        of how this plays out.
+
+        \begin{commentary}
+        The still-in-progress status is sticky to accommodate debuggers that
+        batch together a number of scans, which must all be executed or stop as
+        soon as there's a problem.
+
+        For instance a series of scans may write a Debug Program and execute
+        it.  If one of the writes fails but the execution continues, then the
+        Debug Program may hang, or have other unexpected side effects.
+        \end{commentary}
+
+        <field name="address" bits="abits+33:34" access="R/W" reset="0">
+            Address used for Debug Bus access. In Update-DR this value is sent
+            to the DM.
+        </field>
+        <field name="data" bits="33:2" access="R/W" reset="0">
+            The data to send to the DM during Update-DR, and the data returned
+            from the previous operation to the DM.
+        </field>
+        <field name="op" bits="1:0" access="R/W" reset="0">
+            When the debugger writes this field, it has the following meaning:
+
+            0: Ignore \Fdata. (nop)
+
+            1: Read from \Faddress. (read)
+
+            2: Read from \Faddress. Then write \Fdata to \Faddress. (write)
+
+            3: Reserved.
+
+            When the debugger reads this field, it means the following:
+
+            0: The previous operation completed successfully.
+
+            1: Reserved.
+
+            2: The previous operation failed. The data scanned into \Rdbus in
+            this access will be ignored. This status is sticky and can be
+            cleared by writing \Fdbusreset in \Rdtmcontrol.
+
+            3: The previous operation is still in progress. The data scanned
+            into \Rdbus in this access will be ignored. This status is sticky
+            and can be cleared by writing \Fdbusreset in \Rdtmcontrol. If a
+            debugger sees this status, it needs to give the target more time
+            between Update-DR and Capture-DR. The simplest way to do that is to
+            add extra transitions in Run-Test/Idle.
+        </field>
+    </register>
+
+    <register name="Reserved (BYPASS)" address="10010" sdesc="Reserved for future RISC-V debugging"/>
+    <register name="Reserved (BYPASS)" address="10011" sdesc="Reserved for future RISC-V debugging"/>
+    <register name="Reserved (BYPASS)" address="10100" sdesc="Reserved for future RISC-V debugging"/>
+    <register name="Reserved (BYPASS)" address="10101" sdesc="Reserved for future RISC-V standards"/>
+    <register name="Reserved (BYPASS)" address="10110" sdesc="Reserved for future RISC-V standards"/>
+    <register name="Reserved (BYPASS)" address="10111" sdesc="Reserved for future RISC-V standards"/>
+    <register name="Unused (BYPASS)" address="11000" sdesc="Reserved for customization"/>
+    <register name="Unused (BYPASS)" address="11001" sdesc="Reserved for customization"/>
+    <register name="Unused (BYPASS)" address="11010" sdesc="Reserved for customization"/>
+    <register name="Unused (BYPASS)" address="11011" sdesc="Reserved for customization"/>
+    <register name="Unused (BYPASS)" address="11100" sdesc="Reserved for customization"/>
+    <register name="Unused (BYPASS)" address="11101" sdesc="Reserved for customization"/>
+    <register name="Unused (BYPASS)" address="11110" sdesc="Reserved for customization"/>
+
+    <register name="BYPASS" address="11111" sdesc="JTAG requires this encoding">
+        1-bit register that has no effect. It's used when a debugger wants to
+        talk to a different TAP in the same scan chain as this one.
+
+        <field name="0" bits="0" access="R" reset="0" />
+    </register>
+
+</registers>
