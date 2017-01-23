@@ -83,8 +83,8 @@
 \input{sample_registers.tex.inc}
 
 \newcommand{\versionnum}{0.13}
-\newcommand{\shortdate}{jan20}
-\newcommand{\longdate}{January 20, 2017}
+\newcommand{\shortdate}{jan23}
+\newcommand{\longdate}{January 23, 2017}
 
 \title{RISC-V External Debug Support\\
 Version \versionnum\shortdate}
@@ -368,6 +368,11 @@ The Debug Module conceptually has a direct connection to the halt signal of
 every hart that has one. When set or cleared, a hart must respond in less than
 one second.  (How this is implemented is not further specified. A few clock
 cycles will be a more typical latency.)
+
+\subsection{Abstract Commands}
+
+A debugger can execute abstract commands by accessing \Rcommand, \Rdatazero,
+etc.
 
 \subsection{Data Access / Instruction Fetch}
 

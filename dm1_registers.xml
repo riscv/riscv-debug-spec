@@ -1,41 +1,31 @@
 <registers name="Debug Module Debug Bus Registers">
-    <register name="Info" short="dminfo" address="0x00">
+    <register name="Control" short="dmcontrol" address="0x00">
         The address of this register will not change in the future, because it
         contains \Fversion.  It has changed from version 0.11 of this spec.
 
-        <field name="abussize" bits="31:25" access="R" reset="Preset">
-            Width of the address bus in bits. (0 indicates there is no bus
-            access support.)
+        <field name="halt" bits="31" access="R/W" reset="0">
+            Halt signal for the hart selected by \Fhartid.  Writes apply to the
+            new value of \Fhartid.
         </field>
-        <field name="serialcount" bits="24:21" access="R" reset="Preset">
-            Number of supported serial ports.
+        <field name="reset" bits="30" access="R/W" reset="0">
+            This bit controls the reset signal from the DM to the rest of the
+            system. To perform a reset the debugger writes 1, and then writes 0
+            to deassert the reset.
         </field>
-        <field name="access128" bits="20" access="R" reset="Preset">
-            1 when 128-bit bus accesses are supported.
+        <field name="0" bits="29:26" access="R" reset="0" />
+        <field name="hartid" bits="25:16" access="R/W" reset="0">
+            The ID of the hart to select.
         </field>
-        <field name="access64" bits="19" access="R" reset="Preset">
-            1 when 64-bit bus accesses are supported.
-        </field>
-        <field name="access32" bits="18" access="R" reset="Preset">
-            1 when 32-bit bus accesses are supported.
-        </field>
-        <field name="access16" bits="17" access="R" reset="Preset">
-            1 when 16-bit bus accesses are supported.
-        </field>
-        <field name="access8" bits="16" access="R" reset="Preset">
-            1 when 8-bit bus accesses are supported.
-        </field>
-        <field name="0" bits="15:14" access="R" reset="0" />
-        <field name="ibufsize" bits="13:10" access="R" reset="Preset">
+        <field name="0" bits="15:13" access="R" reset="0" />
+        <field name="ibufsize" bits="12:9" access="R" reset="Preset">
             Size of the Instruction Buffer, in 32-bit words.
 
             A debugger must not access any Instruction Buffer locations that
             fall outside the range specified here.
         </field>
-        <field name="dasum" bits="9" access="R" reset="Preset">
+        <field name="dasum" bits="8" access="R" reset="Preset">
             1 when \Rdasum is implemented.
         </field>
-        <field name="0" bits="8" access="R" reset="0" />
         <field name="authenticated" bits="7" access="R" reset="Preset">
             0 when authentication is required before using the DM.  1 when the
             authentication check has passed. On components that don't implement
@@ -68,42 +58,9 @@
         </field>
     </register>
 
-    <register name="Control" short="dmcontrol" address="0x01">
-        <field name="halt" bits="31" access="R/W" reset="0">
-            Halt signal for the hart selected by \Fhartid.  Writes apply to the
-            new value of \Fhartid.
-        </field>
-        <field name="0" bits="30:23" access="R" reset="0" />
-        <field name="autoread" bits="22" access="R/W" reset="0">
-            When 1, every write to \Rsbaddresszero automatically triggers a bus
-            read at the new address.
-        </field>
-        <field name="buserror" bits="21:19" access="R/W0" reset="0">
-            When the debug bus master causes a bus error, this field gets set.
-            It remains set until 0 is written to any bit in this field. Until
-            that happens, the bus master is busy and no more accesses can be
-            initiated.
-
-            0: There was no bus error.
-
-            1: There was a timeout.
-
-            2: A bad address was accessed.
-
-            3: There was some other error (eg. alignment).
-
-            4: The bus master was busy when a one of the $|sbaddress|$ or
-            $|sbdata|$ registers was written.
-        </field>
-        <field name="serial" bits="18:16" access="R/W" reset="0">
-            Select which serial port is accessed by \Rserdata.
-        </field>
-        <field name="autoincrement" bits="15" access="R/W" reset="0">
-            When 1, the internal address value (used by the bus master) is
-            incremented by the access size (in bytes) selected in \Faccess after
-            every bus access.
-        </field>
-        <field name="access" bits="14:12" access="R/W" reset="2">
+    <register name="Bus Access Control" short="buscs" address="0x02">
+        <field name="0" bits="31:20" access="R" reset="0" />
+        <field name="access" bits="19:17" access="R/W" reset="2">
             Select the access size to use for system bus accesses triggered by
             writes to the {\tt sbaddress} registers or \Rsbdatazero.
 
@@ -120,20 +77,71 @@
             If an unsupported access size is written here, the DM may not
             perform the access, or may perform the access with any access size
         </field>
-        <field name="hartid" bits="11:2" access="R/W" reset="0">
-            The ID of the hart to select.
+        <field name="autoincrement" bits="16" access="R/W" reset="0">
+            When 1, the internal address value (used by the bus master) is
+            incremented by the access size (in bytes) selected in \Faccess after
+            every bus access.
         </field>
-        <field name="0" bits="1" access="R" reset="0" />
-        <field name="reset" bits="0" access="R/W" reset="0">
-            This bit controls the reset signal from the DM to the rest of the
-            system. To perform a reset the debugger writes 1, and then writes 0
-            to deassert the reset.
+        <field name="autoread" bits="15" access="R/W" reset="0">
+            When 1, every write to \Rsbaddresszero automatically triggers a bus
+            read at the new address.
+        </field>
+        <field name="buserror" bits="14:12" access="R/W0" reset="0">
+            When the debug bus master causes a bus error, this field gets set.
+            It remains set until 0 is written to any bit in this field. Until
+            that happens, the bus master is busy and no more accesses can be
+            initiated.
+
+            0: There was no bus error.
+
+            1: There was a timeout.
+
+            2: A bad address was accessed.
+
+            3: There was some other error (eg. alignment).
+
+            4: The bus master was busy when a one of the $|sbaddress|$ or
+            $|sbdata|$ registers was written.
+        </field>
+        <field name="abussize" bits="11:5" access="R" reset="Preset">
+            Width of the address bus in bits. (0 indicates there is no bus
+            access support.)
+        </field>
+        <field name="access128" bits="4" access="R" reset="Preset">
+            1 when 128-bit bus accesses are supported.
+        </field>
+        <field name="access64" bits="3" access="R" reset="Preset">
+            1 when 64-bit bus accesses are supported.
+        </field>
+        <field name="access32" bits="2" access="R" reset="Preset">
+            1 when 32-bit bus accesses are supported.
+        </field>
+        <field name="access16" bits="1" access="R" reset="Preset">
+            1 when 16-bit bus accesses are supported.
+        </field>
+        <field name="access8" bits="0" access="R" reset="Preset">
+            1 when 8-bit bus accesses are supported.
+        </field>
+    </register>
+
+    <register name="Abstract Control" short="abstractcs" address="0x03">
+        <field name="0" bits="31:5" access="R" reset="0" />
+        <field name="cmderr" bits="4" access="R/W0" reset="0">
+            Gets set if an abstract command fails. No abstract command is
+            started until the value is reset to 0.
+        </field>
+        <field name="datacount" bits="3:0" access="R" reset="Preset">
+            Number of {\tt data} registers that are implemented as part of the
+            abstract command interface. If it's 0 then no abstract interface is
+            implemented at all.
         </field>
     </register>
 
     <register name="Hart Info" short="hartinfo" address="0x02">
         This register contains information describing the hart selected by
         \Fhartid.
+
+        TODO: Add info about what abstract commands are supported.
 
         <field name="0" bits="31:13" access="R" reset="0" />
         <field name="datamode" bits="12" access="R" reset="Preset">
@@ -330,7 +338,13 @@
     <register name="Serial Status" short="serstatus" address="0x0b">
         If \Fserialcount is 0, this register is not present.
 
-        <field name="0" bits="31:16" access="R" reset="0" />
+        <field name="serialcount" bits="31:28" access="R" reset="Preset">
+            Number of supported serial ports.
+        </field>
+        <field name="0" bits="27:19" access="R" reset="0" />
+        <field name="serial" bits="18:16" access="R/W" reset="0">
+            Select which serial port is accessed by \Rserdata.
+        </field>
         <field name="valid7" bits="15" access="R" reset="0" />
         <field name="full/overflow7" bits="14" access="R/W0" reset="0" />
         <field name="valid6" bits="13" access="R" reset="0" />
@@ -378,7 +392,7 @@
     </register>
 
     <register name="System Bus Data 31:0" short="sbdata0" address="0x07">
-        If all of the {\tt access} bits in \Rdminfo are 0, then this register
+        If all of the {\tt access} bits in \Rbuscs are 0, then this register
         is not present.
 
         If \Fbuserror isn't 0 then accesses return error, and don't do anything
@@ -496,4 +510,29 @@
             that wide).
         </field>
     </register>
+
+    <register name="Command" short="command" address="0x1f">
+        Writes to this register cause the corresponding abstract command to be
+        executed.
+
+        Writing while an abstract command is executing causes \Fcmderr to be set.
+
+        If \Fcmderr is set, writes to this register are ignored.
+
+        <field name="command" bits="31:0" access="W" reset="0" />
+    </register>
+
+    <register name="Data 0" short="data0" address="0x20">
+        Basic read/write registers that may be read or changed by abstract
+        commands.
+
+        TODO: For now these register addresses conflict.
+
+        <field name="data" bits="31:0" access="R/W" reset="0" />
+    </register>
+
+    <register name="Data 1" short="data1" address="0x21" />
+    <register name="Data 2" short="data2" address="0x22" />
+    <register name="Data 3" short="data3" address="0x23" />
+
 </registers>
