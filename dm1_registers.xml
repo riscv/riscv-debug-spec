@@ -482,16 +482,6 @@
     <register name="System Bus Data 95:64" short="sbdata2" address="0x1b">
         This register only exists if \Faccessonetwentyeight is 1.
 
-        <field name="write/busy" bits="33" access="R/W" reset="0">
-            The same as \Fwritebusy in \Rsbdatazero, except if an access is
-            triggered the access size is 128 bits instead of what \Faccess
-            selects.
-        </field>
-        <field name="read/valid" bits="32" access="R/W" reset="0">
-            The same as \Freadvalid in \Rsbdatazero, except if an access is
-            triggered the access size is 128 bits instead of what \Faccess
-            selects.
-        </field>
         <field name="data" bits="31:0" access="R/W" reset="0">
             Accesses bits 95:64 of the internal data (if the system bus is
             that wide).
@@ -501,16 +491,6 @@
     <register name="System Bus Data 127:96" short="sbdata3" address="0x1c">
         This register only exists if \Faccessonetwentyeight is 1.
 
-        <field name="write/busy" bits="33" access="R/W" reset="0">
-            The same as \Fwritebusy in \Rsbdatazero, except if an access is
-            triggered the access size is 128 bits instead of what \Faccess
-            selects.
-        </field>
-        <field name="read/valid" bits="32" access="R/W" reset="0">
-            The same as \Freadvalid in \Rsbdatazero, except if an access is
-            triggered the access size is 128 bits instead of what \Faccess
-            selects.
-        </field>
         <field name="data" bits="31:0" access="R/W" reset="0">
             Accesses bits 127:96 of the internal data (if the system bus is
             that wide).
