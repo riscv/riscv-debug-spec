@@ -140,7 +140,7 @@
         </field>
     </register>
 
-    <register name="Hart Info" short="hartinfo" address="0x02">
+    <register name="Hart Info" short="hartinfo" address="0x01">
         This register contains information describing the hart selected by
         \Fhartid.
 
@@ -164,7 +164,7 @@
         </field>
     </register>
 
-    <register name="Access Status and Control" short="access" address="0x03">
+    <register name="Access Status and Control" short="access" address="0x04">
         <field name="ilength" bits="31:28" access="R/W" reset="3">
             To accommodate a debugger feeding instructions that aren't 32 bits
             long, in this field it can write the size of the instruction that
@@ -232,7 +232,7 @@
         </field>
     </register>
 
-    <register name="Data Access" short="daccess" address="0x04">
+    <register name="Data Access" short="daccess" address="0x05">
         If there is a read access pending, the debugger writes the data that
         should go back to the hart to this register.
 
@@ -253,7 +253,7 @@
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
 
-    <register name="Instruction Fetch" short="ifetch" address="0x05">
+    <register name="Instruction Fetch" short="ifetch" address="0x06">
         If there is an instruction fetch pending, the debugger writes the
         instruction that should be returned to the hart to this register.
 
@@ -291,7 +291,7 @@
     <register name="Instruction Buffer 6" short="ibuf6" address="0x16" />
     <register name="Instruction Buffer 7" short="ibuf7" address="0x17" />
 
-    <register name="Authentication Data 0" short="authdata0" address="0x08">
+    <register name="Authentication Data 0" short="authdata0" address="0x09">
         If \Fauthtype is 0, this register is not present.
 
         If \Fauthtype is 1, writing a correct password to this register and
@@ -314,14 +314,14 @@
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
 
-    <register name="Authentication Data 1" short="authdata1" address="0x09">
+    <register name="Authentication Data 1" short="authdata1" address="0x0a">
         This register contains the upper 32 bits of a 64-bit password
         or challenge/response as described in \Rauthdatazero.
 
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
 
-    <register name="Serial Data" short="serdata" address="0x0a">
+    <register name="Serial Data" short="serdata" address="0x0b">
         If \Fserialcount is 0, this register is not present.
 
         This register provides access to the data queues of the serial port
@@ -338,7 +338,7 @@
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
 
-    <register name="Serial Status" short="serstatus" address="0x0b">
+    <register name="Serial Status" short="serstatus" address="0x0c">
         If \Fserialcount is 0, this register is not present.
 
         <field name="serialcount" bits="31:28" access="R" reset="Preset">
@@ -372,7 +372,7 @@
         </field>
     </register>
 
-    <register name="System Bus Address 31:0" short="sbaddress0" address="0x06">
+    <register name="System Bus Address 31:0" short="sbaddress0" address="0x07">
         If \Fabussize is 0, then this register is not present.
 
         When the bus master is busy, writes to this register will return error
@@ -387,14 +387,14 @@
         </field>
     </register>
 
-    <register name="System Bus Address 63:32" short="sbaddress1" address="0x0c">
+    <register name="System Bus Address 63:32" short="sbaddress1" address="0x0d">
         <field name="address" bits="31:0" access="R/W" reset="0">
             Accesses bits 63:32 of the internal address (if the system address
             bus is that wide).
         </field>
     </register>
 
-    <register name="System Bus Data 31:0" short="sbdata0" address="0x07">
+    <register name="System Bus Data 31:0" short="sbdata0" address="0x08">
         If all of the {\tt access} bits in \Rbuscs are 0, then this register
         is not present.
 
@@ -420,7 +420,7 @@
         </field>
     </register>
 
-    <register name="System Bus Data 63:32" short="sbdata1" address="0x0d">
+    <register name="System Bus Data 63:32" short="sbdata1" address="0x0e">
         If \Faccesssixtyfour and \Faccessonetwentyeight are 0, then this
         register is not present.
 
