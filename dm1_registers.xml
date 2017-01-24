@@ -551,5 +551,9 @@
     <register name="Data 1" short="data1" address="0x21" />
     <register name="Data 2" short="data2" address="0x22" />
     <register name="Data 3" short="data3" address="0x23" />
+    <register name="Data 4" short="data4" address="0x24" />
+    <register name="Data 5" short="data5" address="0x25" />
+    <register name="Data 6" short="data6" address="0x26" />
+    <register name="Data 7" short="data7" address="0x27" />
 
 </registers>
