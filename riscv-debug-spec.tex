@@ -338,13 +338,13 @@ cores will want to implement 6 bits.
     \label{tab:header}
     \begin{tabulary}{\textwidth}{|r|l|}
         \hline
-        0x00 -- 0x1f & Registers described in Section~\ref{dmdebbus}. \\
+        0x00 -- 0x3f & Registers described in Section~\ref{dmdebbus}. \\
         \hline
-        0x20 -- 0x3f & If accessible, there are 1024 bits here, one for each
+        0x40 -- 0x5f & If accessible, there are 1024 bits here, one for each
         hart that may exist in the system. If the hart is ready for the DM to
         feed it an instruction, the bit is 1. Otherwise the bit is 0. The bit
-        for hart 0 is the LSB in the 32-bit word at 0x20. The bit for hart 1023
-        is the MSB in the 32-bit word at 0x3f. \\
+        for hart 0 is the LSB in the 32-bit word at 0x40. The bit for hart 1023
+        is the MSB in the 32-bit word at 0x5f. \\
         \hline
     \end{tabulary}
 \end{table}
@@ -375,7 +375,9 @@ cycles will be a more typical latency.)
 A debugger can execute abstract commands by writing the command to \Rcommand.
 If a command takes an argument, the debugger must write it to the {\tt data}
 registers before writing to \Rcommand. If a command returns a results, it is
-placed in the {\tt data} registers when the command is complete.
+placed in the {\tt data} registers when the command is complete. Depending on
+the implementation, it may be possible to perform abstract commands even when
+the hart is not halted.
 
 When debugging a 32-bit core, each argument fits in one {\tt data} register.
 When debugging a 64-bit core, each argument uses two {\tt data} registers.
