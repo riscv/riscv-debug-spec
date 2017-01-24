@@ -1,0 +1,18 @@
+<registers name="Abstract Commands" skip_index="1" skip_access="1" skip_reset="1">
+    <register name="Access Register">
+        Access the register specified by \Fregno. If \Fwrite is set, copy data from
+        \Rdatazero into the register. Otherwise copy data from the register into
+        \Rdatazero. (If XLEN is greater than 32, more {\tt data} registers are
+        involved.)
+
+        <field name="0" bits="31:16" />
+        <field name="regno" bits="15:1">
+            Number of the register to access, as described in Table~\ref{tab:regno}.
+        </field>
+        <field name="write" bits="0">
+            0: Read the register.
+
+            1: Write the register.
+        </field>
+    </register>
+</registers>

@@ -81,6 +81,7 @@
 \input{dm2_registers.tex.inc}
 \input{trace_registers.tex.inc}
 \input{sample_registers.tex.inc}
+\input{abstract_commands.tex.inc}
 
 \newcommand{\versionnum}{0.13}
 \newcommand{\shortdate}{jan23}
@@ -371,8 +372,33 @@ cycles will be a more typical latency.)
 
 \subsection{Abstract Commands}
 
-A debugger can execute abstract commands by accessing \Rcommand, \Rdatazero,
-etc.
+A debugger can execute abstract commands by writing the command to \Rcommand.
+If a command takes an argument, the debugger must write it to the {\tt data}
+registers before writing to \Rcommand. If a command returns a results, it is
+placed in the {\tt data} registers when the command is complete.
+
+When debugging a 32-bit core, each argument fits in one {\tt data} register.
+When debugging a 64-bit core, each argument uses two {\tt data} registers.
+When debugging a 128-bit core, each argument uses four {\tt data} registers.
+
+\begin{table}[htp]
+    \centering
+    \caption{Abstract Register Numbers}
+    \label{tab:regno}
+    \begin{tabulary}{\textwidth}{|r|l|}
+        \hline
+        0x0000 -- 0x0fff & CSRs \\
+        \hline
+        0x1000 & PC \\
+        \hline
+        0x1020 -- 0x103f & GPRs \\
+        \hline
+        0x1040 -- 0x105f & Floating point registers \\
+        \hline
+    \end{tabulary}
+\end{table}
+
+\input{abstract_commands.tex}
 
 \subsection{Data Access / Instruction Fetch}
 

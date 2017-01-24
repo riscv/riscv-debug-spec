@@ -8,11 +8,13 @@ import math
 import re
 
 class Registers( object ):
-    def __init__( self, name, label, description, skip_index ):
+    def __init__( self, name, label, description, skip_index, skip_access, skip_reset ):
         self.name = name
         self.label = label
         self.description = description
         self.skip_index = skip_index
+        self.skip_access = skip_access
+        self.skip_reset = skip_reset
         self.registers = []
 
     def add_register( self, register ):
@@ -108,7 +110,9 @@ def parse_xml( path ):
     else:
         description = ""
     registers = Registers( e.get( 'name' ), e.get( 'label' ), description,
-            int( e.get( 'skip_index', 0 ) ) )
+            int( e.get( 'skip_index', 0 ) ),
+            int( e.get( 'skip_access', 0 ) ),
+            int( e.get( 'skip_reset', 0 ) ) )
     for r in e.findall( 'register' ):
         name = r.get( 'name' )
         short = r.get( 'short' )
@@ -300,15 +304,23 @@ def print_latex_custom( registers ):
 
         if any( f.description for f in r.fields ):
             print "\\begin{center}"
-            #print "   \\begin{tabulary}{\\textwidth}{|l|L|c|l|}"
             print "   \\begin{xtabular}{|l|p{0.5\\textwidth}|c|l|}"
             print "   \\hline"
-            print "Field & Description & Access & Reset \\\\"
+            print "Field & Description",
+            if not registers.skip_access:
+                print "& Access",
+            if not registers.skip_reset:
+                print "& Reset",
+            print "\\\\"
             print "   \\hline"
             for f in r.fields:
                 if f.description:
-                    print "$|%s|$ & %s & %s & %s \\\\" % ( f.name,
-                            f.description, f.access, f.reset )
+                    print "$|%s|$ & %s" % ( f.name, f.description ),
+                    if not registers.skip_access:
+                        print "& %s" % f.access,
+                    if not registers.skip_reset:
+                        print "& %s" % f.reset,
+                    print "\\\\"
                     print "   \\hline"
 
             #print "   \\end{tabulary}"

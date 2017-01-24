@@ -9,6 +9,7 @@ REGISTERS_TEX += dm1_registers.tex
 REGISTERS_TEX += dm2_registers.tex
 REGISTERS_TEX += trace_registers.tex
 REGISTERS_TEX += sample_registers.tex
+REGISTERS_TEX += abstract_commands.tex
 
 FIGURES = *.eps
 
