@@ -241,9 +241,15 @@ def print_latex_custom( registers ):
             continue
 
         if r.short:
-            print "\\subsubsection{%s ({\\tt %s}, at %s)}" % ( r.name, r.short, r.address )
+            if r.address:
+                print "\\subsubsection{%s ({\\tt %s}, at %s)}" % ( r.name, r.short, r.address )
+            else:
+                print "\\subsubsection{%s ({\\tt %s})}" % ( r.name, r.short )
         else:
-            print "\\subsubsection{%s (%s)}" % ( r.name, r.address )
+            if r.address:
+                print "\\subsubsection{%s (at %s)}" % ( r.name, r.address )
+            else:
+                print "\\subsubsection{%s}" % r.name
         if r.label and r.define:
             print "\\label{%s}" % r.label
         print r.description
