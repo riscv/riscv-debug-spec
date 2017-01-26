@@ -1,0 +1,176 @@
+\section{Trace Module}
+\label{sec:a_trace}
+
+{\bf This part of the spec needs work before it's ready to be implemented,
+which is why it's in the appendix. It's left here to give a rough idea of some
+of the issues to consider.}
+
+Aside from viewing the current state of a core, knowing what happened in the
+past can be incredibly helpful. Capturing an execution trace can give a user
+that view.  Unfortunately processors run so fast that they generate trace data
+at a very large rate. To help deal with this, the trace data format allows for
+some simple compression.
+
+The trace functionality described here aims to support 3 different use cases:
+\begin{enumerate}
+    \item Full reconstruction of all processor state, including register values
+        etc. To achieve this goal the decoder will have to know what code is
+        being executed, and know the exact behavior of every RISC-V
+        instruction.
+    \item Reconstruct just the instruction stream. Get enough data from the
+        trace stream that it is possible to make a list of every instruction
+        executed.  This is possible without knowing anything about the code or
+        the core executing it.
+    \item Watch memory accesses for a certain memory region.
+\end{enumerate}
+
+Trace data may be stored to a special on-core RAM, RAM on the system bus, or to
+a dedicated off-chip interface. Only the system RAM destination is covered
+here.
+
+\subsection{Trace Data Format}
+
+Trace data should be both compact and easy to generate. Ideally it's also easy
+to decode, but since decoding doesn't have to happen in real time and will
+usually have a powerful workstation to do the work, this is the least important
+concern.
+
+Trace data consists of a stream of 4-bit packets, which are stored in memory in
+32-bit words by putting the first packet in bits 3:0 of the 32-bit word, the
+second packet into bits 7:4, and so on. Trace packets and their encoding are
+listed in Table~\ref{tab:tracepackets}.
+
+\begin{table}[htp]
+   \centering
+   \caption{Trace Sequence Header Packets}
+   \label{tab:tracepackets}
+   \begin{tabulary}{\textwidth}{|l|l|L|}
+      \hline
+      0000 & Nop & Packet that indicates no data. The trace source must use
+      these to ensure that there are 8 synchronization points in each buffer. \\
+      \hline
+      0001 & PC & Followed by a Value Sequence containing bits XLEN-1:1 of the
+      PC if the compressed ISA is supported, or bits XLEN-1:2 of the PC if the
+      compressed ISA is not supported.
+      Missing bits must be filled in with the last PC value. \\
+      \hline
+      0010 & Branch Taken & \\
+      \hline
+      0011 & Branch Not Taken & \\
+      \hline
+      0100 & Trace Enabled & Followed by a single packet indicating the version
+      of the trace data (currently 0). \\
+      \hline
+      0101 & Trace Disabled & Indicates that trace was purposefully disabled,
+      or that some sequences were dropped because the trace buffer overflowed. \\
+      \hline
+      0110 & Privilege Level & Followed by a packet containing whether the
+      cause of the change was an interrupt (1) or something else (0) in bit 3,
+      PRV[1:0] in bits 2:1, and IE in bit 0. \\
+      \hline
+      0111 & Change Hart & Followed by a Value Sequence containing the hart ID
+      of the hart whose trace data follows. Missing bits must be filled in with
+      0. \\
+      \hline
+      1000 & Load Address & Followed by a Value Sequence containing the
+      address.  Missing bits must be filled in with the last Load Address
+      value. \\
+      \hline
+      1001 & Store Address & Followed by a Value Sequence containing the
+      address. Missing bits must be filled in with the last Store Address
+      value. \\
+      \hline
+      1010 & Load Data & Followed by a Value Sequence containing the data.
+      Missing bits must be filled in by sign extending the value. \\
+      \hline
+      1011 & Store Data & Followed by a Value Sequence containing the data.
+      Missing bits must be filled in by sign extending the value. \\
+      \hline
+      1100 & Timestamp & Followed by a Value Sequence containing the timestamp.
+      Missing bits should be filled in with the last Timestamp value. \\
+      \hline
+      1101 & Reserved & Reserved for future standards. \\
+      \hline
+      1110 & Custom & Reserved for custom trace data. \\
+      \hline
+      1111 & Custom & Reserved for custom trace data. \\
+      \hline
+   \end{tabulary}
+\end{table}
+
+Several header packets are followed by a Value Sequence, which can encode
+values between 4 and 64 bits. The sequence consists first of a 4-bit size
+packet which contains a single number N.  It is followed by N+1 4-bit packets
+which contain the value. The first packet contains bits 3:0 of the value. The
+next packet contains bits 7:4, and so on.
+
+\subsection{Trace Events}
+
+Trace events are events that occur when a core is running that result in trace
+packets being emitted. They are listed in Table~\ref{tab:traceevents}.
+
+\begin{table}[htp]
+   \centering
+   \caption{Trace Data Events}
+   \label{tab:traceevents}
+   \begin{tabulary}{\textwidth}{|l|L|}
+      \hline
+      Opcode & Action \\
+      \hline
+      {\tt jal} & If \Femitbranch is disabled but \Femitpc is enabled, emit
+      2 PC values: first the address of the instruction, then the address being
+      jumped to. \\
+      \hline
+      {\tt jalr} & If \Femitbranch is disabled but \Femitpc is enabled, emit 2 PC
+      values: first the address of the instruction, then the address being
+      jumped to. Otherwise, if \Femitstoredata is enabled emit just the
+      destination PC. \\
+      \hline
+      BRANCH & If \Femitbranch is enabled, emit either Branch Taken or Branch
+      Not Taken.  Otherwise if \Femitpc is enabled and the branch is taken,
+      emit 2 PC values: first the address of the branch, then the address being
+      branched to. \\
+      \hline
+      LOAD & If \Femitloadaddr is enabled, emit the address.  If
+      \Femitloaddata is enabled, emit the data that was loaded. \\
+      \hline
+      STORE & If \Femitstoreaddr is enabled, emit the address. If
+      \Femitstoredata is enabled, emit the data that is stored. \\
+      \hline
+      Traps & {\tt scall}, {\tt sbreak}, {\tt ecall}, {\tt ebreak}, and {\tt
+      eret} emit the same as if they were {\tt jal} instructions. In addition they
+      also emit a Privilege Level sequence. \\
+      \hline
+      Interrupts & Emit PC (if enabled) of the last instruction executed.  Emit
+      Privilege Level (if enabled).  Finally emit the new PC (if enabled). \\
+      \hline
+      CSR instructions & For reads emit Load Data (if enabled). For writes emit
+      Store Data (if enabled). \\
+      \hline
+      Data Dropped & After packet sequences are dropped because data is
+      generated too quickly, Trace Disabled must be emitted. It's not necessary
+      to follow that up with a Trace Enabled sequence. \\
+      \hline
+   \end{tabulary}
+\end{table}
+
+\subsection{Synchronization}
+
+If a trace buffer wraps, it is no longer clear what in the buffer is a header
+and what isn't. To guarantee that a trace decoder can sync up easily, each
+trace buffer must have 8 synchronization points, spaced evenly throughout the
+buffer, with the first one at the very start of the buffer. A synchronization
+point is simply an address where there is guaranteed to be a sequence header.
+To make this happen, the trace source can insert a number of Nop headers into
+the sequence just before writing to the synchronization point.
+
+Aside from synchronizing a place in the data stream, it's also necessary to
+send a full PC, Read Address, Write Address, and Timestamp in order for those
+to be fully decoded. Ideally that happens the first time after every
+synchronization point, but bandwidth might prevent that. A trace source should
+attempt to send one full value for each of these (assuming they're enabled)
+soon after each synchronization point.
+
+\subsection{Trace Registers}
+
+\input{trace_registers.tex}

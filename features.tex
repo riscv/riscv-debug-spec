@@ -1,0 +1,33 @@
+\section{Supported Features}
+\label{sec:features}
+
+The debug interface described out here supports the following features:
+\begin{enumerate}
+   \item RV32, RV64, and future RV128 are all supported.
+   \item Any hart in the platform can be independently debugged.
+   \item Arbitrary instructions can be executed on a halted hart. That means no
+       new debug functionality is needed when a core has custom instructions or
+       registers, as long as there exist programs that can store those
+       registers to memory.
+   \item With optional extensions it becomes possible to halt a core very
+       briefly and quickly execute a a few instructions before letting it
+       resume.
+   \item Memory is accessed through the core, so the debugger will see the same
+       thing that the code that is executing sees.
+   \item Optionally, a bus master can be implemented to allow memory access
+       without involving any hart.
+   \item Debugging can be supported over multiple transports.
+   \item Code can be downloaded efficiently.
+   \item Each hart can be debugged from the very first instruction executed.
+   \item A RISC-V core can be halted when a software breakpoint instruction is
+       executed.
+   \item Hardware can step over any instruction.
+   \item A RISC-V core can be halted when a trigger matches the PC, read/write
+       address/data, or an instruction opcode.
+   \item The debug module may implement serial ports which can be used for
+       communication between debugger and monitor, or as a general protocol
+       between debugger and application.
+   \item The debugger doesn't need to know anything about the microarchitecture
+       of the cores it is debugging.
+   \item The spec can be implemented without touching a core's data path.
+\end{enumerate}

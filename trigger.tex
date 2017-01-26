@@ -1,0 +1,24 @@
+\section{Trigger Module}
+\label{sec:trigger}
+
+Triggers can cause a debug exception, entry into Halt Mode, or a trace action
+without having to execute a special instruction. This makes them invaluable
+when debugging code from ROM. They can trigger on execution of instructions at
+a given memory address, or on the address/data in loads/stores.  These are all
+features that can be useful without having the Debug Module present, so the
+Trigger Module is broken out as a separate piece that can be implemented
+separately.
+
+\begin{steps}{Each trigger may support a variety of features. A debugger can
+    build a list of all triggers and their features as follows:}
+\item Write 0 to \Rtselect.
+\item Read back \Rtselect to confirm this trigger exists. If not, exit.
+\item Read \Rtdataone, and possible \Rtdatatwo and \Rtdatathree depending on the
+    trigger type.
+\item If \Ftype in \Rtdataone was 0, then there are no more triggers.
+\item Repeat, incrementing the value in \Rtselect.
+\end{steps}
+
+\subsection{Trigger Registers}
+
+\input{hwbp_registers.tex}

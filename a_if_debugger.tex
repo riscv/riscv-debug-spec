@@ -1,0 +1,326 @@
+\section{Debugger Implementation}
+\label{sec:a_if_debugger}
+
+This section details how an external debugger might use the described debug
+interface to perform some common operations on RISC-V cores using the JTAG DTM.
+All these examples assume a 32-bit core but it should be easy to adapt the
+examples to 64- or 128-bit cores.
+
+\subsection{Debug Bus Access} \label{dbusaccess}
+
+To read an arbitrary Debug Bus register, select \Rdbus, and scan in a value
+with \Fop set to 1, and \Faddress set to the desired register address. In
+Update-DR the operation will start, and in Capture-DR its results will be
+captured into \Fdata.  If the operation didn't complete in time, \Fop will be 3
+and the value in \Fdata must be ignored. The error condition must be cleared by
+writing \Fdbusreset in \Rdtmcontrol, and then the operation must be tried
+again. This time the debugger should allow for more time between Capture-DR and
+Update-DR.
+
+To write an arbitrary Debug Bus register, select \Rdbus, and scan in a value
+with \Fop set to 2, and \Faddress and \Fdata set to the desired register
+address and data respectively. From then on everything happens exactly as with
+a read, except that a write is also performed right after the read. The
+operation isn't considered complete until the write has happened.
+
+It should almost never be necessary to scan IR, avoiding a big part of the
+inefficiency in typical JTAG use.
+
+\subsection{Main Loop}
+
+A debugger continuously monitors \Rdasum to see if any harts have spontaneously
+halted.
+
+\subsection{Data Transfer}
+
+Depending on a core's implementation, a debugger needs to use either {\tt
+csrr}/{\tt csrw} or {\tt lw}/{\tt sw} instructions to move data between GPRs
+and the DM. The debugger can discover which option is required by looking at
+\Rhartinfo.
+
+This document uses the pseudo-op {\tt xmit} to indicate transfer from GPR to
+the DM, and {\tt recv} to indicate transfer from DM to the GPR.
+
+\subsection{Halting}
+
+To halt a hart, the debugger sets \Fhartid and \Fhalt.
+
+Once halted (as evidenced by \Faccess in \Raccess), the debugger can push
+instructions to the hart by writing individual instructions to \Rifetch.
+
+To do anything useful and non-destructive, the debugger must then save a
+register (\Szero in this example), by pushing:
+\begin{minted}{gas}
+        xmit    s0, DM
+        # Service the write data access.
+\end{minted}
+This causes the core to initiate a data access to the DM. The debugger sees
+this happen (\Faccess in \Raccess becomes 2) and reads the register's value.
+Usually the debugger will want to save an additional register (eg. \Sone).
+
+Typically the debugger will also want to read \Rpc, by pushing:
+\begin{minted}{gas}
+        csrr    s0, DPC
+        xmit    s0, DM
+        # Service the write data access.
+\end{minted}
+
+Performing other operations all comes down to writing the appropriate
+instructions, so the sections below mostly consist of short program listings.
+
+A debugger can combine all the accesses above in a single request to the debug
+adapter which the adapter executes as quickly as possible. (It's probably
+limited by the TCK speed.) In that case the debugger must check \Fioverflow,
+\Fdunderflow, and \Fdoverflow afterwards to confirm that all operations
+completed successfully. If not then it must try the operation again, with some
+delays built in.
+
+\subsection{Reading Memory}
+
+Push the following instructions into the hart:
+\begin{minted}{gas}
+        recv    s0, DM
+        # Service the read data access with the address to read from.
+        lw      s0, 0(s0)
+        xmit    s0, DM
+        # Service the write data access by reading the data that was read from
+        # memory.
+\end{minted}
+
+A block of memory can be read efficiently using the Instruction Buffer. First,
+load the start address of the memory block into \Sone by pushing:
+\begin{minted}{gas}
+        recv    s1, DM
+        # Service the read data access with the address to read from.
+\end{minted}
+
+Then load the following into the Instruction Buffer:
+\begin{minted}{gas}
+        lw      s0, 0(s1)
+        xmit    s0, DM
+        addi    s1, s1, 4
+\end{minted}
+
+Enable the Instruction Buffer by asserting \Fibufenable and setting
+\Fibufaction to 1. The DM will start feeding the instructions to the core. Once
+it hits the {\tt xmit} pseudo-op, the core will send a word to the DM, which
+the debugger sees and reads. Execution of instructions is suspended while that
+access is happening.  When the debugger gets the last word that it is
+interested in, it clears \Fibufenable before reading it.
+
+Using this technique, one word can optimistically be read for every JTAG bus
+access. The debugger must check \Fdunderflow afterwards to ensure it never read
+too quickly. If it did, then it can retry the operation with some artificial
+delays added.
+
+Table~\ref{tab:memread} shows the scans involved in reading a single word using
+this method.
+
+\begin{table}[htp]
+    \centering
+    \caption{Memory Read Timeline}
+    \label{tab:memread}
+    \begin{tabulary}{\textwidth}{|r|l|L|}
+        \hline
+        & JTAG State & Activity \\
+        \hline
+        TODO & TODO & TODO \\
+%        1 & Shift-DR & Debugger shifts in write of 0x41002403 to dram[0], and
+%        gets back the result of whatever happened previously. \\
+%        & Update-DR & DTM starts read from dram[0], followed by write to
+%        dram[0]. \\
+%        \hline
+%        2 & Capture-DR & DTM captures results of read from dram[0]. \\
+%        & Shift-DR & Debugger shifts in write of 0x42483 to dram[1], and gets
+%        back the old contents of the first word in Debug RAM. \\
+%        & Update-DR & DTM starts read from dram[1], followed by write to
+%        dram[1]. \\
+%        \hline
+%        3 & Capture-DR & DTM captures results of read from dram[1]. \\
+%        & Shift-DR & Debugger shifts in write of 0x40902823 to dram[2], and
+%        gets back the old contents of the second word in Debug RAM. \\
+%        & Update-DR & DTM starts read from dram[2], followed by write to
+%        dram[2]. \\
+%        \hline
+%        4 & Capture-DR & DTM captures results of read from dram[2]. \\
+%        & Shift-DR & Debugger shifts in write of 0x3f80006f to dram[3], and
+%        gets back the old contents of the third word in Debug RAM. \\
+%        & Update-DR & DTM starts read from dram[3], followed by write to
+%        dram[3]. \\
+%        \hline
+%        5 & Capture-DR & DTM captures results of read from dram[3]. \\
+%        & Shift-DR & Debugger shifts in write of the address the user wants to
+%        read from to dram[4], using the interrupting Debug RAM register to assert
+%        the Debug Interrupt. The old contents of the fourth word in Debug RAM
+%        are shifted out. \\
+%        & Update-DR & DTM starts read from dram[4], followed by write to
+%        dram[4], and then sets the interrupt bit. The hart will respond to the
+%        Debug Interrupt by executing the program in Debug RAM which in this
+%        case will read the address written, and replace the entry in Debug RAM
+%        with the data at that address. \\
+%        \hline
+%        6 & Capture-DR & DTM captures results of read from dram[4]. \\
+%        & Shift-DR & Debugger shifts in read from dram[4], and gets back the
+%        old contents of the fourth word in Debug RAM. (This is the value that
+%        was there just before the address was written there.) \\
+%        & Update-DR & DTM starts read from dram[4]. \\
+%        \hline
+%        7 & Capture-DR & DTM captures results of read from dram[4]. \\
+%        & Shift-DR & Debugger shifts in nop, and gets back the contents of the
+%        fourth word in Debug RAM. This is the value that was there during the
+%        previous Update-DR, which is the result of the Debug Program execution.
+%        \\
+        \hline
+    \end{tabulary}
+\end{table}
+
+\subsection{Writing Memory} \label{writemem}
+
+To write a single word:
+\begin{minted}{gas}
+        recv    s0, DM
+        # Service the data read with the address to write to.
+        recv    s1, DM
+        # Service the data read with the data to write.
+        sw      s1, 0(s0)
+\end{minted}
+
+Similar to reading a block of memory, writing can also be done efficiently.
+Load the start address of the memory block into \Sone by pushing:
+\begin{minted}{gas}
+        recv    s1, DM
+        # Service the read data access with the address to read from.
+\end{minted}
+
+Then load the following into the Instruction Buffer:
+\begin{minted}{gas}
+        recv    s0, DM
+        sw      s0, 0(s1)
+        addi    s0, s0, 4
+\end{minted}
+
+Enable the Instruction Buffer by asserting \Fibufenable and setting
+\Fibufaction to 1. The DM will start feeding the instructions to the core. Once
+it hits the {\tt recv} pseudo-op, the core will wait for a word from the DM.
+The debugger notices and responds.  When the debugger gets to the last word
+that it is interested in, it clears \Fibufenable before completing the read
+access it.
+
+When done, the debugger must check \Fdoverflow to confirm everything went as
+expected.
+
+\begin{commentary}
+    % Select-DR-Scan to Shift-DR: 2
+    % Shift-DR to Exit1-DR: dbus register is abits+33 bits, so 38
+    % Exit1-DR to Select-DR-Scan: 2
+    % Total: 42
+
+    TODO: maybe update
+
+    After the instruction buffer is configured, each word can be written to the
+    target in 42 TCK cycles. That's 76\% efficient, and translates to a
+    download speed of 930KB/s at a 10MHz TCK.  That should be good enough that
+    it's not worth making the JTAG interface more complex to improve the
+    efficiency. (This assumes the Debug Bus uses 5 address bits and that the
+    debugger never has to wait for the core.)
+\end{commentary}
+
+\subsection{Reading Registers}
+
+Floating point register (\Fone):
+\begin{minted}{gas}
+        fmv.x.s s0, f1
+        xmit    s0, DM
+        # Read the actual data.
+\end{minted}
+
+CSR (\Rmepc):
+\begin{minted}{gas}
+        csrr    s0, MEPC
+        xmit    s0, DM
+        # Read the actual data.
+\end{minted}
+
+\subsection{Writing Registers} \label{writereg}
+
+Eg. how to write \Rmepc.
+\begin{minted}{gas}
+        recv    s0, DM
+        # Write the actual data.
+        csrw    MEPC, s0
+\end{minted}
+
+\subsection{Running}
+
+First, the debugger should restore any registers that it has clobbered.  Once
+that's done, it can let the core run by clearing \Fhalt.
+
+\subsection{Single Step}
+
+A debugger can single step the core by setting a breakpoint on the next
+instruction and letting the core run, or by asking the hardware to perform a
+single step. The former requires the debugger to have much more knowledge of
+the hardware than the latter, so the latter is preferred.
+
+Using the hardware single step feature is almost the same as regular running.
+The debugger just sets \Fstep in \Rdcsr before letting the core run. The core
+behaves exactly as in the running case, except that interrupts are left off and
+it only fetches and executes a single instruction before re-entering Debug
+Mode.
+
+\subsection{Handling Exceptions}
+
+Generally the debugger can avoid exceptions by being careful with the programs
+it writes. Sometimes they are unavoidable though, eg. if the user asks to
+access memory or a CSR that is not implemented. A typical debugger will not
+know enough about the platform to know what's going to happen, and must attempt
+the access to determine the outcome.
+
+When an exception occurs in Halt Mode, \Fhmexc becomes set. If the debugger did
+something that might have caused an exception, it should check for that. If
+there was an exception, it's left to the debugger to know what must have caused
+it.
+
+\subsection{Quick Access} \label{quickaccess}
+
+If it's undesirable to halt a hart for more than a few milliseconds, a debugger
+can perform a quick action. This requires both the Instruction Buffer and the
+Scratch RAM. The Scratch RAM is accessed through the DM, either using
+memory-mapped access or special CSRs.  Below we'll uses the pseudo-op {\tt
+save} to indicate transfer from GPR to Scratch RAM, and {\tt restore} to
+indicate transfer from Scratch RAM to the GPR.
+
+To perform a quick memory read, the debugger first writes the following into the
+Instruction Buffer:
+\begin{minted}{gas}
+        save    s0, SCRATCH0
+        restore s0, SCRATCH1
+        lw      s0, 0(s0)
+        save    s0, SCRATCH1
+        restore s0, SCRATCH0
+\end{minted}
+Then it writes the address to read from to the second word in the Scratch RAM.
+Finally it asserts \Fibufenable, and sets \Fibufaction to 2. The debugger can
+monitor \Fibufenable and when it's clear again, it knows the hart has executed
+the instructions. At that point it can read the data value from the second word
+in the Scratch RAM.
+
+To perform a quick memory write, the debugger writes the following into the
+Instruction Buffer:
+\begin{minted}{gas}
+        save    s0, SCRATCH0
+        save    s1, SCRATCH1
+        restore s0, SCRATCH2
+        restore s1, SCRATCH3
+        sw      s1, 0(s0)
+        restore s0, SCRATCH0
+        restore s1, SCRATCH1
+\end{minted}
+Then it writes the address to write to into the 3rd word of Scratch RAM, and
+the value to write into the 4th word.  Finally it asserts \Fibufenable, and
+sets \Fibufaction to 2. The debugger can monitor \Fibufenable and when it's
+clear again, it knows the hart has executed the instructions.
+
+Quick reads require a 5-instruction Instruction Buffer and a 2-word Scratch
+RAM.  Quick writes require a 7-instruction Instruction Buffer and a 4-word
+Scratch RAM.

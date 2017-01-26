@@ -1,0 +1,22 @@
+\section{Background}
+\label{sec:background}
+
+There are two forms of external debugging. The first is \emph{halt mode}
+debugging, where an external debugger will halt some or all components of a
+platform and inspect them while they are in stasis. Then the debugger can allow
+the hardware to either perform a single step or to run freely.
+
+The second is \emph{run mode} debugging.  In this mode there is a software
+debug agent running on a component (eg.  triggered by a timer interrupt on a
+RISC-V core) which communicates with a debugger without halting the component.
+This is essential if the component is controlling some real-time system (like a
+hard drive) where halting the component might lead to physical damage. It
+requires more software support (both on the chip as well as on the debug
+client).  For this use case the debug interface may include simple serial
+ports.
+
+A third use for the external debug interface is to use it as a general
+transport for a component to communicate with the outside world. For instance,
+it could be used to implement a serial interface that firmware could use to
+provide a simple CLI. This can use the same serial ports used for run-mode
+debugging.
