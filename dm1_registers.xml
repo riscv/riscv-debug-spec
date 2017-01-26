@@ -58,9 +58,9 @@
         </field>
     </register>
 
-    <register name="Bus Access Control" short="buscs" address="0x02">
+    <register name="Bus Access Control" short="sbcs" address="0x02">
         <field name="0" bits="31:20" access="R" reset="0" />
-        <field name="access" bits="19:17" access="R/W" reset="2">
+        <field name="sbaccess" bits="19:17" access="R/W" reset="2">
             Select the access size to use for system bus accesses triggered by
             writes to the {\tt sbaddress} registers or \Rsbdatazero.
 
@@ -74,19 +74,19 @@
 
 	    4: 128-bit
 
-            If an unsupported access size is written here, the DM may not
+            If an unsupported bus access size is written here, the DM may not
             perform the access, or may perform the access with any access size
         </field>
         <field name="autoincrement" bits="16" access="R/W" reset="0">
             When 1, the internal address value (used by the bus master) is
-            incremented by the access size (in bytes) selected in \Faccess after
+            incremented by the access size (in bytes) selected in \Fsbaccess after
             every bus access.
         </field>
         <field name="autoread" bits="15" access="R/W" reset="0">
             When 1, every write to \Rsbaddresszero automatically triggers a bus
             read at the new address.
         </field>
-        <field name="buserror" bits="14:12" access="R/W0" reset="0">
+        <field name="sberror" bits="14:12" access="R/W0" reset="0">
             When the debug bus master causes a bus error, this field gets set.
             It remains set until 0 is written to any bit in this field. Until
             that happens, the bus master is busy and no more accesses can be
@@ -107,19 +107,19 @@
             Width of the address bus in bits. (0 indicates there is no bus
             access support.)
         </field>
-        <field name="access128" bits="4" access="R" reset="Preset">
+        <field name="sbaccess128" bits="4" access="R" reset="Preset">
             1 when 128-bit bus accesses are supported.
         </field>
-        <field name="access64" bits="3" access="R" reset="Preset">
+        <field name="sbaccess64" bits="3" access="R" reset="Preset">
             1 when 64-bit bus accesses are supported.
         </field>
-        <field name="access32" bits="2" access="R" reset="Preset">
+        <field name="sbaccess32" bits="2" access="R" reset="Preset">
             1 when 32-bit bus accesses are supported.
         </field>
-        <field name="access16" bits="1" access="R" reset="Preset">
+        <field name="sbaccess16" bits="1" access="R" reset="Preset">
             1 when 16-bit bus accesses are supported.
         </field>
-        <field name="access8" bits="0" access="R" reset="Preset">
+        <field name="sbaccess8" bits="0" access="R" reset="Preset">
             1 when 8-bit bus accesses are supported.
         </field>
     </register>
@@ -175,7 +175,7 @@
         </field>
     </register>
 
-    <register name="Access Status and Control" short="access" address="0x04">
+    <register name="Access Status and Control" short="accesscs" address="0x04">
         <field name="ilength" bits="31:28" access="R/W" reset="3">
             To accommodate a debugger feeding instructions that aren't 32 bits
             long, in this field it can write the size of the instruction that
@@ -250,7 +250,7 @@
         If there is a write access pending, the debugger reads the data that
         the hart wrote from this register.
 
-        If \Fioverflow, \Fdoverflow, or Fdunderflow are set, all accesses to
+        If \Fioverflow, \Fdoverflow, or \Fdunderflow are set, all accesses to
         this register are ignored.
 
         After this register is accessed, the access is automatically completed.
@@ -268,7 +268,7 @@
         If there is an instruction fetch pending, the debugger writes the
         instruction that should be returned to the hart to this register.
 
-        If \Fioverflow, \Fdoverflow, or Fdunderflow are set, writes to this
+        If \Fioverflow, \Fdoverflow, or \Fdunderflow are set, writes to this
         register are ignored.
 
         For instructions that aren't 32 bits long, the debugger must set
@@ -387,11 +387,11 @@
         If \Fabussize is 0, then this register is not present.
 
         When the bus master is busy, writes to this register will return error
-        and \Fbuserror is set.
+        and \Fsberror is set.
 
-        If \Fbuserror is 0 and \Fautoread is set then the bus master will start
+        If \Fsberror is 0 and \Fautoread is set then the bus master will start
         to read after updating the address from \Faddress. The access size is
-        controlled by \Faccess in \Rdmcontrol.
+        controlled by \Fsbaccess in \Rdmcontrol.
 
         <field name="address" bits="31:0" access="R/W" reset="0">
             Accesses bits 31:0 of the internal address.
@@ -406,13 +406,13 @@
     </register>
 
     <register name="System Bus Data 31:0" short="sbdata0" address="0x08">
-        If all of the {\tt access} bits in \Rbuscs are 0, then this register
+        If all of the {\tt sbaccess} bits in \Rsbcs are 0, then this register
         is not present.
 
-        If \Fbuserror isn't 0 then accesses return error, and don't do anything
+        If \Fsberror isn't 0 then accesses return error, and don't do anything
         else.
 
-        If the bus master is busy then accesses set \Fbuserror, return error,
+        If the bus master is busy then accesses set \Fsberror, return error,
         and don't do anything else.
 
         Writes to this register:
@@ -421,7 +421,7 @@
 
         Reads to this register:
         1. If bits 31:0 of the internal data register haven't been updated
-        since the last time this register was read, then set \Fbuserror, return
+        since the last time this register was read, then set \Fsberror, return
         error, and don't do anything else.
         2. "Return" the data.
         3. If \Fautoread is set, start another bus read.
@@ -432,7 +432,7 @@
     </register>
 
     <register name="System Bus Data 63:32" short="sbdata1" address="0x0e">
-        If \Faccesssixtyfour and \Faccessonetwentyeight are 0, then this
+        If \Fsbaccesssixtyfour and \Fsbaccessonetwentyeight are 0, then this
         register is not present.
 
         <field name="data" bits="31:0" access="R/W" reset="0">
@@ -508,7 +508,7 @@
     </register>
 
     <register name="System Bus Data 95:64" short="sbdata2" address="0x1b">
-        This register only exists if \Faccessonetwentyeight is 1.
+        This register only exists if \Fsbaccessonetwentyeight is 1.
 
         <field name="data" bits="31:0" access="R/W" reset="0">
             Accesses bits 95:64 of the internal data (if the system bus is
@@ -517,7 +517,7 @@
     </register>
 
     <register name="System Bus Data 127:96" short="sbdata3" address="0x1c">
-        This register only exists if \Faccessonetwentyeight is 1.
+        This register only exists if \Fsbaccessonetwentyeight is 1.
 
         <field name="data" bits="31:0" access="R/W" reset="0">
             Accesses bits 127:96 of the internal data (if the system bus is

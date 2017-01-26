@@ -436,7 +436,7 @@ still goes through the same stages as a bus access, so that language is used
 here.
 
 When a hart performs an access (data read/write or instruction fetch) to the
-DM, this block updates bits in \Raccess. The debugger can then access \Rdaccess
+DM, this block updates bits in \Raccesscs. The debugger can then access \Rdaccess
 or \Rifetch to complete the access.
 
 \subsection{Instruction Buffer}
@@ -842,7 +842,7 @@ the DM, and {\tt recv} to indicate transfer from DM to the GPR.
 
 To halt a hart, the debugger sets \Fhartid and \Fhalt.
 
-Once halted (as evidenced by \Faccess in \Raccess), the debugger can push
+Once halted (as evidenced by \Faccess in \Raccesscs), the debugger can push
 instructions to the hart by writing individual instructions to \Rifetch.
 
 To do anything useful and non-destructive, the debugger must then save a
@@ -852,7 +852,7 @@ register (\Szero in this example), by pushing:
         # Service the write data access.
 \end{minted}
 This causes the core to initiate a data access to the DM. The debugger sees
-this happen (\Faccess in \Raccess becomes 2) and reads the register's value.
+this happen (\Faccess in \Raccesscs becomes 2) and reads the register's value.
 Usually the debugger will want to save an additional register (eg. \Sone).
 
 Typically the debugger will also want to read \Rpc, by pushing:
