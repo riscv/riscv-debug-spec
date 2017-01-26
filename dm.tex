@@ -1,0 +1,226 @@
+\section{Debug Module (DM)}
+\label{sec:dm}
+
+\begin{steps}{The Debug Module is the interface between specific debug
+    operations and their implementation. It must support the following
+    operations:}
+\item Provide access to a reset signal that resets most of the SoC.
+\item Allow any individual hart to be halted.
+\item Provide status on which harts are halted.
+\item Feed a specific hart one instruction, and have that hart execute the
+    instruction.
+\item Give the debugger necessary information about the implementation.
+\item Provide status on whether a data access is pending.
+\item Service a data access (load or store).
+\end{steps}
+
+Optionally, an Instruction Buffer can repeatedly feed the same set of
+instructions to a hart.
+
+A single DM can debug up to 1024 harts.
+
+\subsection{Debug Module Interface (DMI)}
+
+The Debug Module Interface can be a trivial bus with one master and one slave,
+or use a more full-featured bus like TileLink or the AMBA Advanced Peripheral
+Bus. The details are left to the system designer.
+
+The DMI uses between 4 and 32 address bits.  It supports read and write
+operations, which may return an error. (Errors are only used by the optional
+Bus Access and Serial Port blocks.) The bottom of the address space is used for
+the DM. Extra space can be used for custom debug devices, other cores,
+additional DMs, etc.
+
+The space is laid out so that small systems can get away with just 4 address
+bits. Using the Instruction Buffer requires 5 bits, and systems that have many
+cores will want to implement 6 bits.
+
+\begin{table}[htp]
+    \centering
+    \caption{Debug Module Interface Address Space}
+    \label{tab:header}
+    \begin{tabulary}{\textwidth}{|r|l|}
+        \hline
+        0x00 -- 0x3f & Registers described in Section~\ref{dmdebbus}. \\
+        \hline
+        0x40 -- 0x5f & If accessible, there are 1024 bits here, one for each
+        hart that may exist in the system. If the hart is ready for the DM to
+        feed it an instruction, the bit is 1. Otherwise the bit is 0. The bit
+        for hart 0 is the LSB in the 32-bit word at 0x40. The bit for hart 1023
+        is the MSB in the 32-bit word at 0x5f. \\
+        \hline
+    \end{tabulary}
+\end{table}
+
+
+\subsection{Reset Control} \label{reset}
+
+This block is connected to the global reset signal, which resets every
+component in the platform except for the Debug Module itself.
+
+\subsection{Halt Control}
+
+This block controls halt signals from the Debug Module to a hart.  It is used
+to halt a hart, and let it run again.
+
+For each hart the block contains a single bit that is accessible through to
+\Fhalt in \Rdmcontrol. When a debugger wants to halt a hart, it writes 1 to
+this bit, and then waits for an instruction fetch to be pending from the hart.
+To resume, the debugger clears the bit.
+
+The Debug Module conceptually has a direct connection to the halt signal of
+every hart that has one. When set or cleared, a hart must respond in less than
+one second.  (How this is implemented is not further specified. A few clock
+cycles will be a more typical latency.)
+
+\subsection{Abstract Commands}
+
+A debugger can execute abstract commands by writing the command to \Rcommand.
+If a command takes an argument, the debugger must write it to the {\tt data}
+registers before writing to \Rcommand. If a command returns a results, it is
+placed in the {\tt data} registers when the command is complete. Which {\tt
+data} registers are used is described in Table~\ref{tab:datareg}. Depending on
+the implementation, it may be possible to perform abstract commands even when
+the hart is not halted.
+
+\begin{table}[htp]
+    \centering
+    \caption{Use of Data Registers}
+    \label{tab:datareg}
+    \begin{tabulary}{\textwidth}{|r|l|l|}
+        \hline
+        XLEN & arg0/return value (LSW to MSW) & arg1 (LSW to MSW) \\
+        \hline
+        32 & \Rdatazero & \Rdataone \\
+        \hline
+        64 & \Rdatazero, \Rdataone & \Rdatatwo, \Rdatathree \\
+        \hline
+        128 & \Rdatazero, \Rdataone, \Rdatatwo, \Rdatathree &
+        \Rdatafour, \Rdatafive, \Rdatasix, \Rdataseven \\
+        \hline
+    \end{tabulary}
+\end{table}
+
+\begin{table}[htp]
+    \centering
+    \caption{Abstract Register Numbers}
+    \label{tab:regno}
+    \begin{tabulary}{\textwidth}{|r|l|}
+        \hline
+        0x0000 -- 0x0fff & CSRs \\
+        \hline
+        0x1000 & PC \\
+        \hline
+        0x1020 -- 0x103f & GPRs \\
+        \hline
+        0x1040 -- 0x105f & Floating point registers \\
+        \hline
+    \end{tabulary}
+\end{table}
+
+\input{abstract_commands.tex}
+
+\subsection{Data Access / Instruction Fetch}
+
+While most of the language in this spec refers to data accesses and instruction
+fetches as if they occur over a bus, this is actually implementation-dependent.
+An implementation could feed instructions to a hart some other way, and data
+exchange could occur through special CSRs. These details aside, each access
+still goes through the same stages as a bus access, so that language is used
+here.
+
+When a hart performs an access (data read/write or instruction fetch) to the
+DM, this block updates bits in \Raccess. The debugger can then access \Rdaccess
+or \Rifetch to complete the access.
+
+\subsection{Instruction Buffer}
+
+This optional block contains between 3 and 7 instructions and a pointer to the
+next instruction. If enabled, the DM will automatically complete accesses from
+the currently selected hart with the next instruction, and increment the
+pointer. When all instructions are executed, the Instruction Buffer may be
+disabled, start over at the beginning, or \Fhalt will be cleared.
+
+3 instructions is enough to speed up reading and writing blocks of memory.  5
+instructions is enough to read from a given memory address while halting the
+processor only briefly.  7 instructions is enough to write to a given memory
+address while halting the processor only briefly.
+
+\subsection{Scratch RAM}
+
+This optional block could be used by a debugger to save/restore registers
+faster than transmitting them to the debugger.
+
+It could also be used for a quick access, which halts a hart for the minimum
+amount of time. The debugger would write a small program to the Instruction
+Buffer, and use the Scratch RAM to save/restore registers, pass arguments, and
+return a value. See Section~\ref{quickaccess}.
+
+\subsection{Serial Ports}
+
+The Debug Module may implement up to 8 serial ports. They support basic flow
+control and full duplex data transfer between a component and the debugger.
+They can be used to communicate with a debug monitor running on a hart, for the
+equivalent of printf debugging, to provide a simple CLI without requiring any
+extra peripherals, or more generally to emulate devices that aren't present.
+All these uses require software support, and are not further specified here.
+
+\subsection{Bus Access}
+
+In a minimal configuration a debugger can access the system bus by having a
+RISC-V hart perform the accesses it requires. Optionally a Bus Access block may
+be implemented. Because the Bus Access block performs accesses directly from
+the DM, it only uses physical addresses.
+
+Implementing a Bus Access block has several benefits. First, it is possible to
+access memory in a running system with minimal impact.  Second, it may improve
+performance when downloading programs. (There is only a benefit if JTAG TCK is a
+significant fraction of the RISC-V hart's clock speed.)  Third, it may provide
+access to devices that a hart does not have access to. A hart may be unable to
+access all devices in a system (eg. for security reasons) and in this case the
+debugger needs another path to access them.
+
+To keep implementing, configuring, and using a debugger as simple as possible,
+systems should use the same memory map for each hart. That means that a given
+address maps to the same device no matter which hart performs the access.
+(Different harts may not all have permission to access the same devices.) If
+different harts do have unique memory maps then the system should provide
+access to all devices using the Bus Access block. This will make implementing,
+configuring, and using a debugger more complex so should be avoided if
+possible.
+
+\subsection{Security}
+
+To protect intellectual property it may be desirable to lock access to the
+Debug Module.  To allow access during a manufacturing process and not
+afterwards, a reasonable solution could be to add a fuse bit to the Debug
+Module that can be used to be permanently disable it. Since this is technology
+specific, it is not further addressed in this spec.
+
+Another option is to allow the DM to be unlocked only by users who  have an
+access key. A simple mechanism is documented in Section~\ref{authdata0}. When
+\Fauthenticated is clear, the DM must not interact with the rest of the
+platform in any way.
+
+\subsection{Debug Module DMI Registers} \label{dmdebbus}
+
+\input{dm1_registers.tex}
+
+\subsection{Debug Module Serial Registers} \label{dmsysbus}
+
+TODO: Figure out where these registers should really live on the system bus,
+and how to communicate that to software. Or maybe there are magic CSRs to
+access them as well?
+
+\input{dm2_registers.tex}
+
+%\section{Device Tree Additions TODO}
+%
+%The device tree is a data structure in ROM that all RISC-V platforms should
+%have. It contains a variety of information about every component in the
+%platform. (As of June 18, 2016 it is not yet part of any RISC-V spec.)
+%
+%The device tree contains the hart IDs for each core. The debugger reads this
+%information to determine how many harts there are in the platform, and what
+%their IDs are. It should expose each hart to the user as a separately
+%debuggable entity. (Usually it will be called either a thread or a core.)

@@ -1,0 +1,15 @@
+\section{Debug Transport Module (DTM)}
+\label{sec:dtm}
+
+Debug Transport Modules provide access to the DM over one or more transports
+(eg. JTAG or USB).
+
+There may be multiple DTMs in a single platform. Ideally every component that
+communicates with the outside world includes a DTM, allowing a platform to be
+debugged through every transport it supports.  For instance a USB component
+could include a DTM. This would trivially allow any platform to be debugged
+over USB. All that is required is that the USB module already in use also has
+access to the Debug Bus.
+
+Using multiple DTMs at the same time is not supported. It is left to the user
+to ensure this does not happen.

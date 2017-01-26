@@ -1,0 +1,113 @@
+\section{JTAG Debug Transport Module}
+\label{sec:jtag_dtm}
+
+This Debug Transport Module is based around a normal JTAG Test Access Port
+(TAP).  The JTAG TAP allows access to arbitrary JTAG registers by first
+selecting one using the JTAG instruction register (IR), and then accessing it
+through the JTAG data register (DR).
+
+\subsection{Background}
+
+JTAG refers to IEEE Std 1149.1-2013. It is a standard that defines test logic
+that can be included in an integrated circuit to test the interconnections
+between integrated circuits, test the integrated circuit itself, and observe or
+modify circuit activity during the component’s normal operation. We're using it
+for the third case here.  The standard defines a Test Access Port (TAP) that
+can be used to read and write a few custom registers, which can be used to
+communicate with debug hardware in a component.
+
+\subsection{JTAG Connector}
+
+Every target's JTAG connector seems to have its own pinout. To make it easy to
+acquire debug hardware, this spec recommends a connector that is compatible
+with the Cortex Debug Connector, as described below.
+
+The connector is a .05"-spaced, gold-plated male header with .016" thick
+hardened copper or beryllium bronze square posts (SAMTEC FTSH-105 or
+equivalent). Female connectors are compatible \SI{20}{\micro\metre} gold
+connectors in order to prevent oxide build-up on tin connectors.
+
+Viewing the male header from above (the pins pointing at your eye), a target's
+connector looks as it does in Table~\ref{tab:header}. The function of each pin
+is described in Table~\ref{tab:pinout}.
+
+\begin{table}[htp]
+    \centering
+    \caption{JTAG Connector Diagram}
+    \label{tab:header}
+    \begin{tabulary}{\textwidth}{|r|r|r|l|}
+        \hline
+        VCC & 1 & 2 & TMS \\
+        \hline
+        GND & 3 & 4 & TCK \\
+        \hline
+        GND & 5 & 6 & TDO \\
+        \hline
+        KEY & 7 & 8 & TDI \\
+        \hline
+        N/C & 9 & 10 & RESET \\
+        \hline
+    \end{tabulary}
+\end{table}
+
+\begin{table}[htp]
+    \centering
+    \caption{JTAG Connector Pinout}
+    \label{tab:pinout}
+    \begin{tabulary}{\textwidth}{|r|l|L|}
+        \hline
+        1 & VCC & Power provided by the target, which may be used to power the
+        debug adapter. Must be able to source at least 25mA. This signal also
+        serves as the reference voltage for logic high.
+
+        This pin must be clearly marked in both male and female headers.\\
+        \hline
+        2 & TMS & JTAG TMS signal, driven by debug adapter. \\
+        \hline
+        3 & GND & Target ground. \\
+        \hline
+        4 & TCK & JTAG TCK signal, driven by the debug adapter. \\
+        \hline
+        5 & GND & Target ground. \\
+        \hline
+        6 & TDO & JTAG TDO signal, driven by the target. \\
+        \hline
+        7 & KEY & This pin should be clipped in male connectors, and plugged in
+        female connectors. Electrically it must not be connected. \\
+        \hline
+        8 & TDI & JTAG TDI signal, driven by the debug adapter.
+
+        This pin may be used by a target to sense a debugger at reset by weakly
+        pulling this signal high during a brief detection period at reset.
+        Debuggers should drive TDI low when the interface is idle. \\
+        \hline
+        9 & N/C & Not connected in either target or debug adapter. May be used
+        in future specs. \\
+        \hline
+        10 & RESET & Reset signal, driven by the debug adapter. This may be
+        active low or active high, depending on the target's requirements. A
+        debug adapter must accommodate either option. Asserting reset should
+        reset any RISC-V cores as well as any other peripherals on the PCB.
+        If not implemented in a target, this pin must not be connected. \\
+        \hline
+    \end{tabulary}
+\end{table}
+
+Target connectors may be shrouded. In that case the key slot should be next to
+pin 5. Female headers should have a matching key.
+
+Debug adapters should be tagged or marked with their isolation voltage
+threshold (i.e. unisolated, 250V, etc.).
+
+All debug adapter pins other than GND should be current-limited to 20mA.
+
+\subsection{JTAG Registers}
+
+JTAG DTMs should use a 5-bit JTAG IR. When the TAP is reset, IR must default to
+00001, selecting the IDCODE instruction. A full list of JTAG registers along
+with their encoding is in Table~\ref{table:jtag_registers}. The only regular
+JTAG registers a debugger might use are BYPASS and IDCODE, but the JTAG
+standard recommends a lot of other instructions so we leave IR space for them.
+If they are not implemented, then they must select the BYPASS register.
+
+\input{jtag_registers.tex}

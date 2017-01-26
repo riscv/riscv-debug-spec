@@ -1,0 +1,66 @@
+\section{RISC-V Debug}
+\label{sec:hart}
+
+Modifications to the RISC-V core to support debug are kept to a minimum.  There
+is a special execution mode (Halt Mode) and a few extra CSRs. The DM takes care
+of the rest.
+
+\subsection{Hart IDs}
+
+External debug imposes a few limits on hart IDs. Every hart in the system must
+have a unique ID. (There could be additional harts that reuse IDs, but only one
+of the harts that share an ID can be debugged.) One of the harts must use ID 0.
+The debugger needs this to access the config string to enumerate the remaining
+harts in the system. Hart IDs should be less than 128 if the Debug Bus address
+is 5 bits wide, or less than 1024 if that address is 6 or more bits wide.
+
+\subsection{Halt Mode}
+
+Halt Mode is a special processor mode used only when the core is halted for
+external debugging.
+
+\begin{steps}{To enter Halt Mode the hart:}
+\item Saves \Rpc to \Rdpc.
+\item Sets \Fcause in \Rdcsr.
+\item Starts fetching instructions from the DM.
+\end{steps}
+
+\begin{steps}{While in Halt Mode:}
+\item All instructions come from the DM.
+\item All operations happen in machine mode.
+\item \Fmprv in \Rmstatus is ignored.
+\item All interrupts are masked. Whether slow watchdog timers (10s or longer)
+    are masked is left to the implementation.
+\item Exceptions don't update any registers.  That includes {\tt cause}, {\tt
+    epc}, {\tt badaddr}, and \Rmstatus.  Instead exceptions just set \Fhmexc in
+    \Rdcsr.
+\item No trigger actions are taken.
+\item Trace is disabled.
+\item Cycle counters may be stopped, depending on \Fstopcycle in \Rdcsr.
+\item Timers may be stopped, depending on \Fstoptime in \Rdcsr.
+\item The {\tt wfi} instruction acts as a {\tt nop}.
+\item Instructions that change the privilege level have undefined behavior.
+    This includes {\tt ecall}, {\tt ebreak}, {\tt mret}, {\tt hret}, {\tt
+    sret}, and {\tt uret}.  (To change the privilege level, the debugger can
+    write \Fprv in \Rdcsr.)
+\end{steps}
+
+\subsection{Load-Reserved/Store-Conditional Instructions}
+
+The reservation registered by an {\tt lr} instruction on a memory address may
+be lost when entering Halt Mode or while in Halt Mode.  This means that there
+may be no forward progress if Halt Mode is entered between {\tt lr} and {\tt
+sc} pairs.
+
+\subsection{Reset}
+
+If the halt signal is asserted when a core comes out of reset, the core must
+enter Debug Mode before executing any instructions, but after performing any
+initialization that would usually happen before the first instruction is
+executed.
+
+\subsection{Core Debug Registers} \label{debreg}
+
+The Core Debug Registers must be implemented for each hart being debugged.
+
+\input{core_registers.tex}
