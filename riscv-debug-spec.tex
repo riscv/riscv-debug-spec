@@ -118,6 +118,7 @@ Mark Beal,
 Monte Dalrymple,
 Peter Egold,
 Richard Herveille,
+Aram Nahidipour,
 Gajinder Panesar,
 Klaus Kruse Pedersen,
 Antony Pavlov,
@@ -217,6 +218,8 @@ The debug interface described out here supports the following features:
 \begin{enumerate}
    \item RV32, RV64, and future RV128 are all supported.
    \item Any hart in the platform can be independently debugged.
+   \item A debugger can discover almost everything it needs to know itself,
+       without user configuration.
    \item Arbitrary instructions can be executed on a halted hart. That means no
        new debug functionality is needed when a core has custom instructions or
        registers, as long as there exist programs that can store those
@@ -310,7 +313,9 @@ to ensure this does not happen.
 \item Provide status on which harts are halted.
 \item Feed a specific hart one instruction, and have that hart execute the
     instruction.
-\item Give the debugger necessary information about the implementation.
+\item Give the debugger necessary information about the implementation. The user
+    should not have to configure anything beyond how the debugger accesses the
+    Debug Module.
 \item Provide status on whether a data access is pending.
 \item Service a data access (load or store).
 \end{steps}
