@@ -1,4 +1,7 @@
 <registers name="Debug Module Debug Bus Registers">
+
+    <!-- =============== halt/reset/select hart  =============== -->
+
     <register name="Control" short="dmcontrol" address="0x00">
         The address of this register will not change in the future, because it
         contains \Fversion.  It has changed from version 0.11 of this spec.
@@ -23,8 +26,8 @@
             A debugger must not access any Instruction Buffer locations that
             fall outside the range specified here.
         </field>
-        <field name="dasum" bits="8" access="R" reset="Preset">
-            1 when \Rdasum is implemented.
+        <field name="haltsum" bits="8" access="R" reset="Preset">
+            1 when \Rhaltsum is implemented.
         </field>
         <field name="authenticated" bits="7" access="R" reset="Preset">
             0 when authentication is required before using the DM.  1 when the
@@ -58,7 +61,74 @@
         </field>
     </register>
 
-    <register name="Bus Access Control" short="sbcs" address="0x02">
+    <register name="Hart Info" short="hartinfo" address="0x01">
+        This register contains information describing the hart selected by
+        \Fhartid.
+
+        <field name="0" bits="31:13" access="R" reset="0" />
+        <field name="datamode" bits="12" access="R" reset="Preset">
+            0: This hart access the DM through \Rdaccessthirtytwo, and possibly
+            \Rdaccesssixtyfour and \Rdaccessonetwentyeight.
+
+            1: This hart access the DM at a memory address relatively through
+            \Rzero.
+        </field>
+
+        <field name="dataoffset" bits="11:0" access="R" reset="Preset">
+            If \Fdatamode is 1, this field contains the signed base address of
+            the data access section of the DM.
+
+            32-, 64-, and 128-bit accesses are supported assuming the GPRs are
+            at least that wide.
+        </field>
+    </register>
+
+    <register name="Halt Summary" short="haltsum" address="0x02">
+        If implemented, this register contains a summary of which harts are
+        halted.
+
+        Each 30 bit contains the logical OR of 32 halt bits. When there are a
+        large number of harts in the system, the debugger can first read this
+        register, and then read from the halt region (TODO) to determine which
+        hart is the one that is halted.
+
+        <field name="halt31:0" bits="0" access="R" reset="0" />
+        <field name="halt63:32" bits="1" access="R" reset="0" />
+        <field name="halt95:64" bits="2" access="R" reset="0" />
+        <field name="halt127:96" bits="3" access="R" reset="0" />
+        <field name="halt159:128" bits="4" access="R" reset="0" />
+        <field name="halt191:160" bits="5" access="R" reset="0" />
+        <field name="halt223:192" bits="6" access="R" reset="0" />
+        <field name="halt255:224" bits="7" access="R" reset="0" />
+        <field name="halt287:256" bits="8" access="R" reset="0" />
+        <field name="halt319:288" bits="9" access="R" reset="0" />
+        <field name="halt351:320" bits="10" access="R" reset="0" />
+        <field name="halt383:352" bits="11" access="R" reset="0" />
+        <field name="halt415:384" bits="12" access="R" reset="0" />
+        <field name="halt447:416" bits="13" access="R" reset="0" />
+        <field name="halt479:448" bits="14" access="R" reset="0" />
+        <field name="halt511:480" bits="15" access="R" reset="0" />
+        <field name="halt543:512" bits="16" access="R" reset="0" />
+        <field name="halt575:544" bits="17" access="R" reset="0" />
+        <field name="halt607:576" bits="18" access="R" reset="0" />
+        <field name="halt639:608" bits="19" access="R" reset="0" />
+        <field name="halt671:640" bits="20" access="R" reset="0" />
+        <field name="halt703:672" bits="21" access="R" reset="0" />
+        <field name="halt735:704" bits="22" access="R" reset="0" />
+        <field name="halt767:736" bits="23" access="R" reset="0" />
+        <field name="halt799:768" bits="24" access="R" reset="0" />
+        <field name="halt831:800" bits="25" access="R" reset="0" />
+        <field name="halt863:832" bits="26" access="R" reset="0" />
+        <field name="halt895:864" bits="27" access="R" reset="0" />
+        <field name="halt927:896" bits="28" access="R" reset="0" />
+        <field name="halt959:928" bits="29" access="R" reset="0" />
+        <field name="halt991:960" bits="30" access="R" reset="0" />
+        <field name="halt1023:992" bits="31" access="R" reset="0" />
+    </register>
+
+    <!-- =============== bus mastering =============== -->
+
+    <register name="Bus Access Control" short="sbcs" address="0x03">
         <field name="0" bits="31:20" access="R" reset="0" />
         <field name="sbaccess" bits="19:17" access="R/W" reset="2">
             Select the access size to use for system bus accesses triggered by
@@ -124,7 +194,97 @@
         </field>
     </register>
 
-    <register name="Abstract Control" short="abstractcs" address="0x03">
+    <register name="System Bus Address 31:0" short="sbaddress0" address="0x04">
+        If \Fabussize is 0, then this register is not present.
+
+        When the bus master is busy, writes to this register will return error
+        and \Fsberror is set.
+
+        If \Fsberror is 0 and \Fautoread is set then the bus master will start
+        to read after updating the address from \Faddress. The access size is
+        controlled by \Fsbaccess in \Rdmcontrol.
+
+        <field name="address" bits="31:0" access="R/W" reset="0">
+            Accesses bits 31:0 of the internal address.
+        </field>
+    </register>
+
+    <register name="System Bus Address 63:32" short="sbaddress1" address="0x05">
+        <field name="address" bits="31:0" access="R/W" reset="0">
+            Accesses bits 63:32 of the internal address (if the system address
+            bus is that wide).
+        </field>
+    </register>
+
+    <register name="System Bus Address 91:61" short="sbaddress2" address="0x06">
+        If \Fabussize is less than 65, then this register is not present.
+
+        <field name="busy" bits="31" access="R" reset="0">
+            The same as \Fbusy in \Rsbaddresszero.
+        </field>
+        <field name="address" bits="30:0" access="R/W" reset="0">
+            Accesses bits 91:61 of the internal address (if the system address
+            bus is that wide).
+        </field>
+    </register>
+
+    <register name="System Bus Data 31:0" short="sbdata0" address="0x07">
+        If all of the {\tt sbaccess} bits in \Rsbcs are 0, then this register
+        is not present.
+
+        If \Fsberror isn't 0 then accesses return error, and don't do anything
+        else.
+
+        If the bus master is busy then accesses set \Fsberror, return error,
+        and don't do anything else.
+
+        Writes to this register:
+        1. Update internal data.
+        2. Start a bus write of the internal data to the internal address.
+
+        Reads to this register:
+        1. If bits 31:0 of the internal data register haven't been updated
+        since the last time this register was read, then set \Fsberror, return
+        error, and don't do anything else.
+        2. "Return" the data.
+        3. If \Fautoread is set, start another bus read.
+
+        <field name="data" bits="31:0" access="R/W" reset="0">
+            Accesses bits 31:0 of the internal data.
+        </field>
+    </register>
+
+    <register name="System Bus Data 63:32" short="sbdata1" address="0x08">
+        If \Fsbaccesssixtyfour and \Fsbaccessonetwentyeight are 0, then this
+        register is not present.
+
+        <field name="data" bits="31:0" access="R/W" reset="0">
+            Accesses bits 63:32 of the internal data (if the system bus is
+            that wide).
+        </field>
+    </register>
+
+    <register name="System Bus Data 95:64" short="sbdata2" address="0x09">
+        This register only exists if \Fsbaccessonetwentyeight is 1.
+
+        <field name="data" bits="31:0" access="R/W" reset="0">
+            Accesses bits 95:64 of the internal data (if the system bus is
+            that wide).
+        </field>
+    </register>
+
+    <register name="System Bus Data 127:96" short="sbdata3" address="0x0a">
+        This register only exists if \Fsbaccessonetwentyeight is 1.
+
+        <field name="data" bits="31:0" access="R/W" reset="0">
+            Accesses bits 127:96 of the internal data (if the system bus is
+            that wide).
+        </field>
+    </register>
+
+    <!-- =============== abstract commands =============== -->
+
+    <register name="Abstract Control" short="abstractcs" address="0x0b">
         <field name="0" bits="31:8" access="R" reset="0" />
         <field name="cmderr" bits="7:5" access="R/W0" reset="0">
             Gets set if an abstract command fails. No abstract command is
@@ -151,29 +311,40 @@
         </field>
     </register>
 
-    <register name="Hart Info" short="hartinfo" address="0x01">
-        This register contains information describing the hart selected by
-        \Fhartid.
+    <register name="Abstract Command" short="command" address="0x0c">
+        Writes to this register cause the corresponding abstract command to be
+        executed.
 
-        <field name="0" bits="31:13" access="R" reset="0" />
-        <field name="datamode" bits="12" access="R" reset="Preset">
-            0: This hart access the DM through \Rdaccessthirtytwo, and possibly
-            \Rdaccesssixtyfour and \Rdaccessonetwentyeight.
+        Writing while an abstract command is executing causes \Fcmderr to be set.
 
-            1: This hart access the DM at a memory address relatively through
-            \Rzero.
-        </field>
+        If \Fcmderr is non-zero, writes to this register are ignored.
 
-        <field name="dataoffset" bits="11:0" access="R" reset="Preset">
-            If \Fdatamode is 1, this field contains the signed base address of
-            the data access section of the DM.
-
-            32-, 64-, and 128-bit accesses are supported assuming the GPRs are
-            at least that wide.
-        </field>
+        <field name="command" bits="31:0" access="W" reset="0" />
     </register>
 
-    <register name="Access Status and Control" short="accesscs" address="0x04">
+    <register name="Abstract Data 0" short="data0" address="0x0d">
+        Basic read/write registers that may be read or changed by abstract
+        commands.
+
+        Accessing them while an abstract command is executing causes \Fcmderr
+        to be set.
+
+        TODO: For now these register addresses conflict.
+
+        <field name="data" bits="31:0" access="R/W" reset="0" />
+    </register>
+
+    <register name="Abstract Data 1" short="data1" address="0x0e" />
+    <register name="Abstract Data 2" short="data2" address="0x0f" />
+    <register name="Abstract Data 3" short="data3" address="0x10" />
+    <register name="Abstract Data 4" short="data4" address="0x11" />
+    <register name="Abstract Data 5" short="data5" address="0x12" />
+    <register name="Abstract Data 6" short="data6" address="0x13" />
+    <register name="Abstract Data 7" short="data7" address="0x14" />
+
+    <!-- =============== instruction supply =============== -->
+
+    <register name="Access Status and Control" short="accesscs" address="0x15">
         <field name="ilength" bits="31:28" access="R/W" reset="3">
             To accommodate a debugger feeding instructions that aren't 32 bits
             long, in this field it can write the size of the instruction that
@@ -241,7 +412,7 @@
         </field>
     </register>
 
-    <register name="Data Access" short="daccess" address="0x05">
+    <register name="Data Access" short="daccess" address="0x16">
         If there is a read access pending, the debugger writes the data that
         should go back to the hart to this register.
 
@@ -262,7 +433,7 @@
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
 
-    <register name="Instruction Fetch" short="ifetch" address="0x06">
+    <register name="Instruction Fetch" short="ifetch" address="0x17">
         If there is an instruction fetch pending, the debugger writes the
         instruction that should be returned to the hart to this register.
 
@@ -285,22 +456,24 @@
         <field name="data" bits="31:0" access="W" reset="-" />
     </register>
 
-    <register name="Instruction Buffer 0" short="ibuf0" address="0x10">
+    <register name="Instruction Buffer 0" short="ibuf0" address="0x18">
         The ibuf registers provide read/write access to the optional
         instruction buffer.
 
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
 
-    <register name="Instruction Buffer 1" short="ibuf1" address="0x11" />
-    <register name="Instruction Buffer 2" short="ibuf2" address="0x12" />
-    <register name="Instruction Buffer 3" short="ibuf3" address="0x13" />
-    <register name="Instruction Buffer 4" short="ibuf4" address="0x14" />
-    <register name="Instruction Buffer 5" short="ibuf5" address="0x15" />
-    <register name="Instruction Buffer 6" short="ibuf6" address="0x16" />
-    <register name="Instruction Buffer 7" short="ibuf7" address="0x17" />
+    <register name="Instruction Buffer 1" short="ibuf1" address="0x19" />
+    <register name="Instruction Buffer 2" short="ibuf2" address="0x1a" />
+    <register name="Instruction Buffer 3" short="ibuf3" address="0x1b" />
+    <register name="Instruction Buffer 4" short="ibuf4" address="0x1c" />
+    <register name="Instruction Buffer 5" short="ibuf5" address="0x1d" />
+    <register name="Instruction Buffer 6" short="ibuf6" address="0x1e" />
+    <register name="Instruction Buffer 7" short="ibuf7" address="0x1f" />
 
-    <register name="Authentication Data 0" short="authdata0" address="0x09">
+    <!-- =============== authentication =============== -->
+
+    <register name="Authentication Data 0" short="authdata0" address="0x20">
         If \Fauthtype is 0, this register is not present.
 
         If \Fauthtype is 1, writing a correct password to this register and
@@ -323,14 +496,16 @@
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
 
-    <register name="Authentication Data 1" short="authdata1" address="0x0a">
+    <register name="Authentication Data 1" short="authdata1" address="0x21">
         This register contains the upper 32 bits of a 64-bit password
         or challenge/response as described in \Rauthdatazero.
 
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
 
-    <register name="Serial Data" short="serdata" address="0x0b">
+    <!-- =============== serial ports =============== -->
+
+    <register name="Serial Data" short="serdata" address="0x22">
         If \Fserialcount is 0, this register is not present.
 
         This register provides access to the data queues of the serial port
@@ -347,7 +522,7 @@
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
 
-    <register name="Serial Status" short="serstatus" address="0x0c">
+    <register name="Serial Status" short="serstatus" address="0x23">
         If \Fserialcount is 0, this register is not present.
 
         <field name="serialcount" bits="31:28" access="R" reset="Preset">
@@ -380,178 +555,5 @@
             writing 0 to this bit.
         </field>
     </register>
-
-    <register name="System Bus Address 31:0" short="sbaddress0" address="0x07">
-        If \Fabussize is 0, then this register is not present.
-
-        When the bus master is busy, writes to this register will return error
-        and \Fsberror is set.
-
-        If \Fsberror is 0 and \Fautoread is set then the bus master will start
-        to read after updating the address from \Faddress. The access size is
-        controlled by \Fsbaccess in \Rdmcontrol.
-
-        <field name="address" bits="31:0" access="R/W" reset="0">
-            Accesses bits 31:0 of the internal address.
-        </field>
-    </register>
-
-    <register name="System Bus Address 63:32" short="sbaddress1" address="0x0d">
-        <field name="address" bits="31:0" access="R/W" reset="0">
-            Accesses bits 63:32 of the internal address (if the system address
-            bus is that wide).
-        </field>
-    </register>
-
-    <register name="System Bus Data 31:0" short="sbdata0" address="0x08">
-        If all of the {\tt sbaccess} bits in \Rsbcs are 0, then this register
-        is not present.
-
-        If \Fsberror isn't 0 then accesses return error, and don't do anything
-        else.
-
-        If the bus master is busy then accesses set \Fsberror, return error,
-        and don't do anything else.
-
-        Writes to this register:
-        1. Update internal data.
-        2. Start a bus write of the internal data to the internal address.
-
-        Reads to this register:
-        1. If bits 31:0 of the internal data register haven't been updated
-        since the last time this register was read, then set \Fsberror, return
-        error, and don't do anything else.
-        2. "Return" the data.
-        3. If \Fautoread is set, start another bus read.
-
-        <field name="data" bits="31:0" access="R/W" reset="0">
-            Accesses bits 31:0 of the internal data.
-        </field>
-    </register>
-
-    <register name="System Bus Data 63:32" short="sbdata1" address="0x0e">
-        If \Fsbaccesssixtyfour and \Fsbaccessonetwentyeight are 0, then this
-        register is not present.
-
-        <field name="data" bits="31:0" access="R/W" reset="0">
-            Accesses bits 63:32 of the internal data (if the system bus is
-            that wide).
-        </field>
-    </register>
-
-    <register name="Data Access Summary" short="dasum" address="0x18">
-        If implemented, this register contains a summary of which harts are
-        ready for an instruction.
-
-        Each of the lower 30 bits contains the logical OR of 32 or 64
-        consecutive instruction fetch bits. When there are a large number of
-        harts in the system, the debugger can first read this register, and
-        then read from the halt region (0x20--0x3f) to determine which hart is
-        the one that is halted.
-
-        <field name="serialfull" bits="31" access="R" reset="0">
-            Logical OR of all the full bits in \Rserstatus.
-
-            TODO: Is this helpful? If a debugger is just writing to one serial
-            port it's pretty easy to check just that one. If it's writing to
-            multiple serial ports, then knowing that one of them is still full
-            isn't super helpful because it may still want to write more data to
-            the other ones.
-        </field>
-        <field name="serialvalid" bits="30" access="R" reset="0">
-            Logical OR of all the valid bits in \Rserstatus.
-        </field>
-        <field name="ack31:0" bits="0" access="R" reset="0" />
-        <field name="ack63:32" bits="1" access="R" reset="0" />
-        <field name="ack95:64" bits="2" access="R" reset="0" />
-        <field name="ack127:96" bits="3" access="R" reset="0" />
-        <field name="ack159:128" bits="4" access="R" reset="0" />
-        <field name="ack191:160" bits="5" access="R" reset="0" />
-        <field name="ack223:192" bits="6" access="R" reset="0" />
-        <field name="ack255:224" bits="7" access="R" reset="0" />
-        <field name="ack287:256" bits="8" access="R" reset="0" />
-        <field name="ack319:288" bits="9" access="R" reset="0" />
-        <field name="ack351:320" bits="10" access="R" reset="0" />
-        <field name="ack383:352" bits="11" access="R" reset="0" />
-        <field name="ack415:384" bits="12" access="R" reset="0" />
-        <field name="ack447:416" bits="13" access="R" reset="0" />
-        <field name="ack479:448" bits="14" access="R" reset="0" />
-        <field name="ack511:480" bits="15" access="R" reset="0" />
-        <field name="ack543:512" bits="16" access="R" reset="0" />
-        <field name="ack575:544" bits="17" access="R" reset="0" />
-        <field name="ack607:576" bits="18" access="R" reset="0" />
-        <field name="ack639:608" bits="19" access="R" reset="0" />
-        <field name="ack671:640" bits="20" access="R" reset="0" />
-        <field name="ack703:672" bits="21" access="R" reset="0" />
-        <field name="ack735:704" bits="22" access="R" reset="0" />
-        <field name="ack767:736" bits="23" access="R" reset="0" />
-        <field name="ack799:768" bits="24" access="R" reset="0" />
-        <field name="ack831:800" bits="25" access="R" reset="0" />
-        <field name="ack863:832" bits="26" access="R" reset="0" />
-        <field name="ack895:864" bits="27" access="R" reset="0" />
-        <field name="ack959:896" bits="28" access="R" reset="0" />
-        <field name="ack1023:960" bits="29" access="R" reset="0" />
-    </register>
-
-    <register name="System Bus Address 91:61" short="sbaddress2" address="0x1a">
-        If \Fabussize is less than 65, then this register is not present.
-
-        <field name="busy" bits="31" access="R" reset="0">
-            The same as \Fbusy in \Rsbaddresszero.
-        </field>
-        <field name="address" bits="30:0" access="R/W" reset="0">
-            Accesses bits 91:61 of the internal address (if the system address
-            bus is that wide).
-        </field>
-    </register>
-
-    <register name="System Bus Data 95:64" short="sbdata2" address="0x1b">
-        This register only exists if \Fsbaccessonetwentyeight is 1.
-
-        <field name="data" bits="31:0" access="R/W" reset="0">
-            Accesses bits 95:64 of the internal data (if the system bus is
-            that wide).
-        </field>
-    </register>
-
-    <register name="System Bus Data 127:96" short="sbdata3" address="0x1c">
-        This register only exists if \Fsbaccessonetwentyeight is 1.
-
-        <field name="data" bits="31:0" access="R/W" reset="0">
-            Accesses bits 127:96 of the internal data (if the system bus is
-            that wide).
-        </field>
-    </register>
-
-    <register name="Command" short="command" address="0x1f">
-        Writes to this register cause the corresponding abstract command to be
-        executed.
-
-        Writing while an abstract command is executing causes \Fcmderr to be set.
-
-        If \Fcmderr is non-zero, writes to this register are ignored.
-
-        <field name="command" bits="31:0" access="W" reset="0" />
-    </register>
-
-    <register name="Data 0" short="data0" address="0x20">
-        Basic read/write registers that may be read or changed by abstract
-        commands.
-
-        Accessing them while an abstract command is executing causes \Fcmderr
-        to be set.
-
-        TODO: For now these register addresses conflict.
-
-        <field name="data" bits="31:0" access="R/W" reset="0" />
-    </register>
-
-    <register name="Data 1" short="data1" address="0x21" />
-    <register name="Data 2" short="data2" address="0x22" />
-    <register name="Data 3" short="data3" address="0x23" />
-    <register name="Data 4" short="data4" address="0x24" />
-    <register name="Data 5" short="data5" address="0x25" />
-    <register name="Data 6" short="data6" address="0x26" />
-    <register name="Data 7" short="data7" address="0x27" />
 
 </registers>
