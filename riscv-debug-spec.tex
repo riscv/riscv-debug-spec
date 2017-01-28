@@ -316,8 +316,6 @@ to ensure this does not happen.
 \item Give the debugger necessary information about the implementation. The user
     should not have to configure anything beyond how the debugger accesses the
     Debug Module.
-\item Provide status on whether a data access is pending.
-\item Service a data access (load or store).
 \end{steps}
 
 Optionally, an Instruction Buffer can repeatedly feed the same set of
@@ -331,15 +329,15 @@ The Debug Module Interface can be a trivial bus with one master and one slave,
 or use a more full-featured bus like TileLink or the AMBA Advanced Peripheral
 Bus. The details are left to the system designer.
 
-The DMI uses between 4 and 32 address bits.  It supports read and write
+The DMI uses between TODO and 32 address bits.  It supports read and write
 operations, which may return an error. (Errors are only used by the optional
-Bus Access and Serial Port blocks.) The bottom of the address space is used for
-the DM. Extra space can be used for custom debug devices, other cores,
+Bus Access and Serial Port blocks.) TODO: The bottom of the address space is
+used for the DM. Extra space can be used for custom debug devices, other cores,
 additional DMs, etc.
 
-The space is laid out so that small systems can get away with just 4 address
-bits. Using the Instruction Buffer requires 5 bits, and systems that have many
-cores will want to implement 6 bits.
+TODO: The space is laid out so that small systems can get away with just 4
+address bits. Using the Instruction Buffer requires 5 bits, and systems that
+have many cores will want to implement 6 bits.
 
 \begin{table}[htp]
     \centering
@@ -358,7 +356,6 @@ cores will want to implement 6 bits.
     \end{tabulary}
 \end{table}
 
-
 \subsection{Reset Control} \label{reset}
 
 This block is connected to the global reset signal, which resets every
@@ -371,8 +368,8 @@ to halt a hart, and let it run again.
 
 For each hart the block contains a single bit that is accessible through to
 \Fhalt in \Rdmcontrol. When a debugger wants to halt a hart, it writes 1 to
-this bit, and then waits for an instruction fetch to be pending from the hart.
-To resume, the debugger clears the bit.
+this bit, and then waits for \Fhalt in that register to go high.  To resume,
+the debugger clears the bit, and waits for it to go low.
 
 The Debug Module conceptually has a direct connection to the halt signal of
 every hart that has one. When set or cleared, a hart must respond in less than
@@ -415,52 +412,21 @@ the hart is not halted.
         \hline
         0x0000 -- 0x0fff & CSRs \\
         \hline
-        0x1000 & PC \\
+        0x1000 -- 0x101f & GPRs \\
         \hline
-        0x1020 -- 0x103f & GPRs \\
-        \hline
-        0x1040 -- 0x105f & Floating point registers \\
+        0x1020 -- 0x103f & Floating point registers \\
         \hline
     \end{tabulary}
 \end{table}
 
 \input{abstract_commands.tex}
 
-\subsection{Data Access / Instruction Fetch}
+\subsection{Program Buffer}
 
-While most of the language in this spec refers to data accesses and instruction
-fetches as if they occur over a bus, this is actually implementation-dependent.
-An implementation could feed instructions to a hart some other way, and data
-exchange could occur through special CSRs. These details aside, each access
-still goes through the same stages as a bus access, so that language is used
-here.
-
-When a hart performs an access (data read/write or instruction fetch) to the
-DM, this block updates bits in \Raccesscs. The debugger can then access \Rdaccess
-or \Rifetch to complete the access.
-
-\subsection{Instruction Buffer}
-
-This optional block contains between 3 and 7 instructions and a pointer to the
-next instruction. If enabled, the DM will automatically complete accesses from
-the currently selected hart with the next instruction, and increment the
-pointer. When all instructions are executed, the Instruction Buffer may be
-disabled, start over at the beginning, or \Fhalt will be cleared.
-
-3 instructions is enough to speed up reading and writing blocks of memory.  5
-instructions is enough to read from a given memory address while halting the
-processor only briefly.  7 instructions is enough to write to a given memory
-address while halting the processor only briefly.
-
-\subsection{Scratch RAM}
-
-This optional block could be used by a debugger to save/restore registers
-faster than transmitting them to the debugger.
-
-It could also be used for a quick access, which halts a hart for the minimum
-amount of time. The debugger would write a small program to the Instruction
-Buffer, and use the Scratch RAM to save/restore registers, pass arguments, and
-return a value. See Section~\ref{quickaccess}.
+A debugger can write a small program to the optional Program Buffer, and then
+execute it using some of the abstract commands. The programs must end with {\tt
+ebreak} or {\tt ebreak.c}. While these programs are executed, the hart does not
+leave Halt Mode (see Section~\ref{haltmode}).
 
 \subsection{Serial Ports}
 
@@ -546,7 +512,7 @@ The debugger needs this to access the config string to enumerate the remaining
 harts in the system. Hart IDs should be less than 128 if the Debug Bus address
 is 5 bits wide, or less than 1024 if that address is 6 or more bits wide.
 
-\subsection{Halt Mode}
+\subsection{Halt Mode} \label{haltmode}
 
 Halt Mode is a special processor mode used only when the core is halted for
 external debugging.
@@ -828,49 +794,39 @@ inefficiency in typical JTAG use.
 A debugger continuously monitors \Rhaltsum to see if any harts have spontaneously
 halted.
 
-\subsection{Data Transfer}
-
-Depending on a core's implementation, a debugger needs to use either {\tt
-csrr}/{\tt csrw} or {\tt lw}/{\tt sw} instructions to move data between GPRs
-and the DM. The debugger can discover which option is required by looking at
-\Rhartinfo.
-
-This document uses the pseudo-op {\tt xmit} to indicate transfer from GPR to
-the DM, and {\tt recv} to indicate transfer from DM to the GPR.
-
 \subsection{Halting}
 
-To halt a hart, the debugger sets \Fhartid and \Fhalt.
+To halt a hart, the debugger sets \Fhartid and \Fhalt. Then it waits for \Fhalt
+to become set.
 
-Once halted (as evidenced by \Faccess in \Raccesscs), the debugger can push
-instructions to the hart by writing individual instructions to \Rifetch.
+\subsection{Accessing Registers}
 
-To do anything useful and non-destructive, the debugger must then save a
-register (\Szero in this example), by pushing:
+There are two ways to access registers. The first is to use the Access Register
+abstract command. This is the only way to access GPRs. Accessing other
+registers is also possible using the Program Buffer. In that case the debugger
+writes a simple program that transfers the value between a register it wants to
+access and a GPR.
+
+For example to read \Rmstatus, it writes the following program to the
+Instruction Buffer:
 \begin{minted}{gas}
-        xmit    s0, DM
-        # Service the write data access.
-\end{minted}
-This causes the core to initiate a data access to the DM. The debugger sees
-this happen (\Faccess in \Raccesscs becomes 2) and reads the register's value.
-Usually the debugger will want to save an additional register (eg. \Sone).
-
-Typically the debugger will also want to read \Rpc, by pushing:
-\begin{minted}{gas}
-        csrr    s0, DPC
-        xmit    s0, DM
-        # Service the write data access.
+        csrr    s0, MSTATUS
+        ebreak
 \end{minted}
 
-Performing other operations all comes down to writing the appropriate
-instructions, so the sections below mostly consist of short program listings.
+Next it executes the abstract command that causes this program to be executed
+(0x21000). When \Fbusy in \Rabstractcs goes low, now the debugger executes the
+command to read \Szero (TODO).
 
-A debugger can combine all the accesses above in a single request to the debug
-adapter which the adapter executes as quickly as possible. (It's probably
-limited by the TCK speed.) In that case the debugger must check \Fioverflow,
-\Fdunderflow, and \Fdoverflow afterwards to confirm that all operations
-completed successfully. If not then it must try the operation again, with some
-delays built in.
+To write to eg. \Fone, the following program is written:
+\begin{minted}{gas}
+        fmv.x.s f1, s0
+        ebreak
+\end{minted}
+
+The desired value is written to \Rdatazero, and then the abstract command to
+write \Szero (TODO) and execute the program is executed. Once \Fbusy in
+\Rabstractcs the write is complete.
 
 \subsection{Reading Memory}
 
@@ -897,18 +853,6 @@ Then load the following into the Instruction Buffer:
         xmit    s0, DM
         addi    s1, s1, 4
 \end{minted}
-
-Enable the Instruction Buffer by asserting \Fibufenable and setting
-\Fibufaction to 1. The DM will start feeding the instructions to the core. Once
-it hits the {\tt xmit} pseudo-op, the core will send a word to the DM, which
-the debugger sees and reads. Execution of instructions is suspended while that
-access is happening.  When the debugger gets the last word that it is
-interested in, it clears \Fibufenable before reading it.
-
-Using this technique, one word can optimistically be read for every JTAG bus
-access. The debugger must check \Fdunderflow afterwards to ensure it never read
-too quickly. If it did, then it can retry the operation with some artificial
-delays added.
 
 Table~\ref{tab:memread} shows the scans involved in reading a single word using
 this method.
@@ -996,16 +940,6 @@ Then load the following into the Instruction Buffer:
         addi    s0, s0, 4
 \end{minted}
 
-Enable the Instruction Buffer by asserting \Fibufenable and setting
-\Fibufaction to 1. The DM will start feeding the instructions to the core. Once
-it hits the {\tt recv} pseudo-op, the core will wait for a word from the DM.
-The debugger notices and responds.  When the debugger gets to the last word
-that it is interested in, it clears \Fibufenable before completing the read
-access it.
-
-When done, the debugger must check \Fdoverflow to confirm everything went as
-expected.
-
 \begin{commentary}
     % Select-DR-Scan to Shift-DR: 2
     % Shift-DR to Exit1-DR: dbus register is abits+33 bits, so 38
@@ -1080,47 +1014,7 @@ it.
 
 \subsection{Quick Access} \label{quickaccess}
 
-If it's undesirable to halt a hart for more than a few milliseconds, a debugger
-can perform a quick action. This requires both the Instruction Buffer and the
-Scratch RAM. The Scratch RAM is accessed through the DM, either using
-memory-mapped access or special CSRs.  Below we'll uses the pseudo-op {\tt
-save} to indicate transfer from GPR to Scratch RAM, and {\tt restore} to
-indicate transfer from Scratch RAM to the GPR.
-
-To perform a quick memory read, the debugger first writes the following into the
-Instruction Buffer:
-\begin{minted}{gas}
-        save    s0, SCRATCH0
-        restore s0, SCRATCH1
-        lw      s0, 0(s0)
-        save    s0, SCRATCH1
-        restore s0, SCRATCH0
-\end{minted}
-Then it writes the address to read from to the second word in the Scratch RAM.
-Finally it asserts \Fibufenable, and sets \Fibufaction to 2. The debugger can
-monitor \Fibufenable and when it's clear again, it knows the hart has executed
-the instructions. At that point it can read the data value from the second word
-in the Scratch RAM.
-
-To perform a quick memory write, the debugger writes the following into the
-Instruction Buffer:
-\begin{minted}{gas}
-        save    s0, SCRATCH0
-        save    s1, SCRATCH1
-        restore s0, SCRATCH2
-        restore s1, SCRATCH3
-        sw      s1, 0(s0)
-        restore s0, SCRATCH0
-        restore s1, SCRATCH1
-\end{minted}
-Then it writes the address to write to into the 3rd word of Scratch RAM, and
-the value to write into the 4th word.  Finally it asserts \Fibufenable, and
-sets \Fibufaction to 2. The debugger can monitor \Fibufenable and when it's
-clear again, it knows the hart has executed the instructions.
-
-Quick reads require a 5-instruction Instruction Buffer and a 2-word Scratch
-RAM.  Quick writes require a 7-instruction Instruction Buffer and a 4-word
-Scratch RAM.
+TODO
 
 \section{Trace Module}
 

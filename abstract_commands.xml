@@ -1,18 +1,22 @@
 <registers name="Abstract Commands" skip_index="1" skip_access="1" skip_reset="1">
     <register name="Access Register">
-        Access the register specified by \Fregno. If \Fwrite is set, copy data from
-        \Rdatazero into the register. Otherwise copy data from the register into
-        \Rdatazero. (If XLEN is greater than 32, more {\tt data} registers are
-        involved.)
+        Access the register specified by \Fregno.
 
-        <field name="0" bits="31:16" />
-        <field name="regno" bits="15:1">
-            Number of the register to access, as described in Table~\ref{tab:regno}.
+        <field name="0" bits="31:24" />
+        <field name="0" bits="23:18" />
+        <field name="execute" bits="17">
+            When 1, execute the program in the Program Buffer after performing
+            the read/write.
         </field>
-        <field name="write" bits="0">
-            0: Read the register.
+        <field name="write" bits="16">
+            0: Copy data from \Rdatazero into the specified register.
 
-            1: Write the register.
+            1: Copy data from the specified register into \Rdatazero.
+
+            (If XLEN is greater than 32, more {\tt data} registers are involved.)
+        </field>
+        <field name="regno" bits="15:0">
+            Number of the register to access, as described in Table~\ref{tab:regno}.
         </field>
     </register>
 </registers>

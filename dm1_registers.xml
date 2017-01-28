@@ -19,13 +19,7 @@
         <field name="hartid" bits="25:16" access="R/W" reset="0">
             The ID of the hart to select.
         </field>
-        <field name="0" bits="15:13" access="R" reset="0" />
-        <field name="ibufsize" bits="12:9" access="R" reset="Preset">
-            Size of the Instruction Buffer, in 32-bit words.
-
-            A debugger must not access any Instruction Buffer locations that
-            fall outside the range specified here.
-        </field>
+        <field name="0" bits="15:9" access="R" reset="0" />
         <field name="haltsum" bits="8" access="R" reset="Preset">
             1 when \Rhaltsum is implemented.
         </field>
@@ -345,131 +339,29 @@
     <!-- =============== instruction supply =============== -->
 
     <register name="Access Status and Control" short="accesscs" address="0x15">
-        <field name="ilength" bits="31:28" access="R/W" reset="3">
-            To accommodate a debugger feeding instructions that aren't 32 bits
-            long, in this field it can write the size of the instruction that
-            it's writing minus one.
-        </field>
-        <field name="0" bits="27" access="R" reset="0" />
-        <field name="ibufend" bits="26:24" access="R/W" reset="0">
-            Index of the last word in the Instruction Buffer that will be fed
-            to the core. The debugger must ensure that $|ibufend| + 1$ is an
-            integer multiple of $\lfloor|ilength| / 4\rfloor + 1$.
-        </field>
-        <field name="ibufenable" bits="23" access="R/W" reset="0">
-            0: Instruction fetches are serviced directly by the debugger. The
-            instruction buffer counter is reset to 0.
+        <field name="0" bits="31:4" access="R" reset="0" />
+        <field name="progsize" bits="3:0" access="R" reset="Preset">
+            Size of the Program Buffer, in 32-bit words.
 
-            1: When there is an instruction fetch from selected hart, the DM
-            will automatically and quickly service it from the instruction
-            buffer.
-        </field>
-        <field name="ibufaction" bits="22:21" access="R/W" reset="0">
-            0: After the last instruction is fetched from the instruction
-            buffer, \Fibufenable is cleared.
-
-            1: After the last instruction is fetched from the instruction
-            buffer, the instruction buffer counter is reset to 0.
-
-            2: After the last instruction is fetched from the instruction
-            buffer, \Fibufenable and \Fhalt are both cleared.
-        </field>
-        <field name="ioverflow" bits="20" access="R/W0" reset="0">
-            Instruction fetch overflow bit, which is set when the debugger
-            writes an instruction to \Rifetch when there isn't an instruction
-            fetch pending for the currently selected hart.
-        </field>
-        <field name="doverflow" bits="19" access="R/W0" reset="0">
-            Data overflow bit, which is set when the debugger writes \Rdaccess
-            when there isn't a read data access pending. It is cleared by
-            writing 0.
-        </field>
-        <field name="dunderflow" bits="18" access="R/W0" reset="0">
-            Data underflow bit, which is set when the debugger reads \Rdaccess
-            when there isn't a write data access pending. It is cleared by
-            writing 0.
-        </field>
-        <field name="access" bits="17:16" access="R" reset="0">
-            0: There's no access pending.
-
-            1: There's a data read access pending.
-
-            2: There's a data write access pending.
-
-            3: There's an instruction fetch pending.
-        </field>
-        <field name="0" bits="15:2" access="R" reset="0" />
-        <field name="subword" bits="1:0" access="R" reset="0">
-            When a hart performs a greater-than 32-bit data access, the DM may
-            break this access down into any order. This field contains the word
-            index of the access.
-
-            Eg. a 128-bit access will be presented to the debugger as 4
-            consecutive 32-bit accesses. The order could be 0, 1, 2, 3
-            (least-significant word first), most-significant word first, or any
-            other. The order for a given access size on a given hart must
-            remain consistent between resets, so the debugger can learn it.
+            A debugger must not access any Instruction Buffer locations that
+            fall outside the range specified here.
         </field>
     </register>
 
-    <register name="Data Access" short="daccess" address="0x16">
-        If there is a read access pending, the debugger writes the data that
-        should go back to the hart to this register.
-
-        If there is a write access pending, the debugger reads the data that
-        the hart wrote from this register.
-
-        If \Fioverflow, \Fdoverflow, or \Fdunderflow are set, all accesses to
-        this register are ignored.
-
-        After this register is accessed, the access is automatically completed.
-
-        If the register is written by the debugger and there is no read access
-        pending, \Fdoverflow is set.
-
-        If the register is read by the debugger and there is no write access
-        pending, \Fdunderflow is set.
-
-        <field name="data" bits="31:0" access="R/W" reset="0" />
-    </register>
-
-    <register name="Instruction Fetch" short="ifetch" address="0x17">
-        If there is an instruction fetch pending, the debugger writes the
-        instruction that should be returned to the hart to this register.
-
-        If \Fioverflow, \Fdoverflow, or \Fdunderflow are set, writes to this
-        register are ignored.
-
-        For instructions that aren't 32 bits long, the debugger must set
-        \Filength before writing the instruction here. The instruction must be
-        written in the same order it would appear to a hart when fetching 32
-        bits at a time from memory. Any padding must be valid NOP instructions
-        supported by the hart, although the DM may ignore this data altogether.
-
-        Once a full instruction is written, the DM will cause the core to
-        execute that instruction.
-
-        A debugger must not write instructions that change the PC here (eg.
-        jumps and branches). Doing so results in undefined behavior. To change
-        the PC where execution will resume, the debugger modifies \Rdpc.
-
-        <field name="data" bits="31:0" access="W" reset="-" />
-    </register>
-
-    <register name="Instruction Buffer 0" short="ibuf0" address="0x18">
+    <register name="Program Buffer 0" short="ibuf0" address="0x18">
         The ibuf registers provide read/write access to the optional
         instruction buffer.
 
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
 
-    <register name="Instruction Buffer 1" short="ibuf1" address="0x19" />
-    <register name="Instruction Buffer 2" short="ibuf2" address="0x1a" />
-    <register name="Instruction Buffer 3" short="ibuf3" address="0x1b" />
-    <register name="Instruction Buffer 4" short="ibuf4" address="0x1c" />
-    <register name="Instruction Buffer 5" short="ibuf5" address="0x1d" />
-    <register name="Instruction Buffer 6" short="ibuf6" address="0x1e" />
-    <register name="Instruction Buffer 7" short="ibuf7" address="0x1f" />
+    <register name="Program Buffer 1" short="ibuf1" address="0x19" />
+    <register name="Program Buffer 2" short="ibuf2" address="0x1a" />
+    <register name="Program Buffer 3" short="ibuf3" address="0x1b" />
+    <register name="Program Buffer 4" short="ibuf4" address="0x1c" />
+    <register name="Program Buffer 5" short="ibuf5" address="0x1d" />
+    <register name="Program Buffer 6" short="ibuf6" address="0x1e" />
+    <register name="Program Buffer 7" short="ibuf7" address="0x1f" />
 
     <!-- =============== authentication =============== -->
 
