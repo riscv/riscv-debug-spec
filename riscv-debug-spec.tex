@@ -429,6 +429,11 @@ execute it using some of the abstract commands. The programs must end with {\tt
 ebreak} or {\tt ebreak.c}. While these programs are executed, the hart does not
 leave Halt Mode (see Section~\ref{haltmode}).
 
+Executing the Program Buffer may clobber \Rdpc. If that is the case, it must be
+possible to read/write \Rdpc using an abstract command. The debugger must
+attempt to save \Rdpc between halting and executing a Program Buffer, and then
+resture \Rdpc before leaving Halt Mode.
+
 \subsection{Serial Ports}
 
 The Debug Module may implement up to 8 serial ports. They support basic flow
@@ -713,57 +718,46 @@ match, or come up with their own design.
 
 \subsection{Direct}
 
-\begin{figure}
-   \centering
-   \includegraphics[width=\textwidth]{direct.eps}
-   \caption{Direct Implementation}
-   \label{fig:direct}
-\end{figure}
+Halting happens by inhibiting instruction fetching in Halt Mode.
 
-Figure~\ref{fig:direct} shows an implementation that might be appropriate for
-small cores.  In this implementation the DM reaches directly into the core's
-pipeline to push instructions. Entering halt mode might stall the pipeline, or
-send bubbles through. Data exchange happens by accessing a special CSR.
-Incrementing the PC is inhibited so no separate register is needed to store the
-PC. Instead accessing \Rdpc modifies the actual PC register.  When the halt is
-deasserted, regular instruction execution resumes.
+Muxes on the register file(s) allow for implementing those abstract commands.
+(TODO: Should we spec a suggested way of communicating between DM and hart, so
+that a reusable DM can be implemented?)
 
-\subsection{Instruction Fetch}
+To execute a program buffer, force \Rpc to the start of it, and re-enable
+instruction fetching (while staying in Halt Mode) until {\tt ebreak} is
+encountered.
 
-In this implementation, just the instruction fetch unit is changed. In halt
-mode the unit simply starts fetching instructions from the DM, while the PC is
-unchanged. The DM could wait until the debugger gives it an instruction before
-completing an access, or it could immediately return a jump-to-self instruction
-if the debugger hasn't given it an instruction. Data exchange probably happens
-through a special memory address. \Rdpc maps to the actual PC. When the debug
-interrupt is deasserted, regular instruction execution resumes at the current
-PC.
+\Rdpc is not physically a CSR. Instead, accessing it directly access \Rpc.
 
 \subsection{Plain Exception}
 
-\begin{figure}
-   \centering
-   \includegraphics[width=\textwidth]{plain-exception.eps}
-   \caption{Plain Exception Implementation}
-   \label{fig:direct}
-\end{figure}
+In this implementation, Halt Mode acts more like a real exception, jumping to a
+memory region that is serviced by the DM. When taking this exception, \Rpc is
+saved to \Rdpc. To allow the DM to individually control one out of several
+halted harts, each hart jumps to a hard-coded unique address.
 
-In this implementation, being halted acts more like a real exception, jumping
-to a memory region that is serviced by the DM. The PC is saved to \Rdpc. Any
-details required to make the core behave correctly (eg.  executing fence.i when
-a new instruction is mapped to some address) could be handled by a Debug ROM in
-the DM. When the debug interrupt is deasserted, the DM feeds the hart a dret
-instruction, which causes the PC to be restored and normal execution to resume.
-Data is probably exchanged through a memory address.
+\Rdatazero etc. are mapped into regular memory at address 0x400. The important
+property of that address is that it's reachable relative to \Rzero. The exact
+address is an implementation detail that a debugger must not rely on.
 
-In single-hart systems, the DM can just keep an instruction fetch access alive
-until the debugger has data for it.  In multi-core systems, the DM must have
-some way of allowing the debugger to choose which halted hart to send
-instructions to. It could keep multiple fetches alive, or immediately return a
-jump-to-self for harts that aren't the currently selected one. If it does that,
-it must pretend to the debugger that there is an access pending. In the process
-it assumes that a hart is going to keep fetching instructions, and won't
-suddenly go to sleep or be powered down.
+When first halting, the loop looks like this:
+\begin{minted}{gas}
+dm_control_hart_0:
+        nop
+        j       dm_park_hart_0
+\end{minted}
+
+The DM assumes that every instruction fetched from it is executed.
+
+To implement the abstract GPR access instructions, the {\tt nop} is changed
+(for a single fetch) to {\tt lw <gpr>, 0x400(zero)} or {\tt sw 0x400(zero),
+<gpr>}. To execute the Program Buffer, the {\tt nop} is changed to {\tt j
+dm\_program\_buffer}. To resume execution, the {\tt nop} is changed to {\tt
+dret}.
+
+When {\tt dret} is executed, \Rpc is restored from \Rdpc and normal execution
+resumes at the privilege set by \Fprv.
 
 \section{Debugger Implementation}
 
