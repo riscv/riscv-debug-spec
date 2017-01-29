@@ -229,7 +229,8 @@ The debug interface described out here supports the following features:
        resume.
    \item Memory is accessed through the core, so the debugger will see the same
        thing that the code that is executing sees.
-   \item Optionally, a bus master can be implemented to allow memory access
+     \item Optionally, a system bus master can be implemented to
+       allow memory access
        without involving any hart.
    \item Debugging can be supported over multiple transports.
    \item Code can be downloaded efficiently.
@@ -331,7 +332,7 @@ Bus. The details are left to the system designer.
 
 The DMI uses between TODO and 32 address bits.  It supports read and write
 operations, which may return an error. (Errors are only used by the optional
-Bus Access and Serial Port blocks.) TODO: The bottom of the address space is
+System Bus Access and Serial Port blocks.) TODO: The bottom of the address space is
 used for the DM. Extra space can be used for custom debug devices, other cores,
 additional DMs, etc.
 
@@ -437,14 +438,15 @@ equivalent of printf debugging, to provide a simple CLI without requiring any
 extra peripherals, or more generally to emulate devices that aren't present.
 All these uses require software support, and are not further specified here.
 
-\subsection{Bus Access}
+\subsection{Sytem Bus Access}
 
 In a minimal configuration a debugger can access the system bus by having a
 RISC-V hart perform the accesses it requires. Optionally a Bus Access block may
-be implemented. Because the Bus Access block performs accesses directly from
-the DM, it only uses physical addresses.
+be implemented. Because the System Bus Access block performs accesses directly
+from the DM, it only uses physical addresses.
 
-Implementing a Bus Access block has several benefits. First, it is possible to
+Implementing a System Bus Access block has several benefits.
+First, it is possible to
 access memory in a running system with minimal impact.  Second, it may improve
 performance when downloading programs. (There is only a benefit if JTAG TCK is a
 significant fraction of the RISC-V hart's clock speed.)  Third, it may provide
@@ -457,7 +459,8 @@ systems should use the same memory map for each hart. That means that a given
 address maps to the same device no matter which hart performs the access.
 (Different harts may not all have permission to access the same devices.) If
 different harts do have unique memory maps then the system should provide
-access to all devices using the Bus Access block. This will make implementing,
+access to all devices using the Sytem Bus Access block.
+This will make implementing,
 configuring, and using a debugger more complex so should be avoided if
 possible.
 
@@ -881,7 +884,7 @@ registers can be accessed by moving their value into/out of GPRs.
 
 \subsection{Reading Memory}
 
-\subsubsection{Using Bus Access}
+\subsubsection{Using System Bus Access}
 
 \subsubsection{Using Program Buffer}
 
