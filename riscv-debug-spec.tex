@@ -769,6 +769,13 @@ interface to perform some common operations on RISC-V cores using the JTAG DTM.
 All these examples assume a 32-bit core but it should be easy to adapt the
 examples to 64- or 128-bit cores.
 
+To keep the examples readable, they all assume that everything succeeds, and
+that they complete faster than the debugger can perform the next access. This
+will be the case in a typical JTAG setup. However, the debugger must always
+check the sticky error status bits after performing a sequence of actions. If
+it sees any that are set, then it should attempt the same actions again,
+possibly while adding in some delay, or explicit checks for status bits.
+
 \subsection{Debug Bus Access} \label{dbusaccess}
 
 To read an arbitrary Debug Bus register, select \Rdbus, and scan in a value
@@ -801,60 +808,140 @@ to become set.
 
 \subsection{Accessing Registers}
 
-There are two ways to access registers. The first is to use the Access Register
-abstract command. This is the only way to access GPRs. Accessing other
-registers is also possible using the Program Buffer. In that case the debugger
-writes a simple program that transfers the value between a register it wants to
-access and a GPR.
+\subsubsection{Using Abstract Command}
 
-For example to read \Rmstatus, it writes the following program to the
-Instruction Buffer:
-\begin{minted}{gas}
-        csrr    s0, MSTATUS
-        ebreak
-\end{minted}
+\begin{table}[htp]
+    \centering
+    \caption{Read \Szero using abstract command}
+    \begin{tabulary}{\textwidth}{|r|r|r|L|}
+        \hline
+        Op & Address & Value & Comment \\
+        \hline
+        Write & \Rcommand & 0x1008 & Read \Szero \\
+        \hline
+        Read & \Rdatazero & - & Returns value that was in \Szero \\
+        \hline
+    \end{tabulary}
+\end{table}
 
-Next it executes the abstract command that causes this program to be executed
-(0x21000). When \Fbusy in \Rabstractcs goes low, now the debugger executes the
-command to read \Szero (TODO).
+\begin{table}[htp]
+    \centering
+    \caption{Write \Rmstatus using abstract command}
+    \begin{tabulary}{\textwidth}{|r|r|r|L|}
+        \hline
+        Op & Address & Value & Comment \\
+        \hline
+        Write & \Rdatazero & new value & \\
+        \hline
+        Write & \Rcommand & 0x10300 & Write \Rmstatus \\
+        \hline
+    \end{tabulary}
+\end{table}
 
-To write to eg. \Fone, the following program is written:
-\begin{minted}{gas}
-        fmv.x.s f1, s0
-        ebreak
-\end{minted}
+\subsubsection{Using Program Buffer}
 
-The desired value is written to \Rdatazero, and then the abstract command to
-write \Szero (TODO) and execute the program is executed. Once \Fbusy in
-\Rabstractcs the write is complete.
+Abstract commands are used to exchange data with GPRs. Using this mechanism, other
+registers can be accessed by moving their value into/out of GPRs.
+
+\begin{table}[htp]
+    \centering
+    \caption{Write \Rmstatus using program buffer}
+    \begin{tabulary}{\textwidth}{|r|r|r|L|}
+        \hline
+        Op & Address & Value & Comment \\
+        \hline
+        Write & \Ribufzero & {\tt csrw s0, MSTATUS} & \\
+        \hline
+        Write & \Ribufone & {\tt ebreak} & \\
+        \hline
+        Write & \Rdatazero & new value & \\
+        \hline
+        Write & \Rcommand & 0x31008 & Write \Szero, then execute program buffer \\
+        \hline
+    \end{tabulary}
+\end{table}
+
+\begin{table}[htp]
+    \centering
+    \caption{Read \Fone using program buffer}
+    \begin{tabulary}{\textwidth}{|r|r|r|L|}
+        \hline
+        Op & Address & Value & Comment \\
+        \hline
+        Write & \Ribufzero & {\tt fmv.x.s s0, f1} & \\
+        \hline
+        Write & \Ribufone & {\tt ebreak} & \\
+        \hline
+        Write & \Rcommand & 0x41008 & Execute program buffer, then read \Szero \\
+        \hline
+        Read & \Rdatazero & - & Returns the value that was in \Fone \\
+        \hline
+    \end{tabulary}
+\end{table}
 
 \subsection{Reading Memory}
 
-Push the following instructions into the hart:
-\begin{minted}{gas}
-        recv    s0, DM
-        # Service the read data access with the address to read from.
-        lw      s0, 0(s0)
-        xmit    s0, DM
-        # Service the write data access by reading the data that was read from
-        # memory.
-\end{minted}
+\subsubsection{Using Bus Access}
 
-A block of memory can be read efficiently using the Instruction Buffer. First,
-load the start address of the memory block into \Sone by pushing:
-\begin{minted}{gas}
-        recv    s1, DM
-        # Service the read data access with the address to read from.
-\end{minted}
+\subsubsection{Using Program Buffer}
 
-Then load the following into the Instruction Buffer:
-\begin{minted}{gas}
-        lw      s0, 0(s1)
-        xmit    s0, DM
-        addi    s1, s1, 4
-\end{minted}
+\begin{table}[htp]
+    \centering
+    \caption{Read from memory using program buffer}
+    \begin{tabulary}{\textwidth}{|r|r|r|L|}
+        \hline
+        Op & Address & Value & Comment \\
+        \hline
+        Write & \Ribufzero & {\tt lw s0, 0(s0)} & \\
+        \hline
+        Write & \Ribufone & {\tt ebreak} & \\
+        \hline
+        Write & \Rdatazero & address & \\
+        \hline
+        Write & \Rcommand & 0x31008 & Write \Szero, then execute program buffer \\
+        \hline
+        Write & \Rcommand & 0x1008 & Read \Szero \\
+        \hline
+        Read & \Rdatazero & - & Value read from memory \\
+        \hline
+    \end{tabulary}
+\end{table}
 
-Table~\ref{tab:memread} shows the scans involved in reading a single word using
+\begin{table}[htp]
+    \centering
+    \caption{Read block of memory using program buffer}
+    \begin{tabulary}{\textwidth}{|r|r|r|L|}
+        \hline
+        Op & Address & Value & Comment \\
+        \hline
+        Write & \Ribufzero & {\tt lw s1, 0(s0)} & \\
+        \hline
+        Write & \Ribufone & {\tt addi s0, s0, 4} & \\
+        \hline
+        Write & \Ribuftwo & {\tt ebreak} & \\
+        \hline
+        Write & \Rdatazero & address & \\
+        \hline
+        Write & \Rcommand & 0x31008 & Write \Szero, then execute program buffer \\
+        \hline
+        Write & \Rcommand & \Fexeca OR 0x1009 & Read \Sone, then execute program buffer \\
+        \hline
+        Write & \Rabstractcs & \Fautoexeczero OR \Fcmderr & Set \Fautoexeczero \\
+        \hline
+        Read & \Rdatazero & - & Get value read from memory, then execute program buffer \\
+        \hline
+        Read & \Rdatazero & - & Get next value read from memory, then execute program buffer \\
+        \hline
+        ... & ... & ... & ... \\
+        \hline
+        Write & \Rabstractcs & \Fcmderr & Clear \Fautoexeczero \\
+        \hline
+        Read & \Rdatazero & - & Get last value read from memory. \\
+        \hline
+    \end{tabulary}
+\end{table}
+
+TODO: Table~\ref{tab:memread} shows the scans involved in reading a single word using
 this method.
 
 \begin{table}[htp]
@@ -917,28 +1004,7 @@ this method.
 
 \subsection{Writing Memory} \label{writemem}
 
-To write a single word:
-\begin{minted}{gas}
-        recv    s0, DM
-        # Service the data read with the address to write to.
-        recv    s1, DM
-        # Service the data read with the data to write.
-        sw      s1, 0(s0)
-\end{minted}
-
-Similar to reading a block of memory, writing can also be done efficiently.
-Load the start address of the memory block into \Sone by pushing:
-\begin{minted}{gas}
-        recv    s1, DM
-        # Service the read data access with the address to read from.
-\end{minted}
-
-Then load the following into the Instruction Buffer:
-\begin{minted}{gas}
-        recv    s0, DM
-        sw      s0, 0(s1)
-        addi    s0, s0, 4
-\end{minted}
+TODO: Just like reading memory.
 
 \begin{commentary}
     % Select-DR-Scan to Shift-DR: 2
@@ -955,31 +1021,6 @@ Then load the following into the Instruction Buffer:
     efficiency. (This assumes the Debug Bus uses 5 address bits and that the
     debugger never has to wait for the core.)
 \end{commentary}
-
-\subsection{Reading Registers}
-
-Floating point register (\Fone):
-\begin{minted}{gas}
-        fmv.x.s s0, f1
-        xmit    s0, DM
-        # Read the actual data.
-\end{minted}
-
-CSR (\Rmepc):
-\begin{minted}{gas}
-        csrr    s0, MEPC
-        xmit    s0, DM
-        # Read the actual data.
-\end{minted}
-
-\subsection{Writing Registers} \label{writereg}
-
-Eg. how to write \Rmepc.
-\begin{minted}{gas}
-        recv    s0, DM
-        # Write the actual data.
-        csrw    MEPC, s0
-\end{minted}
 
 \subsection{Running}
 

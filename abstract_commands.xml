@@ -3,8 +3,12 @@
         Access the register specified by \Fregno.
 
         <field name="0" bits="31:24" />
-        <field name="0" bits="23:18" />
-        <field name="execute" bits="17">
+        <field name="0" bits="23:19" />
+        <field name="execb" bits="18">
+            When 1, execute the program in the Program Buffer before performing
+            the read/write.
+        </field>
+        <field name="execa" bits="17">
             When 1, execute the program in the Program Buffer after performing
             the read/write.
         </field>

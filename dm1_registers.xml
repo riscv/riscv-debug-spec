@@ -279,7 +279,18 @@
     <!-- =============== abstract commands =============== -->
 
     <register name="Abstract Control" short="abstractcs" address="0x0b">
-        <field name="0" bits="31:8" access="R" reset="0" />
+        <field name="0" bits="31:16" access="R" reset="0" />
+        <field name="autoexec7" bits="15" access="R/W" reset="0" />
+        <field name="autoexec6" bits="14" access="R/W" reset="0" />
+        <field name="autoexec5" bits="13" access="R/W" reset="0" />
+        <field name="autoexec4" bits="12" access="R/W" reset="0" />
+        <field name="autoexec3" bits="11" access="R/W" reset="0" />
+        <field name="autoexec2" bits="10" access="R/W" reset="0" />
+        <field name="autoexec1" bits="9" access="R/W" reset="0" />
+        <field name="autoexec0" bits="8" access="R/W" reset="0">
+            When 1, accesses to \Ribufzero cause the command in \Rcommand to be
+            executed again.
+        </field>
         <field name="cmderr" bits="7:5" access="R/W0" reset="0">
             Gets set if an abstract command fails. No abstract command is
             started until the value is reset to 0.
@@ -351,6 +362,9 @@
     <register name="Program Buffer 0" short="ibuf0" address="0x18">
         The ibuf registers provide read/write access to the optional
         instruction buffer.
+
+        If \Fautoexeczero is set, then after this register is accessed the
+        command in \Rcommand is executed again.
 
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
