@@ -308,7 +308,7 @@ to ensure this does not happen.
 \begin{steps}{The Debug Module is the interface between specific debug
     operations and their implementation. It must support the following
     operations:}
-\item Provide access to a reset signal that resets most of the SoC.
+\item Provide access to a reset signal that allows debugging out of reset.
 \item Allow any individual hart to be halted.
 \item Provide status on which harts are halted.
 \item Feed a specific hart one instruction, and have that hart execute the
@@ -358,8 +358,31 @@ have many cores will want to implement 6 bits.
 
 \subsection{Reset Control} \label{reset}
 
-This block is connected to the global reset signal, which resets every
-component in the platform except for the Debug Module itself.
+This block is connected to a global reset signal, which can
+reset, or hold in reset, every component in the platform,
+except for the Debug Module and Debug
+Transport Modules. The purpose of this feature is to allow debugging
+programs from the first instruction executed, so exactly what is affected
+by this reset is implementation dependent.
+
+%MAW: Concrete example... FE310 has register which tells the core why
+% it was reset. Examples are ``Power-on-Reset'',
+% ``External Reset'', and
+% ``Watchdog Reset''. Similarly, there is a ``wakeup cause'' register
+% which tells the core why it woke up.
+% I don't think you would want the debugger
+% to affect the control flow of code based on reading these registers, so
+% somehow this debugger-driven reset signal can't impact them.
+% But I don't think that should be spelled out case-by-case in this spec,
+% so I want to focus on the actual requirement more than saying exactly
+% what this reset should do.
+%
+% Also, based on this, is it necessary to say something like Debug Module
+% registers are ONLY reset based on Power-On-Reset or explicit
+% Test-Logic-Reset, similar to JTAG
+% specification? Otherwise how do you debug what happens on e.g.
+% external reset (when someone hits reset button).
+%
 
 \subsection{Halt Control}
 
@@ -619,6 +642,34 @@ Viewing the male header from above (the pins pointing at your eye), a target's
 connector looks as it does in Table~\ref{tab:header}. The function of each pin
 is described in Table~\ref{tab:pinout}.
 
+%MAW: Why do we only have 'RESET', but no 'TRST(n)' signal?
+% See http://openocd.org/doc/html/Reset-Configuration.html
+% Both are useful.
+% One is explicitly ``test logic reset'', which would imply
+% resetting the JTAG state machine and all associated test logic, in this
+% case the Debug Transport Module, synchronizers, and perhaps even
+% the Debug Module itself. It basically does the same thing as getting
+% the JTAG state machine into TEST_LOGIC_RESET state, which is
+% why it is optional.
+%
+% The other is a convenience which allows the debugger to essentially
+% hit the system reset button, which is basically mutually exclusive from
+% what TRST resets.
+%
+% I think a common workflow would be
+% to assert the halt signal in Debug Module,
+% then tell the debugger to pull the 'RESET' signal.
+% The desired effect woudld be to be able to debug the
+% code that executes on external reset.
+%
+% Another common workflow would be to have been debugging for a while,
+% then you disconnect the debugger.
+% Another user connects, and has no idea what state the debug logic
+% is in. They could assert the TRSTn signal (or clock JTAG TAP into
+% the proper state) and then know that all the Debug Transport Module
+% (and Debug Module logic...?) is in a known state.
+%
+
 \begin{table}[htp]
     \centering
     \caption{JTAG Connector Diagram}
@@ -676,6 +727,7 @@ is described in Table~\ref{tab:pinout}.
         active low or active high, depending on the target's requirements. A
         debug adapter must accommodate either option. Asserting reset should
         reset any RISC-V cores as well as any other peripherals on the PCB.
+        It should not reset the debug logic.
         If not implemented in a target, this pin must not be connected. \\
         \hline
     \end{tabulary}
