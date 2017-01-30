@@ -1240,37 +1240,7 @@ Some future version of this spec may implement some of the following features.
 \section{Change Log}
 
 \begin{versionhistory}
-    \vhEntry{0.10}{Jul 11}{TN}{Version shared for 4th RISC-V Workshop}
-    \vhEntry{0.11}{Jul 17}{TN}{Updated Bus Access section}
-    \vhEntry{0.11}{Jul 29}{TN}{\Rmcontrol is intended to alias {\tt tdata0}.
-        Remove conditional writes.}
-    \vhEntry{0.11}{Aug 11}{TN}{Document {\tt wfi} behavior in Halt Mode.
-        Core Debug Registers are only accessible in Halt Mode. Removed hwbpcount
-        field from \Rdcsr.}
-    \vhEntry{0.11}{Aug 22}{TN}{Clarify meaning of $|mode|$ in \Rtselect. All
-        triggers are either locked by the debugger, or none are.}
-    \vhEntry{0.11}{Aug 23}{TN}{Triggers are locked on an individual basis
-        again. See \Fdmode in {\tt tdata0}. The definitions of \Fchain in
-        \Rmcontrol has been changed to be easier to explain. Changed
-        recommendations on when store hardware breakpoints fire.}
-    \vhEntry{0.11}{Aug 25}{TN}{Add \Ftiming to \Rmcontrol. Changed
-        encoding of \Faction.}
-    \vhEntry{0.11}{Aug 26}{TN}{Document {\tt lr}/{\tt sc} behavior.
-        Rename {\tt tdata0}--{\tt tdata2} to {\tt tdata1}--{\tt tdata3}.}
-    \vhEntry{0.11}{Sep 6}{TN}{Change Debug Bus to only support simple
-        read and write operations.}
-    \vhEntry{0.11}{Sep 7}{TN}{Clarify \Fop in \Rdbus.}
-    \vhEntry{0.11}{Sep 13}{TN}{Add rough idea of instruction count
-        triggers that could be used for single step.}
-    \vhEntry{0.11}{Sep 27}{TN}{M-mode writes to triggers with dmode=1 are
-        ignored instead of raising an exception.}
-    \vhEntry{0.11}{Oct 24}{TN}{Change serial full bit to full/overflow.}
-    \vhEntry{0.11}{Nov 2}{TN}{There actually can be side effects to reading
-        Debug Bus registers (specifically reading serial data).}
-    \vhEntry{0.12}{Nov 10}{TN}{Reduce Debug Bus width to 32 bits. This
-        caused a lot of changes in Section~\ref{dm}, and some in
-        Section~\ref{dbus}. Read Section~\ref{dbusaccess} to get an idea of how
-        that affects the debugger.}
+    \input{changelog.tex}
 \end{versionhistory}
 
 \end{document}
