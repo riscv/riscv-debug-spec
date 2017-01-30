@@ -523,20 +523,12 @@ is 5 bits wide, or less than 1024 if that address is 6 or more bits wide.
 \subsection{Halt Mode} \label{haltmode}
 
 Halt Mode is a special processor mode used only when the core is halted for
-external debugging.
-
-\begin{steps}{To enter Halt Mode the hart:}
-\item Saves \Rpc to \Rdpc.
-\item Sets \Fcause in \Rdcsr.
-\item Starts fetching instructions from the DM.
-\end{steps}
+external debugging. How Halt Mode is entered is implementation-specific.
 
 \begin{steps}{While in Halt Mode:}
-\item All instructions come from the DM.
 \item All operations happen in machine mode.
 \item \Fmprv in \Rmstatus is ignored.
-\item All interrupts are masked. Whether slow watchdog timers (10s or longer)
-    are masked is left to the implementation.
+\item All interrupts are masked.
 \item Exceptions don't update any registers.  That includes {\tt cause}, {\tt
     epc}, {\tt badaddr}, and \Rmstatus.  Instead exceptions just set \Fhmexc in
     \Rdcsr.
@@ -545,10 +537,11 @@ external debugging.
 \item Cycle counters may be stopped, depending on \Fstopcycle in \Rdcsr.
 \item Timers may be stopped, depending on \Fstoptime in \Rdcsr.
 \item The {\tt wfi} instruction acts as a {\tt nop}.
-\item Instructions that change the privilege level have undefined behavior.
-    This includes {\tt ecall}, {\tt ebreak}, {\tt mret}, {\tt hret}, {\tt
-    sret}, and {\tt uret}.  (To change the privilege level, the debugger can
-    write \Fprv in \Rdcsr.)
+\item Almost all instructions that change the privilege level have undefined
+    behavior.  This includes {\tt ecall}, {\tt mret}, {\tt hret}, {\tt sret},
+    and {\tt uret}.  (To change the privilege level, the debugger can write
+    \Fprv in \Rdcsr.) The exception is {\tt ebreak}. When that is executed in
+    Halt Mode, it halts the processor again but without updating \Rdpc.
 \end{steps}
 
 \subsection{Load-Reserved/Store-Conditional Instructions}

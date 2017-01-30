@@ -59,22 +59,9 @@
         This register contains information describing the hart selected by
         \Fhartid.
 
-        <field name="0" bits="31:13" access="R" reset="0" />
-        <field name="datamode" bits="12" access="R" reset="Preset">
-            0: This hart access the DM through \Rdaccessthirtytwo, and possibly
-            \Rdaccesssixtyfour and \Rdaccessonetwentyeight.
+        TODO: remove?
 
-            1: This hart access the DM at a memory address relatively through
-            \Rzero.
-        </field>
-
-        <field name="dataoffset" bits="11:0" access="R" reset="Preset">
-            If \Fdatamode is 1, this field contains the signed base address of
-            the data access section of the DM.
-
-            32-, 64-, and 128-bit accesses are supported assuming the GPRs are
-            at least that wide.
-        </field>
+        <field name="0" bits="31:0" access="R" reset="0" />
     </register>
 
     <register name="Halt Summary" short="haltsum" address="0x02">
