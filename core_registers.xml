@@ -22,10 +22,7 @@
             When 1, {\tt ebreak} instructions in User/Application Mode enter
             Halt Mode.
         </field>
-        <field name="hmexc" bits="11" access="R/W0" reset="0">
-            Halt Mode exception bit. It is set when an exception occurs in Halt
-            Mode.  It is cleared by writing 0.
-        </field>
+        <field name="0" bits="11" access="R" reset="0" />
         <field name="stopcycle" bits="10" access="R/W" reset="1">
             Controls the behavior of any counters while the component is in
             Halt Mode. This includes the {\tt cycle} and {\tt instret} CSRs.

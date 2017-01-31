@@ -314,6 +314,9 @@
             supported while the hart is running may be supported when it is
             halted.
 
+            3: An exception occurred while executing the command (eg. while
+            executing the Program Buffer).
+
             7: The command failed for another reason.
         </field>
         <field name="busy" bits="4" access="R" reset="0">

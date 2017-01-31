@@ -423,10 +423,20 @@ execute it using some of the abstract commands. The programs must end with {\tt
 ebreak} or {\tt ebreak.c}. While these programs are executed, the hart does not
 leave Halt Mode (see Section~\ref{haltmode}).
 
+If an exception is encountered during execution of the Program Buffer, no more
+instructions are executed, the hart remains in Halt Mode, and \Fcmderr is set
+to 3.
+
 Executing the Program Buffer may clobber \Rdpc. If that is the case, it must be
 possible to read/write \Rdpc using an abstract command. The debugger must
 attempt to save \Rdpc between halting and executing a Program Buffer, and then
-resture \Rdpc before leaving Halt Mode.
+restore \Rdpc before leaving Halt Mode.
+
+\begin{commentary}
+    Allowing Program Buffer execution to clobber \Rdpc allows for direct
+    implementations that don't have a separate PC register, and do need to use
+    the PC when executing the Program Buffer.
+\end{commentary}
 
 \subsection{Serial Ports}
 
@@ -519,13 +529,14 @@ is 5 bits wide, or less than 1024 if that address is 6 or more bits wide.
 Halt Mode is a special processor mode used only when the core is halted for
 external debugging. How Halt Mode is entered is implementation-specific.
 
-\begin{steps}{While in Halt Mode:}
+\begin{steps}{When executing code from the Program Buffer, the processor stays
+    in Halt Mode and the following apply:}
 \item All operations happen in machine mode.
 \item \Fmprv in \Rmstatus is ignored.
 \item All interrupts are masked.
 \item Exceptions don't update any registers.  That includes {\tt cause}, {\tt
-    epc}, {\tt badaddr}, and \Rmstatus.  Instead exceptions just set \Fhmexc in
-    \Rdcsr.
+    epc}, {\tt badaddr}, {\tt dpc}, and \Rmstatus. They do end execution of the
+    Program Buffer.
 \item No trigger actions are taken.
 \item Trace is disabled.
 \item Cycle counters may be stopped, depending on \Fstopcycle in \Rdcsr.
@@ -738,7 +749,7 @@ address is an implementation detail that a debugger must not rely on.
 
 When first halting, the loop looks like this:
 \begin{minted}{gas}
-dm_control_hart_0:
+dm_park_hart_0:
         nop
         j       dm_park_hart_0
 \end{minted}
@@ -748,12 +759,18 @@ The DM assumes that every instruction fetched from it is executed.
 To implement the abstract 32-bit GPR access instructions, the {\tt nop} is
 changed (for a single fetch) to {\tt lw <gpr>, 0x400(zero)} or {\tt sw
 0x400(zero), <gpr>}. 64- and 128-bit accesses use {\tt ld}/{\tt sd} and {\tt
-lq}/{\tt sq} respectively. To execute the Program Buffer, the {\tt nop} is
-changed to {\tt j dm\_program\_buffer}. To resume execution, the {\tt nop} is
-changed to {\tt dret}.
+lq}/{\tt sq} respectively.
 
-When {\tt dret} is executed, \Rpc is restored from \Rdpc and normal execution
-resumes at the privilege set by \Fprv.
+To execute the Program Buffer, the {\tt nop} is changed to {\tt j
+dm\_program\_buffer}. When {\tt ebreak} is executed (indicating the end of the
+Program Buffer code) the hart jumps back to its dm\_park loop. If an exception
+is encountered, the hart jumps to its debug exception address, which in turn
+contains a jump back to its dm\_park loop. The DM infers from the fetch at the
+dm\_park address that there was an exception, and sets \Fcmderr appropriately.
+
+To resume execution, the {\tt nop} is changed to {\tt dret}.  When {\tt dret}
+is executed, \Rpc is restored from \Rdpc and normal execution resumes at the
+privilege set by \Fprv.
 
 \section{Debugger Implementation}
 
@@ -1076,10 +1093,10 @@ access memory or a CSR that is not implemented. A typical debugger will not
 know enough about the platform to know what's going to happen, and must attempt
 the access to determine the outcome.
 
-When an exception occurs in Halt Mode, \Fhmexc becomes set. If the debugger did
-something that might have caused an exception, it should check for that. If
-there was an exception, it's left to the debugger to know what must have caused
-it.
+When an exception occurs while executing the Program Buffer, \Fcmderr becomes
+set. The debugger can check this field to see whether a program encountered an
+exception.  If there was an exception, it's left to the debugger to know what
+must have caused it.
 
 \subsection{Quick Access} \label{quickaccess}
 
