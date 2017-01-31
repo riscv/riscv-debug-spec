@@ -875,11 +875,51 @@ registers can be accessed by moving their value into/out of GPRs.
 
 \subsubsection{Using System Bus Access}
 
+\noindent Read a word from memory using system bus access:
+
+\begin{tabulary}{\textwidth}{|r|r|r|L|}
+    \hline
+    Op & Address & Value & Comment \\
+    \hline
+    Write & \Rsbaddresszero & address & \\
+    \hline
+    Write & \Rsbcs & \Fsbaccess$=2$, \Fsbsingleread & Perform a read \\
+    \hline
+    Read & \Rsbdatazero & - & Value read from memory \\
+    \hline
+\end{tabulary}
+\medskip
+
+\noindent Read block of memory using system bus access:
+
+\begin{tabulary}{\textwidth}{|r|r|L|L|}
+    \hline
+    Op & Address & Value & Comment \\
+    \hline
+    Write & \Rsbaddresszero & address & \\
+    \hline
+    Write & \Rsbcs & \Fsbaccess$=2$, \Fsbsingleread, \Fsbautoread,
+        \Fsbautoincrement & Turn on autoread and autoincrement, and perform a
+        read \\
+    \hline
+    Read & \Rsbdatazero & - & Value read from memory \\
+    \hline
+    Read & \Rsbdatazero & - & Next value read from memory \\
+    \hline
+    ... & ... & ... & ... \\
+    \hline
+    Write & \Rsbcs & 0 & Clear \Fsbautoread \\
+    \hline
+    Read & \Rdatazero & - & Get last value read from memory. \\
+    \hline
+\end{tabulary}
+\medskip
+
 \subsubsection{Using Program Buffer}
 
 \begin{table}[htp]
     \centering
-    \caption{Read from memory using program buffer}
+    \caption{Read a word from memory using program buffer}
     \begin{tabulary}{\textwidth}{|r|r|r|L|}
         \hline
         Op & Address & Value & Comment \\
