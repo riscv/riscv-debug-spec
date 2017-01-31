@@ -352,26 +352,9 @@ reset, or hold in reset, every component in the platform,
 except for the Debug Module and Debug
 Transport Modules. The purpose of this feature is to allow debugging
 programs from the first instruction executed, so exactly what is affected
-by this reset is implementation dependent.
-
-%MAW: Concrete example... FE310 has register which tells the core why
-% it was reset. Examples are ``Power-on-Reset'',
-% ``External Reset'', and
-% ``Watchdog Reset''. Similarly, there is a ``wakeup cause'' register
-% which tells the core why it woke up.
-% I don't think you would want the debugger
-% to affect the control flow of code based on reading these registers, so
-% somehow this debugger-driven reset signal can't impact them.
-% But I don't think that should be spelled out case-by-case in this spec,
-% so I want to focus on the actual requirement more than saying exactly
-% what this reset should do.
-%
-% Also, based on this, is it necessary to say something like Debug Module
-% registers are ONLY reset based on Power-On-Reset or explicit
-% Test-Logic-Reset, similar to JTAG
-% specification? Otherwise how do you debug what happens on e.g.
-% external reset (when someone hits reset button).
-%
+by this reset is implementation dependent. Debug Module's own state and registers are
+generally reset at power-up and if and only if
+\Fdmactive in \Rdmcontrol is 0.
 
 \subsection{Halt Control}
 
@@ -631,33 +614,12 @@ Viewing the male header from above (the pins pointing at your eye), a target's
 connector looks as it does in Table~\ref{tab:header}. The function of each pin
 is described in Table~\ref{tab:pinout}.
 
-%MAW: Why do we only have 'RESET', but no 'TRST(n)' signal?
-% See http://openocd.org/doc/html/Reset-Configuration.html
-% Both are useful.
-% One is explicitly ``test logic reset'', which would imply
-% resetting the JTAG state machine and all associated test logic, in this
-% case the Debug Transport Module, synchronizers, and perhaps even
-% the Debug Module itself. It basically does the same thing as getting
-% the JTAG state machine into TEST_LOGIC_RESET state, which is
-% why it is optional.
-%
-% The other is a convenience which allows the debugger to essentially
-% hit the system reset button, which is basically mutually exclusive from
-% what TRST resets.
-%
-% I think a common workflow would be
-% to assert the halt signal in Debug Module,
-% then tell the debugger to pull the 'RESET' signal.
-% The desired effect woudld be to be able to debug the
-% code that executes on external reset.
-%
-% Another common workflow would be to have been debugging for a while,
-% then you disconnect the debugger.
-% Another user connects, and has no idea what state the debug logic
-% is in. They could assert the TRSTn signal (or clock JTAG TAP into
-% the proper state) and then know that all the Debug Transport Module
-% (and Debug Module logic...?) is in a known state.
-%
+This header does not include the optional JTAG TRST signal. If an implementation
+requires TRST to be driven at Power-On, this must be handled at the
+PCB level and is not exported to this header.
+
+TODO: If the above is too harsh of a requirement, we should pick a different header to
+standardize on, such as the also very common AVR JTAG Header.
 
 \begin{table}[htp]
     \centering
