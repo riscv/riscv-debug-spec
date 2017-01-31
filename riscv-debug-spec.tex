@@ -745,11 +745,12 @@ dm_control_hart_0:
 
 The DM assumes that every instruction fetched from it is executed.
 
-To implement the abstract GPR access instructions, the {\tt nop} is changed
-(for a single fetch) to {\tt lw <gpr>, 0x400(zero)} or {\tt sw 0x400(zero),
-<gpr>}. To execute the Program Buffer, the {\tt nop} is changed to {\tt j
-dm\_program\_buffer}. To resume execution, the {\tt nop} is changed to {\tt
-dret}.
+To implement the abstract 32-bit GPR access instructions, the {\tt nop} is
+changed (for a single fetch) to {\tt lw <gpr>, 0x400(zero)} or {\tt sw
+0x400(zero), <gpr>}. 64- and 128-bit accesses use {\tt ld}/{\tt sd} and {\tt
+lq}/{\tt sq} respectively. To execute the Program Buffer, the {\tt nop} is
+changed to {\tt j dm\_program\_buffer}. To resume execution, the {\tt nop} is
+changed to {\tt dret}.
 
 When {\tt dret} is executed, \Rpc is restored from \Rdpc and normal execution
 resumes at the privilege set by \Fprv.
@@ -802,74 +803,71 @@ to become set.
 
 \subsubsection{Using Abstract Command}
 
-\begin{table}[htp]
-    \centering
-    \caption{Read \Szero using abstract command}
-    \begin{tabulary}{\textwidth}{|r|r|r|L|}
-        \hline
-        Op & Address & Value & Comment \\
-        \hline
-        Write & \Rcommand & 0x1008 & Read \Szero \\
-        \hline
-        Read & \Rdatazero & - & Returns value that was in \Szero \\
-        \hline
-    \end{tabulary}
-\end{table}
+\noindent Read \Szero using abstract command:
 
-\begin{table}[htp]
-    \centering
-    \caption{Write \Rmstatus using abstract command}
-    \begin{tabulary}{\textwidth}{|r|r|r|L|}
-        \hline
-        Op & Address & Value & Comment \\
-        \hline
-        Write & \Rdatazero & new value & \\
-        \hline
-        Write & \Rcommand & 0x10300 & Write \Rmstatus \\
-        \hline
-    \end{tabulary}
-\end{table}
+\begin{tabulary}{\textwidth}{|r|r|r|L|}
+    \hline
+    Op & Address & Value & Comment \\
+    \hline
+    Write & \Rcommand & \Fsize$=2$, 0x1008 & Read \Szero \\
+    \hline
+    Read & \Rdatazero & - & Returns value that was in \Szero \\
+    \hline
+\end{tabulary}
+\medskip
+
+\noindent Write \Rmstatus using abstract command:
+
+\begin{tabulary}{\textwidth}{|r|r|r|L|}
+    \hline
+    Op & Address & Value & Comment \\
+    \hline
+    Write & \Rdatazero & new value & \\
+    \hline
+    Write & \Rcommand & \Fsize$=2$, \Fwrite, 0x300 & Write \Rmstatus \\
+    \hline
+\end{tabulary}
+\medskip
 
 \subsubsection{Using Program Buffer}
 
 Abstract commands are used to exchange data with GPRs. Using this mechanism, other
 registers can be accessed by moving their value into/out of GPRs.
 
-\begin{table}[htp]
-    \centering
-    \caption{Write \Rmstatus using program buffer}
-    \begin{tabulary}{\textwidth}{|r|r|r|L|}
-        \hline
-        Op & Address & Value & Comment \\
-        \hline
-        Write & \Ribufzero & {\tt csrw s0, MSTATUS} & \\
-        \hline
-        Write & \Ribufone & {\tt ebreak} & \\
-        \hline
-        Write & \Rdatazero & new value & \\
-        \hline
-        Write & \Rcommand & 0x31008 & Write \Szero, then execute program buffer \\
-        \hline
-    \end{tabulary}
-\end{table}
+\noindent Write \Rmstatus using program buffer:
 
-\begin{table}[htp]
-    \centering
-    \caption{Read \Fone using program buffer}
-    \begin{tabulary}{\textwidth}{|r|r|r|L|}
-        \hline
-        Op & Address & Value & Comment \\
-        \hline
-        Write & \Ribufzero & {\tt fmv.x.s s0, f1} & \\
-        \hline
-        Write & \Ribufone & {\tt ebreak} & \\
-        \hline
-        Write & \Rcommand & 0x41008 & Execute program buffer, then read \Szero \\
-        \hline
-        Read & \Rdatazero & - & Returns the value that was in \Fone \\
-        \hline
-    \end{tabulary}
-\end{table}
+\begin{tabulary}{\textwidth}{|r|r|r|L|}
+    \hline
+    Op & Address & Value & Comment \\
+    \hline
+    Write & \Ribufzero & {\tt csrw s0, MSTATUS} & \\
+    \hline
+    Write & \Ribufone & {\tt ebreak} & \\
+    \hline
+    Write & \Rdatazero & new value & \\
+    \hline
+    Write & \Rcommand & \Fsize$=2$, \Fexeca, \Fwrite, 0x1008 &
+        Write \Szero, then execute program buffer \\
+    \hline
+\end{tabulary}
+\medskip
+
+\noindent Read \Fone using program buffer:
+
+\begin{tabulary}{\textwidth}{|r|r|r|L|}
+    \hline
+    Op & Address & Value & Comment \\
+    \hline
+    Write & \Ribufzero & {\tt fmv.x.s s0, f1} & \\
+    \hline
+    Write & \Ribufone & {\tt ebreak} & \\
+    \hline
+    Write & \Rcommand & \Fexecb, 0x1008 & Execute program buffer, then read \Szero \\
+    \hline
+    Read & \Rdatazero & - & Returns the value that was in \Fone \\
+    \hline
+\end{tabulary}
+\medskip
 
 \subsection{Reading Memory}
 
@@ -917,61 +915,59 @@ registers can be accessed by moving their value into/out of GPRs.
 
 \subsubsection{Using Program Buffer}
 
-\begin{table}[htp]
-    \centering
-    \caption{Read a word from memory using program buffer}
-    \begin{tabulary}{\textwidth}{|r|r|r|L|}
-        \hline
-        Op & Address & Value & Comment \\
-        \hline
-        Write & \Ribufzero & {\tt lw s0, 0(s0)} & \\
-        \hline
-        Write & \Ribufone & {\tt ebreak} & \\
-        \hline
-        Write & \Rdatazero & address & \\
-        \hline
-        Write & \Rcommand & 0x31008 & Write \Szero, then execute program buffer \\
-        \hline
-        Write & \Rcommand & 0x1008 & Read \Szero \\
-        \hline
-        Read & \Rdatazero & - & Value read from memory \\
-        \hline
-    \end{tabulary}
-\end{table}
+\noindent Read a word from memory using program buffer:
 
-\begin{table}[htp]
-    \centering
-    \caption{Read block of memory using program buffer}
-    \begin{tabulary}{\textwidth}{|r|r|r|L|}
-        \hline
-        Op & Address & Value & Comment \\
-        \hline
-        Write & \Ribufzero & {\tt lw s1, 0(s0)} & \\
-        \hline
-        Write & \Ribufone & {\tt addi s0, s0, 4} & \\
-        \hline
-        Write & \Ribuftwo & {\tt ebreak} & \\
-        \hline
-        Write & \Rdatazero & address & \\
-        \hline
-        Write & \Rcommand & 0x31008 & Write \Szero, then execute program buffer \\
-        \hline
-        Write & \Rcommand & \Fexeca OR 0x1009 & Read \Sone, then execute program buffer \\
-        \hline
-        Write & \Rabstractcs & \Fautoexeczero OR \Fcmderr & Set \Fautoexeczero \\
-        \hline
-        Read & \Rdatazero & - & Get value read from memory, then execute program buffer \\
-        \hline
-        Read & \Rdatazero & - & Get next value read from memory, then execute program buffer \\
-        \hline
-        ... & ... & ... & ... \\
-        \hline
-        Write & \Rabstractcs & \Fcmderr & Clear \Fautoexeczero \\
-        \hline
-        Read & \Rdatazero & - & Get last value read from memory. \\
-        \hline
-    \end{tabulary}
-\end{table}
+\begin{tabulary}{\textwidth}{|r|r|r|L|}
+    \hline
+    Op & Address & Value & Comment \\
+    \hline
+    Write & \Ribufzero & {\tt lw s0, 0(s0)} & \\
+    \hline
+    Write & \Ribufone & {\tt ebreak} & \\
+    \hline
+    Write & \Rdatazero & address & \\
+    \hline
+    Write & \Rcommand & \Fwrite, \Fexeca, 0x1008 & Write \Szero, then execute program buffer \\
+    \hline
+    Write & \Rcommand & 0x1008 & Read \Szero \\
+    \hline
+    Read & \Rdatazero & - & Value read from memory \\
+    \hline
+\end{tabulary}
+\medskip
+
+\noindent Read block of memory using program buffer:
+
+\begin{tabulary}{\textwidth}{|r|r|r|L|}
+    \hline
+    Op & Address & Value & Comment \\
+    \hline
+    Write & \Ribufzero & {\tt lw s1, 0(s0)} & \\
+    \hline
+    Write & \Ribufone & {\tt addi s0, s0, 4} & \\
+    \hline
+    Write & \Ribuftwo & {\tt ebreak} & \\
+    \hline
+    Write & \Rdatazero & address & \\
+    \hline
+    Write & \Rcommand & \Fwrite, \Fexeca, 0x1008 & Write \Szero, then execute program buffer \\
+    \hline
+    Write & \Rcommand & \Fexeca, 0x1009 & Read \Sone, then execute program buffer \\
+    \hline
+    Write & \Rabstractcs & \Fautoexeczero OR \Fcmderr & Set \Fautoexeczero \\
+    \hline
+    Read & \Rdatazero & - & Get value read from memory, then execute program buffer \\
+    \hline
+    Read & \Rdatazero & - & Get next value read from memory, then execute program buffer \\
+    \hline
+    ... & ... & ... & ... \\
+    \hline
+    Write & \Rabstractcs & \Fcmderr & Clear \Fautoexeczero \\
+    \hline
+    Read & \Rdatazero & - & Get last value read from memory. \\
+    \hline
+\end{tabulary}
+\medskip
 
 TODO: Table~\ref{tab:memread} shows the scans involved in reading a single word using
 this method.
