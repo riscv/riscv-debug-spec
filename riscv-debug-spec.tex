@@ -297,7 +297,7 @@ to ensure this does not happen.
 \begin{steps}{The Debug Module is the interface between specific debug
     operations and their implementation. It must support the following
     operations:}
-\item Provide access to a reset signal that resets most of the SoC.
+\item Provide access to a reset signal that allows debugging out of reset.
 \item Allow any individual hart to be halted.
 \item Provide status on which harts are halted.
 \item Feed a specific hart one instruction, and have that hart execute the
@@ -347,8 +347,14 @@ have many cores will want to implement 6 bits.
 
 \subsection{Reset Control} \label{reset}
 
-This block is connected to the global reset signal, which resets every
-component in the platform except for the Debug Module itself.
+This block is connected to a global reset signal, which can
+reset, or hold in reset, every component in the platform,
+except for the Debug Module and Debug
+Transport Modules. The purpose of this feature is to allow debugging
+programs from the first instruction executed, so exactly what is affected
+by this reset is implementation dependent. Debug Module's own state and registers are
+generally reset at power-up and if and only if
+\Fdmactive in \Rdmcontrol is 0.
 
 \subsection{Halt Control}
 
@@ -608,6 +614,13 @@ Viewing the male header from above (the pins pointing at your eye), a target's
 connector looks as it does in Table~\ref{tab:header}. The function of each pin
 is described in Table~\ref{tab:pinout}.
 
+This header does not include the optional JTAG TRST signal. If an implementation
+requires TRST to be driven at Power-On, this must be handled at the
+PCB level and is not exported to this header.
+
+TODO: If the above is too harsh of a requirement, we should pick a different header to
+standardize on, such as the also very common AVR JTAG Header.
+
 \begin{table}[htp]
     \centering
     \caption{JTAG Connector Diagram}
@@ -665,6 +678,7 @@ is described in Table~\ref{tab:pinout}.
         active low or active high, depending on the target's requirements. A
         debug adapter must accommodate either option. Asserting reset should
         reset any RISC-V cores as well as any other peripherals on the PCB.
+        It should not reset the debug logic.
         If not implemented in a target, this pin must not be connected. \\
         \hline
     \end{tabulary}
