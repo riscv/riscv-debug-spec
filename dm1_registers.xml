@@ -59,22 +59,9 @@
         This register contains information describing the hart selected by
         \Fhartid.
 
-        <field name="0" bits="31:13" access="R" reset="0" />
-        <field name="datamode" bits="12" access="R" reset="Preset">
-            0: This hart access the DM through \Rdaccessthirtytwo, and possibly
-            \Rdaccesssixtyfour and \Rdaccessonetwentyeight.
+        TODO: remove?
 
-            1: This hart access the DM at a memory address relatively through
-            \Rzero.
-        </field>
-
-        <field name="dataoffset" bits="11:0" access="R" reset="Preset">
-            If \Fdatamode is 1, this field contains the signed base address of
-            the data access section of the DM.
-
-            32-, 64-, and 128-bit accesses are supported assuming the GPRs are
-            at least that wide.
-        </field>
+        <field name="0" bits="31:0" access="R" reset="0" />
     </register>
 
     <register name="Halt Summary" short="haltsum" address="0x02">
@@ -120,9 +107,9 @@
         <field name="halt1023:992" bits="31" access="R" reset="0" />
     </register>
 
-    <!-- =============== bus mastering =============== -->
+    <!-- =============== system bus mastering =============== -->
 
-    <register name="Bus Access Control" short="sbcs" address="0x03">
+    <register name="System Bus Access Control" short="sbcs" address="0x03">
         <field name="0" bits="31:20" access="R" reset="0" />
         <field name="sbaccess" bits="19:17" access="R/W" reset="2">
             Select the access size to use for system bus accesses triggered by
@@ -138,23 +125,27 @@
 
 	    4: 128-bit
 
-            If an unsupported bus access size is written here, the DM may not
+            If an unsupported system bus access size is written here,
+	    the DM may not
             perform the access, or may perform the access with any access size
         </field>
-        <field name="autoincrement" bits="16" access="R/W" reset="0">
-            When 1, the internal address value (used by the bus master) is
-            incremented by the access size (in bytes) selected in \Fsbaccess after
-            every bus access.
+        <field name="sbautoincrement" bits="16" access="R/W" reset="0">
+          When 1, the internal address value (used by the system bus master)
+	  is
+          incremented by the access size (in bytes) selected in \Fsbaccess after
+          every system bus access.
         </field>
-        <field name="autoread" bits="15" access="R/W" reset="0">
-            When 1, every write to \Rsbaddresszero automatically triggers a bus
-            read at the new address.
+        <field name="sbautoread" bits="15" access="R/W" reset="0">
+          When 1, every write to \Rsbaddresszero automatically triggers a
+	  system bus
+          read at the new address.
         </field>
         <field name="sberror" bits="14:12" access="R/W0" reset="0">
-            When the debug bus master causes a bus error, this field gets set.
-            It remains set until 0 is written to any bit in this field. Until
-            that happens, the bus master is busy and no more accesses can be
-            initiated.
+          When the debug module's system bus
+	  master causes a bus error, this field gets set.
+          It remains set until 0 is written to any bit in this field. Until
+          that happens, the system bus master is busy and no more accesses can be
+            initiated by the debug module.
 
             0: There was no bus error.
 
@@ -164,37 +155,39 @@
 
             3: There was some other error (eg. alignment).
 
-            4: The bus master was busy when a one of the $|sbaddress|$ or
+            4: The system bus master was busy when a one of the $|sbaddress|$ or
             $|sbdata|$ registers was written.
         </field>
-        <field name="abussize" bits="11:5" access="R" reset="Preset">
-            Width of the address bus in bits. (0 indicates there is no bus
+        <field name="sbasize" bits="11:5" access="R" reset="Preset">
+            Width of system bus addresses in bits. (0 indicates there is no bus
             access support.)
         </field>
         <field name="sbaccess128" bits="4" access="R" reset="Preset">
-            1 when 128-bit bus accesses are supported.
+            1 when 128-bit system bus accesses are supported.
         </field>
         <field name="sbaccess64" bits="3" access="R" reset="Preset">
-            1 when 64-bit bus accesses are supported.
+            1 when 64-bit system bus accesses are supported.
         </field>
         <field name="sbaccess32" bits="2" access="R" reset="Preset">
-            1 when 32-bit bus accesses are supported.
+            1 when 32-bit system bus accesses are supported.
         </field>
         <field name="sbaccess16" bits="1" access="R" reset="Preset">
-            1 when 16-bit bus accesses are supported.
+            1 when 16-bit system bus accesses are supported.
         </field>
         <field name="sbaccess8" bits="0" access="R" reset="Preset">
-            1 when 8-bit bus accesses are supported.
+            1 when 8-bit system bus accesses are supported.
         </field>
     </register>
 
     <register name="System Bus Address 31:0" short="sbaddress0" address="0x04">
-        If \Fabussize is 0, then this register is not present.
+        If \Fsbasize is 0, then this register is not present.
 
-        When the bus master is busy, writes to this register will return error
+        When the syste bus master is busy,
+	writes to this register will return error
         and \Fsberror is set.
 
-        If \Fsberror is 0 and \Fautoread is set then the bus master will start
+        If \Fsberror is 0 and \Fsbautoread is set then the system bus
+	master will start
         to read after updating the address from \Faddress. The access size is
         controlled by \Fsbaccess in \Rdmcontrol.
 
@@ -211,7 +204,7 @@
     </register>
 
     <register name="System Bus Address 91:61" short="sbaddress2" address="0x06">
-        If \Fabussize is less than 65, then this register is not present.
+        If \Fsbasize is less than 65, then this register is not present.
 
         <field name="busy" bits="31" access="R" reset="0">
             The same as \Fbusy in \Rsbaddresszero.
@@ -241,7 +234,7 @@
         since the last time this register was read, then set \Fsberror, return
         error, and don't do anything else.
         2. "Return" the data.
-        3. If \Fautoread is set, start another bus read.
+        3. If \Fsbautoread is set, start another system bus read.
 
         <field name="data" bits="31:0" access="R/W" reset="0">
             Accesses bits 31:0 of the internal data.
@@ -279,7 +272,18 @@
     <!-- =============== abstract commands =============== -->
 
     <register name="Abstract Control" short="abstractcs" address="0x0b">
-        <field name="0" bits="31:8" access="R" reset="0" />
+        <field name="0" bits="31:16" access="R" reset="0" />
+        <field name="autoexec7" bits="15" access="R/W" reset="0" />
+        <field name="autoexec6" bits="14" access="R/W" reset="0" />
+        <field name="autoexec5" bits="13" access="R/W" reset="0" />
+        <field name="autoexec4" bits="12" access="R/W" reset="0" />
+        <field name="autoexec3" bits="11" access="R/W" reset="0" />
+        <field name="autoexec2" bits="10" access="R/W" reset="0" />
+        <field name="autoexec1" bits="9" access="R/W" reset="0" />
+        <field name="autoexec0" bits="8" access="R/W" reset="0">
+            When 1, accesses to \Ribufzero cause the command in \Rcommand to be
+            executed again.
+        </field>
         <field name="cmderr" bits="7:5" access="R/W0" reset="0">
             Gets set if an abstract command fails. No abstract command is
             started until the value is reset to 0.
@@ -351,6 +355,9 @@
     <register name="Program Buffer 0" short="ibuf0" address="0x18">
         The ibuf registers provide read/write access to the optional
         instruction buffer.
+
+        If \Fautoexeczero is set, then after this register is accessed the
+        command in \Rcommand is executed again.
 
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>

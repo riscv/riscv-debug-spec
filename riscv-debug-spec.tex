@@ -220,17 +220,14 @@ The debug interface described out here supports the following features:
    \item Any hart in the platform can be independently debugged.
    \item A debugger can discover almost everything it needs to know itself,
        without user configuration.
-   \item Arbitrary instructions can be executed on a halted hart. That means no
-       new debug functionality is needed when a core has custom instructions or
-       registers, as long as there exist programs that can store those
-       registers to memory.
-   \item With optional extensions it becomes possible to halt a core very
-       briefly and quickly execute a a few instructions before letting it
-       resume.
-   \item Memory is accessed through the core, so the debugger will see the same
-       thing that the code that is executing sees.
-   \item Optionally, a bus master can be implemented to allow memory access
-       without involving any hart.
+   \item An optional extension allows arbitrary instructions to be executed on
+       a halted hart. That means no new debug functionality is needed when a
+       core has custom instructions or state, as long as there exist programs
+       that can move that state into GPRs.
+   \item An implementation can choose to provide register access without
+       halting.
+   \item A system bus master can be implemented to allow memory access without
+       involving any hart.
    \item Debugging can be supported over multiple transports.
    \item Code can be downloaded efficiently.
    \item Each hart can be debugged from the very first instruction executed.
@@ -239,23 +236,18 @@ The debug interface described out here supports the following features:
    \item Hardware can step over any instruction.
    \item A RISC-V core can be halted when a trigger matches the PC, read/write
        address/data, or an instruction opcode.
-   \item The debug module may implement serial ports which can be used for
-       communication between debugger and monitor, or as a general protocol
-       between debugger and application.
+   \item Optional serial ports can be used for communication between debugger
+       and monitor, or as a general protocol between debugger and application.
    \item The debugger doesn't need to know anything about the microarchitecture
        of the cores it is debugging.
-   \item The spec can be implemented without touching a core's data path.
 \end{enumerate}
 
 \section{System Overview}
 
-The Debug System is designed to let a debugger feed a halted hart arbitrary
-instructions, while keeping gate count to a minimum. This is necessary
-functionality, and once it exists it can be used to accomplish all debug tasks.
-To speed up certain repetitive operations, an optional Instruction Buffer can
-be implemented. This is designed so that debug software can easily take
-advantage of it, without needing a separate implementation for when it is and
-isn't supported.
+The Debug System is designed to allow (at least) 2 different implementations.
+The direct implementation is intrusive into a core's data path, but enables a
+very light-weight Debug Module. The instruction supply implementation doesn't
+touch the core's data path, but requires a bit more from the Debug Module.
 
 Figure~\ref{fig:overview} shows the main components of External Debug Support.
 Blocks shown in dotted lines are optional.
@@ -275,13 +267,10 @@ The Debug Transport Hardware connects the Debug Host to the Platform's Debug
 Transport Module (DTM).  The DTM provides access to the DM using the Debug
 Module Interface (DMI).
 
-The DM allows the debugger to halt any hart in the platform.  When a hart is
-halted the DM can cause it to execute arbitrary instructions, and the hart can
-move data to/from the DM as well.  Optionally the DM can contain an Instruction
-Buffer to feed instructions more efficiently. As a further extension a Scratch
-RAM may be implemented which can be used to briefly halt a hart and execute a
-few instructions without requiring any debugger interaction once the process
-has started.
+The DM allows the debugger to halt any hart in the platform. Abstract commands
+provide access to GPRs and possibly other registers. More complex harts will
+require the Program Buffer be implemented, which the debugger uses to have the
+hart execute arbitrary instructions while halted.
 
 Each RISC-V core may implement a Trigger Module for each hart.  These can
 implement breakpoints, which cause a hart to halt spontaneously.  When that
@@ -331,7 +320,7 @@ Bus. The details are left to the system designer.
 
 The DMI uses between TODO and 32 address bits.  It supports read and write
 operations, which may return an error. (Errors are only used by the optional
-Bus Access and Serial Port blocks.) TODO: The bottom of the address space is
+System Bus Access and Serial Port blocks.) TODO: The bottom of the address space is
 used for the DM. Extra space can be used for custom debug devices, other cores,
 additional DMs, etc.
 
@@ -451,6 +440,11 @@ execute it using some of the abstract commands. The programs must end with {\tt
 ebreak} or {\tt ebreak.c}. While these programs are executed, the hart does not
 leave Halt Mode (see Section~\ref{haltmode}).
 
+Executing the Program Buffer may clobber \Rdpc. If that is the case, it must be
+possible to read/write \Rdpc using an abstract command. The debugger must
+attempt to save \Rdpc between halting and executing a Program Buffer, and then
+resture \Rdpc before leaving Halt Mode.
+
 \subsection{Serial Ports}
 
 The Debug Module may implement up to 8 serial ports. They support basic flow
@@ -460,14 +454,15 @@ equivalent of printf debugging, to provide a simple CLI without requiring any
 extra peripherals, or more generally to emulate devices that aren't present.
 All these uses require software support, and are not further specified here.
 
-\subsection{Bus Access}
+\subsection{Sytem Bus Access}
 
 In a minimal configuration a debugger can access the system bus by having a
 RISC-V hart perform the accesses it requires. Optionally a Bus Access block may
-be implemented. Because the Bus Access block performs accesses directly from
-the DM, it only uses physical addresses.
+be implemented. Because the System Bus Access block performs accesses directly
+from the DM, it only uses physical addresses.
 
-Implementing a Bus Access block has several benefits. First, it is possible to
+Implementing a System Bus Access block has several benefits.
+First, it is possible to
 access memory in a running system with minimal impact.  Second, it may improve
 performance when downloading programs. (There is only a benefit if JTAG TCK is a
 significant fraction of the RISC-V hart's clock speed.)  Third, it may provide
@@ -480,7 +475,8 @@ systems should use the same memory map for each hart. That means that a given
 address maps to the same device no matter which hart performs the access.
 (Different harts may not all have permission to access the same devices.) If
 different harts do have unique memory maps then the system should provide
-access to all devices using the Bus Access block. This will make implementing,
+access to all devices using the Sytem Bus Access block.
+This will make implementing,
 configuring, and using a debugger more complex so should be avoided if
 possible.
 
@@ -538,20 +534,12 @@ is 5 bits wide, or less than 1024 if that address is 6 or more bits wide.
 \subsection{Halt Mode} \label{haltmode}
 
 Halt Mode is a special processor mode used only when the core is halted for
-external debugging.
-
-\begin{steps}{To enter Halt Mode the hart:}
-\item Saves \Rpc to \Rdpc.
-\item Sets \Fcause in \Rdcsr.
-\item Starts fetching instructions from the DM.
-\end{steps}
+external debugging. How Halt Mode is entered is implementation-specific.
 
 \begin{steps}{While in Halt Mode:}
-\item All instructions come from the DM.
 \item All operations happen in machine mode.
 \item \Fmprv in \Rmstatus is ignored.
-\item All interrupts are masked. Whether slow watchdog timers (10s or longer)
-    are masked is left to the implementation.
+\item All interrupts are masked.
 \item Exceptions don't update any registers.  That includes {\tt cause}, {\tt
     epc}, {\tt badaddr}, and \Rmstatus.  Instead exceptions just set \Fhmexc in
     \Rdcsr.
@@ -560,10 +548,11 @@ external debugging.
 \item Cycle counters may be stopped, depending on \Fstopcycle in \Rdcsr.
 \item Timers may be stopped, depending on \Fstoptime in \Rdcsr.
 \item The {\tt wfi} instruction acts as a {\tt nop}.
-\item Instructions that change the privilege level have undefined behavior.
-    This includes {\tt ecall}, {\tt ebreak}, {\tt mret}, {\tt hret}, {\tt
-    sret}, and {\tt uret}.  (To change the privilege level, the debugger can
-    write \Fprv in \Rdcsr.)
+\item Almost all instructions that change the privilege level have undefined
+    behavior.  This includes {\tt ecall}, {\tt mret}, {\tt hret}, {\tt sret},
+    and {\tt uret}.  (To change the privilege level, the debugger can write
+    \Fprv in \Rdcsr.) The exception is {\tt ebreak}. When that is executed in
+    Halt Mode, it halts the processor again but without updating \Rdpc.
 \end{steps}
 
 \subsection{Load-Reserved/Store-Conditional Instructions}
@@ -762,57 +751,46 @@ match, or come up with their own design.
 
 \subsection{Direct}
 
-\begin{figure}
-   \centering
-   \includegraphics[width=\textwidth]{direct.eps}
-   \caption{Direct Implementation}
-   \label{fig:direct}
-\end{figure}
+Halting happens by inhibiting instruction fetching in Halt Mode.
 
-Figure~\ref{fig:direct} shows an implementation that might be appropriate for
-small cores.  In this implementation the DM reaches directly into the core's
-pipeline to push instructions. Entering halt mode might stall the pipeline, or
-send bubbles through. Data exchange happens by accessing a special CSR.
-Incrementing the PC is inhibited so no separate register is needed to store the
-PC. Instead accessing \Rdpc modifies the actual PC register.  When the halt is
-deasserted, regular instruction execution resumes.
+Muxes on the register file(s) allow for implementing those abstract commands.
+(TODO: Should we spec a suggested way of communicating between DM and hart, so
+that a reusable DM can be implemented?)
 
-\subsection{Instruction Fetch}
+To execute a program buffer, force \Rpc to the start of it, and re-enable
+instruction fetching (while staying in Halt Mode) until {\tt ebreak} is
+encountered.
 
-In this implementation, just the instruction fetch unit is changed. In halt
-mode the unit simply starts fetching instructions from the DM, while the PC is
-unchanged. The DM could wait until the debugger gives it an instruction before
-completing an access, or it could immediately return a jump-to-self instruction
-if the debugger hasn't given it an instruction. Data exchange probably happens
-through a special memory address. \Rdpc maps to the actual PC. When the debug
-interrupt is deasserted, regular instruction execution resumes at the current
-PC.
+\Rdpc is not physically a CSR. Instead, accessing it directly access \Rpc.
 
 \subsection{Plain Exception}
 
-\begin{figure}
-   \centering
-   \includegraphics[width=\textwidth]{plain-exception.eps}
-   \caption{Plain Exception Implementation}
-   \label{fig:direct}
-\end{figure}
+In this implementation, Halt Mode acts more like a real exception, jumping to a
+memory region that is serviced by the DM. When taking this exception, \Rpc is
+saved to \Rdpc. To allow the DM to individually control one out of several
+halted harts, each hart jumps to a hard-coded unique address.
 
-In this implementation, being halted acts more like a real exception, jumping
-to a memory region that is serviced by the DM. The PC is saved to \Rdpc. Any
-details required to make the core behave correctly (eg.  executing fence.i when
-a new instruction is mapped to some address) could be handled by a Debug ROM in
-the DM. When the debug interrupt is deasserted, the DM feeds the hart a dret
-instruction, which causes the PC to be restored and normal execution to resume.
-Data is probably exchanged through a memory address.
+\Rdatazero etc. are mapped into regular memory at address 0x400. The important
+property of that address is that it's reachable relative to \Rzero. The exact
+address is an implementation detail that a debugger must not rely on.
 
-In single-hart systems, the DM can just keep an instruction fetch access alive
-until the debugger has data for it.  In multi-core systems, the DM must have
-some way of allowing the debugger to choose which halted hart to send
-instructions to. It could keep multiple fetches alive, or immediately return a
-jump-to-self for harts that aren't the currently selected one. If it does that,
-it must pretend to the debugger that there is an access pending. In the process
-it assumes that a hart is going to keep fetching instructions, and won't
-suddenly go to sleep or be powered down.
+When first halting, the loop looks like this:
+\begin{minted}{gas}
+dm_control_hart_0:
+        nop
+        j       dm_park_hart_0
+\end{minted}
+
+The DM assumes that every instruction fetched from it is executed.
+
+To implement the abstract GPR access instructions, the {\tt nop} is changed
+(for a single fetch) to {\tt lw <gpr>, 0x400(zero)} or {\tt sw 0x400(zero),
+<gpr>}. To execute the Program Buffer, the {\tt nop} is changed to {\tt j
+dm\_program\_buffer}. To resume execution, the {\tt nop} is changed to {\tt
+dret}.
+
+When {\tt dret} is executed, \Rpc is restored from \Rdpc and normal execution
+resumes at the privilege set by \Fprv.
 
 \section{Debugger Implementation}
 
@@ -820,6 +798,13 @@ This section details how an external debugger might use the described debug
 interface to perform some common operations on RISC-V cores using the JTAG DTM.
 All these examples assume a 32-bit core but it should be easy to adapt the
 examples to 64- or 128-bit cores.
+
+To keep the examples readable, they all assume that everything succeeds, and
+that they complete faster than the debugger can perform the next access. This
+will be the case in a typical JTAG setup. However, the debugger must always
+check the sticky error status bits after performing a sequence of actions. If
+it sees any that are set, then it should attempt the same actions again,
+possibly while adding in some delay, or explicit checks for status bits.
 
 \subsection{Debug Bus Access} \label{dbusaccess}
 
@@ -853,60 +838,140 @@ to become set.
 
 \subsection{Accessing Registers}
 
-There are two ways to access registers. The first is to use the Access Register
-abstract command. This is the only way to access GPRs. Accessing other
-registers is also possible using the Program Buffer. In that case the debugger
-writes a simple program that transfers the value between a register it wants to
-access and a GPR.
+\subsubsection{Using Abstract Command}
 
-For example to read \Rmstatus, it writes the following program to the
-Instruction Buffer:
-\begin{minted}{gas}
-        csrr    s0, MSTATUS
-        ebreak
-\end{minted}
+\begin{table}[htp]
+    \centering
+    \caption{Read \Szero using abstract command}
+    \begin{tabulary}{\textwidth}{|r|r|r|L|}
+        \hline
+        Op & Address & Value & Comment \\
+        \hline
+        Write & \Rcommand & 0x1008 & Read \Szero \\
+        \hline
+        Read & \Rdatazero & - & Returns value that was in \Szero \\
+        \hline
+    \end{tabulary}
+\end{table}
 
-Next it executes the abstract command that causes this program to be executed
-(0x21000). When \Fbusy in \Rabstractcs goes low, now the debugger executes the
-command to read \Szero (TODO).
+\begin{table}[htp]
+    \centering
+    \caption{Write \Rmstatus using abstract command}
+    \begin{tabulary}{\textwidth}{|r|r|r|L|}
+        \hline
+        Op & Address & Value & Comment \\
+        \hline
+        Write & \Rdatazero & new value & \\
+        \hline
+        Write & \Rcommand & 0x10300 & Write \Rmstatus \\
+        \hline
+    \end{tabulary}
+\end{table}
 
-To write to eg. \Fone, the following program is written:
-\begin{minted}{gas}
-        fmv.x.s f1, s0
-        ebreak
-\end{minted}
+\subsubsection{Using Program Buffer}
 
-The desired value is written to \Rdatazero, and then the abstract command to
-write \Szero (TODO) and execute the program is executed. Once \Fbusy in
-\Rabstractcs the write is complete.
+Abstract commands are used to exchange data with GPRs. Using this mechanism, other
+registers can be accessed by moving their value into/out of GPRs.
+
+\begin{table}[htp]
+    \centering
+    \caption{Write \Rmstatus using program buffer}
+    \begin{tabulary}{\textwidth}{|r|r|r|L|}
+        \hline
+        Op & Address & Value & Comment \\
+        \hline
+        Write & \Ribufzero & {\tt csrw s0, MSTATUS} & \\
+        \hline
+        Write & \Ribufone & {\tt ebreak} & \\
+        \hline
+        Write & \Rdatazero & new value & \\
+        \hline
+        Write & \Rcommand & 0x31008 & Write \Szero, then execute program buffer \\
+        \hline
+    \end{tabulary}
+\end{table}
+
+\begin{table}[htp]
+    \centering
+    \caption{Read \Fone using program buffer}
+    \begin{tabulary}{\textwidth}{|r|r|r|L|}
+        \hline
+        Op & Address & Value & Comment \\
+        \hline
+        Write & \Ribufzero & {\tt fmv.x.s s0, f1} & \\
+        \hline
+        Write & \Ribufone & {\tt ebreak} & \\
+        \hline
+        Write & \Rcommand & 0x41008 & Execute program buffer, then read \Szero \\
+        \hline
+        Read & \Rdatazero & - & Returns the value that was in \Fone \\
+        \hline
+    \end{tabulary}
+\end{table}
 
 \subsection{Reading Memory}
 
-Push the following instructions into the hart:
-\begin{minted}{gas}
-        recv    s0, DM
-        # Service the read data access with the address to read from.
-        lw      s0, 0(s0)
-        xmit    s0, DM
-        # Service the write data access by reading the data that was read from
-        # memory.
-\end{minted}
+\subsubsection{Using System Bus Access}
 
-A block of memory can be read efficiently using the Instruction Buffer. First,
-load the start address of the memory block into \Sone by pushing:
-\begin{minted}{gas}
-        recv    s1, DM
-        # Service the read data access with the address to read from.
-\end{minted}
+\subsubsection{Using Program Buffer}
 
-Then load the following into the Instruction Buffer:
-\begin{minted}{gas}
-        lw      s0, 0(s1)
-        xmit    s0, DM
-        addi    s1, s1, 4
-\end{minted}
+\begin{table}[htp]
+    \centering
+    \caption{Read from memory using program buffer}
+    \begin{tabulary}{\textwidth}{|r|r|r|L|}
+        \hline
+        Op & Address & Value & Comment \\
+        \hline
+        Write & \Ribufzero & {\tt lw s0, 0(s0)} & \\
+        \hline
+        Write & \Ribufone & {\tt ebreak} & \\
+        \hline
+        Write & \Rdatazero & address & \\
+        \hline
+        Write & \Rcommand & 0x31008 & Write \Szero, then execute program buffer \\
+        \hline
+        Write & \Rcommand & 0x1008 & Read \Szero \\
+        \hline
+        Read & \Rdatazero & - & Value read from memory \\
+        \hline
+    \end{tabulary}
+\end{table}
 
-Table~\ref{tab:memread} shows the scans involved in reading a single word using
+\begin{table}[htp]
+    \centering
+    \caption{Read block of memory using program buffer}
+    \begin{tabulary}{\textwidth}{|r|r|r|L|}
+        \hline
+        Op & Address & Value & Comment \\
+        \hline
+        Write & \Ribufzero & {\tt lw s1, 0(s0)} & \\
+        \hline
+        Write & \Ribufone & {\tt addi s0, s0, 4} & \\
+        \hline
+        Write & \Ribuftwo & {\tt ebreak} & \\
+        \hline
+        Write & \Rdatazero & address & \\
+        \hline
+        Write & \Rcommand & 0x31008 & Write \Szero, then execute program buffer \\
+        \hline
+        Write & \Rcommand & \Fexeca OR 0x1009 & Read \Sone, then execute program buffer \\
+        \hline
+        Write & \Rabstractcs & \Fautoexeczero OR \Fcmderr & Set \Fautoexeczero \\
+        \hline
+        Read & \Rdatazero & - & Get value read from memory, then execute program buffer \\
+        \hline
+        Read & \Rdatazero & - & Get next value read from memory, then execute program buffer \\
+        \hline
+        ... & ... & ... & ... \\
+        \hline
+        Write & \Rabstractcs & \Fcmderr & Clear \Fautoexeczero \\
+        \hline
+        Read & \Rdatazero & - & Get last value read from memory. \\
+        \hline
+    \end{tabulary}
+\end{table}
+
+TODO: Table~\ref{tab:memread} shows the scans involved in reading a single word using
 this method.
 
 \begin{table}[htp]
@@ -969,28 +1034,7 @@ this method.
 
 \subsection{Writing Memory} \label{writemem}
 
-To write a single word:
-\begin{minted}{gas}
-        recv    s0, DM
-        # Service the data read with the address to write to.
-        recv    s1, DM
-        # Service the data read with the data to write.
-        sw      s1, 0(s0)
-\end{minted}
-
-Similar to reading a block of memory, writing can also be done efficiently.
-Load the start address of the memory block into \Sone by pushing:
-\begin{minted}{gas}
-        recv    s1, DM
-        # Service the read data access with the address to read from.
-\end{minted}
-
-Then load the following into the Instruction Buffer:
-\begin{minted}{gas}
-        recv    s0, DM
-        sw      s0, 0(s1)
-        addi    s0, s0, 4
-\end{minted}
+TODO: Just like reading memory.
 
 \begin{commentary}
     % Select-DR-Scan to Shift-DR: 2
@@ -1007,31 +1051,6 @@ Then load the following into the Instruction Buffer:
     efficiency. (This assumes the Debug Bus uses 5 address bits and that the
     debugger never has to wait for the core.)
 \end{commentary}
-
-\subsection{Reading Registers}
-
-Floating point register (\Fone):
-\begin{minted}{gas}
-        fmv.x.s s0, f1
-        xmit    s0, DM
-        # Read the actual data.
-\end{minted}
-
-CSR (\Rmepc):
-\begin{minted}{gas}
-        csrr    s0, MEPC
-        xmit    s0, DM
-        # Read the actual data.
-\end{minted}
-
-\subsection{Writing Registers} \label{writereg}
-
-Eg. how to write \Rmepc.
-\begin{minted}{gas}
-        recv    s0, DM
-        # Write the actual data.
-        csrw    MEPC, s0
-\end{minted}
 
 \subsection{Running}
 
@@ -1273,37 +1292,7 @@ Some future version of this spec may implement some of the following features.
 \section{Change Log}
 
 \begin{versionhistory}
-    \vhEntry{0.10}{Jul 11}{TN}{Version shared for 4th RISC-V Workshop}
-    \vhEntry{0.11}{Jul 17}{TN}{Updated Bus Access section}
-    \vhEntry{0.11}{Jul 29}{TN}{\Rmcontrol is intended to alias {\tt tdata0}.
-        Remove conditional writes.}
-    \vhEntry{0.11}{Aug 11}{TN}{Document {\tt wfi} behavior in Halt Mode.
-        Core Debug Registers are only accessible in Halt Mode. Removed hwbpcount
-        field from \Rdcsr.}
-    \vhEntry{0.11}{Aug 22}{TN}{Clarify meaning of $|mode|$ in \Rtselect. All
-        triggers are either locked by the debugger, or none are.}
-    \vhEntry{0.11}{Aug 23}{TN}{Triggers are locked on an individual basis
-        again. See \Fdmode in {\tt tdata0}. The definitions of \Fchain in
-        \Rmcontrol has been changed to be easier to explain. Changed
-        recommendations on when store hardware breakpoints fire.}
-    \vhEntry{0.11}{Aug 25}{TN}{Add \Ftiming to \Rmcontrol. Changed
-        encoding of \Faction.}
-    \vhEntry{0.11}{Aug 26}{TN}{Document {\tt lr}/{\tt sc} behavior.
-        Rename {\tt tdata0}--{\tt tdata2} to {\tt tdata1}--{\tt tdata3}.}
-    \vhEntry{0.11}{Sep 6}{TN}{Change Debug Bus to only support simple
-        read and write operations.}
-    \vhEntry{0.11}{Sep 7}{TN}{Clarify \Fop in \Rdbus.}
-    \vhEntry{0.11}{Sep 13}{TN}{Add rough idea of instruction count
-        triggers that could be used for single step.}
-    \vhEntry{0.11}{Sep 27}{TN}{M-mode writes to triggers with dmode=1 are
-        ignored instead of raising an exception.}
-    \vhEntry{0.11}{Oct 24}{TN}{Change serial full bit to full/overflow.}
-    \vhEntry{0.11}{Nov 2}{TN}{There actually can be side effects to reading
-        Debug Bus registers (specifically reading serial data).}
-    \vhEntry{0.12}{Nov 10}{TN}{Reduce Debug Bus width to 32 bits. This
-        caused a lot of changes in Section~\ref{dm}, and some in
-        Section~\ref{dbus}. Read Section~\ref{dbusaccess} to get an idea of how
-        that affects the debugger.}
+    \input{changelog.tex}
 \end{versionhistory}
 
 \end{document}

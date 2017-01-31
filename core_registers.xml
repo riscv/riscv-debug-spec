@@ -91,38 +91,14 @@
         <field name="dpc" bits="XLEN-1:0" access="R/W" reset="0" />
     </register>
 
-    <register name="32-bit DM Access Register" short="daccess32" address="0x7b2">
-        If a debug implementation access the DM through a CSR, this is the one
-        that's used for 32-bit accesses.
+    <register name="Debug Scratch Register 0" short="dscratch0" address="0x7b2">
+        Optional scratch register that can be used by implementations that need
+        it. A debugger must not write to this register.
     </register>
 
-    <register name="64-bit DM Access Register" short="daccess64" address="0x7b3">
-        If a debug implementation access the DM through a CSR, this is the one
-        that's used for 64-bit accesses.
-
-        This register only exists on cores whose XLEN is at least 64.
-    </register>
-
-    <register name="128-bit DM Access Register" short="daccess128" address="0x7b4">
-        If a debug implementation access the DM through a CSR, this is the one
-        that's used for 128-bit accesses.
-
-        This register only exists on cores whose XLEN is at least 128.
-    </register>
-
-    <register name="Debug Scratch Register 0" short="dscratch0" address="0x7b5">
-        Optional scratch register that can be used by a debugger or for
-        internal implementation.
-    </register>
-
-    <register name="Debug Scratch Register 1" short="dscratch1" address="0x7b6">
-        Optional scratch register that can be used by a debugger or for
-        internal implementation.
-    </register>
-
-    <register name="Debug Scratch Register 2" short="dscratch2" address="0x7b7">
-        Optional scratch register that can be used by a debugger or for
-        internal implementation.
+    <register name="Debug Scratch Register 1" short="dscratch1" address="0x7b3">
+        Optional scratch register that can be used by implementations that need
+        it. A debugger must not write to this register.
     </register>
 
     <register name="Privilege Level" short="priv" address="virtual">
