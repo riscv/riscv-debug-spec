@@ -242,7 +242,7 @@ The debug interface described out here supports the following features:
        of the cores it is debugging.
 \end{enumerate}
 
-\section{System Overview}
+\section{System Overview} \label{overview}
 
 The Debug System is designed to allow (at least) 2 different implementations.
 The direct implementation is intrusive into a core's data path, but enables a
@@ -276,6 +276,55 @@ Each RISC-V core may implement a Trigger Module for each hart.  These can
 implement breakpoints, which cause a hart to halt spontaneously.  When that
 happens the DM notices because the hart will signal the DM that it's ready for
 an instruction.
+
+\section{Reading Order}
+
+This section describes the minimal parts of the spec required to understand a
+given piece of functionality. It's still best to read the whole thing, but it
+might help you get started better than reading it all start to finish. No
+matter what you want to learn about, it's best to read Section~\ref{overview}
+first.
+
+\subsection{Halt/Resume}
+
+Sections \ref{dmi}, \ref{haltcontrol}, \ref{dmcontrol}, \ref{haltsum},
+\ref{hartids}, \ref{deb:halt}.
+
+\subsection{Abstract register access}
+
+Sections \ref{abstractcommands}, \ref{abstractcs}, \ref{command},
+\ref{data0}, \ref{deb:abstractreg}.
+
+\subsection{Instruction supply}
+
+Sections \ref{programbuffer}, \ref{accesscs}, \ref{ibuf0}, \ref{access
+register}, \ref{haltmode}, \ref{deb:regprogbuf}, \ref{deb:mrprogbuf}.
+
+\subsection{JTAG Debug Transport Module}
+
+Sections \ref{jtagdtm}, \ref{dbusaccess}.
+
+\subsection{System Bus master}
+
+Sections \ref{systembusaccess}, \ref{sbcs}, \ref{sbaddress0}, \ref{sbaddress1},
+\ref{sbaddress2}, \ref{sbdata0}, \ref{sbdata1}, \ref{sbdata2}, \ref{sbdata3},
+\ref{deb:mrsysbus}.
+
+\subsection{Reset}
+
+TODO
+
+\subsection{Security}
+
+TODO
+
+\subsection{Triggers}
+
+TODO
+
+\subsection{Serial Ports}
+
+TODO
 
 \section{Debug Transport Module (DTM)}
 
@@ -312,7 +361,7 @@ instructions to a hart.
 
 A single DM can debug up to 1024 harts.
 
-\subsection{Debug Module Interface (DMI)}
+\subsection{Debug Module Interface (DMI)} \label{dmi}
 
 The Debug Module Interface can be a trivial bus with one master and one slave,
 or use a more full-featured bus like TileLink or the AMBA Advanced Peripheral
@@ -356,7 +405,7 @@ by this reset is implementation dependent. Debug Module's own state and register
 generally reset at power-up and if and only if
 \Fdmactive in \Rdmcontrol is 0.
 
-\subsection{Halt Control}
+\subsection{Halt Control} \label{haltcontrol}
 
 This block controls halt signals from the Debug Module to a hart.  It is used
 to halt a hart, and let it run again.
@@ -371,7 +420,7 @@ every hart that has one. When set or cleared, a hart must respond in less than
 one second.  (How this is implemented is not further specified. A few clock
 cycles will be a more typical latency.)
 
-\subsection{Abstract Commands}
+\subsection{Abstract Commands} \label{abstractcommands}
 
 A debugger can execute abstract commands by writing the command to \Rcommand.
 If a command takes an argument, the debugger must write it to the {\tt data}
@@ -416,7 +465,7 @@ the hart is not halted.
 
 \input{abstract_commands.tex}
 
-\subsection{Program Buffer}
+\subsection{Program Buffer} \label{programbuffer}
 
 A debugger can write a small program to the optional Program Buffer, and then
 execute it exactly once using some of the abstract commands. The programs must
@@ -447,7 +496,7 @@ equivalent of printf debugging, to provide a simple CLI without requiring any
 extra peripherals, or more generally to emulate devices that aren't present.
 All these uses require software support, and are not further specified here.
 
-\subsection{Sytem Bus Access}
+\subsection{System Bus Access} \label{systembusaccess}
 
 In a minimal configuration a debugger can access the system bus by having a
 RISC-V hart perform the accesses it requires. Optionally a Bus Access block may
@@ -515,7 +564,7 @@ Modifications to the RISC-V core to support debug are kept to a minimum.  There
 is a special execution mode (Halt Mode) and a few extra CSRs. The DM takes care
 of the rest.
 
-\subsection{Hart IDs}
+\subsection{Hart IDs} \label{hartids}
 
 External debug imposes a few limits on hart IDs. Every hart in the system must
 have a unique ID. (There could be additional harts that reuse IDs, but only one
@@ -593,7 +642,7 @@ separately.
 
 \input{hwbp_registers.tex}
 
-\section{JTAG Debug Transport Module}
+\section{JTAG Debug Transport Module} \label{jtagdtm}
 
 This Debug Transport Module is based around a normal JTAG Test Access Port
 (TAP).  The JTAG TAP allows access to arbitrary JTAG registers by first
@@ -820,14 +869,14 @@ inefficiency in typical JTAG use.
 A debugger continuously monitors \Rhaltsum to see if any harts have spontaneously
 halted.
 
-\subsection{Halting}
+\subsection{Halting} \label{deb:halt}
 
 To halt a hart, the debugger sets \Fhartid and \Fhalt. Then it waits for \Fhalt
 to become set.
 
 \subsection{Accessing Registers}
 
-\subsubsection{Using Abstract Command}
+\subsubsection{Using Abstract Command} \label{deb:abstractreg}
 
 \noindent Read \Szero using abstract command:
 
@@ -855,7 +904,7 @@ to become set.
 \end{tabulary}
 \medskip
 
-\subsubsection{Using Program Buffer}
+\subsubsection{Using Program Buffer} \label{deb:regprogbuf}
 
 Abstract commands are used to exchange data with GPRs. Using this mechanism, other
 registers can be accessed by moving their value into/out of GPRs.
@@ -897,7 +946,7 @@ registers can be accessed by moving their value into/out of GPRs.
 
 \subsection{Reading Memory}
 
-\subsubsection{Using System Bus Access}
+\subsubsection{Using System Bus Access} \label{deb:mrsysbus}
 
 \noindent Read a word from memory using system bus access:
 
@@ -939,7 +988,7 @@ registers can be accessed by moving their value into/out of GPRs.
 \end{tabulary}
 \medskip
 
-\subsubsection{Using Program Buffer}
+\subsubsection{Using Program Buffer} \label{deb:mrprogbuf}
 
 \noindent Read a word from memory using program buffer:
 
