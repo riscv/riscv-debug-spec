@@ -419,9 +419,9 @@ the hart is not halted.
 \subsection{Program Buffer}
 
 A debugger can write a small program to the optional Program Buffer, and then
-execute it using some of the abstract commands. The programs must end with {\tt
-ebreak} or {\tt ebreak.c}. While these programs are executed, the hart does not
-leave Halt Mode (see Section~\ref{haltmode}).
+execute it exactly once using some of the abstract commands. The programs must
+end with {\tt ebreak} or {\tt ebreak.c}. While these programs are executed, the
+hart does not leave Halt Mode (see Section~\ref{haltmode}).
 
 If an exception is encountered during execution of the Program Buffer, no more
 instructions are executed, the hart remains in Halt Mode, and \Fcmderr is set
@@ -719,7 +719,7 @@ If they are not implemented, then they must select the BYPASS register.
 
 \section{Hardware Implementations}
 
-Below are three possible implementations. A designer could choose one, mix and
+Below are two possible implementations. A designer could choose one, mix and
 match, or come up with their own design.
 
 \subsection{Direct}
@@ -747,26 +747,35 @@ halted harts, each hart jumps to a hard-coded unique address.
 property of that address is that it's reachable relative to \Rzero. The exact
 address is an implementation detail that a debugger must not rely on.
 
-When first halting, the loop looks like this:
+When first halting, the code there looks like this:
 \begin{minted}{gas}
-dm_park_hart_0:
-        nop
-        j       dm_park_hart_0
+dm_entry_hart_0:
+        fence.i # Rocket core caches all instruction memory.
+        nop     # "entry nop"
+_park:
+        fence.i # Rocket core caches all instruction memory.
+        nop     # "park nop"
+        j       _park
+
+dm_exception_hart_0:
+        sw      0x408(zero), zero
+        j       dm_entry_hart_0
 \end{minted}
 
-The DM assumes that every instruction fetched from it is executed.
+To implement the abstract 32-bit GPR access instructions, the park nop is
+changed to {\tt lw <gpr>, 0x400(zero)} or {\tt sw 0x400(zero), <gpr>}. 64- and
+128-bit accesses use {\tt ld}/{\tt sd} and {\tt lq}/{\tt sq} respectively. When
+the DM sees this access happen, it turns the instruction back to {\tt nop}.
 
-To implement the abstract 32-bit GPR access instructions, the {\tt nop} is
-changed (for a single fetch) to {\tt lw <gpr>, 0x400(zero)} or {\tt sw
-0x400(zero), <gpr>}. 64- and 128-bit accesses use {\tt ld}/{\tt sd} and {\tt
-lq}/{\tt sq} respectively.
+To execute the Program Buffer, the entry nop is changed to {\tt sw 0x404(zero),
+zero} and the park nop is changed to {\tt j dm\_program\_buffer}. When {\tt
+ebreak} is executed (indicating the end of the Program Buffer code) the hart
+jumps back to its dm\_park loop. The DM can see this happened when the access
+to 0x404 happens. At that point it restores both the entry and the park nop.
 
-To execute the Program Buffer, the {\tt nop} is changed to {\tt j
-dm\_program\_buffer}. When {\tt ebreak} is executed (indicating the end of the
-Program Buffer code) the hart jumps back to its dm\_park loop. If an exception
-is encountered, the hart jumps to its debug exception address, which in turn
-contains a jump back to its dm\_park loop. The DM infers from the fetch at the
-dm\_park address that there was an exception, and sets \Fcmderr appropriately.
+If an exception is encountered, the hart jumps to its debug exception address,
+where code writes to 0x408 indicating to the DM that an exception occurred. In
+response the DM sets \Fcmderr.
 
 To resume execution, the {\tt nop} is changed to {\tt dret}.  When {\tt dret}
 is executed, \Rpc is restored from \Rdpc and normal execution resumes at the
