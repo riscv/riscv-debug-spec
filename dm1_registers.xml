@@ -328,6 +328,15 @@
 
         If \Fcmderr is non-zero, writes to this register are ignored.
 
+        \begin{commentary}
+            \Fcmderr inhibits starting a new command to accommodate debuggers
+            that, for performance reasons, send several commands to be executed
+            in a row without checking \Fcmderr in between. They can safely do
+            so and check \Fcmderr at the end without worrying that one command
+            failed but then a later command (which might have depended on the
+            previous one succeeding) passed.
+        \end{commentary}
+
         <field name="command" bits="31:0" access="W" reset="0" />
     </register>
 
