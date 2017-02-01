@@ -347,8 +347,6 @@
         Accessing them while an abstract command is executing causes \Fcmderr
         to be set.
 
-        TODO: For now these register addresses conflict.
-
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
 
