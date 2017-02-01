@@ -191,6 +191,55 @@ in Table~\ref{tab:access}.
 
 \input{sample_registers.tex}
 
+\subsection{Reading Order}
+
+This section describes the minimal parts of the spec required to understand a
+given piece of functionality. It's still best to read the whole thing, but it
+might help you get started better than reading it all start to finish. No
+matter what you want to learn about, it's best to read Section~\ref{overview}
+first.
+
+\subsubsection{Halt/Resume}
+
+Sections \ref{dmi}, \ref{haltcontrol}, \ref{dmcontrol}, \ref{haltsum},
+\ref{hartids}, \ref{deb:halt}.
+
+\subsubsection{Abstract register access}
+
+Sections \ref{abstractcommands}, \ref{abstractcs}, \ref{command},
+\ref{data0}, \ref{deb:abstractreg}.
+
+\subsubsection{Instruction supply}
+
+Sections \ref{programbuffer}, \ref{accesscs}, \ref{ibuf0}, \ref{access
+register}, \ref{haltmode}, \ref{deb:regprogbuf}, \ref{deb:mrprogbuf}.
+
+\subsubsection{JTAG Debug Transport Module}
+
+Sections \ref{jtagdtm}, \ref{dbusaccess}.
+
+\subsubsection{System Bus master}
+
+Sections \ref{systembusaccess}, \ref{sbcs}, \ref{sbaddress0}, \ref{sbaddress1},
+\ref{sbaddress2}, \ref{sbdata0}, \ref{sbdata1}, \ref{sbdata2}, \ref{sbdata3},
+\ref{deb:mrsysbus}.
+
+\subsubsection{Reset}
+
+TODO
+
+\subsubsection{Security}
+
+TODO
+
+\subsubsection{Triggers}
+
+TODO
+
+\subsubsection{Serial Ports}
+
+TODO
+
 \section{Background}
 
 There are two forms of external debugging. The first is \emph{halt mode}
@@ -276,55 +325,6 @@ Each RISC-V core may implement a Trigger Module for each hart.  These can
 implement breakpoints, which cause a hart to halt spontaneously.  When that
 happens the DM notices because the hart will signal the DM that it's ready for
 an instruction.
-
-\section{Reading Order}
-
-This section describes the minimal parts of the spec required to understand a
-given piece of functionality. It's still best to read the whole thing, but it
-might help you get started better than reading it all start to finish. No
-matter what you want to learn about, it's best to read Section~\ref{overview}
-first.
-
-\subsection{Halt/Resume}
-
-Sections \ref{dmi}, \ref{haltcontrol}, \ref{dmcontrol}, \ref{haltsum},
-\ref{hartids}, \ref{deb:halt}.
-
-\subsection{Abstract register access}
-
-Sections \ref{abstractcommands}, \ref{abstractcs}, \ref{command},
-\ref{data0}, \ref{deb:abstractreg}.
-
-\subsection{Instruction supply}
-
-Sections \ref{programbuffer}, \ref{accesscs}, \ref{ibuf0}, \ref{access
-register}, \ref{haltmode}, \ref{deb:regprogbuf}, \ref{deb:mrprogbuf}.
-
-\subsection{JTAG Debug Transport Module}
-
-Sections \ref{jtagdtm}, \ref{dbusaccess}.
-
-\subsection{System Bus master}
-
-Sections \ref{systembusaccess}, \ref{sbcs}, \ref{sbaddress0}, \ref{sbaddress1},
-\ref{sbaddress2}, \ref{sbdata0}, \ref{sbdata1}, \ref{sbdata2}, \ref{sbdata3},
-\ref{deb:mrsysbus}.
-
-\subsection{Reset}
-
-TODO
-
-\subsection{Security}
-
-TODO
-
-\subsection{Triggers}
-
-TODO
-
-\subsection{Serial Ports}
-
-TODO
 
 \section{Debug Transport Module (DTM)}
 
