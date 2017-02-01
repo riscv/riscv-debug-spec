@@ -70,7 +70,7 @@
         If implemented, this register contains a summary of which harts are
         halted.
 
-        Each 30 bit contains the logical OR of 32 halt bits. When there are a
+        Each bit contains the logical OR of 32 halt bits. When there are a
         large number of harts in the system, the debugger can first read this
         register, and then read from the halt region (TODO) to determine which
         hart is the one that is halted.
