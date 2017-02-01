@@ -298,7 +298,7 @@
         <field name="autoexec2" bits="10" access="R/W" reset="0" />
         <field name="autoexec1" bits="9" access="R/W" reset="0" />
         <field name="autoexec0" bits="8" access="R/W" reset="0">
-            When 1, accesses to \Ribufzero cause the command in \Rcommand to be
+            When 1, accesses to \Rdatazero cause the command in \Rcommand to be
             executed again.
         </field>
         <field name="cmderr" bits="7:5" access="R/W0" reset="0">
