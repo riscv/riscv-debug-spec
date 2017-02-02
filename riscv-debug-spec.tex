@@ -928,7 +928,7 @@ registers can be accessed by moving their value into/out of GPRs.
     \hline
     Write & \Rdatazero & new value & \\
     \hline
-    Write & \Rcommand & \Fsize$=2$, \Fexeca, \Fwrite, 0x1008 &
+    Write & \Rcommand & \Fsize$=2$, \Fpostexec, \Fwrite, 0x1008 &
         Write \Szero, then execute program buffer \\
     \hline
 \end{tabulary}
@@ -944,7 +944,7 @@ registers can be accessed by moving their value into/out of GPRs.
     \hline
     Write & \Ribufone & {\tt ebreak} & \\
     \hline
-    Write & \Rcommand & \Fexecb, 0x1008 & Execute program buffer, then read \Szero \\
+    Write & \Rcommand & \Fpreexec, 0x1008 & Execute program buffer, then read \Szero \\
     \hline
     Read & \Rdatazero & - & Returns the value that was in \Fone \\
     \hline
@@ -1009,7 +1009,7 @@ registers can be accessed by moving their value into/out of GPRs.
     \hline
     Write & \Rdatazero & address & \\
     \hline
-    Write & \Rcommand & \Fwrite, \Fexeca, 0x1008 & Write \Szero, then execute program buffer \\
+    Write & \Rcommand & \Fwrite, \Fpostexec, 0x1008 & Write \Szero, then execute program buffer \\
     \hline
     Write & \Rcommand & 0x1008 & Read \Szero \\
     \hline
@@ -1032,9 +1032,9 @@ registers can be accessed by moving their value into/out of GPRs.
     \hline
     Write & \Rdatazero & address & \\
     \hline
-    Write & \Rcommand & \Fwrite, \Fexeca, 0x1008 & Write \Szero, then execute program buffer \\
+    Write & \Rcommand & \Fwrite, \Fpostexec, 0x1008 & Write \Szero, then execute program buffer \\
     \hline
-    Write & \Rcommand & \Fexeca, 0x1009 & Read \Sone, then execute program buffer \\
+    Write & \Rcommand & \Fpostexec, 0x1009 & Read \Sone, then execute program buffer \\
     \hline
     Write & \Rabstractcs & \Fautoexeczero OR \Fcmderr & Set \Fautoexeczero \\
     \hline

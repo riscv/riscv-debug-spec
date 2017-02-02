@@ -14,11 +14,11 @@
 
             4: Access the lowest 128 bits of the register.
         </field>
-        <field name="execb" bits="18">
+        <field name="preexec" bits="18">
             When 1, execute the program in the Program Buffer exactly once
             before performing the read/write.
         </field>
-        <field name="execa" bits="17">
+        <field name="postexec" bits="17">
             When 1, execute the program in the Program Buffer exactly once
             after performing the read/write.
         </field>
