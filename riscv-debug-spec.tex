@@ -14,7 +14,6 @@
 
 % Used for tables that can span pages:
 \usepackage{xtab}
-\tabletail{\hline \multicolumn{4}{|r|}{{Continued on next page}} \\ \hline}
 
 % Keep spacing normal in enumerated instead of adding extra space between
 % items.
@@ -118,6 +117,7 @@ Mark Beal,
 Monte Dalrymple,
 Peter Egold,
 Richard Herveille,
+Po-wei Huang,
 Aram Nahidipour,
 Gajinder Panesar,
 Klaus Kruse Pedersen,
@@ -157,7 +157,7 @@ function. Typically they will all be connected to a single system bus.
 A single RISC-V core contains one or more hardware threads, called
 \emph{harts}.
 
-\subsection{Register Definitions}
+\subsection{Register Definition Format}
 
 All register definitions in this document follow the format shown in Section~\ref{shortname}.
 A simple graphic shows which fields are in the register. The
@@ -336,7 +336,7 @@ communicates with the outside world includes a DTM, allowing a platform to be
 debugged through every transport it supports.  For instance a USB component
 could include a DTM. This would trivially allow any platform to be debugged
 over USB. All that is required is that the USB module already in use also has
-access to the Debug Bus.
+access to the Debug Module Interface.
 
 Using multiple DTMs at the same time is not supported. It is left to the user
 to ensure this does not happen.
@@ -344,20 +344,18 @@ to ensure this does not happen.
 \section{Debug Module (DM)} \label{dm}
 
 \begin{steps}{The Debug Module is the interface between specific debug
-    operations and their implementation. It must support the following
+    operations and their implementation. It might support the following
     operations:}
 \item Provide access to a reset signal that allows debugging out of reset.
-\item Allow any individual hart to be halted.
-\item Provide status on which harts are halted.
-\item Feed a specific hart one instruction, and have that hart execute the
-    instruction.
-\item Give the debugger necessary information about the implementation. The user
-    should not have to configure anything beyond how the debugger accesses the
-    Debug Module.
+    (Required)
+\item Allow any individual hart to be halted. (Required)
+\item Provide status on which harts are halted. (Required)
+\item Provide access to a halted hart's GPRs. (Required)
+\item Give the debugger necessary information about the implementation.
+    (Required)
+\item Provide access to other hart registers. (Optional)
+\item Force the hart to execute arbitrary instructions. (Optional)
 \end{steps}
-
-Optionally, an Instruction Buffer can repeatedly feed the same set of
-instructions to a hart.
 
 A single DM can debug up to 1024 harts.
 
@@ -410,15 +408,15 @@ generally reset at power-up and if and only if
 This block controls halt signals from the Debug Module to a hart.  It is used
 to halt a hart, and let it run again.
 
-For each hart the block contains a single bit that is accessible through to
-\Fhalt in \Rdmcontrol. When a debugger wants to halt a hart, it writes 1 to
-this bit, and then waits for \Fhalt in that register to go high.  To resume,
-the debugger clears the bit, and waits for it to go low.
+For each hart the block contains a single bit that is accessible through \Fhalt
+in \Rdmcontrol. When a debugger wants to halt a hart, it writes 1 to this bit,
+and then waits for \Fhalt in that register to go high.  To resume, the debugger
+clears the bit, and waits for it to go low.
 
 The Debug Module conceptually has a direct connection to the halt signal of
-every hart that has one. When set or cleared, a hart must respond in less than
-one second.  (How this is implemented is not further specified. A few clock
-cycles will be a more typical latency.)
+every hart that has a halt signal. When set or cleared, a hart must respond in
+less than one second.  (How this is implemented is not further specified. A few
+clock cycles will be a more typical latency.)
 
 \subsection{Abstract Commands} \label{abstractcommands}
 
@@ -466,6 +464,11 @@ the hart is not halted.
 \input{abstract_commands.tex}
 
 \subsection{Program Buffer} \label{programbuffer}
+
+To support executing arbitrary instructions on a halted hart, there may be a
+Program Buffer that a debugger can write small programs to. Systems that don't
+need any access beyond the abstract commands described in
+Section~\ref{abstractcommands} may choose to omit this functionality.
 
 A debugger can write a small program to the optional Program Buffer, and then
 execute it exactly once using some of the abstract commands. The programs must
@@ -586,7 +589,7 @@ external debugging. How Halt Mode is entered is implementation-specific.
 \item Exceptions don't update any registers.  That includes {\tt cause}, {\tt
     epc}, {\tt badaddr}, {\tt dpc}, and \Rmstatus. They do end execution of the
     Program Buffer.
-\item No trigger actions are taken.
+\item No action is taken if a trigger matches.
 \item Trace is disabled.
 \item Cycle counters may be stopped, depending on \Fstopcycle in \Rdcsr.
 \item Timers may be stopped, depending on \Fstoptime in \Rdcsr.

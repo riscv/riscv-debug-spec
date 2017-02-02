@@ -308,25 +308,25 @@ def print_latex_custom( registers ):
 
             print "\\end{center}"
 
+        columns = [("l", "Field", "name")]
+        columns += [("p{0.5\\textwidth}", "Description", "description")]
+        if not registers.skip_access:
+            columns += [("c", "Access", "access")]
+        if not registers.skip_reset:
+            columns += [("l", "Reset", "reset")]
+
         if any( f.description for f in r.fields ):
+            print "\\tabletail{\\hline \\multicolumn{%d}{|r|}" % len(columns)
+            print "   {{Continued on next page}} \\\\ \\hline}"
             print "\\begin{center}"
-            print "   \\begin{xtabular}{|l|p{0.5\\textwidth}|c|l|}"
+            print "   \\begin{xtabular}{|%s|}" % "|".join(c[0] for c in columns)
             print "   \\hline"
-            print "Field & Description",
-            if not registers.skip_access:
-                print "& Access",
-            if not registers.skip_reset:
-                print "& Reset",
-            print "\\\\"
+            print "   %s\\\\" % " & ".join(c[1] for c in columns)
             print "   \\hline"
             for f in r.fields:
                 if f.description:
-                    print "$|%s|$ & %s" % ( f.name, f.description ),
-                    if not registers.skip_access:
-                        print "& %s" % f.access,
-                    if not registers.skip_reset:
-                        print "& %s" % f.reset,
-                    print "\\\\"
+                    print "   |%s| &" % str(getattr(f, columns[0][2])),
+                    print "%s\\\\" % " & ".join(str(getattr(f, c[2])) for c in columns[1:])
                     print "   \\hline"
 
             #print "   \\end{tabulary}"
