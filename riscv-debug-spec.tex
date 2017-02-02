@@ -471,13 +471,17 @@ need any access beyond the abstract commands described in
 Section~\ref{abstractcommands} may choose to omit this functionality.
 
 A debugger can write a small program to the optional Program Buffer, and then
-execute it exactly once using some of the abstract commands. The programs must
-end with {\tt ebreak} or {\tt ebreak.c}. While these programs are executed, the
-hart does not leave Halt Mode (see Section~\ref{haltmode}).
+execute it exactly once using some of the abstract commands. If \Fprogsize is
+1, the Program Buffer may only hold a single instruction. This can be a 32-bit
+instruction, or a compressed instruction in the lower 16 bits accompanied by a
+compressed {\tt nop} in the upper 16 bits.  If \Fprogsize is greater than 1,
+the debugger can write whatever program it likes, but the program must end with
+{\tt ebreak} or {\tt ebreak.c}.
 
-If an exception is encountered during execution of the Program Buffer, no more
-instructions are executed, the hart remains in Halt Mode, and \Fcmderr is set
-to 3.
+While these programs are executed, the hart does not leave Halt Mode (see
+Section~\ref{haltmode}).  If an exception is encountered during execution of
+the Program Buffer, no more instructions are executed, the hart remains in Halt
+Mode, and \Fcmderr is set to 3.
 
 Executing the Program Buffer may clobber \Rdpc. If that is the case, it must be
 possible to read/write \Rdpc using an abstract command. The debugger must

@@ -366,7 +366,8 @@
     <register name="Access Status and Control" short="accesscs" address="0x15">
         <field name="0" bits="31:4" access="R" reset="0" />
         <field name="progsize" bits="3:0" access="R" reset="Preset">
-            Size of the Program Buffer, in 32-bit words.
+            Size of the Program Buffer, in 32-bit words. Valid sizes are 0, 1,
+            and 8.
 
             A debugger must not access any Instruction Buffer locations that
             fall outside the range specified here.
