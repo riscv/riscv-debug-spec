@@ -5,8 +5,26 @@
         is accessible, then \Fsize matching the register's actual size must be
         supported.
 
+        \begin{steps}{Perform the following sequence of operations:}
+        \item Halt the hart, if \Fprehalt is set.
+        \item Execute the Program Buffer, if \Fpreexec is set.
+        \item Copy data from the specified register into {\tt data}, if \Fwrite is clear.
+        \item Copy data from {\tt data} into the specified register, if \Fwrite is set.
+        \item Execute the Program Buffer, if \Fpostexec is set.
+        \item Resume the hart, if \Fpostresume is set.
+        \end{steps}
+
         <field name="0" bits="31:24" />
-        <field name="0" bits="23:22" />
+        <field name="prehalt" bits="23">
+            When 1, halt the hart before performing the rest of the command.
+
+            If the hart is already halted, the command may fail.
+        </field>
+        <field name="postresume" bits="22">
+            When 1, resume the hart after performing the rest of the command.
+
+            If the hart is already running, the command may fail.
+        </field>
         <field name="size" bits="21:19">
             2: Access the lowest 32 bits of the register.
 
