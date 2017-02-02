@@ -291,6 +291,9 @@
         <field name="autoexec0" bits="8" access="R/W" reset="0">
             When 1, accesses to \Rdatazero cause the command in \Rcommand to be
             executed again.
+
+            The same is true for other other autoexec bits: When 1, accesses to
+            {\tt data}N cause the command in \Rcommand to be executed again.
         </field>
         <field name="cmderr" bits="7:5" access="R/W0" reset="0">
             Gets set if an abstract command fails. No abstract command is
