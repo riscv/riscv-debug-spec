@@ -5,6 +5,10 @@
         is accessible, then \Fsize matching the register's actual size must be
         supported.
 
+        This command must be implemented and support accessing GPRs when the
+        hart is halted. Accessing other registers, or accessing registers while
+        the hart is running is optional.
+
         <field name="0" bits="31:24" />
         <field name="0" bits="23:22" />
         <field name="size" bits="21:19">
