@@ -490,15 +490,6 @@ restore \Rdpc before leaving Halt Mode.
     the PC when executing the Program Buffer.
 \end{commentary}
 
-\subsection{Serial Ports}
-
-The Debug Module may implement up to 8 serial ports. They support basic flow
-control and full duplex data transfer between a component and the debugger.
-They can be used to communicate with a debug monitor running on a hart, for the
-equivalent of printf debugging, to provide a simple CLI without requiring any
-extra peripherals, or more generally to emulate devices that aren't present.
-All these uses require software support, and are not further specified here.
-
 \subsection{System Bus Access} \label{systembusaccess}
 
 In a minimal configuration a debugger can access the system bus by having a
@@ -525,6 +516,23 @@ This will make implementing,
 configuring, and using a debugger more complex so should be avoided if
 possible.
 
+\subsection{Quick Access}
+
+Some systems can only be halted very briefly. There are several mechanisms that
+can still allow accessing resources in such a running system.
+
+First, an implementation may implement abstract commands that work without
+halting the hart.
+
+Second, \Fprehalt and \Fpostresume in abstract commands allow a single abstract
+command to first halt the hart, and then resume it. This results in the hart
+being halted for a minimal amount of time. There are no doubt systems where
+this is unacceptable, but most real-time systems can bear an occasional hiccup
+of a hundred or less cycles.
+
+Third, if the System Bus Access block is implemented, it can be used while a
+hart is running to access memory.
+
 \subsection{Security}
 
 To protect intellectual property it may be desirable to lock access to the
@@ -537,6 +545,15 @@ Another option is to allow the DM to be unlocked only by users who  have an
 access key. A simple mechanism is documented in Section~\ref{authdata0}. When
 \Fauthenticated is clear, the DM must not interact with the rest of the
 platform in any way.
+
+\subsection{Serial Ports}
+
+The Debug Module may implement up to 8 serial ports. They support basic flow
+control and full duplex data transfer between a component and the debugger.
+They can be used to communicate with a debug monitor running on a hart, for the
+equivalent of printf debugging, to provide a simple CLI without requiring any
+extra peripherals, or more generally to emulate devices that aren't present.
+All these uses require software support, and are not further specified here.
 
 \subsection{Debug Module DMI Registers} \label{dmdebbus}
 

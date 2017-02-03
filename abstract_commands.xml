@@ -1,15 +1,10 @@
 <registers name="Abstract Commands" skip_index="1" skip_access="1" skip_reset="1">
     <register name="Access Register">
-        Access the register specified by \Fregno. If \Fsize specifies a size
-        larger than the register is, then the access must fail. If a register
-        is accessible, then \Fsize matching the register's actual size must be
-        supported.
-
         \begin{steps}{Perform the following sequence of operations:}
         \item Halt the hart, if \Fprehalt is set.
         \item Execute the Program Buffer, if \Fpreexec is set.
-        \item Copy data from the specified register into {\tt data}, if \Fwrite is clear.
-        \item Copy data from {\tt data} into the specified register, if \Fwrite is set.
+        \item Copy data from the register specified by \Fregno into {\tt data}, if \Fwrite is clear.
+        \item Copy data from {\tt data} into the register specified by \Fregno, if \Fwrite is set.
         \item Execute the Program Buffer, if \Fpostexec is set.
         \item Resume the hart, if \Fpostresume is set.
         \end{steps}
@@ -35,6 +30,10 @@
             3: Access the lowest 64 bits of the register.
 
             4: Access the lowest 128 bits of the register.
+
+            If \Fsize specifies a size larger than the register is, then the
+            access must fail. If a register is accessible, then \Fsize matching
+            the register's actual size must be supported.
         </field>
         <field name="preexec" bits="18">
             When 1, execute the program in the Program Buffer exactly once
