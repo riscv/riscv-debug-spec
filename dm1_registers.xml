@@ -66,23 +66,14 @@
         </field>
     </register>
 
-    <register name="Hart Info" short="hartinfo" address="0x01">
-        This register contains information describing the hart selected by
-        \Fhartid.
-
-        TODO: remove?
-
-        <field name="0" bits="31:0" access="R" reset="0" />
-    </register>
-
     <register name="Halt Summary" short="haltsum" address="0x02">
         If implemented, this register contains a summary of which harts are
         halted.
 
-        Each 30 bit contains the logical OR of 32 halt bits. When there are a
+        Each bit contains the logical OR of 32 halt bits. When there are a
         large number of harts in the system, the debugger can first read this
-        register, and then read from the halt region (TODO) to determine which
-        hart is the one that is halted.
+        register, and then read from the halt region (0x40--0x5f) to determine
+        which hart is the one that is halted.
 
         <field name="halt31:0" bits="0" access="R" reset="0" />
         <field name="halt63:32" bits="1" access="R" reset="0" />
@@ -300,6 +291,9 @@
         <field name="autoexec0" bits="8" access="R/W" reset="0">
             When 1, accesses to \Rdatazero cause the command in \Rcommand to be
             executed again.
+
+            The same is true for other other autoexec bits: When 1, accesses to
+            {\tt data}N cause the command in \Rcommand to be executed again.
         </field>
         <field name="cmderr" bits="7:5" access="R/W0" reset="0">
             Gets set if an abstract command fails. No abstract command is
@@ -337,6 +331,15 @@
 
         If \Fcmderr is non-zero, writes to this register are ignored.
 
+        \begin{commentary}
+            \Fcmderr inhibits starting a new command to accommodate debuggers
+            that, for performance reasons, send several commands to be executed
+            in a row without checking \Fcmderr in between. They can safely do
+            so and check \Fcmderr at the end without worrying that one command
+            failed but then a later command (which might have depended on the
+            previous one succeeding) passed.
+        \end{commentary}
+
         <field name="command" bits="31:0" access="W" reset="0" />
     </register>
 
@@ -346,8 +349,6 @@
 
         Accessing them while an abstract command is executing causes \Fcmderr
         to be set.
-
-        TODO: For now these register addresses conflict.
 
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
@@ -365,7 +366,8 @@
     <register name="Access Status and Control" short="accesscs" address="0x15">
         <field name="0" bits="31:4" access="R" reset="0" />
         <field name="progsize" bits="3:0" access="R" reset="Preset">
-            Size of the Program Buffer, in 32-bit words.
+            Size of the Program Buffer, in 32-bit words. Valid sizes are 0, 1,
+            and 8.
 
             A debugger must not access any Instruction Buffer locations that
             fall outside the range specified here.

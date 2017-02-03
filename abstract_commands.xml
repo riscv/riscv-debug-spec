@@ -1,24 +1,46 @@
 <registers name="Abstract Commands" skip_index="1" skip_access="1" skip_reset="1">
     <register name="Access Register">
-        Access the register specified by \Fregno. If \Fsize specifies a size
-        larger than the register is, then the access must fail. If a register
-        is accessible, then \Fsize matching the register's actual size must be
-        supported.
+        \begin{steps}{Perform the following sequence of operations:}
+        \item Halt the hart, if \Fprehalt is set. If the hart is already
+            handled, the entire command fails.
+        \item Execute the Program Buffer, if \Fpreexec is set.
+        \item Copy data from the register specified by \Fregno into {\tt data}, if \Fwrite is clear.
+        \item Copy data from {\tt data} into the register specified by \Fregno, if \Fwrite is set.
+        \item Execute the Program Buffer, if \Fpostexec is set.
+        \item Resume the hart, if \Fpostresume is set. If the hart is already
+            running, the entire command fails.
+        \end{steps}
+
+        If any of these operations fail, \Fcmderr is set and none of the
+        remaining steps are executed.
+
+        This command must be implemented and support accessing GPRs when the
+        hart is halted. Accessing other registers, or accessing registers while
+        the hart is running is optional.
 
         <field name="0" bits="31:24" />
-        <field name="0" bits="23:22" />
+        <field name="prehalt" bits="23">
+            When 1, halt the hart before performing the rest of the command.
+        </field>
+        <field name="postresume" bits="22">
+            When 1, resume the hart after performing the rest of the command.
+        </field>
         <field name="size" bits="21:19">
             2: Access the lowest 32 bits of the register.
 
             3: Access the lowest 64 bits of the register.
 
             4: Access the lowest 128 bits of the register.
+
+            If \Fsize specifies a size larger than the register is, then the
+            access must fail. If a register is accessible, then \Fsize matching
+            the register's actual size must be supported.
         </field>
-        <field name="execb" bits="18">
+        <field name="preexec" bits="18">
             When 1, execute the program in the Program Buffer exactly once
             before performing the read/write.
         </field>
-        <field name="execa" bits="17">
+        <field name="postexec" bits="17">
             When 1, execute the program in the Program Buffer exactly once
             after performing the read/write.
         </field>
