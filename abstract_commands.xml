@@ -9,6 +9,9 @@
         \item Resume the hart, if \Fpostresume is set.
         \end{steps}
 
+        If any of these operations fail, \Fcmderr is set and none of the
+        remaining steps are executed.
+
         This command must be implemented and support accessing GPRs when the
         hart is halted. Accessing other registers, or accessing registers while
         the hart is running is optional.
