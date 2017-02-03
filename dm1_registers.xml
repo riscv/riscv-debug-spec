@@ -72,8 +72,8 @@
 
         Each bit contains the logical OR of 32 halt bits. When there are a
         large number of harts in the system, the debugger can first read this
-        register, and then read from the halt region (TODO) to determine which
-        hart is the one that is halted.
+        register, and then read from the halt region (0x40--0x5f) to determine
+        which hart is the one that is halted.
 
         <field name="halt31:0" bits="0" access="R" reset="0" />
         <field name="halt63:32" bits="1" access="R" reset="0" />

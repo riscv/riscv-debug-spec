@@ -365,15 +365,11 @@ The Debug Module Interface can be a trivial bus with one master and one slave,
 or use a more full-featured bus like TileLink or the AMBA Advanced Peripheral
 Bus. The details are left to the system designer.
 
-The DMI uses between TODO and 32 address bits.  It supports read and write
+The DMI uses between 7 and 32 address bits.  It supports read and write
 operations, which may return an error. (Errors are only used by the optional
-System Bus Access and Serial Port blocks.) TODO: The bottom of the address space is
+System Bus Access and Serial Port blocks.) The bottom of the address space is
 used for the DM. Extra space can be used for custom debug devices, other cores,
 additional DMs, etc.
-
-TODO: The space is laid out so that small systems can get away with just 4
-address bits. Using the Instruction Buffer requires 5 bits, and systems that
-have many cores will want to implement 6 bits.
 
 \begin{table}[htp]
     \centering
@@ -1030,7 +1026,7 @@ registers can be accessed by moving their value into/out of GPRs.
     \hline
     Write & \Rcommand & \Fpostexec, 0x1009 & Read \Sone, then execute program buffer \\
     \hline
-    Write & \Rabstractcs & \Fautoexeczero OR \Fcmderr & Set \Fautoexeczero \\
+    Write & \Rabstractcs & \Fautoexeczero & Set \Fautoexeczero \\
     \hline
     Read & \Rdatazero & - & Get value read from memory, then execute program buffer \\
     \hline
@@ -1038,7 +1034,7 @@ registers can be accessed by moving their value into/out of GPRs.
     \hline
     ... & ... & ... & ... \\
     \hline
-    Write & \Rabstractcs & \Fcmderr & Clear \Fautoexeczero \\
+    Write & \Rabstractcs & 0 & Clear \Fautoexeczero \\
     \hline
     Read & \Rdatazero & - & Get last value read from memory. \\
     \hline
@@ -1109,6 +1105,98 @@ this method.
 \subsection{Writing Memory} \label{writemem}
 
 TODO: Just like reading memory.
+
+\subsubsection{Using System Bus Access} \label{deb:mrsysbus}
+
+\noindent Write a word to memory using system bus access:
+
+\begin{tabulary}{\textwidth}{|r|r|r|L|}
+    \hline
+    Op & Address & Value & Comment \\
+    \hline
+    Write & \Rsbaddresszero & address & \\
+    \hline
+    Write & \Rsbdatazero & value & \\
+    \hline
+\end{tabulary}
+\medskip
+
+\noindent Write block of memory using system bus access:
+
+\begin{tabulary}{\textwidth}{|r|r|L|L|}
+    \hline
+    Op & Address & Value & Comment \\
+    \hline
+    Write & \Rsbaddresszero & address & \\
+    \hline
+    Write & \Rsbcs & \Fsbaccess$=2$, \Fsbautoincrement & Turn on autoincrement \\
+    \hline
+    Write & \Rsbdatazero & value0 & \\
+    \hline
+    Write & \Rsbdatazero & value1 & \\
+    \hline
+    ... & ... & ... & ... \\
+    \hline
+    Write & \Rsbdatazero & valueN & \\
+    \hline
+\end{tabulary}
+\medskip
+
+\subsubsection{Using Program Buffer} \label{deb:mrprogbuf}
+
+\noindent Write a word to memory using program buffer:
+
+\begin{tabulary}{\textwidth}{|r|r|r|L|}
+    \hline
+    Op & Address & Value & Comment \\
+    \hline
+    Write & \Ribufzero & {\tt sw 0(s0), s1} & \\
+    \hline
+    Write & \Ribufone & {\tt ebreak} & \\
+    \hline
+    Write & \Rdatazero & value & \\
+    \hline
+    Write & \Rcommand & \Fwrite, 0x1008 & Write \Szero \\
+    \hline
+    Write & \Rdatazero & address & \\
+    \hline
+    Write & \Rcommand & \Fwrite, \Fpostexec, 0x1009 & Write \Sone, then execute program buffer \\
+    \hline
+\end{tabulary}
+\medskip
+
+\noindent Write block of memory using program buffer:
+
+\begin{tabulary}{\textwidth}{|r|r|r|L|}
+    \hline
+    Op & Address & Value & Comment \\
+    \hline
+    Write & \Ribufzero & {\tt sw s1, 0(s0)} & \\
+    \hline
+    Write & \Ribufone & {\tt addi s0, s0, 4} & \\
+    \hline
+    Write & \Ribuftwo & {\tt ebreak} & \\
+    \hline
+    Write & \Rdatazero & address & \\
+    \hline
+    Write & \Rcommand & \Fwrite, 0x1008 & Write \Szero \\
+    \hline
+    Write & \Rdatazero & value0 & \\
+    \hline
+    Write & \Rcommand & \Fwrite, \Fpostexec, 0x1009 & Write \Sone, then execute program buffer \\
+    \hline
+    Write & \Rabstractcs & \Fautoexeczero & Set \Fautoexeczero \\
+    \hline
+    Write & \Rdatazero & value1 & \\
+    \hline
+    ... & ... & ... & ... \\
+    \hline
+    Write & \Rdatazero & valueN & \\
+    \hline
+    Write & \Rabstractcs & 0 & Clear \Fautoexeczero \\
+    \hline
+\end{tabulary}
+\medskip
 
 \begin{commentary}
     % Select-DR-Scan to Shift-DR: 2
