@@ -16,6 +16,15 @@
         hart is halted. Accessing other registers, or accessing registers while
         the hart is running is optional.
 
+        \begin{steps}{Perform the following sequence of operations:}
+        \item Halt the hart, if \Fprehalt is set.
+        \item Execute the Program Buffer, if \Fpreexec is set.
+        \item Copy data from the specified register into {\tt data}, if \Fwrite is clear.
+        \item Copy data from {\tt data} into the specified register, if \Fwrite is set.
+        \item Execute the Program Buffer, if \Fpostexec is set.
+        \item Resume the hart, if \Fpostresume is set.
+        \end{steps}
+
         <field name="0" bits="31:24" />
         <field name="prehalt" bits="23">
             When 1, halt the hart before performing the rest of the command.
