@@ -315,6 +315,9 @@
         </field>
         <field name="busy" bits="4" access="R" reset="0">
             1: An abstract command is currently being executed.
+
+            This bit is set as soon as \Rcommand is written, and isn't cleared
+            until that command has completed.
         </field>
         <field name="datacount" bits="3:0" access="R" reset="Preset">
             Number of {\tt data} registers that are implemented as part of the
