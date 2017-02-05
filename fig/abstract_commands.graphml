@@ -17,7 +17,7 @@
     <node id="n0">
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="141.0" width="156.943359375" x="158.4719711061508" y="0.0"/>
+          <y:Geometry height="141.0" width="156.943359375" x="447.17990761408726" y="0.0"/>
           <y:Fill color="#99CC00" transparent="false"/>
           <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="74.6640625" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="133.146484375" x="11.8984375" y="33.16796875">M/U/S/H Mode
@@ -38,7 +38,7 @@ abstractcs.cmderr = 0<y:LabelModel>
     <node id="n1">
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="141.0" width="156.943359375" x="177.43268539186508" y="522.2447372541322"/>
+          <y:Geometry height="141.0" width="156.943359375" x="382.94379650297617" y="487.7401153701776"/>
           <y:Fill color="#FF9900" transparent="false"/>
           <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="74.6640625" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="133.146484375" x="11.8984375" y="33.16796875">Halted: Waiting 
@@ -59,7 +59,7 @@ abstractcs.cmderr = 0<y:LabelModel>
     <node id="n2">
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="141.0" width="156.943359375" x="552.5073512231099" y="743.6797660966766"/>
+          <y:Geometry height="141.0" width="156.943359375" x="792.8577342319138" y="688.675144212722"/>
           <y:Fill color="#CC99FF" transparent="false"/>
           <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="74.6640625" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="133.146484375" x="11.8984375" y="33.16796875">Command: Pre Exec
@@ -80,7 +80,7 @@ abstractcs.cmderr = 0<y:LabelModel>
     <node id="n3">
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="141.0" width="156.943359375" x="530.7361837210213" y="1215.4198814668543"/>
+          <y:Geometry height="141.0" width="156.943359375" x="792.8577342319138" y="1166.6279230480475"/>
           <y:Fill color="#CC99FF" transparent="false"/>
           <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="74.6640625" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="133.146484375" x="11.8984375" y="33.16796875">Command: Post Exec
@@ -101,7 +101,7 @@ abstractcs.cmderr = 0<y:LabelModel>
     <node id="n4">
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="141.0" width="156.943359375" x="454.3763361855159" y="522.2447372541322"/>
+          <y:Geometry height="141.0" width="156.943359375" x="-86.2921619829823" y="487.7401153701776"/>
           <y:Fill color="#FF6600" transparent="false"/>
           <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="74.6640625" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="136.943359375" x="10.0" y="33.16796875">Command: Error
@@ -122,7 +122,7 @@ abstractcs.cmderr != 0<y:LabelModel>
     <node id="n5">
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="141.0" width="156.943359375" x="261.94379650297617" y="235.8700576850888"/>
+          <y:Geometry height="141.0" width="156.943359375" x="550.6517330109127" y="279.02384259905307"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="74.6640625" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="133.146484375" x="11.8984375" y="33.16796875">Halting
@@ -143,7 +143,7 @@ abstractcs.cmderr = 0<y:LabelModel>
     <node id="n6">
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="141.0" width="156.943359375" x="55.00014570932541" y="235.8700576850888"/>
+          <y:Geometry height="141.0" width="156.943359375" x="343.7080822172619" y="279.02384259905307"/>
           <y:Fill color="#FFCC00" transparent="false"/>
           <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="74.6640625" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="133.146484375" x="11.8984375" y="33.16796875">Resuming
@@ -164,7 +164,7 @@ abstractcs.cmderr = 0<y:LabelModel>
     <node id="n7">
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="141.0" width="156.943359375" x="731.3199869791666" y="522.2447372541322"/>
+          <y:Geometry height="141.0" width="156.943359375" x="-86.2921619829823" y="678.7401153701776"/>
           <y:Fill color="#C0C0C0" transparent="false"/>
           <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="47.787109375" x="54.578125" y="61.43359375">Various<y:LabelModel>
@@ -181,7 +181,7 @@ abstractcs.cmderr = 0<y:LabelModel>
     <node id="n8">
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="141.0" width="156.943359375" x="197.05054253472224" y="743.6797660966766"/>
+          <y:Geometry height="141.0" width="156.943359375" x="461.41562189980164" y="688.675144212722"/>
           <y:Fill color="#00CCFF" transparent="false"/>
           <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="74.6640625" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="133.146484375" x="11.8984375" y="33.16796875">Command Start 
@@ -202,7 +202,7 @@ abstractcs.cmderr = 0<y:LabelModel>
     <node id="n9">
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="141.0" width="156.943359375" x="177.43268539186505" y="1215.4198814668543"/>
+          <y:Geometry height="141.0" width="156.943359375" x="461.41562189980164" y="1166.6279230480475"/>
           <y:Fill color="#00CCFF" transparent="false"/>
           <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="74.6640625" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="133.146484375" x="11.8984375" y="33.16796875">Command: Done
@@ -223,7 +223,7 @@ abstractcs.cmderr = 0<y:LabelModel>
     <node id="n10">
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="141.0" width="156.943359375" x="305.7866536458333" y="979.5498237817656"/>
+          <y:Geometry height="141.0" width="156.943359375" x="461.41562189980164" y="914.6101730552664"/>
           <y:Fill color="#00CCFF" transparent="false"/>
           <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="74.6640625" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="133.146484375" x="11.8984375" y="33.16796875">Command: R/W
@@ -241,24 +241,62 @@ abstractcs.cmderr = 0<y:LabelModel>
         </y:ShapeNode>
       </data>
     </node>
+    <node id="n11">
+      <data key="d6">
+        <y:ShapeNode>
+          <y:Geometry height="141.0" width="156.943359375" x="757.5953838045635" y="279.02384259905307"/>
+          <y:Fill color="#FFCC00" transparent="false"/>
+          <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="74.6640625" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="133.146484375" x="11.8984375" y="33.16796875">Auto Halting
+
+control.halt = 0
+abstractcs.busy = 1
+abstractcs.cmderr = 0<y:LabelModel>
+              <y:SmartNodeLabelModel distance="4.0"/>
+            </y:LabelModel>
+            <y:ModelParameter>
+              <y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/>
+            </y:ModelParameter>
+          </y:NodeLabel>
+          <y:Shape type="ellipse"/>
+        </y:ShapeNode>
+      </data>
+    </node>
+    <node id="n12">
+      <data key="d6">
+        <y:ShapeNode>
+          <y:Geometry height="141.0" width="156.943359375" x="136.76443142361111" y="279.02384259905307"/>
+          <y:Fill color="#FFCC00" transparent="false"/>
+          <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="74.6640625" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="133.146484375" x="11.8984375" y="33.16796875">Auto Resuming
+
+control.halt = 0
+abstractcs.busy = 1
+abstractcs.cmderr = 0<y:LabelModel>
+              <y:SmartNodeLabelModel distance="4.0"/>
+            </y:LabelModel>
+            <y:ModelParameter>
+              <y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/>
+            </y:ModelParameter>
+          </y:NodeLabel>
+          <y:Shape type="ellipse"/>
+        </y:ShapeNode>
+      </data>
+    </node>
     <edge id="e0" source="n0" target="n5">
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="39.23583984375" sy="61.03125" tx="0.0" ty="-70.5">
-            <y:Point x="276.1794906374008" y="156.5"/>
-            <y:Point x="290.6145194799452" y="170.9350288425444"/>
-            <y:Point x="325.9804473479318" y="170.9350288425444"/>
-            <y:Point x="340.41547619047617" y="185.3700576850888"/>
+          <y:Path sx="19.61791992187503" sy="68.28125" tx="0.0" ty="-70.5">
+            <y:Point x="545.2695072234623" y="163.2837272288756"/>
+            <y:Point x="564.3989751136334" y="181.0"/>
+            <y:Point x="609.0356033796817" y="181.0"/>
+            <y:Point x="629.1234126984127" y="208.1537849139644"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="102.9296875" horizontalTextPosition="center" iconTextGap="4" modelName="side_slider" preferredPlacement="right" ratio="0.5014761780316982" textColor="#000000" verticalTextPosition="bottom" visible="true" width="137.18359375" x="110.48330112467272" y="-4.892317576027153">control.hartid=&gt;N
- 
-control.halt=&gt;1
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="46.3984375" horizontalTextPosition="center" iconTextGap="4" modelName="side_slider" preferredPlacement="right" ratio="0.6558052456699189" textColor="#000000" verticalTextPosition="bottom" visible="true" width="137.18359375" x="-55.32971230158728" y="70.37253491396439">control.halt=&gt;1
 OR
-breakpoint w/ action 1
-OR
-command.prehalt=&gt;1<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" placement="anywhere" side="right" sideReference="relative_to_edge_flow"/>
+breakpoint w/ action 1<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" placement="anywhere" side="right" sideReference="relative_to_edge_flow"/>
           </y:EdgeLabel>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
@@ -267,9 +305,11 @@ command.prehalt=&gt;1<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRi
     <edge id="e1" source="n5" target="n1">
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="70.5" tx="58.85375976562503" ty="-46.65625">
-            <y:Point x="340.41547619047617" y="392.3700576850888"/>
-            <y:Point x="314.7581248449901" y="418.02740903057486"/>
+          <y:Path sx="0.0" sy="70.5" tx="39.23583984375003" ty="-61.03125">
+            <y:Point x="629.1234126984127" y="435.52384259905307"/>
+            <y:Point x="614.6883838558683" y="449.95887144159747"/>
+            <y:Point x="515.0863448767706" y="449.95887144159747"/>
+            <y:Point x="500.65131603422617" y="464.39390028414186"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
@@ -280,18 +320,13 @@ command.prehalt=&gt;1<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRi
     <edge id="e2" source="n1" target="n8">
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="70.5" tx="0.0" ty="-70.5">
-            <y:Point x="255.90436507936508" y="678.7447372541322"/>
-            <y:Point x="271.5235585709064" y="691.8234133144001"/>
-            <y:Point x="275.52222222222224" y="695.108552631579"/>
-          </y:Path>
+          <y:Path sx="39.23581225004645" sy="61.03125000004013" tx="-39.23581225004651" ty="-61.03125000004013"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="74.6640625" horizontalTextPosition="center" iconTextGap="4" modelName="side_slider" preferredPlacement="right" ratio="0.44728517137399815" textColor="#000000" verticalTextPosition="bottom" visible="true" width="190.955078125" x="21.61786431206599" y="14.254877137565245">command =&gt; _
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="46.3984375" horizontalTextPosition="center" iconTextGap="4" modelName="side_slider" preferredPlacement="right" ratio="0.0" textColor="#000000" verticalTextPosition="bottom" visible="true" width="190.955078125" x="2.0001723450045574" y="16.19853555316854">command =&gt; _
 OR
 dataN =&gt; _ AND autoexecN = 1
-OR
-command.prehalt = 1<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" placement="anywhere" side="right" sideReference="relative_to_edge_flow"/>
+<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" placement="anywhere" side="right" sideReference="relative_to_edge_flow"/>
           </y:EdgeLabel>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
@@ -303,7 +338,7 @@ command.prehalt = 1<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRigh
           <y:Path sx="78.4716796875" sy="0.0" tx="-78.4716796875" ty="0.0"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="side_slider" preferredPlacement="right" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="136.09375" x="31.209855082041088" y="2.0000175615203943">command.preexec = 1<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" placement="anywhere" side="right" sideReference="relative_to_edge_flow"/>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="side_slider" preferredPlacement="right" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="136.09375" x="19.202473964295223" y="1.9999733142844889">command.preexec = 1<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" placement="anywhere" side="right" sideReference="relative_to_edge_flow"/>
           </y:EdgeLabel>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
@@ -312,15 +347,10 @@ command.prehalt = 1<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRigh
     <edge id="e4" source="n8" target="n10">
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="70.5" tx="-39.23583984375" ty="-61.03125">
-            <y:Point x="275.52222222222224" y="900.1797660966766"/>
-            <y:Point x="289.95725106476664" y="914.614794939221"/>
-            <y:Point x="330.5874646470389" y="914.614794939221"/>
-            <y:Point x="345.0224934895833" y="929.0498237817654"/>
-          </y:Path>
+          <y:Path sx="0.0" sy="70.5" tx="0.0" ty="-70.5"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="side_slider" preferredPlacement="right" ratio="0.521787295150944" textColor="#000000" verticalTextPosition="bottom" visible="true" width="136.09375" x="-84.87739397856387" y="28.08615457533699">command.preexec = 0<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" placement="anywhere" side="right" sideReference="relative_to_edge_flow"/>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="side_slider" preferredPlacement="right" ratio="0.0" textColor="#000000" verticalTextPosition="bottom" visible="true" width="136.09375" x="-138.09377751426086" y="21.76302739992059">command.preexec = 0<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" placement="anywhere" side="right" sideReference="relative_to_edge_flow"/>
           </y:EdgeLabel>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
@@ -332,7 +362,7 @@ command.prehalt = 1<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRigh
           <y:Path sx="-78.4716796875" sy="0.0" tx="78.4716796875" ty="0.0"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="side_slider" preferredPlacement="right" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="43.474609375" x="-119.91739649824433" y="-20.13285290814565">ebreak<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" placement="anywhere" side="right" sideReference="relative_to_edge_flow"/>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="side_slider" preferredPlacement="right" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="43.474609375" x="-108.98667398492353" y="-20.132819139452522">ebreak<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" placement="anywhere" side="right" sideReference="relative_to_edge_flow"/>
           </y:EdgeLabel>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
@@ -341,16 +371,24 @@ command.prehalt = 1<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRigh
     <edge id="e6" source="n9" target="n1">
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="-78.4716796875" sy="0.0" tx="-58.853759765625" ty="46.65625">
-            <y:Point x="145.04052840434423" y="1285.9198814668543"/>
-            <y:Point x="135.9813178780284" y="1267.3486842105262"/>
-            <y:Point x="135.9813178780284" y="716.6740054655369"/>
-            <y:Point x="150.4163467205729" y="705.2587134650977"/>
-            <y:Point x="182.61557647119568" y="705.2587134650977"/>
-            <y:Point x="197.05060531374008" y="690.8236846225533"/>
+          <y:Path sx="-52.31446299623022" sy="-52.53125000000273" tx="-39.23583984375" ty="61.03125">
+            <y:Point x="386.67984555543717" y="1184.5966730480447"/>
+            <y:Point x="371.27935409886095" y="1164.9774117124614"/>
+            <y:Point x="371.27935409886095" y="787.6543149270019"/>
+            <y:Point x="385.9953884432484" y="764.7401153701776"/>
+            <y:Point x="411.4329005860883" y="764.7401153701776"/>
+            <y:Point x="422.17963634672617" y="750.2297492986773"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="158.646484375" x="-211.465305559934" y="-0.3522884006322329">command.postresume = 0<y:LabelModel>
+              <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
+            </y:LabelModel>
+            <y:ModelParameter>
+              <y:SmartEdgeLabelModelParameter angle="0.0" distance="30.0" distanceToCenter="true" position="left" ratio="0.5" segment="1"/>
+            </y:ModelParameter>
+            <y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
+          </y:EdgeLabel>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
       </data>
@@ -358,17 +396,11 @@ command.prehalt = 1<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRigh
     <edge id="e7" source="n1" target="n6">
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="-57.73800438764013" sy="-47.74994019886151" tx="0.0" ty="70.5">
-            <y:Point x="198.16636069172495" y="440.74834715877296"/>
-            <y:Point x="180.04793963909339" y="419.6101892640362"/>
-            <y:Point x="150.83531223893056" y="419.6101892640362"/>
-            <y:Point x="133.4718253968254" y="407.46874189561515"/>
-          </y:Path>
+          <y:Path sx="-39.23585237539251" sy="-61.031250000008185" tx="0.0" ty="70.5"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="46.3984375" horizontalTextPosition="center" iconTextGap="4" modelName="side_slider" preferredPlacement="right" ratio="0.0" textColor="#000000" verticalTextPosition="bottom" visible="true" width="158.646484375" x="-160.6464902604235" y="-79.2735122575865">control.halt=&gt;0
-OR
-command.postresume = 1<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" placement="anywhere" side="right" sideReference="relative_to_edge_flow"/>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="side_slider" preferredPlacement="right" ratio="0.0" textColor="#000000" verticalTextPosition="bottom" visible="true" width="97.697265625" x="-99.69723322010134" y="-37.688870225525534">control.halt=&gt;0
+<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" placement="anywhere" side="right" sideReference="relative_to_edge_flow"/>
           </y:EdgeLabel>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
@@ -377,11 +409,11 @@ command.postresume = 1<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnR
     <edge id="e8" source="n6" target="n0">
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="-70.5" tx="-39.23583984375" ty="61.03125">
-            <y:Point x="133.4718253968254" y="185.3700576850888"/>
-            <y:Point x="147.9068542393698" y="170.9350288425444"/>
-            <y:Point x="183.2727821073564" y="170.9350288425444"/>
-            <y:Point x="197.7078109499008" y="156.5"/>
+          <y:Path sx="0.0" sy="-70.5" tx="-19.617919921875" ty="68.28125">
+            <y:Point x="422.1797619047619" y="211.4350288425444"/>
+            <y:Point x="436.6147907473063" y="197.0"/>
+            <y:Point x="496.79656532286776" y="197.0"/>
+            <y:Point x="506.03366737971226" y="183.65378491396427"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
@@ -392,10 +424,10 @@ command.postresume = 1<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnR
     <edge id="e9" source="n4" target="n1">
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="-78.4716796875" sy="0.0" tx="78.4716796875" ty="0.0"/>
+          <y:Path sx="78.4716796875" sy="0.0" tx="-78.4716796875" ty="0.0"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="32.265625" horizontalTextPosition="center" iconTextGap="4" modelName="side_slider" preferredPlacement="right" ratio="0.0" textColor="#000000" verticalTextPosition="bottom" visible="true" width="112.22265625" x="-116.11148042224698" y="-34.26563872243025">abstractcs.cmderr 
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="32.265625" horizontalTextPosition="center" iconTextGap="4" modelName="side_slider" preferredPlacement="right" ratio="0.0" textColor="#000000" verticalTextPosition="bottom" visible="true" width="112.22265625" x="10.124998051197394" y="-1.999996934509909">abstractcs.cmderr 
 =&gt; 0<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" placement="anywhere" side="right" sideReference="relative_to_edge_flow"/>
           </y:EdgeLabel>
           <y:BendStyle smoothed="false"/>
@@ -405,15 +437,10 @@ command.postresume = 1<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnR
     <edge id="e10" source="n10" target="n9">
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="-39.23583984375" sy="61.03125" tx="0.0" ty="-70.5">
-            <y:Point x="345.0224934895833" y="1136.0498237817656"/>
-            <y:Point x="330.5874646470389" y="1150.48485262431"/>
-            <y:Point x="281.24395774030967" y="1150.48485262431"/>
-            <y:Point x="255.90436507936505" y="1178.5086972563279"/>
-          </y:Path>
+          <y:Path sx="0.0" sy="70.5" tx="0.0" ty="-70.5"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="side_slider" preferredPlacement="right" ratio="0.04498933164599222" textColor="#000000" verticalTextPosition="bottom" visible="true" width="142.474609375" x="-160.758528011767" y="23.071049140537752">command.postexec = 0<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" placement="anywhere" side="right" sideReference="relative_to_edge_flow"/>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="side_slider" preferredPlacement="right" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="142.474609375" x="1.9999724857391357" y="46.442412309469546">command.postexec = 0<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" placement="anywhere" side="right" sideReference="relative_to_edge_flow"/>
           </y:EdgeLabel>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
@@ -422,15 +449,15 @@ command.postresume = 1<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnR
     <edge id="e11" source="n10" target="n3">
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="39.2358523753926" sy="61.031250000008185" tx="0.0" ty="-70.5">
-            <y:Point x="423.4941857087259" y="1132.970394736842"/>
-            <y:Point x="442.89309210526324" y="1157.1282894736842"/>
-            <y:Point x="590.860197368421" y="1157.1282894736842"/>
-            <y:Point x="609.2078634085213" y="1175.2467105263158"/>
+          <y:Path sx="60.0743967536356" sy="45.33643683725745" tx="0.0" ty="-70.5">
+            <y:Point x="599.9616983409372" y="1055.1530719043458"/>
+            <y:Point x="620.8788034519122" y="1073.5246084519522"/>
+            <y:Point x="849.8164127374718" y="1073.5246084519522"/>
+            <y:Point x="871.3294139194138" y="1094.7225352376524"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="side_slider" preferredPlacement="right" ratio="0.7622793754487434" textColor="#000000" verticalTextPosition="bottom" visible="true" width="142.474609375" x="23.891416850842916" y="25.871697676809163">command.postexec = 1<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" placement="anywhere" side="right" sideReference="relative_to_edge_flow"/>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="side_slider" preferredPlacement="right" ratio="0.03973035180107876" textColor="#000000" verticalTextPosition="bottom" visible="true" width="142.474609375" x="21.917133530037177" y="22.89692290507719">command.postexec = 1<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" placement="anywhere" side="right" sideReference="relative_to_edge_flow"/>
           </y:EdgeLabel>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
@@ -439,15 +466,15 @@ command.postresume = 1<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnR
     <edge id="e12" source="n2" target="n10">
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="70.5" tx="39.23583984375" ty="-61.03125">
-            <y:Point x="630.9790309106099" y="900.1797660966766"/>
-            <y:Point x="618.053870489118" y="914.614794939221"/>
-            <y:Point x="437.9292020196277" y="914.614794939221"/>
-            <y:Point x="423.4941731770833" y="929.0498237817654"/>
+          <y:Path sx="0.0" sy="70.5" tx="53.39100347112446" ty="-51.695966753986454">
+            <y:Point x="871.3294139194138" y="845.175144212722"/>
+            <y:Point x="854.875923538408" y="860.9807051650953"/>
+            <y:Point x="609.0047989392139" y="860.9807051650953"/>
+            <y:Point x="593.2783050584261" y="875.4157340076397"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="side_slider" preferredPlacement="right" ratio="0.4326803725474939" textColor="#000000" verticalTextPosition="bottom" visible="true" width="43.474609375" x="-124.72477233937707" y="9.802233904064792">ebreak<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" placement="anywhere" side="right" sideReference="relative_to_edge_flow"/>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="side_slider" preferredPlacement="right" ratio="0.46596061153237583" textColor="#000000" verticalTextPosition="bottom" visible="true" width="43.474609375" x="-161.12635018697028" y="11.172721766657787">ebreak<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" placement="anywhere" side="right" sideReference="relative_to_edge_flow"/>
           </y:EdgeLabel>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
@@ -456,14 +483,95 @@ command.postresume = 1<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnR
     <edge id="e13" source="n7" target="n4">
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="-78.4716796875" sy="0.0" tx="78.4716796875" ty="0.0"/>
+          <y:Path sx="0.0" sy="-70.5" tx="0.0" ty="70.5"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="84.853515625" x="-102.42692386687747" y="-39.06641997243025">various errors<y:LabelModel>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="84.853515625" x="19.420210464777064" y="-23.123236800524182">various errors<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
             </y:LabelModel>
             <y:ModelParameter>
-              <y:SmartEdgeLabelModelParameter angle="0.0" distance="30.0" distanceToCenter="true" position="right" ratio="0.5" segment="0"/>
+              <y:SmartEdgeLabelModelParameter angle="0.0" distance="19.420210506231037" distanceToCenter="false" position="right" ratio="-0.009572633985754227" segment="-1"/>
+            </y:ModelParameter>
+            <y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
+          </y:EdgeLabel>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e14" source="n0" target="n11">
+      <data key="d9"/>
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:Path sx="58.85375976562503" sy="46.65625" tx="0.0" ty="-70.5">
+            <y:Point x="584.5053470672123" y="146.5649711574556"/>
+            <y:Point x="598.9403759097567" y="161.0"/>
+            <y:Point x="821.6320346495191" y="161.0"/>
+            <y:Point x="836.0670634920635" y="175.4350288425444"/>
+          </y:Path>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="140.787109375" x="110.77458302331354" y="64.77734374999994">command.prehalt =&gt; 1<y:LabelModel>
+              <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
+            </y:LabelModel>
+            <y:ModelParameter>
+              <y:SmartEdgeLabelModelParameter angle="0.0" distance="30.0" distanceToCenter="true" position="right" ratio="0.7487174591018304" segment="2"/>
+            </y:ModelParameter>
+            <y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
+          </y:EdgeLabel>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e15" source="n11" target="n8">
+      <data key="d9"/>
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:Path sx="0.0" sy="70.5" tx="60.384140499184014" ty="-45.04198865692763">
+            <y:Point x="836.0670634920635" y="442.61604695091546"/>
+            <y:Point x="821.6320346495191" y="462.7038562696465"/>
+            <y:Point x="768.5753802277502" y="462.7038562696465"/>
+            <y:Point x="758.3799367423459" y="479.66219769820646"/>
+            <y:Point x="759.108022737552" y="687.0498327708036"/>
+            <y:Point x="744.2479855518792" y="714.1331555557944"/>
+          </y:Path>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e16" source="n12" target="n0">
+      <data key="d9"/>
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:Path sx="0.0" sy="-70.5" tx="-58.853759765625" ty="46.65625">
+            <y:Point x="215.23611111111111" y="182.7162727711244"/>
+            <y:Point x="229.6711399536555" y="168.28124392858"/>
+            <y:Point x="452.36279869341786" y="168.28124392858"/>
+            <y:Point x="466.79782753596226" y="149.60662972889563"/>
+          </y:Path>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e17" source="n9" target="n12">
+      <data key="d9"/>
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:Path sx="-78.4716796875" sy="0.0" tx="0.0" ty="70.5">
+            <y:Point x="242.87012781552733" y="1237.1279230480475"/>
+            <y:Point x="215.23611111111111" y="1217.343191381394"/>
+            <y:Point x="215.23611111111111" y="435.52384259905307"/>
+          </y:Path>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="standard"/>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="158.646484375" x="-204.62913982403603" y="1.2288729587064608">command.postresume = 1<y:LabelModel>
+              <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
+            </y:LabelModel>
+            <y:ModelParameter>
+              <y:SmartEdgeLabelModelParameter angle="0.0" distance="1.2288795981590939" distanceToCenter="false" position="left" ratio="0.3053343083818295" segment="0"/>
             </y:ModelParameter>
             <y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
           </y:EdgeLabel>
