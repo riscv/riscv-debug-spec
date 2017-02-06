@@ -48,11 +48,7 @@
             sticky error state.
         </field>
         <field name="0" bits="15" access="R" reset="0" />
-        <field name="hiabits" bits="14:13" access="R" reset="Preset">
-            Bits 5:4 of $|abits|$, which describes the size of \Faddress in
-            \Rdbus.
-        </field>
-        <field name="idle" bits="12:10" access="R" reset="Preset">
+        <field name="idle" bits="14:12" access="R" reset="Preset">
             The number of cycles a debugger needs to send the target through
             Run-Test/Idle after every dbus scan.
 
@@ -64,7 +60,7 @@
 
             And so on.
         </field>
-        <field name="dbusstat" bits="9:8" access="R" reset="0">
+        <field name="dbusstat" bits="11:10" access="R" reset="0">
             0: No error.
 
             2: An operation failed.
@@ -72,9 +68,8 @@
             3: An operation was attempted while a bus access was still in
             progress.
         </field>
-        <field name="loabits" bits="7:4" access="R" reset="Preset">
-            Bits 3:0 of $|abits|$, which describes the size of \Faddress in
-            \Rdbus.
+        <field name="abits" bits="9:4" access="R" reset="Preset">
+            The size of \Faddress in \Rdbus.
         </field>
         <field name="version" bits="3:0" access="R" reset="1">
             0: Version described in spec version 0.11.
