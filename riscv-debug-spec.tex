@@ -204,12 +204,12 @@ first.
 Sections \ref{dmi}, \ref{haltcontrol}, \ref{dmcontrol}, \ref{haltsum},
 \ref{hartids}, \ref{deb:halt}.
 
-\subsubsection{Abstract register access}
+\subsubsection{Abstract Register Access}
 
 Sections \ref{abstractcommands}, \ref{abstractcs}, \ref{command},
 \ref{data0}, \ref{deb:abstractreg}.
 
-\subsubsection{Instruction supply}
+\subsubsection{Instruction Supply}
 
 Sections \ref{programbuffer}, \ref{accesscs}, \ref{ibuf0}, \ref{access
 register}, \ref{haltmode}, \ref{deb:regprogbuf}, \ref{deb:mrprogbuf}.
@@ -218,7 +218,7 @@ register}, \ref{haltmode}, \ref{deb:regprogbuf}, \ref{deb:mrprogbuf}.
 
 Sections \ref{jtagdtm}, \ref{dbusaccess}.
 
-\subsubsection{System Bus master}
+\subsubsection{System Bus Master}
 
 Sections \ref{systembusaccess}, \ref{sbcs}, \ref{sbaddress0}, \ref{sbaddress1},
 \ref{sbaddress2}, \ref{sbdata0}, \ref{sbdata1}, \ref{sbdata2}, \ref{sbdata3},
@@ -459,6 +459,20 @@ the hart is not halted.
 
 \input{abstract_commands.tex}
 
+
+\begin{figure}
+   \centering
+   \includegraphics[width=\textwidth]{fig/abstract_commands.pdf}
+   \caption[Run/Halt Debug State Machine]{Run/Halt Debug State Machine.
+     As only a small amount of state is visibile to the debugger,
+     the states and transitions are conceptual.}
+   \label{fig:abstract_sm}
+\end{figure}
+
+Figure~\ref{fig:abstract_sm} shows a conceptual view of the states
+passed through by a hart during run/halt debugging as influenced
+by the different fields of \Rcommand.
+
 \subsection{Program Buffer} \label{programbuffer}
 
 To support executing arbitrary instructions on a halted hart, there may be a
@@ -467,8 +481,9 @@ need any access beyond the abstract commands described in
 Section~\ref{abstractcommands} may choose to omit this functionality.
 
 A debugger can write a small program to the optional Program Buffer, and then
-execute it exactly once using some of the abstract commands. If \Fprogsize is
-1, the Program Buffer may only hold a single instruction. This can be a 32-bit
+execute it exactly once using the \Fpreexec or \Fpostexec bits in \Rcommand.
+If \Fprogsize is 1, the Program Buffer may only hold a single instruction.
+This can be a 32-bit
 instruction, or a compressed instruction in the lower 16 bits accompanied by a
 compressed {\tt nop} in the upper 16 bits.  If \Fprogsize is greater than 1,
 the debugger can write whatever program it likes, but the program must end with
