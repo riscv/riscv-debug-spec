@@ -6,11 +6,14 @@ import argparse
 import sympy
 import math
 import re
+import collections
 
 class Registers( object ):
-    def __init__( self, name, label, description, skip_index, skip_access, skip_reset ):
+    def __init__( self, name, label, prefix, description, skip_index,
+            skip_access, skip_reset ):
         self.name = name
         self.label = label
+        self.prefix = prefix or ""
         self.description = description
         self.skip_index = skip_index
         self.skip_access = skip_access
@@ -109,7 +112,8 @@ def parse_xml( path ):
         description = e.text.strip()
     else:
         description = ""
-    registers = Registers( e.get( 'name' ), e.get( 'label' ), description,
+    registers = Registers( e.get( 'name' ), e.get( 'label' ),
+            e.get( 'prefix' ), description,
             int( e.get( 'skip_index', 0 ) ),
             int( e.get( 'skip_access', 0 ) ),
             int( e.get( 'skip_reset', 0 ) ) )
@@ -185,16 +189,29 @@ def write_definitions( fd, registers ):
                         toLatexIdentifier( f.name ), f.name ) )
 
 def write_cheader( fd, registers ):
+    definitions = []
     for r in registers.registers:
         name = toCIdentifier( r.short or r.label ).upper()
+        prefname = registers.prefix + name
         if r.define:
-            fd.write( "#define %s_ADDRESS  %s\n" % ( name, r.address ) )
+            definitions.append((prefname, r.address))
         for f in r.fields:
             if f.define:
-                offset = "%s_%s_OFFSET" % ( name, toCIdentifier( f.name ).upper() )
-                mask = "%s_%s_MASK" % ( name, toCIdentifier( f.name ).upper() )
-                fd.write( "#define %s %s\n" % ( offset, f.lowBit ) )
-                fd.write( "#define %s (((1<<%s)-1) << %s)\n" % ( mask, f.length(), offset ) )
+                offset = "%s_%s_OFFSET" % ( prefname, toCIdentifier( f.name ).upper() )
+                length = "%s_%s_LENGTH" % ( prefname, toCIdentifier( f.name ).upper() )
+                mask = "%s_%s" % ( prefname, toCIdentifier( f.name ).upper() )
+                definitions.append(( offset, f.lowBit ))
+                definitions.append(( length, f.length() ))
+                try:
+                    definitions.append(( mask,
+                            "(0x%x << %s)" % ( ((1<<int(f.length()))-1), offset )))
+                except TypeError:
+                    definitions.append(( mask, "(((1<<%s)-1) << %s)" % (f.length(), offset) ))
+
+    counted = collections.Counter(name for name, value in definitions)
+    for name, value in definitions:
+        if counted[name] == 1:
+            fd.write( "#define %-35s %s\n" % ( name, value ) )
 
 def address_value( address ):
     if type( address ) == str:

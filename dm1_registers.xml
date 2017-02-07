@@ -1,4 +1,4 @@
-<registers name="Debug Module Debug Bus Registers">
+<registers name="Debug Module Debug Bus Registers" prefix="DMI_">
 
     <!-- =============== halt/reset/select hart  =============== -->
 

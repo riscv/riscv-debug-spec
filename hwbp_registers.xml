@@ -1,4 +1,4 @@
-<registers name="Trigger Registers">
+<registers name="Trigger Registers" prefix="CSR_">
     The trigger registers are only accessible in machine and debug mode to
     prevent untrusted user code from causing entry into Debug Mode without the
     OS's permission.

@@ -1,7 +1,7 @@
-<registers name="JTAG TAP Registers" label="table:jtag_registers">
+<registers name="JTAG TAP Registers" label="table:jtag_registers" prefix="DTM_">
     <!-- JTAG standard registers, everything starting with 0 -->
-    <register name="BYPASS" address="00000" sdesc="JTAG recommends this encoding"/>
-    <register name="IDCODE" address="00001" sdesc="JTAG recommends this encoding">
+    <register name="BYPASS" address="0x00" sdesc="JTAG recommends this encoding"/>
+    <register name="IDCODE" address="0x01" sdesc="JTAG recommends this encoding">
         This register is selected (in IR) when the TAP state machine is reset.
         Its definition is exactly as defined in IEEE Std 1149.1-2013.
 
@@ -21,24 +21,24 @@
         <field name="1" bits="0" access="R" reset="1"></field>
     </register>
 
-    <register name="SAMPLE" address="00010" sdesc="JTAG requires this instruction" />
-    <register name="PRELOAD" address="00011" sdesc="JTAG requires this instruction" />
-    <register name="EXTEST" address="00100" sdesc="JTAG requires this instruction" />
-    <register name="CLAMP" address="00101" sdesc="JTAG recommends this instruction"/>
-    <register name="CLAMP\_HOLD" address="00110" sdesc="JTAG recommends this instruction"/>
-    <register name="CLAMP\_RELEASE" address="00111" sdesc="JTAG recommends this instruction"/>
-    <register name="HIGHZ" address="01000" sdesc="JTAG recommends this instruction"/>
-    <register name="IC\_RESET" address="01001" sdesc="JTAG recommends this instruction"/>
-    <register name="TMP\_STATUS" address="01010" sdesc="JTAG recommends this instruction"/>
-    <register name="INIT\_SETUP" address="01011" sdesc="JTAG recommends this instruction"/>
-    <register name="INIT\_SETUP\_CLAMP" address="01100" sdesc="JTAG recommends this instruction"/>
-    <register name="INIT\_RUN" address="01101" sdesc="JTAG recommends this instruction"/>
-    <register name="Unused (BYPASS)" address="01110" sdesc="Reserved for future JTAG"/>
-    <register name="Unused (BYPASS)" address="01111" sdesc="Reserved for future JTAG"/>
+    <register name="SAMPLE" address="0x02" sdesc="JTAG requires this instruction" />
+    <register name="PRELOAD" address="0x03" sdesc="JTAG requires this instruction" />
+    <register name="EXTEST" address="0x04" sdesc="JTAG requires this instruction" />
+    <register name="CLAMP" address="0x05" sdesc="JTAG recommends this instruction"/>
+    <register name="CLAMP\_HOLD" address="0x06" sdesc="JTAG recommends this instruction"/>
+    <register name="CLAMP\_RELEASE" address="0x07" sdesc="JTAG recommends this instruction"/>
+    <register name="HIGHZ" address="0x08" sdesc="JTAG recommends this instruction"/>
+    <register name="IC\_RESET" address="0x09" sdesc="JTAG recommends this instruction"/>
+    <register name="TMP\_STATUS" address="0x0a" sdesc="JTAG recommends this instruction"/>
+    <register name="INIT\_SETUP" address="0x0b" sdesc="JTAG recommends this instruction"/>
+    <register name="INIT\_SETUP\_CLAMP" address="0x0c" sdesc="JTAG recommends this instruction"/>
+    <register name="INIT\_RUN" address="0x0d" sdesc="JTAG recommends this instruction"/>
+    <register name="Unused (BYPASS)" address="0x0e" sdesc="Reserved for future JTAG"/>
+    <register name="Unused (BYPASS)" address="0x0f" sdesc="Reserved for future JTAG"/>
 
     <!-- All our registers start with 1. -->
 
-    <register name="DTM Control" short="dtmcontrol" address="10000"
+    <register name="DTM Control" short="dtmcontrol" address="0x10"
         sdesc="For Debugging" define="1">
         The size of this register will remain constant in future versions so
         that a debugger can always determine the version of the DTM.
@@ -81,7 +81,7 @@
         </field>
     </register>
 
-    <register name="Debug Bus Access" short="dbus" address="10001"
+    <register name="Debug Bus Access" short="dbus" address="0x11"
         sdesc="For Debugging">
         This register allows access to the Debug Bus.
 
@@ -142,21 +142,21 @@
         </field>
     </register>
 
-    <register name="Reserved (BYPASS)" address="10010" sdesc="Reserved for future RISC-V debugging"/>
-    <register name="Reserved (BYPASS)" address="10011" sdesc="Reserved for future RISC-V debugging"/>
-    <register name="Reserved (BYPASS)" address="10100" sdesc="Reserved for future RISC-V debugging"/>
-    <register name="Reserved (BYPASS)" address="10101" sdesc="Reserved for future RISC-V standards"/>
-    <register name="Reserved (BYPASS)" address="10110" sdesc="Reserved for future RISC-V standards"/>
-    <register name="Reserved (BYPASS)" address="10111" sdesc="Reserved for future RISC-V standards"/>
-    <register name="Unused (BYPASS)" address="11000" sdesc="Reserved for customization"/>
-    <register name="Unused (BYPASS)" address="11001" sdesc="Reserved for customization"/>
-    <register name="Unused (BYPASS)" address="11010" sdesc="Reserved for customization"/>
-    <register name="Unused (BYPASS)" address="11011" sdesc="Reserved for customization"/>
-    <register name="Unused (BYPASS)" address="11100" sdesc="Reserved for customization"/>
-    <register name="Unused (BYPASS)" address="11101" sdesc="Reserved for customization"/>
-    <register name="Unused (BYPASS)" address="11110" sdesc="Reserved for customization"/>
+    <register name="Reserved (BYPASS)" address="0x12" sdesc="Reserved for future RISC-V debugging"/>
+    <register name="Reserved (BYPASS)" address="0x13" sdesc="Reserved for future RISC-V debugging"/>
+    <register name="Reserved (BYPASS)" address="0x14" sdesc="Reserved for future RISC-V debugging"/>
+    <register name="Reserved (BYPASS)" address="0x15" sdesc="Reserved for future RISC-V standards"/>
+    <register name="Reserved (BYPASS)" address="0x16" sdesc="Reserved for future RISC-V standards"/>
+    <register name="Reserved (BYPASS)" address="0x17" sdesc="Reserved for future RISC-V standards"/>
+    <register name="Unused (BYPASS)" address="0x18" sdesc="Reserved for customization"/>
+    <register name="Unused (BYPASS)" address="0x19" sdesc="Reserved for customization"/>
+    <register name="Unused (BYPASS)" address="0x1a" sdesc="Reserved for customization"/>
+    <register name="Unused (BYPASS)" address="0x1b" sdesc="Reserved for customization"/>
+    <register name="Unused (BYPASS)" address="0x1c" sdesc="Reserved for customization"/>
+    <register name="Unused (BYPASS)" address="0x1d" sdesc="Reserved for customization"/>
+    <register name="Unused (BYPASS)" address="0x1e" sdesc="Reserved for customization"/>
 
-    <register name="BYPASS" address="11111" sdesc="JTAG requires this encoding">
+    <register name="BYPASS" address="0x1f" sdesc="JTAG requires this encoding">
         1-bit register that has no effect. It's used when a debugger wants to
         talk to a different TAP in the same scan chain as this one.
 

@@ -39,7 +39,7 @@ changelog.tex: .git/logs/HEAD Makefile
 	dot -Teps $< -o $@
 
 %.tex: %.xml registers.py
-	./registers.py --custom --definitions $@.inc --cheader $@.h $< > $@
+	./registers.py --custom --definitions $@.inc --cheader $(basename $@).h $< > $@
 
 %.o:	%.S
 	$(CC) -c $<

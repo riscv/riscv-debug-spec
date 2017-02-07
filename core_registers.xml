@@ -1,4 +1,4 @@
-<registers name="Core Debug Registers">
+<registers name="Core Debug Registers" prefix="CSR_">
     These registers are only accessible from Halt Mode.
     <register name="Debug Control and Status" short="dcsr" address="0x7b0">
         <field name="xdebugver" bits="31:30" access="R" reset="Preset">
