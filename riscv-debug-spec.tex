@@ -380,10 +380,10 @@ additional DMs, etc.
         0x00 -- 0x3f & Registers described in Section~\ref{dmdebbus}. \\
         \hline
         0x40 -- 0x5f & If accessible, there are 1024 bits here, one for each
-        hart that may exist in the system. If the hart is ready for the DM to
-        feed it an instruction, the bit is 1. Otherwise the bit is 0. The bit
-        for hart 0 is the LSB in the 32-bit word at 0x40. The bit for hart 1023
-        is the MSB in the 32-bit word at 0x5f. \\
+        hart that may exist in the system. If the hart is halted, the bit is 1.
+        Otherwise the bit is 0. The bit for hart 0 is the LSB in the 32-bit
+        word at 0x40. The bit for hart 1023 is the MSB in the 32-bit word at
+        0x5f. \\
         \hline
     \end{tabulary}
 \end{table}
