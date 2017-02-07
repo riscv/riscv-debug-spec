@@ -7,7 +7,7 @@
         \item Copy data from the register specified by \Fregno into {\tt data}, if \Fwrite is clear.
         \item Copy data from {\tt data} into the register specified by \Fregno, if \Fwrite is set.
         \item Execute the Program Buffer, if \Fpostexec is set.
-        \item Resume the hart, if \Fpostresume is set. If the hart is already 
+        \item Resume the hart, if \Fpostresume is set. If the hart is already
         running and \Fprehalt is not set, the entire command fails.
         \end{steps}
 
