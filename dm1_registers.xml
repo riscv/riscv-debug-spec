@@ -29,6 +29,9 @@
         <field name="0" bits="28:26" access="R" reset="0" />
         <field name="hartid" bits="25:16" access="R/W" reset="0">
             The ID of the hart to select.
+
+            While the ID written here does not match an actual hart in the
+            system, \Fhalt is 0, \Fbusy in \Rabstractcs is 1.
         </field>
         <field name="0" bits="15:9" access="R" reset="0" />
         <field name="haltsum" bits="8" access="R" reset="Preset">
@@ -299,19 +302,22 @@
             Gets set if an abstract command fails. No abstract command is
             started until the value is reset to 0.
 
-            0: No error.
+            0 (none): No error.
 
-            1: An abstract command was executing while \Rcommand or one of the
-            {\tt data} registers was accessed.
+            1 (busy): An abstract command was executing while \Rcommand or one
+            of the {\tt data} registers was accessed.
 
-            2: The requested command is not supported. A command that is not
-            supported while the hart is running may be supported when it is
-            halted.
+            2 (not supported): The requested command is not supported. A
+            command that is not supported while the hart is running may be
+            supported when it is halted.
 
-            3: An exception occurred while executing the command (eg. while
-            executing the Program Buffer).
+            3 (exception): An exception occurred while executing the command
+            (eg. while executing the Program Buffer).
 
-            7: The command failed for another reason.
+            4 (halt/resume): An abstract command couldn't execute because the
+            hart wasn't in the expected state (running/halted).
+
+            7 (other): The command failed for another reason.
         </field>
         <field name="busy" bits="4" access="R" reset="0">
             1: An abstract command is currently being executed.
