@@ -12,7 +12,9 @@
         \end{steps}
 
         If any of these operations fail, \Fcmderr is set and none of the
-        remaining steps are executed.
+        remaining steps are executed. An implementation may detect an upcoming
+        failure early, and fail the overall command before it reaches the step
+        that would cause failure.
 
         This command must be implemented and support accessing GPRs when the
         hart is halted. Accessing other registers, or accessing registers while
