@@ -353,6 +353,11 @@
         Accessing them while an abstract command is executing causes \Fcmderr
         to be set.
 
+        The values in these registers may not be preserved after an abstract
+        command is executed. The only guarantees on their contents are the ones
+        offered by the command in question. If the command fails, no
+        assumptions can be made about the contents of these registers.
+
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
 
