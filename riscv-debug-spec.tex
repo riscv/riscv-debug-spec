@@ -418,8 +418,8 @@ clock cycles will be a more typical latency.)
 A debugger can execute an abstract command by writing the command to \Rcommand.
 If the command takes arguments, the debugger must write them to the {\tt data}
 registers before writing to \Rcommand. If a command returns results, they are
-placed in the {\tt data} registers when the command is complete. Which {\tt
-data} registers are used for the arguments is described in Table~\ref{tab:datareg}. 
+placed in the {\tt data} registers when the command is complete. Which {\tt data}
+registers are used for the arguments is described in Table~\ref{tab:datareg}. 
 Depending on the implementation, it may be possible to perform abstract commands 
 even when the hart is not halted.
 
