@@ -206,7 +206,7 @@ def write_cheader( fd, registers ):
                     definitions.append(( mask,
                             "(0x%x << %s)" % ( ((1<<int(f.length()))-1), offset )))
                 except TypeError:
-                    definitions.append(( mask, "(((1<<%s)-1) << %s)" % (f.length(), offset) ))
+                    definitions.append(( mask, "(((1L<<%s)-1) << %s)" % (f.length(), offset) ))
 
     counted = collections.Counter(name for name, value in definitions)
     for name, value in definitions:
