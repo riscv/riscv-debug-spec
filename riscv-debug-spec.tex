@@ -403,7 +403,8 @@ generally reset at power-up and if and only if
 Up to 1024 harts can be connected to the DM. The debugger can select any hart
 by writing its index to \Fhartsel. Hart indexes start at 0 and are continuous
 until the final index. This allows the debugger to enumerate all the harts
-attached to the DM by trying each index until \Fhartstatus is 3.
+attached to the DM by trying each index until \Fhartstatus is 3, although a
+binary search should be preferred.
 
 \subsection{Halt Control} \label{haltcontrol}
 
