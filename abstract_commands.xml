@@ -1,4 +1,5 @@
-<registers name="Abstract Commands" skip_index="1" skip_access="1" skip_reset="1">
+<registers name="Abstract Commands" skip_index="1" skip_access="1"
+        skip_reset="1" prefix="AC_">
     <register name="Access Register">
         \begin{steps}{Perform the following sequence of operations:}
         \item Halt the hart, if \Fprehalt is set. If the hart is already
