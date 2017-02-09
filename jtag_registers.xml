@@ -112,7 +112,7 @@
             The data to send to the DM during Update-DR, and the data returned
             from the previous operation to the DM.
         </field>
-        <field name="op" bits="1:0" access="R/W" reset="0">
+        <field name="op" bits="1:0" access="R/W" reset="2">
             When the debugger writes this field, it has the following meaning:
 
             0: Ignore \Fdata. (nop)
