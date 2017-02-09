@@ -201,8 +201,8 @@ first.
 
 \subsubsection{Halt/Resume}
 
-Sections \ref{dmi}, \ref{haltcontrol}, \ref{dmcontrol}, \ref{haltsum},
-\ref{hartids}, \ref{deb:halt}.
+Sections \ref{dmi}, \ref{selectingharts}, \ref{haltcontrol}, \ref{dmcontrol},
+\ref{haltsum}, \ref{deb:halt}.
 
 \subsubsection{Abstract Register Access}
 
@@ -398,15 +398,23 @@ by this reset is implementation dependent. Debug Module's own state and register
 generally reset at power-up and if and only if
 \Fdmactive in \Rdmcontrol is 0.
 
+\subsection{Selecting Harts} \label{selectingharts}
+
+Up to 1024 harts can be connected to the DM. The debugger can select any hart
+by writing its index to \Fhartsel. Hart indexes start at 0 and are continuous
+until the final index. This allows the debugger to enumerate all the harts
+attached to the DM by trying each index until \Fhartstatus is 3.
+
 \subsection{Halt Control} \label{haltcontrol}
 
 This block controls halt signals from the Debug Module to a hart.  It is used
 to halt a hart, and let it run again.
 
-For each hart the block contains a single bit that is accessible through \Fhalt
-in \Rdmcontrol. When a debugger wants to halt a hart, it writes 1 to this bit,
-and then waits for \Fhalt in that register to go high.  To resume, the debugger
-clears the bit, and waits for it to go low.
+For each hart the block contains a single bit that is accessible through
+\Fhaltreq in \Rdmcontrol. When a debugger wants to halt a hart, it writes 1 to
+this bit, and then waits for \Fhartstatus to indicate the hart is halted.  To
+resume, the debugger clears the bit, and waits for \Fhartstatus to indicate the
+hart is running.
 
 The Debug Module conceptually has a direct connection to the halt signal of
 every hart that has a halt signal. When set or cleared, a hart must respond in
@@ -597,15 +605,6 @@ access them as well?
 Modifications to the RISC-V core to support debug are kept to a minimum.  There
 is a special execution mode (Halt Mode) and a few extra CSRs. The DM takes care
 of the rest.
-
-\subsection{Hart IDs} \label{hartids}
-
-External debug imposes a few limits on hart IDs. Every hart in the system must
-have a unique ID. (There could be additional harts that reuse IDs, but only one
-of the harts that share an ID can be debugged.) One of the harts must use ID 0.
-The debugger needs this to access the config string to enumerate the remaining
-harts in the system. Hart IDs should be less than 128 if the Debug Bus address
-is 5 bits wide, or less than 1024 if that address is 6 or more bits wide.
 
 \subsection{Halt Mode} \label{haltmode}
 
@@ -899,8 +898,8 @@ halted.
 
 \subsection{Halting} \label{deb:halt}
 
-To halt a hart, the debugger sets \Fhartid and \Fhalt. Then it waits for \Fhalt
-to become set.
+To halt a hart, the debugger sets \Fhartsel and \Fhaltreq. Then it waits for
+\Fhartstatus to become 0.
 
 \subsection{Accessing Registers}
 
@@ -1248,7 +1247,7 @@ TODO: Just like reading memory.
 \subsection{Running}
 
 First, the debugger should restore any registers that it has clobbered.  Once
-that's done, it can let the core run by clearing \Fhalt.
+that's done, it can let the core run by clearing \Fhaltreq.
 
 \subsection{Single Step}
 

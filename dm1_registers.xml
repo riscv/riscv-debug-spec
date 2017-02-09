@@ -6,9 +6,9 @@
         The address of this register will not change in the future, because it
         contains \Fversion.  It has changed from version 0.11 of this spec.
 
-        <field name="halt" bits="31" access="R/W" reset="0">
-            Halt signal for the hart selected by \Fhartid.  Writes apply to the
-            new value of \Fhartid.
+        <field name="haltreq" bits="31" access="R/W" reset="0">
+            Halt request signal for the hart selected by \Fhartsel.  Writes
+            apply to the new value of \Fhartsel.
         </field>
         <field name="reset" bits="30" access="R/W" reset="0">
             This bit controls the reset signal from the DM to the rest of the
@@ -26,12 +26,20 @@
 	    neither by the platform's system reset or Debug Transport
 	    reset signals.
         </field>
-        <field name="0" bits="28:26" access="R" reset="0" />
-        <field name="hartid" bits="25:16" access="R/W" reset="0">
-            The ID of the hart to select.
+        <field name="0" bits="28" access="R" reset="0" />
+        <field name="hartstatus" bits="27:26" access="R" reset="-">
+            The status of the currently selected hart.
 
-            While the ID written here does not match an actual hart in the
-            system, \Fhalt is 0, \Fbusy in \Rabstractcs is 1.
+            0: Halted.
+
+            1: Running.
+
+            2: Powered down.
+
+            3: \Fhartsel specifies a hart that does not exist in this system.
+        </field>
+        <field name="hartsel" bits="25:16" access="R/W" reset="0">
+            The DM-specific index of the hart to select.
         </field>
         <field name="0" bits="15:8" access="R" reset="0" />
         <field name="authenticated" bits="7" access="R" reset="Preset">

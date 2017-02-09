@@ -57,7 +57,7 @@
 
             4: The hart single stepped because \Fstep was set. (priority 1)
 
-            5: \Fhalt was set. (priority 0)
+            5: \Fhaltreq was set. (priority 0)
 
             Other values are reserved for future use.
         </field>
