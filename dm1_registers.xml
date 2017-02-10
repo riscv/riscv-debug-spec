@@ -16,15 +16,18 @@
             to deassert the reset.
         </field>
         <field name="dmactive" bits="29" access="R/W" reset="0">
-            This bit indicates whether the Debug Module is active. When 0,
-	    all DM registers and state keep their reset values.
-	    When 1, DM registers and state are updated as described in the rest
-	    of the Debug Module description. Implementations may use this bit
-	    as needed to aid debugging, for example by preventing the Debug Module
-	    from being power gated while debugging is active.
-	    DM registers should not be otherwise reset after power-on,
-	    neither by the platform's system reset or Debug Transport
-	    reset signals.
+            This bit serves as a reset signal for the Debug Module itself.
+            When 0, the module is held in reset. When 1, it functions normally.
+            No other mechanism should exist that may result in resetting the
+            Debug Module after power up, including the platform's system reset
+            or Debug Transport reset signals.
+
+            A debugger should pulse this bit low to ensure that the Debug
+            Module is fully reset and ready to use.
+
+            Implementations may use this bit to aid debugging, for example by
+            preventing the Debug Module from being power gated while debugging
+            is active.
         </field>
         <field name="0" bits="28" access="R" reset="0" />
         <field name="hartstatus" bits="27:26" access="R" reset="-">
