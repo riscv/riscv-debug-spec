@@ -413,8 +413,8 @@ to halt a hart, and let it run again.
 For each hart the block contains a single bit that is accessible through
 \Fhaltreq in \Rdmcontrol. When a debugger wants to halt a hart, it writes 1 to
 this bit, and then waits for \Fhartstatus to indicate the hart is halted.  To
-resume, the debugger clears the bit, and waits for \Fhartstatus to indicate the
-hart is running.
+resume, the debugger writes 0 to \Fhaltreq, and waits for \Fhartstatus to
+indicate the hart is running.
 
 The Debug Module conceptually has a direct connection to the halt signal of
 every hart that has a halt signal. When set or cleared, a hart must respond in

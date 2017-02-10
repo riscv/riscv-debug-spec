@@ -34,7 +34,7 @@
 
             1: Running.
 
-            2: Powered down.
+            2: Unavailable (eg. powered down, held in reset).
 
             3: \Fhartsel specifies a hart that does not exist in this system.
         </field>
