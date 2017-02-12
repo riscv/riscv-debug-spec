@@ -77,6 +77,32 @@
         </field>
     </register>
 
+    <register name="Hart Info" short="hartinfo" address="0x01">
+        <field name="0" bits="31:17" access="R" reset="0" />
+        <field name="dataaccess" bits="16" access="R" reset="Preset">
+            0: The {\tt data} registers are shadowed in the hart by CSR
+            registers. Each CSR register is XLEN bits in size, and corresponds
+            to a single argument, per Table~\ref{tab:datareg}.
+
+            1: The {\tt data} registers are shadowed in the hart's memory map.
+            Each register takes up 4 bytes in the memory map.
+        </field>
+        <field name="datasize" bits="15:12" access="R" reset="Preset">
+            If \Fdataaccess is 0: Number of CSR registers dedicated to
+            shadowing the {\tt data} registers.
+
+            If \Fdataaccess is 1: Number of 32-bit words in the memory map
+            dedicated to shadowing the {\tt data} registers.
+        </field>
+        <field name="dataaddr" bits="11:0" access="R" reset="Preset">
+            If \Fdataaccess is 0: The number of the first CSR dedicated to
+            shadowing the {\tt data} registers.
+
+            If \Fdataaccess is 1: Signed address of RAM where the {\tt data}
+            registers are shadowed.
+        </field>
+    </register>
+
     <register name="Halt Summary" short="haltsum" address="0x02">
         This register contains a summary of which harts are halted.
 
@@ -287,9 +313,41 @@
         </field>
     </register>
 
+    <!-- =============== authentication =============== -->
+
+    <register name="Authentication Data 0" short="authdata0" address="0x0b">
+        If \Fauthtype is 0, this register is not present.
+
+        If \Fauthtype is 1, writing a correct password to this register and
+        \Rauthdataone enables the DM. The DM is disabled either by writing an
+        invalid password, or by resetting it. 0 must not be used as a password.
+        If an implementation wants to use a well-known password, the
+        recommended value is 0x5551212. Reading from the register returns 0.
+
+        If \Fauthtype is 2, things are a bit more complicated. Reading from the
+        register pair reads the last challenge generated. Writing the correct
+        response to \Rauthdataone and \Rauthdatazero enables the DM. The DM
+        is disabled either by writing an incorrect response, or by resetting
+        it.  Writing to \Rauthdatazero triggers validation, so if a 64-bit
+        value is required then \Rauthdataone must be written first.  If the
+        combined value in \Rauthdatazero and \Rauthdataone is not a valid
+        response after writing \Rauthdatazero, then a new challenge must be
+        generated.  Depending on the implementation, there may not be a valid
+        challenge until the first write to this register.
+
+        <field name="data" bits="31:0" access="R/W" reset="0" />
+    </register>
+
+    <register name="Authentication Data 1" short="authdata1" address="0x0c">
+        This register contains the upper 32 bits of a 64-bit password
+        or challenge/response as described in \Rauthdatazero.
+
+        <field name="data" bits="31:0" access="R/W" reset="0" />
+    </register>
+
     <!-- =============== abstract commands =============== -->
 
-    <register name="Abstract Control" short="abstractcs" address="0x0b">
+    <register name="Abstract Control" short="abstractcs" address="0x0e">
         <field name="0" bits="31:16" access="R" reset="0" />
         <field name="autoexec7" bits="15" access="R/W" reset="0" />
         <field name="autoexec6" bits="14" access="R/W" reset="0" />
@@ -339,7 +397,7 @@
         </field>
     </register>
 
-    <register name="Abstract Command" short="command" address="0x0c">
+    <register name="Abstract Command" short="command" address="0x0f">
         Writes to this register cause the corresponding abstract command to be
         executed.
 
@@ -359,7 +417,7 @@
         <field name="command" bits="31:0" access="W" reset="0" />
     </register>
 
-    <register name="Abstract Data 0" short="data0" address="0x0d">
+    <register name="Abstract Data 0" short="data0" address="0x10">
         Basic read/write registers that may be read or changed by abstract
         commands.
 
@@ -374,80 +432,21 @@
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
 
-    <register name="Abstract Data 1" short="data1" address="0x0e" />
-    <register name="Abstract Data 2" short="data2" address="0x0f" />
-    <register name="Abstract Data 3" short="data3" address="0x10" />
-    <register name="Abstract Data 4" short="data4" address="0x11" />
-    <register name="Abstract Data 5" short="data5" address="0x12" />
-    <register name="Abstract Data 6" short="data6" address="0x13" />
-    <register name="Abstract Data 7" short="data7" address="0x14" />
-
-    <!-- =============== instruction supply =============== -->
-
-    <register name="Access Status and Control" short="accesscs" address="0x15">
-        <field name="0" bits="31:4" access="R" reset="0" />
-        <field name="progsize" bits="3:0" access="R" reset="Preset">
-            Size of the Program Buffer, in 32-bit words. Valid sizes are 0, 1, 4,
-            and 8.
-
-            A debugger must not access any Instruction Buffer locations that
-            fall outside the range specified here.
-        </field>
-    </register>
-
-    <register name="Program Buffer 0" short="ibuf0" address="0x18">
-        The ibuf registers provide read/write access to the optional
-        instruction buffer.
-
-        If \Fautoexeczero is set, then after this register is accessed the
-        command in \Rcommand is executed again.
-
-        <field name="data" bits="31:0" access="R/W" reset="0" />
-    </register>
-
-    <register name="Program Buffer 1" short="ibuf1" address="0x19" />
-    <register name="Program Buffer 2" short="ibuf2" address="0x1a" />
-    <register name="Program Buffer 3" short="ibuf3" address="0x1b" />
-    <register name="Program Buffer 4" short="ibuf4" address="0x1c" />
-    <register name="Program Buffer 5" short="ibuf5" address="0x1d" />
-    <register name="Program Buffer 6" short="ibuf6" address="0x1e" />
-    <register name="Program Buffer 7" short="ibuf7" address="0x1f" />
-
-    <!-- =============== authentication =============== -->
-
-    <register name="Authentication Data 0" short="authdata0" address="0x20">
-        If \Fauthtype is 0, this register is not present.
-
-        If \Fauthtype is 1, writing a correct password to this register and
-        \Rauthdataone enables the DM. The DM is disabled either by writing an
-        invalid password, or by resetting it. 0 must not be used as a password.
-        If an implementation wants to use a well-known password, the
-        recommended value is 0x5551212. Reading from the register returns 0.
-
-        If \Fauthtype is 2, things are a bit more complicated. Reading from the
-        register pair reads the last challenge generated. Writing the correct
-        response to \Rauthdataone and \Rauthdatazero enables the DM. The DM
-        is disabled either by writing an incorrect response, or by resetting
-        it.  Writing to \Rauthdatazero triggers validation, so if a 64-bit
-        value is required then \Rauthdataone must be written first.  If the
-        combined value in \Rauthdatazero and \Rauthdataone is not a valid
-        response after writing \Rauthdatazero, then a new challenge must be
-        generated.  Depending on the implementation, there may not be a valid
-        challenge until the first write to this register.
-
-        <field name="data" bits="31:0" access="R/W" reset="0" />
-    </register>
-
-    <register name="Authentication Data 1" short="authdata1" address="0x21">
-        This register contains the upper 32 bits of a 64-bit password
-        or challenge/response as described in \Rauthdatazero.
-
-        <field name="data" bits="31:0" access="R/W" reset="0" />
-    </register>
+    <register name="Abstract Data 1" short="data1" address="0x11" />
+    <register name="Abstract Data 2" short="data2" address="0x12" />
+    <register name="Abstract Data 3" short="data3" address="0x13" />
+    <register name="Abstract Data 4" short="data4" address="0x14" />
+    <register name="Abstract Data 5" short="data5" address="0x15" />
+    <register name="Abstract Data 6" short="data6" address="0x16" />
+    <register name="Abstract Data 7" short="data7" address="0x17" />
+    <register name="Abstract Data 8" short="data8" address="0x18" />
+    <register name="Abstract Data 9" short="data9" address="0x19" />
+    <register name="Abstract Data 10" short="data10" address="0x1a" />
+    <register name="Abstract Data 11" short="data11" address="0x1b" />
 
     <!-- =============== serial ports =============== -->
 
-    <register name="Serial Data" short="serdata" address="0x22">
+    <register name="Serial Data" short="serdata" address="0x1c">
         If \Fserialcount is 0, this register is not present.
 
         This register provides access to the data queues of the serial port
@@ -464,7 +463,7 @@
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
 
-    <register name="Serial Status" short="serstatus" address="0x23">
+    <register name="Serial Status" short="serstatus" address="0x1d">
         If \Fserialcount is 0, this register is not present.
 
         <field name="serialcount" bits="31:28" access="R" reset="Preset">
@@ -497,5 +496,40 @@
             writing 0 to this bit.
         </field>
     </register>
+
+    <!-- =============== instruction supply =============== -->
+
+    <register name="Access Status and Control" short="accesscs" address="0x1f">
+        <field name="0" bits="31:4" access="R" reset="0" />
+        <field name="progsize" bits="3:0" access="R" reset="Preset">
+            Size of the Program Buffer, in 32-bit words. Valid sizes are 0, 1, 4,
+            and 8.
+
+            A debugger must not access any Instruction Buffer locations that
+            fall outside the range specified here.
+        </field>
+    </register>
+
+    <register name="Program Buffer 0" short="ibuf0" address="0x20">
+        The ibuf registers provide read/write access to the optional
+        instruction buffer.
+
+        If \Fautoexeczero is set, then after this register is accessed the
+        command in \Rcommand is executed again.
+
+        <field name="data" bits="31:0" access="R/W" reset="0" />
+    </register>
+
+    <register name="Program Buffer 1" short="ibuf1" address="0x21" />
+    <register name="Program Buffer 2" short="ibuf2" address="0x22" />
+    <register name="Program Buffer 3" short="ibuf3" address="0x23" />
+    <register name="Program Buffer 4" short="ibuf4" address="0x24" />
+    <register name="Program Buffer 5" short="ibuf5" address="0x25" />
+    <register name="Program Buffer 6" short="ibuf6" address="0x26" />
+    <register name="Program Buffer 7" short="ibuf7" address="0x27" />
+    <register name="Program Buffer 8" short="ibuf8" address="0x28" />
+    <register name="Program Buffer 9" short="ibuf9" address="0x29" />
+    <register name="Program Buffer 10" short="ibuf10" address="0x2a" />
+    <register name="Program Buffer 11" short="ibuf11" address="0x2b" />
 
 </registers>

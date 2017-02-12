@@ -426,25 +426,25 @@ clock cycles will be a more typical latency.)
 A debugger can execute an abstract command by writing the command to \Rcommand.
 If the command takes arguments, the debugger must write them to the {\tt data}
 registers before writing to \Rcommand. If a command returns results, they are
-placed in the {\tt data} registers when the command is complete. Which {\tt data}
-registers are used for the arguments is described in Table~\ref{tab:datareg}. 
-Depending on the implementation, it may be possible to perform abstract commands 
-even when the hart is not halted.
+placed in the {\tt data} registers when the command is complete. Which {\tt
+data} registers are used for the arguments is described in
+Table~\ref{tab:datareg}.  In all cases the least-significant word is placed in
+the lowest-numbered {\tt data} register.  Depending on the implementation, it
+may be possible to perform abstract commands even when the hart is not halted.
 
 \begin{table}[htp]
     \centering
     \caption{Use of Data Registers}
     \label{tab:datareg}
-    \begin{tabulary}{\textwidth}{|r|l|l|}
+    \begin{tabulary}{\textwidth}{|r|l|l|l|}
         \hline
-        XLEN & arg0/return value (LSW to MSW) & arg1 (LSW to MSW) \\
+        XLEN & arg0/return value & arg1 & arg2 \\
         \hline
-        32 & \Rdatazero & \Rdataone \\
+        32 & \Rdatazero & \Rdataone & \Rdatatwo \\
         \hline
-        64 & \Rdatazero, \Rdataone & \Rdatatwo, \Rdatathree \\
+        64 & \Rdatazero, \Rdataone & \Rdatatwo, \Rdatathree & \Rdatafour, \Rdatafive \\
         \hline
-        128 & \Rdatazero, \Rdataone, \Rdatatwo, \Rdatathree &
-        \Rdatafour, \Rdatafive, \Rdatasix, \Rdataseven \\
+        128 & \Rdatazero--\Rdatathree & \Rdatafour--\Rdataseven & \Rdataeight--\Rdataeleven \\
         \hline
     \end{tabulary}
 \end{table}
@@ -549,10 +549,12 @@ can still allow accessing resources in such a running system.
 First, an implementation may implement abstract commands that work without
 halting the hart.
 
-Second, \Fprehalt and \Fpostresume in abstract commands allow a single abstract
-command to first halt the hart, and then resume it. This results in the hart
-being halted for a minimal amount of time. There are no doubt systems where
-this is unacceptable, but most real-time systems can bear an occasional hiccup
+Second, the Quick Access abstract command can be used to halt a hart, quickly
+execute the contents of the Program Buffer, and let the hart run again.
+Combined with instructions that allow Program Buffer code to access the {\tt
+data} registers, as described in \ref{hartinfo}, this can be used to quickly
+perform a memory or register access. For some systems this will be too
+intrusive, but many systems that can't be halted can bear an occasional hiccup
 of a hundred or less cycles.
 
 Third, if the System Bus Access block is implemented, it can be used while a
@@ -1280,7 +1282,41 @@ must have caused it.
 
 \subsection{Quick Access} \label{quickaccess}
 
-TODO
+Halt the hart for a minimum amount of time to perform a single memory write.
+
+There are 2 different instructions to transfer data between GPRs and the {\tt
+data} registers. They are either loads/stores or CSR reads/writes. The specific
+addresses also vary. This is all specified in \Rhartinfo. The example here uses
+the pseudo-op {\tt transfer dest, src} to represent all these options.
+
+\begin{tabulary}{\textwidth}{|r|r|l|L|}
+    \hline
+    Op & Address & Value & Comment \\
+    \hline
+    Write & \Ribufzero & {\tt transfer arg2, s0} & \\
+    \hline
+    Write & \Ribufone & {\tt transfer s0, arg0} & \\
+    \hline
+    Write & \Ribuftwo & {\tt transfer arg0, s1} & \\
+    \hline
+    Write & \Ribufthree & {\tt transfer s1, arg1} & \\
+    \hline
+    Write & \Ribuffour & {\tt sw 0(s0), s1} & \\
+    \hline
+    Write & \Ribuffive & {\tt transfer arg1, s1} & \\
+    \hline
+    Write & \Ribufsix & {\tt transfer arg2, s0} & \\
+    \hline
+    Write & \Ribufseven & {\tt ebreak} & \\
+    \hline
+    Write & \Rdatazero & address & \\
+    \hline
+    Write & \Rdataone & data & \\
+    \hline
+    Write & \Rcommand & 0x10000000 & Perform quick access \\
+    \hline
+\end{tabulary}
+\medskip
 
 \section{Trace Module}
 

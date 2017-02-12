@@ -159,6 +159,7 @@ def toLatexIdentifier( text ):
             ( '32', 'thirtytwo' ),
             ( '28', 'twentyeight' ),
             ( '16', 'sixteen' ),
+            ( '11', 'eleven' ),
             ( '9', 'nine' ),
             ( '8', 'eight' ),
             ( '7', 'seven' ),

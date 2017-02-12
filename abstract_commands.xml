@@ -2,16 +2,12 @@
         skip_reset="1" prefix="AC_">
     <register name="Access Register">
         \begin{steps}{Perform the following sequence of operations:}
-        \item Halt the hart, if \Fprehalt is set. If the hart is already
-            handled, the entire command fails.
         \item Execute the Program Buffer, if \Fpreexec is set.
         \item Copy data from the register specified by \Fregno into the {\tt arg0} region of
             {\tt data}, if \Fwrite is clear.
         \item Copy data from the {\tt arg0} region of {\tt data} into the register specified
             by \Fregno, if \Fwrite is set.
         \item Execute the Program Buffer, if \Fpostexec is set.
-        \item Resume the hart, if \Fpostresume is set. If the hart is already
-            running, the entire command fails.
         \end{steps}
 
         If any of these operations fail, \Fcmderr is set and none of the
@@ -24,11 +20,8 @@
         the hart is running is optional.
 
         <field name="0" bits="31:24" />
-        <field name="prehalt" bits="23">
+        <field name="0" bits="23:22">
             When 1, halt the hart before performing the rest of the command.
-        </field>
-        <field name="postresume" bits="22">
-            When 1, resume the hart after performing the rest of the command.
         </field>
         <field name="size" bits="21:19">
             2: Access the lowest 32 bits of the register.
@@ -59,5 +52,25 @@
         <field name="regno" bits="15:0">
             Number of the register to access, as described in Table~\ref{tab:regno}.
         </field>
+    </register>
+
+    <register name="Quick Access">
+        \begin{steps}{Perform the following sequence of operations:}
+        \item Halt the hart. If the hart is already handled, the entire command
+            fails.
+        \item Execute the Program Buffer.
+        \item Resume the hart. If the hart is already running, the entire
+            command fails.
+        \end{steps}
+
+        If any of these operations fail, \Fcmderr is set and none of the
+        remaining steps are executed. An implementation may detect an upcoming
+        failure early, and fail the overall command before it reaches the step
+        that would cause failure.
+
+        Implementing this command is optional.
+
+        <field name="1" bits="31:24" />
+        <field name="0" bits="23:0" />
     </register>
 </registers>
