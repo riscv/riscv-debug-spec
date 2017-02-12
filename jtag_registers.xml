@@ -43,47 +43,60 @@
         The size of this register will remain constant in future versions so
         that a debugger can always determine the version of the DTM.
         <field name="0" bits="31:17" access="R" reset="0" />
-        <field name="dbusreset" bits="16" access="W1" reset="0">
-            Writing 1 to this bit resets the dbus controller, clearing any
+        <field name="dmireset" bits="16" access="W1" reset="0">
+            Writing 1 to this bit resets the DMI controller, clearing any
             sticky error state.
         </field>
         <field name="0" bits="15" access="R" reset="0" />
         <field name="idle" bits="14:12" access="R" reset="Preset">
-            The number of cycles a debugger needs to send the target through
-            Run-Test/Idle after every dbus scan.
+            This is a hint to the debugger of the minimum number of cycles
+            a debugger should spend in
+            Run-Test/Idle after every DMI scan to avoid a 'busy'
+            return code (\Fdmistat of 3). This field may
+            be incorrect and a debugger must still function properly
+            by checking \Fdmistat when necessary.
 
-            0: It's not necessary to enter Run-Test/Idle at all.
+            0: It is not necessary to enter Run-Test/Idle at all.
 
             1: Enter Run-Test/Idle and leave it immediately.
 
             2: Enter Run-Test/Idle and stay there for 1 cycle before leaving.
 
             And so on.
+
+            \begin{commentary}
+            TODO: How useful is this? The debugger can quickly find this out
+            by reading DMINFO a few times until it figures out the value.
+            It is likely to be just a guess most of the time.
+            \end{commentary
+
         </field>
-        <field name="dbusstat" bits="11:10" access="R" reset="0">
+        <field name="dmistat" bits="11:10" access="R" reset="0">
             0: No error.
 
-            2: An operation failed.
+            1: Reserved. Interpret the same as 2.
 
-            3: An operation was attempted while a bus access was still in
-            progress.
+            2: An operation failed (resulted in \Fop of 2).
+
+            3: An operation was attempted while a DMI access was still in
+            progress (resulted in \Fop of 3).
         </field>
         <field name="abits" bits="9:4" access="R" reset="Preset">
-            The size of \Faddress in \Rdbus.
+            The size of \Faddress in \Rdmi.
         </field>
         <field name="version" bits="3:0" access="R" reset="1">
             0: Version described in spec version 0.11.
 
             1: Version described in spec version 0.12 (and later?), which
-            reduces the Debug Bus width to 32 bits.
+            reduces the DMI data width to 32 bits.
 
             Other values are reserved for future use.
         </field>
     </register>
 
-    <register name="Debug Bus Access" short="dbus" address="0x11"
+    <register name="Debug Module Interface Access" short="dmi" address="0x11"
         sdesc="For Debugging">
-        This register allows access to the Debug Bus.
+        This register allows access to the Debug Module Interface (DMI).
 
         In Update-DR, the DTM starts the operation specified in \Fop unless the
         current status reported in \Fop is sticky.
@@ -91,8 +104,8 @@
         In Capture-DR, the DTM updates \Fdata with the result from that
         operation, updating \Fop if the current \Fop isn't sticky.
 
-        See Section~\ref{dbusaccess} and Table~\ref{tab:memread} for examples
-        of how this plays out.
+        See Section~\ref{dmiaccess} and Table~\ref{tab:memread} for examples
+        of how this is used.
 
         \begin{commentary}
         The still-in-progress status is sticky to accommodate debuggers that
@@ -105,12 +118,12 @@
         \end{commentary}
 
         <field name="address" bits="abits+33:34" access="R/W" reset="0">
-            Address used for Debug Bus access. In Update-DR this value is sent
-            to the DM.
+            Address used for DMI access. In Update-DR this value is used
+            to access the DM over the DMI.
         </field>
         <field name="data" bits="33:2" access="R/W" reset="0">
-            The data to send to the DM during Update-DR, and the data returned
-            from the previous operation to the DM.
+            The data to send to the DM over the DMI during Update-DR, and
+            the data returned from the DM as a result of the previous operation.
         </field>
         <field name="op" bits="1:0" access="R/W" reset="2">
             When the debugger writes this field, it has the following meaning:
@@ -119,7 +132,7 @@
 
             1: Read from \Faddress. (read)
 
-            2: Read from \Faddress. Then write \Fdata to \Faddress. (write)
+            2: Write \Fdata to \Faddress. (write)
 
             3: Reserved.
 
@@ -129,16 +142,36 @@
 
             1: Reserved.
 
-            2: The previous operation failed. The data scanned into \Rdbus in
-            this access will be ignored. This status is sticky and can be
-            cleared by writing \Fdbusreset in \Rdtmcontrol.
+            2: The previous operation returned a non-zero value in \Fop.
+            The data scanned into \Rdmi in this access will be ignored.
+            This status is sticky and can be cleared by writing \Fdmireset
+            in \Rdtmcontrol.
 
-            3: The previous operation is still in progress. The data scanned
-            into \Rdbus in this access will be ignored. This status is sticky
-            and can be cleared by writing \Fdbusreset in \Rdtmcontrol. If a
-            debugger sees this status, it needs to give the target more time
-            between Update-DR and Capture-DR. The simplest way to do that is to
-            add extra transitions in Run-Test/Idle.
+            \begin{commentary}
+            This indicates that the DM itself responded with an error, e.g.
+            in the System Bus and Serial Port overflow/underflow cases.
+            Generally this means that for this type of DM access, the DTM should
+            allow more time between Update-DR and Capture-DR. The most portable way
+            to achieve this is to spend more TCK ticks in Run-Test/Idle state
+            for similar operations.
+            \end{commentary}
+
+            3: The previous DMI request is still in progress. The data scanned
+            into \Rdmi in this access will be ignored. This status is sticky
+            and can be cleared by writing \Fdmireset in \Rdtmcontrol. If a
+            debugger sees this status, it needs to give the target more TCK
+            edges between Update-DR and Capture-DR. The simplest way
+            to do that is to add extra transitions in Run-Test/Idle.
+
+            \begin{commentary}
+            The DTM, DM, and/or component may be in different clock domains, so
+            synchronization may be required. Some relatively fixed number of TCK
+            ticks may be needed for the request to reach the DM, complete, and
+            for the response to be synchronized back into the TCK domain.
+            This status is intended to cover these cases, and is orthogonal to
+            the causes for case 2.
+            \end{commentary}
+
         </field>
     </register>
 
@@ -157,8 +190,8 @@
     <register name="Unused (BYPASS)" address="0x1e" sdesc="Reserved for customization"/>
 
     <register name="BYPASS" address="0x1f" sdesc="JTAG requires this encoding">
-        1-bit register that has no effect. It's used when a debugger wants to
-        talk to a different TAP in the same scan chain as this one.
+        1-bit register that has no effect. It is used when a debugger does not
+        want to communicate with this TAP.
 
         <field name="0" bits="0" access="R" reset="0" />
     </register>
