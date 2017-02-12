@@ -133,23 +133,17 @@ and Andy Wright.
 \section{Introduction}
 
 When a design progresses from simulation to a hardware implementation, a users's
-control and understanding of the system's current state drops
-dramatically.
+control and understanding of the system's current state drops dramatically.
 To help bring up and debug low level software and hardware,
-it is critical to have good debugging support built
-into the hardware.
+it is critical to have good debugging support built into the hardware.
 When a robust OS is running on a core, software can handle many
-debugging tasks. Howevever, in many scenarios,
-hardware support is essential.
+debugging tasks. Howevever, in many scenarios, hardware support is essential.
 
-This document outlines a standard
-architecture for external debug support on RISC-V platforms.
-This architecture allows a variety of implementations and
-tradeoffs, which is complementary to the wide range of
-RISC-V implementations. At the same time, this
-specification aims to define common interfaces, to
-allow debugging tools and components to target a
-variety of platforms based on the RISC-V ISA.
+This document outlines a standard architecture for external debug support 
+on RISC-V platforms. This architecture allows a variety of implementations and
+tradeoffs, which is complementary to the wide range of RISC-V implementations.
+At the same time, this specification aims to define common interfaces, to
+allow debugging tools and components to target a variety of platforms based on the RISC-V ISA.
 
 System designers may choose to add additional hardware debug support,
 but this specification defines a standard interface for common
@@ -168,8 +162,7 @@ not part of the actual specification.
 \subsection{Terminology}
 
 A \emph{platform} is a single integrated circuit consisting of one or more
-\emph{components}.
-Some components may be RISC-V cores, while others may have a different
+\emph{components}. Some components may be RISC-V cores, while others may have a different
 function. Typically they will all be connected to a single system bus.
 A single RISC-V core contains one or more hardware threads, called
 \emph{harts}.
@@ -262,8 +255,8 @@ TODO
 There are several use cases for dedicated debugging hardware, both
 internal to a CPU core and with an external connection.
 This specification defines techniques to support all of the use cases
-listed below. Some are
-optional to allow system designers to make cost vs capability tradeoffs.
+listed below. Some are optional to allow system designers to make
+cost vs capability tradeoffs.
 
 \begin{itemize}
 
@@ -276,11 +269,10 @@ optional to allow system designers to make cost vs capability tradeoffs.
 
 \item Accessing hardware on the system without a working CPU.
 
-\item Accesssing parts of a system which a CPU may not have software visibility
-  (e.g. cache tag arrays).
+\item Accessing custom registers that could be added to aid in hardware debug, system bringup,
+etc.
 
-\item Efficiently communicating data between a running process and external hardware,
-  for example to download code and data to write a program to memory.
+\item Writing code and data to memory, e.g. boot code and manufacturing constants.
 
 \item Analyzing low-level performance issues using profiling and sampling techniques.
 
@@ -296,16 +288,13 @@ This specification aims to define common resources which can be used
 for different cases.
 
 When debugging software, this specification distinguishes between two
-forms of external debugging.
-The first is \emph{halt mode} debugging, where an external debugger halts
-some or all components of a
+forms of external debugging. The first is \emph{halt mode} debugging,
+where an external debugger halts some or all components of a
 platform and inspects their state while they are in stasis.
-The debugger can read and/or modify state, then
-direct the hardware
+The debugger can read and/or modify state, then direct the hardware
 to execute a single instruction, or continue to run freely.
 
-The second is \emph{run mode} debugging.
-In this mode a software
+The second is \emph{run mode} debugging. In this mode a software
 debug agent runs on a component (eg.  triggered by a timer interrupt or breakpoint
 on a RISC-V core) which transfers data to or from the debugger
 without halting the component, only briefly interrupting its program flow.
@@ -349,11 +338,10 @@ The debug interface described in this specification supports the following featu
        of the cores it is debugging.
 \end{enumerate}
 
-This document does not suggest a strategy or implementation
-for hardware test, debugging or error detection techniqes.
-Scan, BIST, etc are out of scope of this specification,
-but this specification does not intend
-to limit their use in RISC-V systems.
+This document does not suggest a strategy or implementation for hardware test,
+debugging or error detection techniqes. Scan, BIST, etc. are out of scope of
+this specification, but this specification does not intend to limit their use 
+in RISC-V systems.
 
 \section{System Overview} \label{overview}
 
