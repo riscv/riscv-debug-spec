@@ -132,11 +132,28 @@ and Andy Wright.
 
 \section{Introduction}
 
-Software contains bugs, and to help find these bugs it is critical to have good
-debugging tools. Unless a robust OS is running on a core, with convenient
-access to it (eg. over a network interface), hardware support is required to
-provide visibility into what is going on in that core.  This document outlines
-how that support should be provided on RISC-V platforms.
+When a design progresses from simulation to a hardware implementation, a users's
+control and understanding of the system's current state drops
+dramatically.
+To help bring up and debug low level software and hardware,
+it is critical to have good debugging support built
+into the hardware.
+When a robust OS is running on a core, software can handle many
+debugging tasks. Howevever, in many scenarios,
+hardware support is essential.
+
+This document outlines a standard
+architecture for external debug support on RISC-V platforms.
+This architecture allows a variety of implementations and
+tradeoffs, which is complementary to the wide range of
+RISC-V implementations. At the same time, this
+specification aims to define common interfaces, to
+allow debugging tools and components to target a
+variety of platforms based on the RISC-V ISA.
+
+System designers may choose to add additional hardware debug support,
+but this specification defines a standard interface for common
+functionality.
 
 \section{About This Document}
 
@@ -242,28 +259,66 @@ TODO
 
 \section{Background}
 
-There are two forms of external debugging. The first is \emph{halt mode}
-debugging, where an external debugger will halt some or all components of a
-platform and inspect them while they are in stasis. Then the debugger can allow
-the hardware to either perform a single step or to run freely.
+There are several use cases for dedicated debugging hardware, both
+internal to a CPU core and with an external connection.
+This specification defines techniques to support all of the use cases
+listed below. Some are
+optional to allow system designers to make cost vs capability tradeoffs.
 
-The second is \emph{run mode} debugging.  In this mode there is a software
-debug agent running on a component (eg.  triggered by a timer interrupt on a
-RISC-V core) which communicates with a debugger without halting the component.
-This is essential if the component is controlling some real-time system (like a
-hard drive) where halting the component might lead to physical damage. It
-requires more software support (both on the chip as well as on the debug
-client).  For this use case the debug interface may include simple serial
-ports.
+\begin{itemize}
 
-A third use for the external debug interface is to use it as a general
-transport for a component to communicate with the outside world. For instance,
-it could be used to implement a serial interface that firmware could use to
-provide a simple CLI. This can use the same serial ports used for run-mode
-debugging.
+\item Debugging low-level software in the absence of an OS or other software.
+
+\item Debugging issues in the OS itself.
+
+\item Bootstrapping a system to test, configure, and program components before
+  there is any executable code path in the system.
+
+\item Accessing hardware on the system without a working CPU.
+
+\item Accesssing parts of a system which a CPU may not have software visibility
+  (e.g. cache tag arrays).
+
+\item Efficiently communicating data between a running process and external hardware,
+  for example to download code and data to write a program to memory.
+
+\item Analyzing low-level performance issues using profiling and sampling techniques.
+
+\item Providing a general transport for firmware running on a component to communicate with the
+  outside world.
+
+\end{itemize}
+
+In addition, even without a hardware debugging interface,
+architectural support in a RISC-V CPU can aid software debugging and
+performance analysis, by allowing hardware triggers and breakpoints.
+This specification aims to define common resources which can be used
+for different cases.
+
+When debugging software, this specification distinguishes between two
+forms of external debugging.
+The first is \emph{halt mode} debugging, where an external debugger halts
+some or all components of a
+platform and inspects their state while they are in stasis.
+The debugger can read and/or modify state, then
+direct the hardware
+to execute a single instruction, or continue to run freely.
+
+The second is \emph{run mode} debugging.
+In this mode a software
+debug agent runs on a component (eg.  triggered by a timer interrupt or breakpoint
+on a RISC-V core) which transfers data to or from the debugger
+without halting the component, only briefly interrupting its program flow.
+This functionality is essential if the component is controlling some real-time system (like a
+hard drive) where long timing delays could lead to physical damage.
+This requires additional software support (both on the system as well as on the debugger),
+and efficient communication channels between the component and the debugger.
+
+%MAW -- where does Quick Access fit in the above description? Is it fair to call
+% it run-mode debugging?
 
 \section{Supported Features}
-The debug interface described out here supports the following features:
+The debug interface described in this specification supports the following features:
 \begin{enumerate}
    \item RV32, RV64, and future RV128 are all supported.
    \item Any hart in the platform can be independently debugged.
@@ -271,10 +326,13 @@ The debug interface described out here supports the following features:
        without user configuration.
    \item An optional extension allows arbitrary instructions to be executed on
        a halted hart. That means no new debug functionality is needed when a
-       core has custom instructions or state, as long as there exist programs
+       core has additional or custom instructions or state, as
+       long as there exist programs
        that can move that state into GPRs.
    \item An implementation can choose to provide register access without
-       halting.
+     halting.
+   \item An implemenation can choose to provide the ability to automatically
+     halt and resume a hart without debugger intervention.
    \item A system bus master can be implemented to allow memory access without
        involving any hart.
    \item Debugging can be supported over multiple transports.
@@ -287,16 +345,23 @@ The debug interface described out here supports the following features:
        address/data, or an instruction opcode.
    \item Optional serial ports can be used for communication between debugger
        and monitor, or as a general protocol between debugger and application.
-   \item The debugger doesn't need to know anything about the microarchitecture
+   \item The debugger does not need to know anything about the microarchitecture
        of the cores it is debugging.
 \end{enumerate}
 
+This document does not suggest a strategy or implementation
+for hardware test, debugging or error detection techniqes.
+Scan, BIST, etc are out of scope of this specification,
+but this specification does not intend
+to limit their use in RISC-V systems.
+
 \section{System Overview} \label{overview}
 
-The Debug System is designed to allow (at least) 2 different implementations.
+The Debug System is designed to allow (at least) 2 different implementations
+for accessing a RISC-V core's internals.
 The direct implementation is intrusive into a core's data path, but enables a
-very light-weight Debug Module. The instruction supply implementation doesn't
-touch the core's data path, but requires a bit more from the Debug Module.
+very light-weight Debug Module. The instruction supply implementation does not
+touch the core's data path, but requires more from the Debug Module.
 
 Figure~\ref{fig:overview} shows the main components of External Debug Support.
 Blocks shown in dotted lines are optional.
@@ -311,7 +376,7 @@ Blocks shown in dotted lines are optional.
 The user interacts with the Debug Host (eg. laptop), which is running a
 debugger (eg. gdb).  The debugger communicates with a Debug Translator (eg.
 OpenOCD, which may include a hardware driver) to communicate with Debug
-Transport Hardware (eg.  Olimex USB-JTAG adapter) that's connected to the host.
+Transport Hardware (eg.  Olimex USB-JTAG adapter).
 The Debug Transport Hardware connects the Debug Host to the Platform's Debug
 Transport Module (DTM).  The DTM provides access to the DM using the Debug
 Module Interface (DMI).
@@ -323,8 +388,7 @@ hart execute arbitrary instructions while halted.
 
 Each RISC-V core may implement a Trigger Module for each hart.  These can
 implement breakpoints, which cause a hart to halt spontaneously.  When that
-happens the DM notices because the hart will signal the DM that it's ready for
-an instruction.
+happens the the hart signals the DM that it is halted.
 
 \section{Debug Transport Module (DTM)}
 
@@ -348,13 +412,13 @@ to ensure this does not happen.
     operations:}
 \item Provide access to a reset signal that allows debugging out of reset.
     (Required)
-\item Allow any individual hart to be halted. (Required)
+\item Allow any individual hart to be halted and resumed. (Required)
 \item Provide status on which harts are halted. (Required)
-\item Provide access to a halted hart's GPRs. (Required)
-\item Give the debugger necessary information about the implementation.
-    (Required)
+\item Provide read (and write?) access to a halted hart's GPRs. (Required)
+\item Give the debugger necessary information about the implementation. (Required)
 \item Provide access to other hart registers. (Optional)
 \item Force the hart to execute arbitrary instructions. (Optional)
+\item Single step? Is that required? What about seeing / modifying PC?
 \end{steps}
 
 A single DM can debug up to 1024 harts.
@@ -366,8 +430,10 @@ or use a more full-featured bus like TileLink or the AMBA Advanced Peripheral
 Bus. The details are left to the system designer.
 
 The DMI uses between 7 and 32 address bits.  It supports read and write
-operations, which may return an error. (Errors are only used by the optional
-System Bus Access and Serial Port blocks.) The bottom of the address space is
+operations, which may return an error. (Errors are only used for protocol
+optimzation by the optional
+System Bus Access and Serial Port blocks).
+The bottom of the address space is
 used for the DM. Extra space can be used for custom debug devices, other cores,
 additional DMs, etc.
 
@@ -551,8 +617,8 @@ halting the hart.
 
 Second, the Quick Access abstract command can be used to halt a hart, quickly
 execute the contents of the Program Buffer, and let the hart run again.
-Combined with instructions that allow Program Buffer code to access the {\tt
-data} registers, as described in \ref{hartinfo}, this can be used to quickly
+Combined with instructions that allow Program Buffer code to access the
+{\tt data} registers, as described in \ref{hartinfo}, this can be used to quickly
 perform a memory or register access. For some systems this will be too
 intrusive, but many systems that can't be halted can bear an occasional hiccup
 of a hundred or less cycles.
