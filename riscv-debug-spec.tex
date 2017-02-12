@@ -216,7 +216,7 @@ register}, \ref{haltmode}, \ref{deb:regprogbuf}, \ref{deb:mrprogbuf}.
 
 \subsubsection{JTAG Debug Transport Module}
 
-Sections \ref{jtagdtm}, \ref{dbusaccess}.
+Sections \ref{dtm}, \ref{jtagdtm}, \ref{dbusaccess}.
 
 \subsubsection{System Bus Master}
 
@@ -326,7 +326,7 @@ implement breakpoints, which cause a hart to halt spontaneously.  When that
 happens the DM notices because the hart will signal the DM that it's ready for
 an instruction.
 
-\section{Debug Transport Module (DTM)}
+\section{Debug Transport Module (DTM)} \label{dtm}
 
 Debug Transport Modules provide access to the DM over one or more transports
 (eg. JTAG or USB).
@@ -340,6 +340,9 @@ access to the Debug Module Interface.
 
 Using multiple DTMs at the same time is not supported. It is left to the user
 to ensure this does not happen.
+
+This specification defines a JTAG DTM in Section~\ref{jtagdtm}. Additional DTMs
+may be added in future versions of this specification.
 
 \section{Debug Module (DM)} \label{dm}
 
@@ -692,8 +695,9 @@ through the JTAG data register (DR).
 JTAG refers to IEEE Std 1149.1-2013. It is a standard that defines test logic
 that can be included in an integrated circuit to test the interconnections
 between integrated circuits, test the integrated circuit itself, and observe or
-modify circuit activity during the component’s normal operation. We're using it
-for the third case here.  The standard defines a Test Access Port (TAP) that
+modify circuit activity during the component’s normal operation.
+This specification uses the latter functionality.
+The JTAG standard defines a Test Access Port (TAP) that
 can be used to read and write a few custom registers, which can be used to
 communicate with debug hardware in a component.
 
@@ -791,6 +795,11 @@ threshold (i.e. unisolated, 250V, etc.).
 All debug adapter pins other than GND should be current-limited to 20mA.
 
 \subsection{JTAG Registers}
+
+%MAW -- is it required that the DTM be the only functionality of the TAP?
+% Is it expected to be daisy-chained with a tap which drives scan
+% functionality, etc? Or is it allowed to combine into a single tap?
+% if the latter, is the 5-bit IR a minimum or hard requirement?
 
 JTAG DTMs should use a 5-bit JTAG IR. When the TAP is reset, IR must default to
 00001, selecting the IDCODE instruction. A full list of JTAG registers along
