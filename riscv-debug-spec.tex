@@ -796,17 +796,13 @@ All debug adapter pins other than GND should be current-limited to 20mA.
 
 \subsection{JTAG Registers}
 
-%MAW -- is it required that the DTM be the only functionality of the TAP?
-% Is it expected to be daisy-chained with a tap which drives scan
-% functionality, etc? Or is it allowed to combine into a single tap?
-% if the latter, is the 5-bit IR a minimum or hard requirement?
-
-JTAG DTMs should use a 5-bit JTAG IR. When the TAP is reset, IR must default to
+JTAG TAPs used as a DTM must have an IR of at least 5 bits.
+When the TAP is reset, IR must default to
 00001, selecting the IDCODE instruction. A full list of JTAG registers along
 with their encoding is in Table~\ref{table:jtag_registers}. The only regular
-JTAG registers a debugger might use are BYPASS and IDCODE, but the JTAG
-standard recommends a lot of other instructions so we leave IR space for them.
-If they are not implemented, then they must select the BYPASS register.
+JTAG registers a debugger might use are BYPASS and IDCODE, but this
+specification leaves IR space for many other standard JTAG instructions.
+Unimplemented instructions must select the BYPASS register.
 
 \input{jtag_registers.tex}
 

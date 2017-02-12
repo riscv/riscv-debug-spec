@@ -49,12 +49,10 @@
         </field>
         <field name="0" bits="15" access="R" reset="0" />
         <field name="idle" bits="14:12" access="R" reset="Preset">
-            This is a hint to the debugger of the minimum number of cycles
-            a debugger should spend in
+            This is the minimum number of cycles a debugger should spend in
             Run-Test/Idle after every DMI scan to avoid a 'busy'
-            return code (\Fdmistat of 3). This field may
-            be incorrect and a debugger must still function properly
-            by checking \Fdmistat when necessary.
+            return code (\Fdmistat of 3). A debugger must still
+            check \Fdmistat when necessary.
 
             0: It is not necessary to enter Run-Test/Idle at all.
 
@@ -63,13 +61,6 @@
             2: Enter Run-Test/Idle and stay there for 1 cycle before leaving.
 
             And so on.
-
-            \begin{commentary}
-            TODO: How useful is this? The debugger can quickly find this out
-            by reading DMINFO a few times until it figures out the value.
-            It is likely to be just a guess most of the time.
-            \end{commentary
-
         </field>
         <field name="dmistat" bits="11:10" access="R" reset="0">
             0: No error.
