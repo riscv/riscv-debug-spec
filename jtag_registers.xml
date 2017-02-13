@@ -138,14 +138,12 @@
             This status is sticky and can be cleared by writing \Fdmireset
             in \Rdtmcontrol.
 
-            \begin{commentary}
-            This indicates that the DM itself responded with an error, e.g.
+            (This indicates that the DM itself responded with an error, e.g.
             in the System Bus and Serial Port overflow/underflow cases.
             Generally this means that for this type of DM access, the DTM should
             allow more time between Update-DR and Capture-DR. The most portable way
             to achieve this is to spend more TCK ticks in Run-Test/Idle state
-            for similar operations.
-            \end{commentary}
+            for similar operations.)
 
             3: The previous DMI request is still in progress. The data scanned
             into \Rdmi in this access will be ignored. This status is sticky
@@ -154,14 +152,12 @@
             edges between Update-DR and Capture-DR. The simplest way
             to do that is to add extra transitions in Run-Test/Idle.
 
-            \begin{commentary}
-            The DTM, DM, and/or component may be in different clock domains, so
-            synchronization may be required. Some relatively fixed number of TCK
-            ticks may be needed for the request to reach the DM, complete, and
-            for the response to be synchronized back into the TCK domain.
+            (The DTM, DM, and/or component may be in different clock domains,
+            so synchronization may be required. Some relatively fixed number of
+            TCK ticks may be needed for the request to reach the DM, complete,
+            and for the response to be synchronized back into the TCK domain.
             This status is intended to cover these cases, and is orthogonal to
-            the causes for case 2.
-            \end{commentary}
+            the causes for case 2.)
 
         </field>
     </register>

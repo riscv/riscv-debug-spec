@@ -883,16 +883,16 @@ possibly while adding in some delay, or explicit checks for status bits.
 
 \subsection{Debug Bus Access} \label{dbusaccess}
 
-To read an arbitrary Debug Bus register, select \Rdbus, and scan in a value
+To read an arbitrary Debug Bus register, select \Rdmi, and scan in a value
 with \Fop set to 1, and \Faddress set to the desired register address. In
 Update-DR the operation will start, and in Capture-DR its results will be
 captured into \Fdata.  If the operation didn't complete in time, \Fop will be 3
 and the value in \Fdata must be ignored. The error condition must be cleared by
-writing \Fdbusreset in \Rdtmcontrol, and then the operation must be tried
+writing \Fdmireset in \Rdtmcontrol, and then the operation must be tried
 again. This time the debugger should allow for more time between Capture-DR and
 Update-DR.
 
-To write an arbitrary Debug Bus register, select \Rdbus, and scan in a value
+To write an arbitrary Debug Bus register, select \Rdmi, and scan in a value
 with \Fop set to 2, and \Faddress and \Fdata set to the desired register
 address and data respectively. From then on everything happens exactly as with
 a read, except that a write is also performed right after the read. The
