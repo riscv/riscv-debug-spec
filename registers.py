@@ -198,6 +198,8 @@ def write_cheader( fd, registers ):
             definitions.append((prefname, r.address))
         for f in r.fields:
             if f.define:
+                if f.description:
+                    definitions.append(( "comment", f.description ))
                 offset = "%s_%s_OFFSET" % ( prefname, toCIdentifier( f.name ).upper() )
                 length = "%s_%s_LENGTH" % ( prefname, toCIdentifier( f.name ).upper() )
                 mask = "%s_%s" % ( prefname, toCIdentifier( f.name ).upper() )
@@ -211,6 +213,12 @@ def write_cheader( fd, registers ):
 
     counted = collections.Counter(name for name, value in definitions)
     for name, value in definitions:
+        if name == "comment":
+            fd.write( "/*\n" )
+            for line in value.splitlines():
+                fd.write( " * %s\n" % line.strip() )
+            fd.write( " */\n" )
+            continue
         if counted[name] == 1:
             fd.write( "#define %-35s %s\n" % ( name, value ) )
 
