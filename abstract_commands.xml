@@ -3,10 +3,10 @@
     <register name="Access Register">
         \begin{steps}{Perform the following sequence of operations:}
         \item Execute the Program Buffer, if \Fpreexec is set.
-        \item Copy data from the register specified by \Fregno into the {\tt arg0} region of
-            {\tt data}, if \Fwrite is clear.
-        \item Copy data from the {\tt arg0} region of {\tt data} into the register specified
-            by \Fregno, if \Fwrite is set.
+        \item Copy data from the register specified by \Fregno into the
+	    {\tt arg0} region of {\tt data}, if \Fwrite is clear.
+        \item Copy data from the {\tt arg0} region of {\tt data} into the
+	    register specified by \Fregno, if \Fwrite is set.
         \item Execute the Program Buffer, if \Fpostexec is set.
         \end{steps}
 
@@ -17,12 +17,9 @@
 
         This command must be implemented and support accessing GPRs when the
         hart is halted. Accessing other registers, or accessing registers while
-        the hart is running is optional.
+        the hart is running, is optional.
 
-        <field name="0" bits="31:24" />
-        <field name="0" bits="23:22">
-            When 1, halt the hart before performing the rest of the command.
-        </field>
+        <field name="0" bits="31:22" />
         <field name="size" bits="21:19">
             2: Access the lowest 32 bits of the register.
 
@@ -43,11 +40,12 @@
             after performing the read/write.
         </field>
         <field name="write" bits="16">
-            0: Copy data from \Rdatazero into the specified register.
+            0: Copy data from {\tt arg0} portion of {\tt data} into the
+               specified register.
 
-            1: Copy data from the specified register into \Rdatazero.
+            1: Copy data from the specified register into {\tt arg0} portion
+               of {\tt data}.
 
-            (If XLEN is greater than 32, more {\tt data} registers are involved.)
         </field>
         <field name="regno" bits="15:0">
             Number of the register to access, as described in Table~\ref{tab:regno}.
@@ -56,7 +54,7 @@
 
     <register name="Quick Access">
         \begin{steps}{Perform the following sequence of operations:}
-        \item Halt the hart. If the hart is already handled, the entire command
+        \item Halt the hart. If the hart is already halted, the entire command
             fails.
         \item Execute the Program Buffer.
         \item Resume the hart. If the hart is already running, the entire
