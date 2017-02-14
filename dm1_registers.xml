@@ -7,8 +7,11 @@
         contains \Fversion.  It has changed from version 0.11 of this spec.
 
         <field name="haltreq" bits="31" access="R/W" reset="0">
-            Halt request signal for the hart selected by \Fhartsel.  Writes
-            apply to the new value of \Fhartsel.
+            Halt request signal for the hart selected by \Fhartsel.  Writing 1
+            will cause the hart to halt if it's not currently halted.  Writing
+            0 will cause the hart to resume running if it is currently halted.
+
+            Writes apply to the new value of \Fhartsel.
         </field>
         <field name="reset" bits="30" access="R/W" reset="0">
             This bit controls the reset signal from the DM to the rest of the
