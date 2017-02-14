@@ -4,6 +4,7 @@ import sys
 import xml.etree.ElementTree
 import argparse
 import sympy
+from sympy.functions.elementary.miscellaneous import Max
 import math
 import re
 import collections
@@ -66,6 +67,12 @@ class Register( object ):
             previous = f.lowBit
         assert previous is None or int( previous ) == 0, \
                 "%s isn't defined down to 0 (%r)" % ( self, previous )
+
+    def width( self ):
+        if self.fields:
+            return Max(*(f.highBit for f in self.fields))
+        else:
+            return 0
 
     def __str__( self ):
         return self.name
@@ -196,6 +203,13 @@ def write_cheader( fd, registers ):
         prefname = registers.prefix + name
         if r.define:
             definitions.append((prefname, r.address))
+        try:
+            if r.width() <= 32:
+                suffix = ""
+            else:
+                suffix = "L"
+        except TypeError:
+            suffix = "L"
         for f in r.fields:
             if f.define:
                 if f.description:
@@ -207,7 +221,7 @@ def write_cheader( fd, registers ):
                 definitions.append(( length, f.length() ))
                 try:
                     definitions.append(( mask,
-                            "(0x%x << %s)" % ( ((1<<int(f.length()))-1), offset )))
+                            "(0x%x%s << %s)" % ( ((1<<int(f.length()))-1), suffix, offset )))
                 except TypeError:
                     definitions.append(( mask, "(((1L<<%s)-1) << %s)" % (f.length(), offset) ))
 
@@ -216,7 +230,7 @@ def write_cheader( fd, registers ):
         if name == "comment":
             fd.write( "/*\n" )
             for line in value.splitlines():
-                fd.write( " * %s\n" % line.strip() )
+                fd.write( (" * %s" % line.strip()).strip() + "\n" )
             fd.write( " */\n" )
             continue
         if counted[name] == 1:
