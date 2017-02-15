@@ -413,11 +413,11 @@ attached to the DM by trying each index until \Fhartstatus is 3.
 This block controls halt signals from the Debug Module to a hart.  It is used
 to halt a hart, and let it run again.
 
-For each hart the block contains a single bit that is accessible through
-\Fhaltreq in \Rdmcontrol. When a debugger wants to halt a hart, it writes 1 to
-this bit, and then waits for \Fhartstatus to indicate the hart is halted.  To
-resume, the debugger writes 0 to \Fhaltreq, and waits for \Fhartstatus to
-indicate the hart is running.
+To control halting and resuming, there are \Fhaltreq and \Fresumereq bits in
+\Rdmcontrol.  When a debugger wants to halt a hart, it sets \Fhaltreq, waits
+for \Fhartstatus to indicate the hart is halted, and clears \Fhaltreq.  To
+resume, the debugger sets \Fresumereq, waits for \Fhartstatus to indicate the
+hart is running, and clears \Fresumereq.
 
 The Debug Module conceptually has a direct connection to the halt signal of
 every hart that has a halt signal. When set or cleared, a hart must respond in
@@ -1257,7 +1257,7 @@ TODO: Just like reading memory.
 \subsection{Running}
 
 First, the debugger should restore any registers that it has clobbered.  Once
-that's done, it can let the core run by clearing \Fhaltreq.
+that's done, it can let the core run by setting \Fresumereq.
 
 \subsection{Single Step}
 

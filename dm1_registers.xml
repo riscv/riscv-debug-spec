@@ -6,33 +6,28 @@
         The address of this register will not change in the future, because it
         contains \Fversion.  It has changed from version 0.11 of this spec.
 
+        \begin{commentary}
+        There are separate \Fhaltreq and \Fresumereq bits so a debugger can
+        write \Rdmcontrol without affecting the current state, without knowing
+        what that current state is.
+        \end{commentary}
+
+        <!-- Fields that apply to a specific hart. -->
         <field name="haltreq" bits="31" access="R/W" reset="0">
-            Halt request signal for the hart selected by \Fhartsel.  Writing 1
-            will cause the hart to halt if it's not currently halted.  Writing
-            0 will cause the hart to resume running if it is currently halted.
+            Halt request signal for the hart selected by \Fhartsel. When 1, the
+            hart will halt if it's not currently halted.
+            Setting both \Fhaltreq and \Fresumereq leads to undefined behavior.
 
             Writes apply to the new value of \Fhartsel.
         </field>
-        <field name="reset" bits="30" access="R/W" reset="0">
-            This bit controls the reset signal from the DM to the rest of the
-            system. To perform a reset the debugger writes 1, and then writes 0
-            to deassert the reset.
-        </field>
-        <field name="dmactive" bits="29" access="R/W" reset="0">
-            This bit serves as a reset signal for the Debug Module itself.
-            When 0, the module is held in reset. When 1, it functions normally.
-            No other mechanism should exist that may result in resetting the
-            Debug Module after power up, including the platform's system reset
-            or Debug Transport reset signals.
+        <field name="resumereq" bits="30" access="R/W" reset="0">
+            Resume request signal for the hart selected by \Fhartsel. When 1,
+            the hart will resume if it's currently halted.
+            Setting both \Fhaltreq and \Fresumereq leads to undefined behavior.
 
-            A debugger should pulse this bit low to ensure that the Debug
-            Module is fully reset and ready to use.
-
-            Implementations may use this bit to aid debugging, for example by
-            preventing the Debug Module from being power gated while debugging
-            is active.
+            Writes apply to the new value of \Fhartsel.
         </field>
-        <field name="0" bits="28" access="R" reset="0" />
+        <field name="0" bits="29:28" access="R" reset="0" />
         <field name="hartstatus" bits="27:26" access="R" reset="-">
             The status of the currently selected hart.
 
@@ -47,7 +42,27 @@
         <field name="hartsel" bits="25:16" access="R/W" reset="0">
             The DM-specific index of the hart to select.
         </field>
-        <field name="0" bits="15:8" access="R" reset="0" />
+        <!-- Fields that apply to the entire DM. -->
+        <field name="0" bits="15:10" access="R" reset="0" />
+        <field name="dmactive" bits="9" access="R/W" reset="0">
+            This bit serves as a reset signal for the Debug Module itself.
+            When 0, the module is held in reset. When 1, it functions normally.
+            No other mechanism should exist that may result in resetting the
+            Debug Module after power up, including the platform's system reset
+            or Debug Transport reset signals.
+
+            A debugger should pulse this bit low to ensure that the Debug
+            Module is fully reset and ready to use.
+
+            Implementations may use this bit to aid debugging, for example by
+            preventing the Debug Module from being power gated while debugging
+            is active.
+        </field>
+        <field name="reset" bits="8" access="R/W" reset="0">
+            This bit controls the reset signal from the DM to the rest of the
+            system. To perform a reset the debugger writes 1, and then writes 0
+            to deassert the reset.
+        </field>
         <field name="authenticated" bits="7" access="R" reset="Preset">
             0 when authentication is required before using the DM.  1 when the
             authentication check has passed. On components that don't implement
