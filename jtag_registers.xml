@@ -21,20 +21,20 @@
         <field name="1" bits="0" access="R" reset="1"></field>
     </register>
 
-    <register name="SAMPLE" address="0x02" sdesc="JTAG requires this instruction" />
-    <register name="PRELOAD" address="0x03" sdesc="JTAG requires this instruction" />
-    <register name="EXTEST" address="0x04" sdesc="JTAG requires this instruction" />
-    <register name="CLAMP" address="0x05" sdesc="JTAG recommends this instruction"/>
-    <register name="CLAMP\_HOLD" address="0x06" sdesc="JTAG recommends this instruction"/>
-    <register name="CLAMP\_RELEASE" address="0x07" sdesc="JTAG recommends this instruction"/>
-    <register name="HIGHZ" address="0x08" sdesc="JTAG recommends this instruction"/>
-    <register name="IC\_RESET" address="0x09" sdesc="JTAG recommends this instruction"/>
-    <register name="TMP\_STATUS" address="0x0a" sdesc="JTAG recommends this instruction"/>
-    <register name="INIT\_SETUP" address="0x0b" sdesc="JTAG recommends this instruction"/>
-    <register name="INIT\_SETUP\_CLAMP" address="0x0c" sdesc="JTAG recommends this instruction"/>
-    <register name="INIT\_RUN" address="0x0d" sdesc="JTAG recommends this instruction"/>
-    <register name="Unused (BYPASS)" address="0x0e" sdesc="Reserved for future JTAG"/>
-    <register name="Unused (BYPASS)" address="0x0f" sdesc="Reserved for future JTAG"/>
+    <register name="Unused (BYPASS)" address="0x02" sdesc="Reserved for other TAP uses" />
+    <register name="Unused (BYPASS)" address="0x03" sdesc="Reserved for other TAP uses" />
+    <register name="Unused (BYPASS)" address="0x04" sdesc="Reserved for other TAP uses" />
+    <register name="Unused (BYPASS)" address="0x05" sdesc="Reserved for other TAP uses"/>
+    <register name="Unused (BYPASS)" address="0x06" sdesc="Reserved for other TAP uses"/>
+    <register name="Unused (BYPASS)" address="0x07" sdesc="Reserved for other TAP uses"/>
+    <register name="Unused (BYPASS)" address="0x08" sdesc="Reserved for other TAP uses"/>
+    <register name="Unused (BYPASS)" address="0x09" sdesc="Reserved for other TAP uses"/>
+    <register name="Unused (BYPASS)" address="0x0a" sdesc="Reserved for other TAP uses"/>
+    <register name="Unused (BYPASS)" address="0x0b" sdesc="Reserved for other TAP uses"/>
+    <register name="Unused (BYPASS)" address="0x0c" sdesc="Reserved for other TAP uses"/>
+    <register name="Unused (BYPASS)" address="0x0d" sdesc="Reserved for other TAP uses"/>
+    <register name="Unused (BYPASS)" address="0x0e" sdesc="Reserved for other TAP uses"/>
+    <register name="Unused (BYPASS)" address="0x0f" sdesc="Reserved for other TAP uses"/>
 
     <!-- All our registers start with 1. -->
 
