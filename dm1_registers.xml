@@ -165,7 +165,7 @@
 
     <!-- =============== system bus mastering =============== -->
 
-    <register name="System Bus Access Control" short="sbcs" address="0x03">
+    <register name="System Bus Access Control and Status" short="sbcs" address="0x03">
         <field name="0" bits="31:21" access="R" reset="0" />
         <field name="sbsingleread" bits="20" access="W1" reset="0">
             When a 1 is written here, triggers a read at the address in {\tt
@@ -375,7 +375,7 @@
 
     <!-- =============== abstract commands =============== -->
 
-    <register name="Abstract Control" short="abstractcs" address="0x0e">
+    <register name="Abstract Control and Status" short="abstractcs" address="0x0e">
         <field name="0" bits="31:16" access="R" reset="0" />
         <field name="autoexec7" bits="15" access="R/W" reset="0" />
         <field name="autoexec6" bits="14" access="R/W" reset="0" />
@@ -478,7 +478,7 @@
         If \Fserialcount is 0, this register is not present.
 
         This register provides access to the data queues of the serial port
-        selected by \Fserial in \Rdmcontrol.
+        selected by \Fserial in \Rsercs.
 
         A read from this register reads the oldest entry in the
         debugger-to-core queue, and removes that entry from the queue.  If the
@@ -491,7 +491,7 @@
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
 
-    <register name="Serial Status" short="serstatus" address="0x1d">
+    <register name="Serial Control and Status" short="sercs" address="0x1d">
         If \Fserialcount is 0, this register is not present.
 
         <field name="serialcount" bits="31:28" access="R" reset="Preset">
@@ -527,7 +527,7 @@
 
     <!-- =============== instruction supply =============== -->
 
-    <register name="Access Status and Control" short="accesscs" address="0x1f">
+    <register name="Access Control and Status" short="accesscs" address="0x1f">
         <field name="0" bits="31:4" access="R" reset="0" />
         <field name="progsize" bits="3:0" access="R" reset="Preset">
             Size of the Program Buffer, in 32-bit words. Valid sizes are 0 - 12.
