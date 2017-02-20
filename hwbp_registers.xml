@@ -9,8 +9,9 @@
         be contiguous.
 
         Writes of values greater than or equal to the number of supported
-        triggers result in an undefined value in \Rtselect. Debuggers should
-        read back the value to confirm that what they wrote was a valid index.
+        triggers result in a different value in this register than what was
+        written.  Debuggers should read back the value to confirm that what
+        they wrote was a valid index.
 
         Since triggers can be used both by Debug Mode and M Mode, the debugger
         must restore this register if it modifies it.
@@ -75,7 +76,7 @@
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="2" />
         <field name="dmode" bits="XLEN-5" access="R/W" reset="0" />
-        <field name="maskmax" bits="XLEN-6:XLEN-11" access="R" reset="0">
+        <field name="maskmax" bits="XLEN-6:XLEN-11" access="R" reset="Preset">
             Specifies the largest naturally aligned powers-of-two (NAPOT) range
             supported by the hardware. The value is the logarithm base 2 of the
             number of bytes in that range.  A value of 0 indicates that only

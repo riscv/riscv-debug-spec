@@ -266,14 +266,11 @@
         </field>
     </register>
 
-    <register name="System Bus Address 91:61" short="sbaddress2" address="0x06">
+    <register name="System Bus Address 95:64" short="sbaddress2" address="0x06">
         If \Fsbasize is less than 65, then this register is not present.
 
-        <field name="busy" bits="31" access="R" reset="0">
-            The same as \Fbusy in \Rsbaddresszero.
-        </field>
-        <field name="address" bits="30:0" access="R/W" reset="0">
-            Accesses bits 91:61 of the internal address (if the system address
+        <field name="address" bits="31:0" access="R/W" reset="0">
+            Accesses bits 95:64 of the internal address (if the system address
             bus is that wide).
         </field>
     </register>
