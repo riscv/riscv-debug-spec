@@ -13,11 +13,13 @@ REGISTERS_TEX += abstract_commands.tex
 
 FIGURES = *.eps
 
-riscv-debug-spec.pdf: $(NAME).tex $(REGISTERS_TEX) debug_rom.S $(FIGURES) vc.tex changelog.tex
+all:	$(NAME).pdf debug_defines.h
+
+$(NAME).pdf: $(NAME).tex $(REGISTERS_TEX) debug_rom.S $(FIGURES) vc.tex changelog.tex
 	pdflatex -shell-escape $< && pdflatex -shell-escape $<
 
-publish:	riscv-debug-spec.pdf
-	cp $< riscv-debug-spec-`git rev-parse --abbrev-ref HEAD`.`git rev-parse --short HEAD`.pdf
+publish:	$(NAME).pdf
+	cp $< $(NAME)-`git rev-parse --abbrev-ref HEAD`.`git rev-parse --short HEAD`.pdf
 
 vc.tex: .git/logs/HEAD
 	# https://thorehusfeldt.net/2011/05/13/including-git-revision-identifiers-in-latex/
@@ -35,10 +37,13 @@ changelog.tex: .git/logs/HEAD Makefile
 	git log --date=short --pretty="format:\\vhEntry{%h}{%ad}{%an}{%s}" | \
 	    sed s,_,\\\\_,g | sed "s,#,\\\\#,g" >> changelog.tex
 
+debug_defines.h:	$(REGISTERS_TEX:.tex=.h)
+	cat $^ > $@
+
 %.eps: %.dot
 	dot -Teps $< -o $@
 
-%.tex: %.xml registers.py
+%.tex %.h: %.xml registers.py
 	./registers.py --custom --definitions $@.inc --cheader $(basename $@).h $< > $@
 
 %.o:	%.S
@@ -63,4 +68,4 @@ hello.s:	hello.c
 clean:
 	rm -f $(NAME).pdf $(NAME).aux $(NAME).toc $(NAME).log $(REGISTERS_TEX) \
 	    $(REGISTERS_TEX:=.inc) *.o *_no128.S *.h $(NAME).lof $(NAME).lot $(NAME).out \
-	    $(NAME).hst $(NAME).pyg
+	    $(NAME).hst $(NAME).pyg debug_defines.h
