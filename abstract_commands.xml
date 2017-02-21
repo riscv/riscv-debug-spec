@@ -1,7 +1,8 @@
 <registers name="Abstract Commands" skip_index="1" skip_access="1"
         skip_reset="1" prefix="AC_">
     <register name="Access Register">
-        \begin{steps}{Perform the following sequence of operations:}
+        \begin{steps}{This command gives the debugger access to CPU registers.
+        It performs the following sequence of operations:}
         \item Execute the Program Buffer, if \Fpreexec is set.
         \item Copy data from the register specified by \Fregno into the
 	    {\tt arg0} region of {\tt data}, if \Fwrite is clear.
