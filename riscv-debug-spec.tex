@@ -212,7 +212,7 @@ Sections \ref{abstractcommands}, \ref{abstractcs}, \ref{command},
 
 \subsubsection{Program Buffer}
 
-Sections \ref{programbuffer}, \ref{progbufcs}, \ref{ibuf0}, \ref{access
+Sections \ref{programbuffer}, \ref{progbufcs}, \ref{progbuf0}, \ref{access
 register}, \ref{haltmode}, \ref{deb:regprogbuf}, \ref{deb:mrprogbuf}.
 
 \subsubsection{JTAG Debug Transport Module}
@@ -954,9 +954,9 @@ registers can be accessed by moving their value into/out of GPRs.
     \hline
     Op & Address & Value & Comment \\
     \hline
-    Write & \Ribufzero & {\tt csrw s0, MSTATUS} & \\
+    Write & \Rprogbufzero & {\tt csrw s0, MSTATUS} & \\
     \hline
-    Write & \Ribufone & {\tt ebreak} & \\
+    Write & \Rprogbufone & {\tt ebreak} & \\
     \hline
     Write & \Rdatazero & new value & \\
     \hline
@@ -972,9 +972,9 @@ registers can be accessed by moving their value into/out of GPRs.
     \hline
     Op & Address & Value & Comment \\
     \hline
-    Write & \Ribufzero & {\tt fmv.x.s s0, f1} & \\
+    Write & \Rprogbufzero & {\tt fmv.x.s s0, f1} & \\
     \hline
-    Write & \Ribufone & {\tt ebreak} & \\
+    Write & \Rprogbufone & {\tt ebreak} & \\
     \hline
     Write & \Rcommand & \Fpreexec, 0x1008 & Execute program buffer, then read \Szero \\
     \hline
@@ -1035,9 +1035,9 @@ registers can be accessed by moving their value into/out of GPRs.
     \hline
     Op & Address & Value & Comment \\
     \hline
-    Write & \Ribufzero & {\tt lw s0, 0(s0)} & \\
+    Write & \Rprogbufzero & {\tt lw s0, 0(s0)} & \\
     \hline
-    Write & \Ribufone & {\tt ebreak} & \\
+    Write & \Rprogbufone & {\tt ebreak} & \\
     \hline
     Write & \Rdatazero & address & \\
     \hline
@@ -1056,11 +1056,11 @@ registers can be accessed by moving their value into/out of GPRs.
     \hline
     Op & Address & Value & Comment \\
     \hline
-    Write & \Ribufzero & {\tt lw s1, 0(s0)} & \\
+    Write & \Rprogbufzero & {\tt lw s1, 0(s0)} & \\
     \hline
-    Write & \Ribufone & {\tt addi s0, s0, 4} & \\
+    Write & \Rprogbufone & {\tt addi s0, s0, 4} & \\
     \hline
-    Write & \Ribuftwo & {\tt ebreak} & \\
+    Write & \Rprogbuftwo & {\tt ebreak} & \\
     \hline
     Write & \Rdatazero & address & \\
     \hline
@@ -1192,9 +1192,9 @@ TODO: Just like reading memory.
     \hline
     Op & Address & Value & Comment \\
     \hline
-    Write & \Ribufzero & {\tt sw 0(s0), s1} & \\
+    Write & \Rprogbufzero & {\tt sw 0(s0), s1} & \\
     \hline
-    Write & \Ribufone & {\tt ebreak} & \\
+    Write & \Rprogbufone & {\tt ebreak} & \\
     \hline
     Write & \Rdatazero & value & \\
     \hline
@@ -1213,11 +1213,11 @@ TODO: Just like reading memory.
     \hline
     Op & Address & Value & Comment \\
     \hline
-    Write & \Ribufzero & {\tt sw s1, 0(s0)} & \\
+    Write & \Rprogbufzero & {\tt sw s1, 0(s0)} & \\
     \hline
-    Write & \Ribufone & {\tt addi s0, s0, 4} & \\
+    Write & \Rprogbufone & {\tt addi s0, s0, 4} & \\
     \hline
-    Write & \Ribuftwo & {\tt ebreak} & \\
+    Write & \Rprogbuftwo & {\tt ebreak} & \\
     \hline
     Write & \Rdatazero & address & \\
     \hline
@@ -1300,21 +1300,21 @@ the pseudo-op {\tt transfer dest, src} to represent all these options.
     \hline
     Op & Address & Value & Comment \\
     \hline
-    Write & \Ribufzero & {\tt transfer arg2, s0} & \\
+    Write & \Rprogbufzero & {\tt transfer arg2, s0} & \\
     \hline
-    Write & \Ribufone & {\tt transfer s0, arg0} & \\
+    Write & \Rprogbufone & {\tt transfer s0, arg0} & \\
     \hline
-    Write & \Ribuftwo & {\tt transfer arg0, s1} & \\
+    Write & \Rprogbuftwo & {\tt transfer arg0, s1} & \\
     \hline
-    Write & \Ribufthree & {\tt transfer s1, arg1} & \\
+    Write & \Rprogbufthree & {\tt transfer s1, arg1} & \\
     \hline
-    Write & \Ribuffour & {\tt sw 0(s0), s1} & \\
+    Write & \Rprogbuffour & {\tt sw 0(s0), s1} & \\
     \hline
-    Write & \Ribuffive & {\tt transfer arg1, s1} & \\
+    Write & \Rprogbuffive & {\tt transfer arg1, s1} & \\
     \hline
-    Write & \Ribufsix & {\tt transfer arg2, s0} & \\
+    Write & \Rprogbufsix & {\tt transfer arg2, s0} & \\
     \hline
-    Write & \Ribufseven & {\tt ebreak} & \\
+    Write & \Rprogbufseven & {\tt ebreak} & \\
     \hline
     Write & \Rdatazero & address & \\
     \hline
