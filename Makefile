@@ -12,6 +12,7 @@ REGISTERS_TEX += sample_registers.tex
 REGISTERS_TEX += abstract_commands.tex
 
 REGISTERS_CHISEL += dm1_registers.scala
+REGISTERS_CHISEL += abstract_commands.scala
 
 FIGURES = *.eps
 
