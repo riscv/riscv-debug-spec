@@ -236,6 +236,71 @@ def write_cheader( fd, registers ):
         if counted[name] == 1:
             fd.write( "#define %-35s %s\n" % ( name, value ) )
 
+def write_chisel( fd, registers ):
+    fd.write("package uncore.devices\n\n")
+
+    fd.write("// This file was auto-generated from the repository at https://github.com/sifive/riscv-debug-spec.git,\n")
+    fd.write("// 'make chisel'\n\n")
+
+    fd.write("object " + registers.prefix + "RegAddrs {\n")
+
+    for r in registers.registers:
+        name = toCIdentifier( r.short or r.label ).upper()
+        prefname = registers.prefix + name
+        if (r.define and r.address):
+            if r.description:
+                fd.write ("  /* " + r.description + "\n  */\n")
+            fd.write ("  def " + prefname + " = UInt(" + r.address + ")\n\n")
+
+    fd.write("}\n\n")
+
+    for r in registers.registers:
+        name = toCIdentifier( r.short or r.label ).upper()
+        prefname = registers.prefix + name
+
+        if (r.fields and r.define) :
+            sorted_fields = sorted(r.fields, key = lambda x: int(x.lowBit), reverse = True)
+            topbit = 31
+            reserved = 0
+            fd.write("class " + prefname + "Fields extends Bundle {\n\n")
+            for f in sorted_fields:
+
+                # These need try-catch blocks in the general case,
+                # but for DM1 Registers it's fine.
+
+                fieldlength = int(f.length())
+                lowbit = int(f.lowBit)
+
+                newtopbit = lowbit + fieldlength - 1
+
+                if (newtopbit != topbit):
+                    reservedwidth = topbit - newtopbit
+                    print reserved
+                    print reservedwidth
+                    fd.write("  val reserved%d = UInt(%d.W)\n\n" % (reserved, reservedwidth))
+                    reserved = reserved + 1
+                if not f.define:
+                    reservedwidth = fieldlength
+                    fd.write("  val reserved%d = UInt(%d.W)\n\n" % (reserved, reservedwidth))
+                    reserved = reserved + 1
+                else:
+                    if f.description:
+                        fd.write("  /* " + f.description + "\n  */\n")
+
+                    fd.write("  val " + toCIdentifier(f.name) + " = ")
+                    if (int(fieldlength) > 1):
+                        fd.write("UInt(%d.W)\n\n" % fieldlength)
+                    else:
+                        fd.write("Bool()\n\n")
+
+                topbit = int(lowbit) - 1
+
+            lastlowbit = int(sorted_fields[-1].lowBit)
+            if (lastlowbit > 0 ):
+                fd.write("  val reserved" + reserved + "= UInt(" + lastlowbit + ".W)\n")
+
+            fd.write("}\n\n")
+
 def address_value( address ):
     if type( address ) == str:
         try:
@@ -423,6 +488,8 @@ def main():
             help='Write register style definitions to the named file.' )
     parser.add_argument( '--cheader',
             help='Write C #defines to the named file.' )
+    parser.add_argument( '--chisel',
+            help='Write Scala Classes to the named file.' )
     parsed = parser.parse_args()
 
     registers = parse_xml( parsed.path )
@@ -430,6 +497,8 @@ def main():
         write_definitions( file( parsed.definitions, "w" ), registers )
     if parsed.cheader:
         write_cheader( file( parsed.cheader, "w" ), registers )
+    if parsed.chisel:
+        write_chisel( file( parsed.chisel, "w" ), registers )
     if not registers.skip_index:
         print_latex_index( registers )
     if parsed.register:
