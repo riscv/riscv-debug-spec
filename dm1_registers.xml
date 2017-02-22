@@ -552,9 +552,9 @@
         </field>
     </register>
 
-    <register name="Program Buffer 0" short="ibuf0" address="0x20">
-        The ibuf registers provide read/write access to the optional
-        instruction buffer.
+    <register name="Program Buffer 0" short="progbuf0" address="0x20">
+        The {\tt progbuf} registers provide read/write access to the optional
+        program buffer.
 
         If \Fautoexeczero is set, then after this register is accessed the
         command in \Rcommand is executed again.
@@ -562,16 +562,16 @@
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
 
-    <register name="Program Buffer 1" short="ibuf1" address="0x21" />
-    <register name="Program Buffer 2" short="ibuf2" address="0x22" />
-    <register name="Program Buffer 3" short="ibuf3" address="0x23" />
-    <register name="Program Buffer 4" short="ibuf4" address="0x24" />
-    <register name="Program Buffer 5" short="ibuf5" address="0x25" />
-    <register name="Program Buffer 6" short="ibuf6" address="0x26" />
-    <register name="Program Buffer 7" short="ibuf7" address="0x27" />
-    <register name="Program Buffer 8" short="ibuf8" address="0x28" />
-    <register name="Program Buffer 9" short="ibuf9" address="0x29" />
-    <register name="Program Buffer 10" short="ibuf10" address="0x2a" />
-    <register name="Program Buffer 11" short="ibuf11" address="0x2b" />
+    <register name="Program Buffer 1" short="progbuf1" address="0x21" />
+    <register name="Program Buffer 2" short="progbuf2" address="0x22" />
+    <register name="Program Buffer 3" short="progbuf3" address="0x23" />
+    <register name="Program Buffer 4" short="progbuf4" address="0x24" />
+    <register name="Program Buffer 5" short="progbuf5" address="0x25" />
+    <register name="Program Buffer 6" short="progbuf6" address="0x26" />
+    <register name="Program Buffer 7" short="progbuf7" address="0x27" />
+    <register name="Program Buffer 8" short="progbuf8" address="0x28" />
+    <register name="Program Buffer 9" short="progbuf9" address="0x29" />
+    <register name="Program Buffer 10" short="progbuf10" address="0x2a" />
+    <register name="Program Buffer 11" short="progbuf11" address="0x2b" />
 
 </registers>
