@@ -46,7 +46,12 @@
         <field name="0" bits="15:10" access="R" reset="0" />
         <field name="dmactive" bits="9" access="R/W" reset="0">
             This bit serves as a reset signal for the Debug Module itself.
-            When 0, the module is held in reset. When 1, it functions normally.
+
+            0: The module, including authentication mechanism, is held in
+            reset.
+
+            1: The module functions normally.
+
             No other mechanism should exist that may result in resetting the
             Debug Module after power up, including the platform's system reset
             or Debug Transport reset signals.
