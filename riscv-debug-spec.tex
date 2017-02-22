@@ -574,10 +574,10 @@ afterwards, a reasonable solution could be to add a fuse bit to the Debug
 Module that can be used to be permanently disable it. Since this is technology
 specific, it is not further addressed in this spec.
 
-Another option is to allow the DM to be unlocked only by users who  have an
-access key. A simple mechanism is documented in Section~\ref{authdata0}. When
-\Fauthenticated is clear, the DM must not interact with the rest of the
-platform in any way.
+Another option is to allow the DM to be unlocked only by users who have an
+access key. A few bits in \Rdmcontrol and \Rauthdata can support an arbitrarily
+complex authentication mechanism.  When \Fauthenticated is clear, the DM must
+not interact with the rest of the platform in any way.
 
 \subsection{Serial Ports}
 

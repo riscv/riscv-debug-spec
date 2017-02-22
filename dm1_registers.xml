@@ -83,22 +83,16 @@
             authentication, this bit must be preset as 1.
         </field>
         <field name="authbusy" bits="6" reset="0" access="R">
-            While 1, writes to \Rauthdatazero and \Rauthdataone may be ignored
-            or may result in authentication failing.  Authentication mechanisms
-            that are slow (or intentionally delayed) must set this bit when
-            they're not ready to process another write.
+            0: The authentication module is ready to process the next
+            read/write to \Rauthdata.
+
+            1: The authentication module is busy. Accessing \Rauthdata results
+            in unspecified behavior.
+
+            \Fauthbusy only becomes set in immediate response to an access to
+            \Rauthdata.
         </field>
-        <field name="authtype" bits="5:4" reset="Preset" access="R">
-          Defines the kind of authentication required to use this DM.
-
-	  0: No authentication is required.
-
-          1: A password is required.
-
-	  2: A challenge-response mechanism is in place.
-
-	  3: Reserved for future use.
-        </field>
+        <field name="0" bits="5:4" reset="0" access="R" />
         <field name="version" bits="3:0" reset="1" access="R">
             0: There is no Debug Module present.
 
@@ -354,32 +348,13 @@
 
     <!-- =============== authentication =============== -->
 
-    <register name="Authentication Data 0" short="authdata0" address="0x0b">
-        If \Fauthtype is 0, this register is not present.
+    <register name="Authentication Data" short="authdata" address="0x0b">
+        This register serves as a 32-bit serial port to the authentication
+        module.
 
-        If \Fauthtype is 1, writing a correct password to this register and
-        \Rauthdataone enables the DM. The DM is disabled either by writing an
-        invalid password, or by resetting it. 0 must not be used as a password.
-        If an implementation wants to use a well-known password, the
-        recommended value is 0x5551212. Reading from the register returns 0.
-
-        If \Fauthtype is 2, things are a bit more complicated. Reading from the
-        register pair reads the last challenge generated. Writing the correct
-        response to \Rauthdataone and \Rauthdatazero enables the DM. The DM
-        is disabled either by writing an incorrect response, or by resetting
-        it.  Writing to \Rauthdatazero triggers validation, so if a 64-bit
-        value is required then \Rauthdataone must be written first.  If the
-        combined value in \Rauthdatazero and \Rauthdataone is not a valid
-        response after writing \Rauthdatazero, then a new challenge must be
-        generated.  Depending on the implementation, there may not be a valid
-        challenge until the first write to this register.
-
-        <field name="data" bits="31:0" access="R/W" reset="0" />
-    </register>
-
-    <register name="Authentication Data 1" short="authdata1" address="0x0c">
-        This register contains the upper 32 bits of a 64-bit password
-        or challenge/response as described in \Rauthdatazero.
+        When \Fauthbusy is clear, the debugger can communicate with the
+        authentication module by reading or writing this register. There is no
+        separate mechanism to signal overflow/underflow.
 
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
