@@ -133,31 +133,25 @@
 
             1: Reserved.
 
-            2: The previous operation returned a non-zero value in \Fop.
-            The data scanned into \Rdmi in this access will be ignored.
-            This status is sticky and can be cleared by writing \Fdmireset
-            in \Rdtmcontrol.
+            2: A previous operation failed.  The data scanned into \Rdmi in
+            this access will be ignored.  This status is sticky and can be
+            cleared by writing \Fdmireset in \Rdtmcontrol.
 
-            (This indicates that the DM itself responded with an error, e.g.
+            This indicates that the DM itself responded with an error, e.g.
             in the System Bus and Serial Port overflow/underflow cases.
-            Generally this means that for this type of DM access, the DTM should
-            allow more time between Update-DR and Capture-DR. The most portable way
-            to achieve this is to spend more TCK ticks in Run-Test/Idle state
-            for similar operations.)
 
-            3: The previous DMI request is still in progress. The data scanned
-            into \Rdmi in this access will be ignored. This status is sticky
-            and can be cleared by writing \Fdmireset in \Rdtmcontrol. If a
-            debugger sees this status, it needs to give the target more TCK
-            edges between Update-DR and Capture-DR. The simplest way
-            to do that is to add extra transitions in Run-Test/Idle.
+            3: An operation was attempted while a DMI request is still in
+            progress. The data scanned into \Rdmi in this access will be
+            ignored. This status is sticky and can be cleared by writing
+            \Fdmireset in \Rdtmcontrol. If a debugger sees this status, it
+            needs to give the target more TCK edges between Update-DR and
+            Capture-DR. The simplest way to do that is to add extra transitions
+            in Run-Test/Idle.
 
             (The DTM, DM, and/or component may be in different clock domains,
             so synchronization may be required. Some relatively fixed number of
             TCK ticks may be needed for the request to reach the DM, complete,
-            and for the response to be synchronized back into the TCK domain.
-            This status is intended to cover these cases, and is orthogonal to
-            the causes for case 2.)
+            and for the response to be synchronized back into the TCK domain.)
 
         </field>
     </register>
