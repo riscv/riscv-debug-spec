@@ -428,7 +428,14 @@
             previous one succeeding) passed.
         \end{commentary}
 
-        <field name="command" bits="31:0" access="W" reset="0" />
+        <field name="type"    bits="31:24" access="W" reset="0">
+            The type determines the overall functionality of this
+            abstract command.
+	</field>
+        <field name="control" bits="23:0" access="W" reset="0" >
+            This field is interpreted in a command-specific manner,
+            described for each abstract command.
+	</field>
     </register>
 
     <register name="Abstract Data 0" short="data0" address="0x10">

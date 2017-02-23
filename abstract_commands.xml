@@ -20,7 +20,10 @@
         hart is halted. Accessing other registers, or accessing registers while
         the hart is running, is optional.
 
-        <field name="0" bits="31:22" />
+        <field name="type" bits="31:24">
+            This is 0 to indicate Access Register Command.
+        </field>
+        <field name="0" bits="23:22" />
         <field name="size" bits="21:19">
             2: Access the lowest 32 bits of the register.
 
@@ -68,7 +71,9 @@
 
         Implementing this command is optional.
 
-        <field name="1" bits="31:24" />
+        <field name="type" bits="31:24">
+            This is 1 to indicate Quick Access command.
+        </field>
         <field name="0" bits="23:0" />
     </register>
 </registers>
