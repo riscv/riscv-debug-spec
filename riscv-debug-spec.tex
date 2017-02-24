@@ -114,6 +114,7 @@ I would like to thank the following people for their time, feedback, and ideas:
 Bruce Ableidinger,
 Krste Asanovic,
 Mark Beal,
+Zhong-Ho Chen,
 Monte Dalrymple,
 Peter Egold,
 Richard Herveille,
@@ -678,8 +679,22 @@ separately.
 \item Read back \Rtselect to confirm this trigger exists. If not, exit.
 \item Read \Rtdataone, and possible \Rtdatatwo and \Rtdatathree depending on the
     trigger type.
+\item If \Ftype is 0, this trigger doesn't exist. Exit the loop.
 \item Repeat, incrementing the value in \Rtselect.
 \end{steps}
+
+\begin{commentary}
+    There are two ways to check whether a given trigger is the last one to
+    support these implementations:
+    \begin{enumerate}
+        \item When no hardware triggers are implemented at all, all related
+            registers return 0. The algorithm above terminates when checking
+            \Ftype.
+        \item When 2 triggers are implemented, \Rtselect is just a single bit
+            that selects one of the two. When the debugger writes 2, it reads
+            back as 0 which terminates the enumeration.
+    \end{enumerate}
+\end{commentary}
 
 \subsection{Trigger Registers}
 

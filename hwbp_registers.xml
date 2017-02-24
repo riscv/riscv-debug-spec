@@ -9,7 +9,7 @@
         be contiguous.
 
         Writes of values greater than or equal to the number of supported
-        triggers result in a different value in this register than what was
+        triggers may result in a different value in this register than what was
         written.  Debuggers should read back the value to confirm that what
         they wrote was a valid index.
 
