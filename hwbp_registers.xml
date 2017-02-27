@@ -9,7 +9,7 @@
         be contiguous.
 
         Writes of values greater than or equal to the number of supported
-        triggers result in a different value in this register than what was
+        triggers may result in a different value in this register than what was
         written.  Debuggers should read back the value to confirm that what
         they wrote was a valid index.
 
@@ -26,9 +26,11 @@
             1: The trigger is a legacy SiFive address match trigger. These
             should not be implemented and aren't further documented here.
 
-            2: The trigger is an address/data match trigger.
+            2: The trigger is an address/data match trigger. The remaining bits
+            in this register act as described in \Rmcontrol.
 
-            3: The trigger is an instruction count trigger.
+            3: The trigger is an instruction count trigger. The remaining bits
+            in this register act as described in \Ricount.
 
             15: This trigger exists (so enumeration shouldn't terminate), but
             is not currently available.
