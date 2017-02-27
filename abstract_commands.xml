@@ -76,4 +76,22 @@
         </field>
         <field name="0" bits="23:0" />
     </register>
+
+    <register name="Config String Address">
+        Copies the start address of the config string into the {\tt arg0}
+        region of {\tt data}.
+
+        Implementing this command is optional.
+
+        <field name="type" bits="31:24">
+            This is 2 to indicate Config String Address command.
+        </field>
+        <field name="0" bits="23:1" />
+        <field name="space" bits="0">
+            0: Return the physical address as seen by the currently selected
+            hart.
+
+            1: Return the address as seen by the System Bus Access module.
+        </field>
+    </register>
 </registers>
