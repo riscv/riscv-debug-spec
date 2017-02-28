@@ -634,7 +634,7 @@ external debugging. How Halt Mode is entered is implementation-specific.
     Program Buffer.
 \item No action is taken if a trigger matches.
 \item Trace is disabled.
-\item Cycle counters may be stopped, depending on \Fstopcycle in \Rdcsr.
+\item Counters may be stopped, depending on \Fstopcount in \Rdcsr.
 \item Timers may be stopped, depending on \Fstoptime in \Rdcsr.
 \item The {\tt wfi} instruction acts as a {\tt nop}.
 \item Almost all instructions that change the privilege level have undefined

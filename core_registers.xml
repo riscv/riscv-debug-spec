@@ -23,21 +23,21 @@
             Halt Mode.
         </field>
         <field name="0" bits="11" access="R" reset="0" />
-        <field name="stopcycle" bits="10" access="R/W" reset="1">
-            Controls the behavior of any counters while the component is in
-            Halt Mode. This includes the {\tt cycle} and {\tt instret} CSRs.
-            When 1, counters are stopped when the component is in Halt Mode.
-            Otherwise, the counters continue to run.
+        <field name="stopcount" bits="10" access="R/W" reset="1">
+            0: Don't increment any counters while in Halt Mode.  This includes
+            the {\tt cycle} and {\tt instret} CSRs. This is preferred for most
+            debugging scenarios.
+
+            1: Increment counters as usual.
 
             An implementation may choose not to support writing to this bit.
             The debugger must read back the value it writes to check whether
             the feature is supported.
         </field>
         <field name="stoptime" bits="9" access="R/W" reset="0">
-            Controls the behavior of any timers while the component is in Debug
-            Mode.  This includes the {\tt time} and {tt timeh} CSRs.  When 1,
-            timers are stopped when the component is in Halt Mode.  Otherwise,
-            the timers continue to run.
+            0: Don't increment any hart-local timers while in Halt Mode.
+
+            1: Increment timers as usual.
 
             An implementation may choose not to support writing to this bit.
             The debugger must read back the value it writes to check whether
