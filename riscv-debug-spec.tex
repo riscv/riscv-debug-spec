@@ -596,9 +596,10 @@ All these uses require software support, and are not further specified here.
 
 \subsection{Debug Module Serial Registers} \label{dmsysbus}
 
-TODO: Figure out where these registers should really live on the system bus,
-and how to communicate that to software. Or maybe there are magic CSRs to
-access them as well?
+The Debug Module's serial port registers must be accessible from the
+component memory space. The Debug Module's system bus registers  base address
+is discoverable in the configuration string. The offsets from this base
+are given in this section.
 
 \input{dm2_registers.tex}
 

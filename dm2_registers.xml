@@ -1,5 +1,5 @@
 <registers name="Debug Module System Bus Registers">
-    <register name="Serial Info" short="serinfo" address="0x110">
+    <register name="Serial Info" short="serinfo" address="0x280">
         <field name="0" bits="31:8" access="R" reset="0" />
         <field name="serial7" bits="7" access="R" reset="Preset">
             Like \Fserialzero.
@@ -52,31 +52,31 @@
         </field>
     </register>
 
-    <register name="Serial Send 1" short="sersend1" address="0x20c" />
-    <register name="Serial Receive 1" short="serrecv1" address="0x210" />
-    <register name="Serial Status 1" short="serstat1" address="0x214" />
+    <register name="Serial Send 1" short="sersend1" address="0x210" />
+    <register name="Serial Receive 1" short="serrecv1" address="0x214" />
+    <register name="Serial Status 1" short="serstat1" address="0x218" />
 
-    <register name="Serial Send 2" short="sersend2" address="0x218" />
-    <register name="Serial Receive 2" short="serrecv2" address="0x21c" />
-    <register name="Serial Status 2" short="serstat2" address="0x220" />
+    <register name="Serial Send 2" short="sersend2" address="0x220" />
+    <register name="Serial Receive 2" short="serrecv2" address="0x224" />
+    <register name="Serial Status 2" short="serstat2" address="0x228" />
 
-    <register name="Serial Send 3" short="sersend3" address="0x224" />
-    <register name="Serial Receive 3" short="serrecv3" address="0x228" />
-    <register name="Serial Status 3" short="serstat3" address="0x22c" />
+    <register name="Serial Send 3" short="sersend3" address="0x230" />
+    <register name="Serial Receive 3" short="serrecv3" address="0x234" />
+    <register name="Serial Status 3" short="serstat3" address="0x238" />
 
-    <register name="Serial Send 4" short="sersend4" address="0x230" />
-    <register name="Serial Receive 4" short="serrecv4" address="0x234" />
-    <register name="Serial Status 4" short="serstat4" address="0x238" />
+    <register name="Serial Send 4" short="sersend4" address="0x240" />
+    <register name="Serial Receive 4" short="serrecv4" address="0x244" />
+    <register name="Serial Status 4" short="serstat4" address="0x248" />
 
-    <register name="Serial Send 5" short="sersend5" address="0x23c" />
-    <register name="Serial Receive 5" short="serrecv5" address="0x240" />
-    <register name="Serial Status 5" short="serstat5" address="0x244" />
+    <register name="Serial Send 5" short="sersend5" address="0x250" />
+    <register name="Serial Receive 5" short="serrecv5" address="0x254" />
+    <register name="Serial Status 5" short="serstat5" address="0x258" />
 
-    <register name="Serial Send 6" short="sersend6" address="0x248" />
-    <register name="Serial Receive 6" short="serrecv6" address="0x24c" />
-    <register name="Serial Status 6" short="serstat6" address="0x250" />
+    <register name="Serial Send 6" short="sersend6" address="0x260" />
+    <register name="Serial Receive 6" short="serrecv6" address="0x264" />
+    <register name="Serial Status 6" short="serstat6" address="0x268" />
 
-    <register name="Serial Send 7" short="sersend7" address="0x254" />
-    <register name="Serial Receive 7" short="serrecv7" address="0x258" />
-    <register name="Serial Status 7" short="serstat7" address="0x25c" />
+    <register name="Serial Send 7" short="sersend7" address="0x274" />
+    <register name="Serial Receive 7" short="serrecv7" address="0x278" />
+    <register name="Serial Status 7" short="serstat7" address="0x27c" />
 </registers>
