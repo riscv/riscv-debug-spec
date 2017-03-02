@@ -257,13 +257,12 @@ def write_chisel( fd, registers ):
 
     for r in registers.registers:
         name = toCIdentifier( r.short or r.label ).upper()
-        prefname = registers.prefix + name
-
+ 
         if (r.fields and r.define) :
             sorted_fields = sorted(r.fields, key = lambda x: int(x.lowBit), reverse = True)
             topbit = 31
             reserved = 0
-            fd.write("class " + prefname + "Fields extends Bundle {\n\n")
+            fd.write("class " + name + "Fields extends Bundle {\n\n")
             for f in sorted_fields:
 
                 # These need try-catch blocks in the general case,
