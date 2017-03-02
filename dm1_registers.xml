@@ -428,7 +428,7 @@
             previous one succeeding) passed.
         \end{commentary}
 
-        <field name="type"    bits="31:24" access="W" reset="0">
+        <field name="cmdtype"    bits="31:24" access="W" reset="0">
             The type determines the overall functionality of this
             abstract command.
 	</field>

@@ -11,6 +11,9 @@ REGISTERS_TEX += trace_registers.tex
 REGISTERS_TEX += sample_registers.tex
 REGISTERS_TEX += abstract_commands.tex
 
+REGISTERS_CHISEL += dm1_registers.scala
+REGISTERS_CHISEL += abstract_commands.scala
+
 FIGURES = *.eps
 
 all:	$(NAME).pdf debug_defines.h
@@ -46,6 +49,10 @@ debug_defines.h:	$(REGISTERS_TEX:.tex=.h)
 %.tex %.h: %.xml registers.py
 	./registers.py --custom --definitions $@.inc --cheader $(basename $@).h $< > $@
 
+
+%.scala: %.xml registers.py
+	./registers.py --chisel $(basename $@).scala $< > /dev/null
+
 %.o:	%.S
 	$(CC) -c $<
 
@@ -64,6 +71,8 @@ hello:	hello.c
 
 hello.s:	hello.c
 	$(CC) -o $@ $^ -S -Os
+
+chisel: $(REGISTERS_CHISEL)
 
 clean:
 	rm -f $(NAME).pdf $(NAME).aux $(NAME).toc $(NAME).log $(REGISTERS_TEX) \
