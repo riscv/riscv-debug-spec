@@ -110,7 +110,7 @@
         </field>
         <field name="0" bits="XLEN-12:20" access="R" reset="0" />
         <field name="select" bits="19" access="R/W" reset="0">
-            0: Perform a match on the address.
+            0: Perform a match on the virtual address.
 
             1: Perform a match on the data value loaded/stored, or the
             instruction executed.
@@ -198,14 +198,14 @@
             When set, enable this trigger in U mode.
         </field>
         <field name="execute" bits="2" access="R/W" reset="0">
-            When set, the trigger fires on the address or opcode of an
+            When set, the trigger fires on the virtual address or opcode of an
             instruction that is executed.
         </field>
         <field name="store" bits="1" access="R/W" reset="0">
-            When set, the trigger fires on the address or data of a store.
+            When set, the trigger fires on the virtual address or data of a store.
         </field>
         <field name="load" bits="0" access="R/W" reset="0">
-            When set, the trigger fires on the address or data of a load.
+            When set, the trigger fires on the virtual address or data of a load.
         </field>
     </register>
 
