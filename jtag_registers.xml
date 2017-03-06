@@ -38,7 +38,7 @@
 
     <!-- All our registers start with 1. -->
 
-    <register name="DTM Control" short="dtmcontrol" address="0x10"
+    <register name="DTM Control and Status" short="dtmcs" address="0x10"
         sdesc="For Debugging" define="1">
         The size of this register will remain constant in future versions so
         that a debugger can always determine the version of the DTM.
@@ -135,7 +135,7 @@
 
             2: A previous operation failed.  The data scanned into \Rdmi in
             this access will be ignored.  This status is sticky and can be
-            cleared by writing \Fdmireset in \Rdtmcontrol.
+            cleared by writing \Fdmireset in \Rdtmcs.
 
             This indicates that the DM itself responded with an error, e.g.
             in the System Bus and Serial Port overflow/underflow cases.
@@ -143,7 +143,7 @@
             3: An operation was attempted while a DMI request is still in
             progress. The data scanned into \Rdmi in this access will be
             ignored. This status is sticky and can be cleared by writing
-            \Fdmireset in \Rdtmcontrol. If a debugger sees this status, it
+            \Fdmireset in \Rdtmcs. If a debugger sees this status, it
             needs to give the target more TCK edges between Update-DR and
             Capture-DR. The simplest way to do that is to add extra transitions
             in Run-Test/Idle.
