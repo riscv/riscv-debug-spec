@@ -117,6 +117,7 @@ Mark Beal,
 Alex Bradbury,
 Zhong-Ho Chen,
 Monte Dalrymple,
+Vyacheslav Dyanchenco,
 Peter Egold,
 Richard Herveille,
 Po-wei Huang,
@@ -204,7 +205,7 @@ first.
 
 \subsubsection{Halt/Resume}
 
-Sections \ref{dmi}, \ref{selectingharts}, \ref{haltcontrol}, \ref{dmcs},
+Sections \ref{dmi}, \ref{selectingharts}, \ref{haltcontrol}, \ref{dmcontrol}, \ref{dmstatus},
 \ref{haltsum}, \ref{deb:halt}.
 
 \subsubsection{Abstract Register Access}
@@ -292,6 +293,7 @@ The debug interface described out here supports the following features:
        and monitor, or as a general protocol between debugger and application.
    \item The debugger doesn't need to know anything about the microarchitecture
        of the cores it is debugging.
+   \item Multiple harts can be halted and resumed simultaneously.
 \end{enumerate}
 
 \section{System Overview} \label{overview}
@@ -361,6 +363,7 @@ may be added in future versions of this specification.
     (Required)
 \item Provide access to other hart registers. (Optional)
 \item Force the hart to execute arbitrary instructions. (Optional)
+\item Allow multiple harts to be halted, resumed, and/or reset at the same time (Optional)
 \end{steps}
 
 A single DM can debug up to 1024 harts.
@@ -402,7 +405,7 @@ Transport Modules. The purpose of this feature is to allow debugging
 programs from the first instruction executed, so exactly what is affected
 by this reset is implementation dependent. Debug Module's own state and registers are
 generally reset at power-up and if and only if
-\Fdmactive in \Rdmcs is 0. This means that the halt state of all harts is
+\Fdmactive in \Rdmcontrol is 0. This means that the halt state of all harts is
 maintained provided that \Fdmactive is 1, although trigger CSRs may be cleared.
 
 \subsection{Selecting Harts} \label{selectingharts}
@@ -410,7 +413,7 @@ maintained provided that \Fdmactive is 1, although trigger CSRs may be cleared.
 Up to 1024 harts can be connected to the DM. The debugger can select any hart
 by writing its index to \Fhartsel. Hart indexes start at 0 and are continuous
 until the final index. This allows the debugger to enumerate all the harts
-attached to the DM by trying each index until \Fhartstatus is 3.
+attached to the DM by trying each index until \Fanynonexistent is 1.
 
 \subsection{Halt Control} \label{haltcontrol}
 
@@ -418,15 +421,19 @@ This block controls halt signals from the Debug Module to a hart.  It is used
 to halt a hart, and let it run again.
 
 To control halting and resuming, there are \Fhaltreq and \Fresumereq bits in
-\Rdmcs.  When a debugger wants to halt a hart, it sets \Fhaltreq, waits
-for \Fhartstatus to indicate the hart is halted, and clears \Fhaltreq.  To
-resume, the debugger sets \Fresumereq, waits for \Fhartstatus to indicate the
+\Rdmcontrol.  When a debugger wants to halt a hart, it sets \Fhaltreq, waits
+for \Fallhalted to indicate the hart is halted, and clears \Fhaltreq.  To
+resume, the debugger sets \Fresumereq, waits for \Fallrunning to indicate the
 hart is running, and clears \Fresumereq.
 
 The Debug Module conceptually has a direct connection to the halt signal of
 every hart that has a halt signal. When set or cleared, a hart must respond in
 less than one second.  (How this is implemented is not further specified. A few
 clock cycles will be a more typical latency.)
+
+\subsection{Hart Array Mask Register} \label{hamask}
+
+TODO: Write this section.
 
 \subsection{Abstract Commands} \label{abstractcommands}
 
@@ -577,7 +584,7 @@ Module that can be used to be permanently disable it. Since this is technology
 specific, it is not further addressed in this spec.
 
 Another option is to allow the DM to be unlocked only by users who have an
-access key. A few bits in \Rdmcs and \Rauthdata can support an arbitrarily
+access key. A few bits in \Rdmstatus and \Rauthdata can support an arbitrarily
 complex authentication mechanism.  When \Fauthenticated is clear, the DM must
 not interact with the rest of the platform in any way.
 
@@ -928,7 +935,7 @@ halted.
 \subsection{Halting} \label{deb:halt}
 
 To halt a hart, the debugger sets \Fhartsel and \Fhaltreq. Then it waits for
-\Fhartstatus to become 0.
+\Fallhalted to become 1.
 
 \subsection{Accessing Registers}
 

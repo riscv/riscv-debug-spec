@@ -2,63 +2,128 @@
 
     <!-- =============== halt/reset/select hart  =============== -->
 
-    <register name="Debug Module Control and Status" short="dmcs" address="0x00">
+    <register name="Debug Module Status" short="dmstatus" address="0x00">
         The address of this register will not change in the future, because it
         contains \Fversion.  It has changed from version 0.11 of this spec.
 
-        \begin{commentary}
-        There are separate \Fhaltreq and \Fresumereq bits so a debugger can
-        write \Rdmcs without affecting the current state, without knowing
-        what that current state is.
-        \end{commentary}
+        This register reports status for the overall debug module
+        as well as the currently selected harts, as defined in \Fhasel.
+
+        <field name="0" bits="31:16" access="R" reset="0" />
+        <field name="allnonexistent" bits="15" access="R" reset="-">
+          This field is 1 when all currently selected harts do not exist in this system.
+        </field>
+        <field name="anynonexistent" bits="14" access="R" reset="-">
+          This field is 1 when any currently selected hart does not exist in this system.
+        </field>
+        <field name="allunavail" bits="13" access="R" reset="-">
+          This field is 1 when all currently selected harts are unavailable.
+        </field>
+        <field name="anyunavail" bits="12" access="R" reset="-">
+          This field is 1 when any currently selected hart is unavailable.
+        </field>
+        <field name="allrunning" bits="11" access="R" reset="-">
+          This field is 1 when all currently selected harts are running.
+        </field>
+        <field name="anyrunning" bits="10" access="R" reset="-">
+          This field is 1 when any currently selected hart is running.
+        </field>
+        <field name="allhalted" bits="9" access="R" reset="-">
+          This field is 1 when all currently selected harts are halted.
+        </field>
+        <field name="anyhalted" bits="8" access="R" reset="-">
+          This field is 1 when any currently selected hart is halted.
+        </field>
+
+        <!-- Fields that apply to the entire DM. -->
+        <field name="authenticated" bits="7" access="R" reset="Preset">
+            0 when authentication is required before using the DM.  1 when the
+            authentication check has passed. On components that don't implement
+            authentication, this bit must be preset as 1.
+        </field>
+        <field name="authbusy" bits="6" access="R" reset="0">
+            0: The authentication module is ready to process the next
+            read/write to \Rauthdata.
+
+            1: The authentication module is busy. Accessing \Rauthdata results
+            in unspecified behavior.
+
+            \Fauthbusy only becomes set in immediate response to an access to
+            \Rauthdata.
+        </field>
+        <field name="0" bits="5:4" reset="0" access="R" />
+        <field name="version" bits="3:0" reset="1" access="R">
+            0: There is no Debug Module present.
+
+            1: There is a Debug Module and it conforms to version 0.13 of this
+            specification.
+
+            Other values are reserved for future use.
+        </field>
+    </register>
+
+    <register name="Debug Module Control" short="dmcontrol" address="0x01">
+
+        This register controls the overall debug module
+        as well as the currently selected harts, as defined in \Fhasel.
 
         <!-- Fields that apply to a specific hart. -->
         <field name="haltreq" bits="31" access="R/W" reset="0">
-            Halt request signal for the hart selected by \Fhartsel. When 1, the
-            hart will halt if it's not currently halted.
+            Halt request signal for all currently selected harts. When 1, the
+            hart will halt if it is not currently halted.
             Setting both \Fhaltreq and \Fresumereq leads to undefined behavior.
 
-            Writes apply to the new value of \Fhartsel.
+            Writes apply to the new value of \Fhartsel and \Fhasel.
         </field>
         <field name="resumereq" bits="30" access="R/W" reset="0">
-            Resume request signal for the hart selected by \Fhartsel. When 1,
-            the hart will resume if it's currently halted.
+            Resume request signal for all currently selected harts. When 1,
+            the hart will resume if it is currently halted.
             Setting both \Fhaltreq and \Fresumereq leads to undefined behavior.
 
-            Writes apply to the new value of \Fhartsel.
+            Writes apply to the new value of \Fhartsel and \Fhasel.
         </field>
         <field name="hartreset" bits="29" access="R/W" reset="0">
-            This optional bit controls reset to the currently selected hart. To
-            perform a reset the debugger writes 1, and then writes 0 to
+            This optional bit controls reset to all the currently selected harts.
+            To perform a reset the debugger writes 1, and then writes 0 to
             deassert the reset signal.
 
             If this feature is not implemented, the bit always stays 0, so
             after writing 1 the debugger can read the register back to see if
             the feature is supported.
+
+            Writes apply to the new value of \Fhartsel and \Fhasel.
         </field>
- 
-        <field name="0" bits="28" access="R" reset="0" />
-        <field name="hartstatus" bits="27:26" access="R" reset="-">
-            The status of the currently selected hart.
+        <field name="0" bits="28:27" reset="0" access="R" />
+         <field name="hasel" bits="26" access="R/W" reset = "0">
+            Selects the  definition of currently selected harts.
 
-            0: Halted.
+            0: There is a single currently selected hart, that selected by \Fhartsel.
 
-            1: Running.
+            1: There may be multiple currently selected harts -- that selected by \Fhartsel,
+               plus those selected by the hart array mask register.
 
-            2: Unavailable (eg. powered down, held in reset).
-
-            3: \Fhartsel specifies a hart that does not exist in this system.
+            An implementation which does not implement the hart array mask register
+            should tie this field to 0. A debugger which wishes to use the hart array
+            mask register feature should set this bit and read back to see if the functionality
+            is supported.
         </field>
         <field name="hartsel" bits="25:16" access="R/W" reset="0">
-            The DM-specific index of the hart to select.
+            The DM-specific index of the hart to select. This hart is always part of the
+            currently selected harts.
         </field>
         <!-- Fields that apply to the entire DM. -->
-        <field name="0" bits="15:10" access="R" reset="0" />
-        <field name="dmactive" bits="9" access="R/W" reset="0">
+        <field name="0" bits="15:2" access="R" reset="0" />
+        <field name="ndmreset" bits="1" access="R/W" reset="0">
+            This bit controls the reset signal from the DM to the rest of the
+            system. To perform a reset the debugger writes 1, and then writes 0
+            to deassert the reset.
+        </field>
+        <field name="dmactive" bits="0" access="R/W" reset="0">
             This bit serves as a reset signal for the Debug Module itself.
 
-            0: The module, including authentication mechanism, is held in
-            reset.
+            0: The module's state, including authentication mechanism,
+            takes its reset values (the \Fdmactive bit is the only bit which can
+            be written to something other than its reset value).
 
             1: The module functions normally.
 
@@ -73,38 +138,19 @@
             preventing the Debug Module from being power gated while debugging
             is active.
         </field>
-        <field name="reset" bits="8" access="R/W" reset="0">
-            This bit controls the reset signal from the DM to the rest of the
-            system. To perform a reset the debugger writes 1, and then writes 0
-            to deassert the reset.
-        </field>
-        <field name="authenticated" bits="7" access="R" reset="Preset">
-            0 when authentication is required before using the DM.  1 when the
-            authentication check has passed. On components that don't implement
-            authentication, this bit must be preset as 1.
-        </field>
-        <field name="authbusy" bits="6" reset="0" access="R">
-            0: The authentication module is ready to process the next
-            read/write to \Rauthdata.
-
-            1: The authentication module is busy. Accessing \Rauthdata results
-            in unspecified behavior.
-
-            \Fauthbusy only becomes set in immediate response to an access to
-            \Rauthdata.
-        </field>
-        <field name="0" bits="5:4" reset="0" access="R" />
-        <field name="version" bits="3:0" reset="1" access="R">
-            0: There is no Debug Module present.
-
-            1: There is a Debug Module and it conforms to version 0.12 of this
-            specification.
-
-            Other values are reserved for future use.
-        </field>
     </register>
 
     <register name="Hart Info" short="hartinfo" address="0x02">
+      This register gives information about the hart currently
+      selected by \Fhartsel.
+
+      This register is optional. If it is not present it should
+      read all-zero.
+
+      If this register is included, the debugger can do more with
+      the Program Buffer by writing programs which
+      explicitly access the {\tt data} registers.
+
         <field name="0" bits="31:17" access="R" reset="0" />
         <field name="dataaccess" bits="16" access="R" reset="Preset">
             0: The {\tt data} registers are shadowed in the hart by CSR
@@ -129,6 +175,7 @@
             registers are shadowed.
         </field>
     </register>
+
 
     <register name="Halt Summary" short="haltsum" address="0x03">
         This register contains a summary of which harts are halted.
@@ -172,22 +219,33 @@
         <field name="halt1023:992" bits="31" access="R" reset="0" />
     </register>
 
-    <!-- =============== authentication =============== -->
+    <!-- =============== Hart Array Registers =============== -->
 
-    <register name="Authentication Data" short="authdata" address="0x30">
-        This register serves as a 32-bit serial port to the authentication
-        module.
+    <register name="Hart Array Window Select" short="hawindowsel" address="0x04">
 
-        When \Fauthbusy is clear, the debugger can communicate with the
-        authentication module by reading or writing this register. There is no
-        separate mechanism to signal overflow/underflow.
+      This register selects which of the 32-bit portion of the hart array mask register
+      is accessible in \Rhawindow.
 
-        <field name="data" bits="31:0" access="R/W" reset="0" />
+      The hart array mask register provides a mask of all harts controlled by
+      the debug module. A hart is part of the currently selected harts if
+      the corresponding bit is set in the hart array mask register and
+      \Fhasel in \Rdmcontrol is 1, or if the hart is selected by \Fhartsel.
+
+      <field name="0" bits="31:5" access="R/W" reset="0" />
+      <field name="hawindowsel" bits="4:0" access="R/W" reset="0" />
     </register>
+
+    <register name="Hart Array Window " short="hawindow" address="0x05">
+      This register provides R/W access to a 32-bit portion of the
+      hart array mask register. The position of the window is determined by
+      \Rhawindowsel.
+      <field name="maskdata" bits="31:0" access="R/W" reset="0" />
+    </register>
+
 
     <!-- =============== abstract commands =============== -->
 
-    <register name="Abstract Control and Status" short="abstractcs" address="0x06">
+    <register name="Abstract Control and Status" short="abstractcs" address="0x05">
         <field name="0" bits="31:28" access="R" reset="0" />
         <field name="progsize" bits="27:24" access="R" reset="Preset">
             Size of the Program Buffer, in 32-bit words. Valid sizes are 0 - 12.
@@ -195,8 +253,8 @@
             A debugger must not access any Program Buffer locations that
             fall outside the range specified here.
 
-	    TODO: Explain what can be done with each size of the buffer, to suggest
-	    why you would want more or less words.
+            TODO: Explain what can be done with each size of the buffer, to suggest
+            why you would want more or less words.
 
         </field>
         <field name="0" bits="23:16" access="R" reset="0" />
@@ -252,7 +310,7 @@
         </field>
     </register>
 
-    <register name="Abstract Command" short="command" address="0x07">
+    <register name="Abstract Command" short="command" address="0x06">
         Writes to this register cause the corresponding abstract command to be
         executed.
 
@@ -272,12 +330,13 @@
         <field name="cmdtype"    bits="31:24" access="W" reset="0">
             The type determines the overall functionality of this
             abstract command.
-	</field>
+        </field>
         <field name="control" bits="23:0" access="W" reset="0" >
             This field is interpreted in a command-specific manner,
             described for each abstract command.
-	</field>
+        </field>
     </register>
+
 
     <register name="Abstract Data 0" short="data0" address="0x10">
         Basic read/write registers that may be read or changed by abstract
@@ -325,6 +384,19 @@
     <register name="Program Buffer 9" short="progbuf9" address="0x29" />
     <register name="Program Buffer 10" short="progbuf10" address="0x2a" />
     <register name="Program Buffer 11" short="progbuf11" address="0x2b" />
+
+    <!-- =============== authentication =============== -->
+
+    <register name="Authentication Data" short="authdata" address="0x30">
+        This register serves as a 32-bit serial port to the authentication
+        module.
+
+        When \Fauthbusy is clear, the debugger can communicate with the
+        authentication module by reading or writing this register. There is no
+        separate mechanism to signal overflow/underflow.
+
+        <field name="data" bits="31:0" access="R/W" reset="0" />
+    </register>
 
     <!-- =============== serial ports =============== -->
 
@@ -382,7 +454,7 @@
         adds the written data to the core-to-debugger queue.
         Otherwise the {\tt error} bit is set and the write returns error.
 
-	A read to this register returns the last data written. 
+        A read to this register returns the last data written.
 
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
@@ -424,7 +496,7 @@
 
             If an unsupported system bus access size is written here,
             the DM may not perform the access, or may perform the access
-	    with any access size.
+            with any access size.
         </field>
         <field name="sbautoincrement" bits="16" access="R/W" reset="0">
             When 1, the internal address value (used by the system bus master)
@@ -481,11 +553,11 @@
         If \Fsbasize is 0, then this register is not present.
 
         When the system bus master is busy,
-	writes to this register will return error
+        writes to this register will return error
         and \Fsberror is set.
 
         If \Fsberror is 0 and \Fsbautoread is set then the system bus
-	master will start
+        master will start
         to read after updating the address from \Faddress. The access size is
         controlled by \Fsbaccess in \Rsbcs.
 
