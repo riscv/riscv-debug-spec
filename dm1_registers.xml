@@ -104,7 +104,7 @@
         </field>
     </register>
 
-    <register name="Hart Info" short="hartinfo" address="0x01">
+    <register name="Hart Info" short="hartinfo" address="0x02">
         <field name="0" bits="31:17" access="R" reset="0" />
         <field name="dataaccess" bits="16" access="R" reset="Preset">
             0: The {\tt data} registers are shadowed in the hart by CSR
@@ -130,7 +130,7 @@
         </field>
     </register>
 
-    <register name="Halt Summary" short="haltsum" address="0x02">
+    <register name="Halt Summary" short="haltsum" address="0x03">
         This register contains a summary of which harts are halted.
 
         Each bit contains the logical OR of 32 halt bits. When there are a
@@ -172,184 +172,9 @@
         <field name="halt1023:992" bits="31" access="R" reset="0" />
     </register>
 
-    <!-- =============== system bus mastering =============== -->
-
-    <register name="System Bus Access Control and Status" short="sbcs" address="0x03">
-        <field name="0" bits="31:21" access="R" reset="0" />
-        <field name="sbsingleread" bits="20" access="W1" reset="0">
-            When a 1 is written here, triggers a read at the address in {\tt
-            sbaddress} using the access size set by \Fsbaccess.
-        </field>
-        <field name="sbaccess" bits="19:17" access="R/W" reset="2">
-            Select the access size to use for system bus accesses triggered by
-            writes to the {\tt sbaddress} registers or \Rsbdatazero.
-
-	    0: 8-bit
-
-            1: 16-bit
-
-	    2: 32-bit
-
-	    3: 64-bit
-
-	    4: 128-bit
-
-            If an unsupported system bus access size is written here,
-	    the DM may not
-            perform the access, or may perform the access with any access size
-        </field>
-        <field name="sbautoincrement" bits="16" access="R/W" reset="0">
-            When 1, the internal address value (used by the system bus master)
-            is incremented by the access size (in bytes) selected in \Fsbaccess
-            after every system bus access.
-        </field>
-        <field name="sbautoread" bits="15" access="R/W" reset="0">
-            When 1, every read from \Rsbdatazero automatically triggers a system
-            bus read at the new address.
-        </field>
-        <field name="sberror" bits="14:12" access="R/W0" reset="0">
-            When the debug module's system bus
-            master causes a bus error, this field gets set. The bits in this
-            field remain set until they are cleared by writing 1 to them.
-            While this field is non-zero, no more system bus accesses can be
-            initiated by the debug module.
-
-            0: There was no bus error.
-
-            1: There was a timeout.
-
-            2: A bad address was accessed.
-
-            3: There was some other error (eg. alignment).
-
-            4: The system bus master was busy when a one of the
-            {\tt sbaddress} or {\tt sbdata} registers was written,
-            or the {\tt sbdata} register was read when it had
-            stale data.
-
-        </field>
-        <field name="sbasize" bits="11:5" access="R" reset="Preset">
-            Width of system bus addresses in bits. (0 indicates there is no bus
-            access support.)
-        </field>
-        <field name="sbaccess128" bits="4" access="R" reset="Preset">
-            1 when 128-bit system bus accesses are supported.
-        </field>
-        <field name="sbaccess64" bits="3" access="R" reset="Preset">
-            1 when 64-bit system bus accesses are supported.
-        </field>
-        <field name="sbaccess32" bits="2" access="R" reset="Preset">
-            1 when 32-bit system bus accesses are supported.
-        </field>
-        <field name="sbaccess16" bits="1" access="R" reset="Preset">
-            1 when 16-bit system bus accesses are supported.
-        </field>
-        <field name="sbaccess8" bits="0" access="R" reset="Preset">
-            1 when 8-bit system bus accesses are supported.
-        </field>
-    </register>
-
-    <register name="System Bus Address 31:0" short="sbaddress0" address="0x04">
-        If \Fsbasize is 0, then this register is not present.
-
-        When the system bus master is busy,
-	writes to this register will return error
-        and \Fsberror is set.
-
-        If \Fsberror is 0 and \Fsbautoread is set then the system bus
-	master will start
-        to read after updating the address from \Faddress. The access size is
-        controlled by \Fsbaccess in \Rsbcs.
-
-        If \Fsbsingleread is set, the bit is cleared.
-
-        <field name="address" bits="31:0" access="R/W" reset="0">
-            Accesses bits 31:0 of the internal address.
-        </field>
-    </register>
-
-    <register name="System Bus Address 63:32" short="sbaddress1" address="0x05">
-        <field name="address" bits="31:0" access="R/W" reset="0">
-            Accesses bits 63:32 of the internal address (if the system address
-            bus is that wide).
-        </field>
-    </register>
-
-    <register name="System Bus Address 95:64" short="sbaddress2" address="0x06">
-        If \Fsbasize is less than 65, then this register is not present.
-
-        <field name="address" bits="31:0" access="R/W" reset="0">
-            Accesses bits 95:64 of the internal address (if the system address
-            bus is that wide).
-        </field>
-    </register>
-
-    <register name="System Bus Data 31:0" short="sbdata0" address="0x07">
-        If all of the {\tt sbaccess} bits in \Rsbcs are 0, then this register
-        is not present.
-
-        If \Fsberror isn't 0 then accesses return error, and don't do anything
-        else.
-
-        Writes to this register:
-
-        1. If the bus master is busy then accesses set \Fsberror, return error,
-        and don't do anything else.
-
-        2. Update internal data.
-
-        3. Start a bus write of the internal data to the internal address.
-
-        4. If \Fsbautoincrement is set, increment the internal address.
-
-        Reads to this register:
-
-        1. If bits 31:0 of the internal data register haven't been updated
-        since the last time this register was read, then set \Fsberror, return
-        error, and don't do anything else.
-
-        2. ``Return'' the data.
-
-        3. If \Fsbautoincrement is set, increment the internal address.
-
-        4. If \Fsbautoread is set, start another system bus read.
-
-        <field name="data" bits="31:0" access="R/W" reset="0">
-            Accesses bits 31:0 of the internal data.
-        </field>
-    </register>
-
-    <register name="System Bus Data 63:32" short="sbdata1" address="0x08">
-        If \Fsbaccesssixtyfour and \Fsbaccessonetwentyeight are 0, then this
-        register is not present.
-
-        <field name="data" bits="31:0" access="R/W" reset="0">
-            Accesses bits 63:32 of the internal data (if the system bus is
-            that wide).
-        </field>
-    </register>
-
-    <register name="System Bus Data 95:64" short="sbdata2" address="0x09">
-        This register only exists if \Fsbaccessonetwentyeight is 1.
-
-        <field name="data" bits="31:0" access="R/W" reset="0">
-            Accesses bits 95:64 of the internal data (if the system bus is
-            that wide).
-        </field>
-    </register>
-
-    <register name="System Bus Data 127:96" short="sbdata3" address="0x0a">
-        This register only exists if \Fsbaccessonetwentyeight is 1.
-
-        <field name="data" bits="31:0" access="R/W" reset="0">
-            Accesses bits 127:96 of the internal data (if the system bus is
-            that wide).
-        </field>
-    </register>
-
     <!-- =============== authentication =============== -->
 
-    <register name="Authentication Data" short="authdata" address="0x0b">
+    <register name="Authentication Data" short="authdata" address="0x30">
         This register serves as a 32-bit serial port to the authentication
         module.
 
@@ -362,8 +187,19 @@
 
     <!-- =============== abstract commands =============== -->
 
-    <register name="Abstract Control and Status" short="abstractcs" address="0x0e">
-        <field name="0" bits="31:16" access="R" reset="0" />
+    <register name="Abstract Control and Status" short="abstractcs" address="0x06">
+        <field name="0" bits="31:28" access="R" reset="0" />
+        <field name="progsize" bits="27:24" access="R" reset="Preset">
+            Size of the Program Buffer, in 32-bit words. Valid sizes are 0 - 12.
+
+            A debugger must not access any Program Buffer locations that
+            fall outside the range specified here.
+
+	    TODO: Explain what can be done with each size of the buffer, to suggest
+	    why you would want more or less words.
+
+        </field>
+        <field name="0" bits="23:16" access="R" reset="0" />
         <field name="autoexec7" bits="15" access="R/W" reset="0" />
         <field name="autoexec6" bits="14" access="R/W" reset="0" />
         <field name="autoexec5" bits="13" access="R/W" reset="0" />
@@ -408,12 +244,15 @@
         </field>
         <field name="datacount" bits="3:0" access="R" reset="Preset">
             Number of {\tt data} registers that are implemented as part of the
-            abstract command interface. If it's 0 then no abstract interface is
-            implemented at all.
+            abstract command interface.
+
+            A debugger must not access any Abstract Data locations that
+            fall outside the range specified here.
+
         </field>
     </register>
 
-    <register name="Abstract Command" short="command" address="0x0f">
+    <register name="Abstract Command" short="command" address="0x07">
         Writes to this register cause the corresponding abstract command to be
         executed.
 
@@ -467,26 +306,29 @@
     <register name="Abstract Data 10" short="data10" address="0x1a" />
     <register name="Abstract Data 11" short="data11" address="0x1b" />
 
-    <!-- =============== serial ports =============== -->
+    <!-- =============== Program Buffer =============== -->
 
-    <register name="Serial Data" short="serdata" address="0x1c">
-        If \Fserialcount is 0, this register is not present.
-
-        This register provides access to the data queues of the serial port
-        selected by \Fserial in \Rsercs.
-
-        If the {\tt error} bit is not set and the queue is not empty, a read from this register reads the
-        oldest entry in the debugger-to-core queue, and removes that entry from the queue.
-        Otherwise the {\tt error} bit is set and the read returns error.
-
-        If the {\tt error} bit is not set and the queue is not full, a write to this register
-        adds the written data to the core-to-debugger queue.
-        Otherwise the {\tt error} bit is set and the write returns error.
-
+    <register name="Program Buffer 0" short="progbuf0" address="0x20">
+        The {\tt progbuf} registers provide read/write access to the optional
+        program buffer.
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
 
-    <register name="Serial Control and Status" short="sercs" address="0x1d">
+    <register name="Program Buffer 1" short="progbuf1" address="0x21" />
+    <register name="Program Buffer 2" short="progbuf2" address="0x22" />
+    <register name="Program Buffer 3" short="progbuf3" address="0x23" />
+    <register name="Program Buffer 4" short="progbuf4" address="0x24" />
+    <register name="Program Buffer 5" short="progbuf5" address="0x25" />
+    <register name="Program Buffer 6" short="progbuf6" address="0x26" />
+    <register name="Program Buffer 7" short="progbuf7" address="0x27" />
+    <register name="Program Buffer 8" short="progbuf8" address="0x28" />
+    <register name="Program Buffer 9" short="progbuf9" address="0x29" />
+    <register name="Program Buffer 10" short="progbuf10" address="0x2a" />
+    <register name="Program Buffer 11" short="progbuf11" address="0x2b" />
+
+    <!-- =============== serial ports =============== -->
+
+    <register name="Serial Control and Status" short="sercs" address="0x34">
         If \Fserialcount is 0, this register is not present.
 
         <field name="serialcount" bits="31:28" access="R" reset="Preset">
@@ -494,7 +336,7 @@
         </field>
         <field name="0" bits="27" access="R" reset="0" />
         <field name="serial" bits="26:24" access="R/W" reset="0">
-            Select which serial port is accessed by \Rserdata.
+            Select which serial port is accessed by \Rserrx and \Rsertx.
         </field>
         <field name="error7" bits="23" access="R" reset="0"/>
         <field name="valid7" bits="22" access="R" reset="0" />
@@ -530,42 +372,207 @@
         </field>
     </register>
 
-    <!-- =============== instruction supply =============== -->
+    <register name="Serial TX Data" short="sertx" address="0x35">
+        If \Fserialcount is 0, this register is not present.
 
-    <register name="Program Buffer Control and Status" short="progbufcs" address="0x1f">
-        <field name="0" bits="31:4" access="R" reset="0" />
-        <field name="progsize" bits="3:0" access="R" reset="Preset">
-            Size of the Program Buffer, in 32-bit words. Valid sizes are 0 - 12.
+        This register provides access to the write data queue of the serial port
+        selected by \Fserial in \Rsercs.
 
-            A debugger must not access any Program Buffer locations that
-            fall outside the range specified here.
+        If the {\tt error} bit is not set and the queue is not full, a write to this register
+        adds the written data to the core-to-debugger queue.
+        Otherwise the {\tt error} bit is set and the write returns error.
 
-	    TODO: Explain what can be done with each size of the buffer, to suggest
-	    why you would want more or less words.
-
-        </field>
-    </register>
-
-    <register name="Program Buffer 0" short="progbuf0" address="0x20">
-        The {\tt progbuf} registers provide read/write access to the optional
-        program buffer.
-
-        If \Fautoexeczero is set, then after this register is accessed the
-        command in \Rcommand is executed again.
+	A read to this register returns the last data written. 
 
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
 
-    <register name="Program Buffer 1" short="progbuf1" address="0x21" />
-    <register name="Program Buffer 2" short="progbuf2" address="0x22" />
-    <register name="Program Buffer 3" short="progbuf3" address="0x23" />
-    <register name="Program Buffer 4" short="progbuf4" address="0x24" />
-    <register name="Program Buffer 5" short="progbuf5" address="0x25" />
-    <register name="Program Buffer 6" short="progbuf6" address="0x26" />
-    <register name="Program Buffer 7" short="progbuf7" address="0x27" />
-    <register name="Program Buffer 8" short="progbuf8" address="0x28" />
-    <register name="Program Buffer 9" short="progbuf9" address="0x29" />
-    <register name="Program Buffer 10" short="progbuf10" address="0x2a" />
-    <register name="Program Buffer 11" short="progbuf11" address="0x2b" />
+    <register name="Serial RX Data" short="serrx" address="0x36">
+        If \Fserialcount is 0, this register is not present.
+
+        This register provides access to the read data queues of the serial port
+        selected by \Fserial in \Rsercs.
+
+        If the {\tt error} bit is not set and the queue is not empty, a read from this register reads the
+        oldest entry in the debugger-to-core queue, and removes that entry from the queue.
+        Otherwise the {\tt error} bit is set and the read returns error.
+
+        <field name="data" bits="31:0" access="R" reset="0" />
+    </register>
+
+    <!-- =============== system bus mastering =============== -->
+
+    <register name="System Bus Access Control and Status" short="sbcs" address="0x38">
+        <field name="0" bits="31:21" access="R" reset="0" />
+        <field name="sbsingleread" bits="20" access="W1" reset="0">
+            When a 1 is written here, triggers a read at the address in {\tt
+            sbaddress} using the access size set by \Fsbaccess.
+        </field>
+        <field name="sbaccess" bits="19:17" access="R/W" reset="2">
+            Select the access size to use for system bus accesses triggered by
+            writes to the {\tt sbaddress} registers or \Rsbdatazero.
+
+            0: 8-bit
+
+            1: 16-bit
+
+            2: 32-bit
+
+            3: 64-bit
+
+            4: 128-bit
+
+            If an unsupported system bus access size is written here,
+            the DM may not perform the access, or may perform the access
+	    with any access size.
+        </field>
+        <field name="sbautoincrement" bits="16" access="R/W" reset="0">
+            When 1, the internal address value (used by the system bus master)
+            is incremented by the access size (in bytes) selected in \Fsbaccess
+            after every system bus access.
+        </field>
+        <field name="sbautoread" bits="15" access="R/W" reset="0">
+            When 1, every read from \Rsbdatazero automatically triggers a system
+            bus read at the new address.
+        </field>
+        <field name="sberror" bits="14:12" access="R/W0" reset="0">
+            When the debug module's system bus
+            master causes a bus error, this field gets set. The bits in this
+            field remain set until they are cleared by writing 1 to them.
+            While this field is non-zero, no more system bus accesses can be
+            initiated by the debug module.
+
+            0: There was no bus error.
+
+            1: There was a timeout.
+
+            2: A bad address was accessed.
+
+            3: There was some other error (eg. alignment).
+
+            4: The system bus master was busy when a one of the
+            {\tt sbaddress} or {\tt sbdata} registers was written,
+            or the {\tt sbdata} register was read when it had
+            stale data.
+
+        </field>
+        <field name="sbasize" bits="11:5" access="R" reset="Preset">
+            Width of system bus addresses in bits. (0 indicates there is no bus
+            access support.)
+        </field>
+        <field name="sbaccess128" bits="4" access="R" reset="Preset">
+            1 when 128-bit system bus accesses are supported.
+        </field>
+        <field name="sbaccess64" bits="3" access="R" reset="Preset">
+            1 when 64-bit system bus accesses are supported.
+        </field>
+        <field name="sbaccess32" bits="2" access="R" reset="Preset">
+            1 when 32-bit system bus accesses are supported.
+        </field>
+        <field name="sbaccess16" bits="1" access="R" reset="Preset">
+            1 when 16-bit system bus accesses are supported.
+        </field>
+        <field name="sbaccess8" bits="0" access="R" reset="Preset">
+            1 when 8-bit system bus accesses are supported.
+        </field>
+    </register>
+
+    <register name="System Bus Address 31:0" short="sbaddress0" address="0x39">
+        If \Fsbasize is 0, then this register is not present.
+
+        When the system bus master is busy,
+	writes to this register will return error
+        and \Fsberror is set.
+
+        If \Fsberror is 0 and \Fsbautoread is set then the system bus
+	master will start
+        to read after updating the address from \Faddress. The access size is
+        controlled by \Fsbaccess in \Rsbcs.
+
+        If \Fsbsingleread is set, the bit is cleared.
+
+        <field name="address" bits="31:0" access="R/W" reset="0">
+            Accesses bits 31:0 of the internal address.
+        </field>
+    </register>
+
+    <register name="System Bus Address 63:32" short="sbaddress1" address="0x3a">
+        <field name="address" bits="31:0" access="R/W" reset="0">
+            Accesses bits 63:32 of the internal address (if the system address
+            bus is that wide).
+        </field>
+    </register>
+
+    <register name="System Bus Address 95:64" short="sbaddress2" address="0x3b">
+        If \Fsbasize is less than 65, then this register is not present.
+
+        <field name="address" bits="31:0" access="R/W" reset="0">
+            Accesses bits 95:64 of the internal address (if the system address
+            bus is that wide).
+        </field>
+    </register>
+
+    <register name="System Bus Data 31:0" short="sbdata0" address="0x3c">
+        If all of the {\tt sbaccess} bits in \Rsbcs are 0, then this register
+        is not present.
+
+        If \Fsberror isn't 0 then accesses return error, and don't do anything
+        else.
+
+        Writes to this register:
+
+        1. If the bus master is busy then accesses set \Fsberror, return error,
+        and don't do anything else.
+
+        2. Update internal data.
+
+        3. Start a bus write of the internal data to the internal address.
+
+        4. If \Fsbautoincrement is set, increment the internal address.
+
+        Reads to this register:
+
+        1. If bits 31:0 of the internal data register haven't been updated
+        since the last time this register was read, then set \Fsberror, return
+        error, and don't do anything else.
+
+        2. ``Return'' the data.
+
+        3. If \Fsbautoincrement is set, increment the internal address.
+
+        4. If \Fsbautoread is set, start another system bus read.
+
+        <field name="data" bits="31:0" access="R/W" reset="0">
+            Accesses bits 31:0 of the internal data.
+        </field>
+    </register>
+
+    <register name="System Bus Data 63:32" short="sbdata1" address="0x3d">
+        If \Fsbaccesssixtyfour and \Fsbaccessonetwentyeight are 0, then this
+        register is not present.
+
+        <field name="data" bits="31:0" access="R/W" reset="0">
+            Accesses bits 63:32 of the internal data (if the system bus is
+            that wide).
+        </field>
+    </register>
+
+    <register name="System Bus Data 95:64" short="sbdata2" address="0x3e">
+        This register only exists if \Fsbaccessonetwentyeight is 1.
+
+        <field name="data" bits="31:0" access="R/W" reset="0">
+            Accesses bits 95:64 of the internal data (if the system bus is
+            that wide).
+        </field>
+    </register>
+
+    <register name="System Bus Data 127:96" short="sbdata3" address="0x3f">
+        This register only exists if \Fsbaccessonetwentyeight is 1.
+
+        <field name="data" bits="31:0" access="R/W" reset="0">
+            Accesses bits 127:96 of the internal data (if the system bus is
+            that wide).
+        </field>
+    </register>
 
 </registers>
