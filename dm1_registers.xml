@@ -495,28 +495,28 @@
         <field name="serial" bits="26:24" access="R/W" reset="0">
             Select which serial port is accessed by \Rserdata.
         </field>
-        <field name="error7" bits="1" access="R" reset="0">
-        <field name="valid7" bits="15" access="R" reset="0" />
-        <field name="full7" bits="14" access="R/W0" reset="0" />
-        <field name="error6" bits="1" access="R" reset="0">
-        <field name="valid6" bits="13" access="R" reset="0" />
-        <field name="full6" bits="12" access="R/W0" reset="0" />
-        <field name="error5" bits="1" access="R" reset="0">
-        <field name="valid5" bits="11" access="R" reset="0" />
-        <field name="full5" bits="10" access="R/W0" reset="0" />
-        <field name="error4" bits="1" access="R" reset="0">
-        <field name="valid4" bits="9" access="R" reset="0" />
-        <field name="full4" bits="8" access="R/W0" reset="0" />
-        <field name="error3" bits="1" access="R" reset="0">
-        <field name="valid3" bits="7" access="R" reset="0" />
-        <field name="full3" bits="6" access="R/W0" reset="0" />
-        <field name="error2" bits="1" access="R" reset="0">
-        <field name="valid2" bits="5" access="R" reset="0" />
-        <field name="full2" bits="4" access="R/W0" reset="0" />
-        <field name="error1" bits="1" access="R" reset="0">
-        <field name="valid1" bits="3" access="R" reset="0" />
-        <field name="full1" bits="2" access="R/W0" reset="0" />
-        <field name="error0" bits="1" access="R" reset="0">
+        <field name="error7" bits="23" access="R" reset="0">
+        <field name="valid7" bits="22" access="R" reset="0" />
+        <field name="full7" bits="21" access="R/W0" reset="0" />
+        <field name="error6" bits="20" access="R" reset="0">
+        <field name="valid6" bits="19" access="R" reset="0" />
+        <field name="full6" bits="18" access="R/W0" reset="0" />
+        <field name="error5" bits="17" access="R" reset="0">
+        <field name="valid5" bits="16" access="R" reset="0" />
+        <field name="full5" bits="15" access="R/W0" reset="0" />
+        <field name="error4" bits="14" access="R" reset="0">
+        <field name="valid4" bits="13" access="R" reset="0" />
+        <field name="full4" bits="12" access="R/W0" reset="0" />
+        <field name="error3" bits="11" access="R" reset="0">
+        <field name="valid3" bits="10" access="R" reset="0" />
+        <field name="full3" bits="9" access="R/W0" reset="0" />
+        <field name="error2" bits="8" access="R" reset="0">
+        <field name="valid2" bits="7" access="R" reset="0" />
+        <field name="full2" bits="6" access="R/W0" reset="0" />
+        <field name="error1" bits="5" access="R" reset="0">
+        <field name="valid1" bits="4" access="R" reset="0" />
+        <field name="full1" bits="3" access="R/W0" reset="0" />
+        <field name="error0" bits="2" access="R" reset="0">
             1 when the debugger-to-core queue for serial port 0 has
             over or underflowed. This bit will remain set until it is reset by
             writing 1 to this bit.
