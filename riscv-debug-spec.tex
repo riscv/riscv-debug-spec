@@ -1092,7 +1092,7 @@ registers can be accessed by moving their value into/out of GPRs.
     \hline
     Write & \Rcommand & \Fpostexec, 0x1009 & Read \Sone, then execute program buffer \\
     \hline
-    Write & \Rabstractcs & \Fautoexeczero & Set \Fautoexeczero \\
+    Write & \Rabstractcs & \Fautoexecdata[0] & Set \Fautoexecdata[0] \\
     \hline
     Read & \Rdatazero & - & Get value read from memory, then execute program buffer \\
     \hline
@@ -1100,7 +1100,7 @@ registers can be accessed by moving their value into/out of GPRs.
     \hline
     ... & ... & ... & ... \\
     \hline
-    Write & \Rabstractcs & 0 & Clear \Fautoexeczero \\
+    Write & \Rabstractcs & 0 & Clear \Fautoexecdata[0] \\
     \hline
     Read & \Rdatazero & - & Get last value read from memory. \\
     \hline
@@ -1251,7 +1251,7 @@ TODO: Just like reading memory.
     \hline
     Write & \Rcommand & \Fwrite, \Fpostexec, 0x1009 & Write \Sone, then execute program buffer \\
     \hline
-    Write & \Rabstractcs & \Fautoexeczero & Set \Fautoexeczero \\
+    Write & \Rabstractcs & \Fautoexecdata[0] & Set \Fautoexecdata[0] \\
     \hline
     Write & \Rdatazero & value1 & \\
     \hline
@@ -1259,7 +1259,7 @@ TODO: Just like reading memory.
     \hline
     Write & \Rdatazero & valueN & \\
     \hline
-    Write & \Rabstractcs & 0 & Clear \Fautoexeczero \\
+    Write & \Rabstractcs & 0 & Clear \Fautoexecdata[0] \\
     \hline
 \end{tabulary}
 \medskip

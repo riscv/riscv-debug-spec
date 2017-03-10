@@ -249,37 +249,26 @@
       <field name="maskdata" bits="31:0" access="R/W" reset="0" />
     </register>
 
-
     <!-- =============== abstract commands =============== -->
 
     <register name="Abstract Control and Status" short="abstractcs" address="0x05">
-        <field name="0" bits="31:27" access="R" reset="0" />
+        <field name="0" bits="31:29" access="R" reset="0" />
         <field name="progsize" bits="28:24" access="R" reset="Preset">
             Size of the Program Buffer, in 32-bit words. Valid sizes are 0 - 16.
-
-            A debugger must not access any Program Buffer locations that
-            fall outside the range specified here.
 
             TODO: Explain what can be done with each size of the buffer, to suggest
             why you would want more or less words.
 
         </field>
-        <field name="0" bits="23:16" access="R" reset="0" />
-        <field name="autoexec7" bits="15" access="R/W" reset="0" />
-        <field name="autoexec6" bits="14" access="R/W" reset="0" />
-        <field name="autoexec5" bits="13" access="R/W" reset="0" />
-        <field name="autoexec4" bits="12" access="R/W" reset="0" />
-        <field name="autoexec3" bits="11" access="R/W" reset="0" />
-        <field name="autoexec2" bits="10" access="R/W" reset="0" />
-        <field name="autoexec1" bits="9" access="R/W" reset="0" />
-        <field name="autoexec0" bits="8" access="R/W" reset="0">
-            When 1, accesses to \Rdatazero cause the command in \Rcommand to be
-            executed again.
+        <field name="0" bits="23:13" access="R" reset="0" />
+        <field name="busy" bits="12" access="R" reset="0">
+            1: An abstract command is currently being executed.
 
-            The same is true for other other autoexec bits: When 1, accesses to
-            {\tt data}N cause the command in \Rcommand to be executed again.
+            This bit is set as soon as \Rcommand is written, and is
+            not cleared until that command has completed.
         </field>
-        <field name="cmderr" bits="8:7" access="R/W0" reset="0">
+        <field name="0" bits="11" access="R" reset="0" />
+        <field name="cmderr" bits="10:8" access="R/W0" reset="0">
             Gets set if an abstract command fails. The bits in this field remain set until
             they are cleared by writing 1 to them. No abstract command is
             started until the value is reset to 0.
@@ -301,19 +290,10 @@
 
             7 (other): The command failed for another reason.
         </field>
-        <field name="busy" bits="6" access="R" reset="0">
-            1: An abstract command is currently being executed.
-
-            This bit is set as soon as \Rcommand is written, and isn't cleared
-            until that command has completed.
-        </field>
+        <field name="0" bits="7:6" access="R" reset="0"/>
         <field name="datacount" bits="5:0" access="R" reset="Preset">
             Number of {\tt data} registers that are implemented as part of the
             abstract command interface. Valid sizes are 0 - 16.
-
-            A debugger must not access any Abstract Data locations that
-            fall outside the range specified here.
-
         </field>
     </register>
 
@@ -342,6 +322,20 @@
             This field is interpreted in a command-specific manner,
             described for each abstract command.
         </field>
+    </register>
+
+    <register name ="Abstract Command Autoexec" short="abstractauto" address="0x07">
+      This register is optional. Including it allows more efficient burst accesses.
+      Debugger can attempt to set bits and read them back to determine if the functionality is supported.
+
+      <field name="autoexecprogbuf" bits="31:16" access="R/W" reset="0">
+          When a bit in this field is 1, read or write accesses the corresponding {\tt progbuf} word
+	  cause the command in \Rcommand to be executed again.
+      </field>
+      <field name="autoexecdata" bits="15:0" access="R/W" reset="0">
+          When a bit in this field is 1, read or write accesses the corresponding {\tt data} word
+	  cause the command in \Rcommand to be executed again.
+      </field>
     </register>
 
     <register name="Abstract Data 0" short="data0" address="0x10">
