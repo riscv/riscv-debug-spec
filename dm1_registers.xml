@@ -149,9 +149,17 @@
 
       If this register is included, the debugger can do more with
       the Program Buffer by writing programs which
-      explicitly access the {\tt data} registers.
+      explicitly access the {\tt data} and/or {\tt dscratch}
+      registers.
 
-        <field name="0" bits="31:17" access="R" reset="0" />
+        <field name="0" bits="31:24" access="R" reset="0" />
+        <field name="nscratch" bits="23:20" access="R" reset="Preset">
+            Number of {\tt dscratch} registers available for the debugger
+            to use during program buffer execution, starting from \Rdscratchzero.
+            The debugger can make no assumptions about the contents of these
+            registers between commands.
+        </field>
+        <field name="0" bits="19:17" access="R" reset="0" />
         <field name="dataaccess" bits="16" access="R" reset="Preset">
             0: The {\tt data} registers are shadowed in the hart by CSR
             registers. Each CSR register is XLEN bits in size, and corresponds
@@ -175,7 +183,6 @@
             registers are shadowed.
         </field>
     </register>
-
 
     <register name="Halt Summary" short="haltsum" address="0x03">
         This register contains a summary of which harts are halted.
@@ -246,9 +253,9 @@
     <!-- =============== abstract commands =============== -->
 
     <register name="Abstract Control and Status" short="abstractcs" address="0x05">
-        <field name="0" bits="31:28" access="R" reset="0" />
-        <field name="progsize" bits="27:24" access="R" reset="Preset">
-            Size of the Program Buffer, in 32-bit words. Valid sizes are 0 - 12.
+        <field name="0" bits="31:27" access="R" reset="0" />
+        <field name="progsize" bits="28:24" access="R" reset="Preset">
+            Size of the Program Buffer, in 32-bit words. Valid sizes are 0 - 16.
 
             A debugger must not access any Program Buffer locations that
             fall outside the range specified here.
@@ -272,7 +279,7 @@
             The same is true for other other autoexec bits: When 1, accesses to
             {\tt data}N cause the command in \Rcommand to be executed again.
         </field>
-        <field name="cmderr" bits="7:5" access="R/W0" reset="0">
+        <field name="cmderr" bits="8:7" access="R/W0" reset="0">
             Gets set if an abstract command fails. The bits in this field remain set until
             they are cleared by writing 1 to them. No abstract command is
             started until the value is reset to 0.
@@ -294,15 +301,15 @@
 
             7 (other): The command failed for another reason.
         </field>
-        <field name="busy" bits="4" access="R" reset="0">
+        <field name="busy" bits="6" access="R" reset="0">
             1: An abstract command is currently being executed.
 
             This bit is set as soon as \Rcommand is written, and isn't cleared
             until that command has completed.
         </field>
-        <field name="datacount" bits="3:0" access="R" reset="Preset">
+        <field name="datacount" bits="5:0" access="R" reset="Preset">
             Number of {\tt data} registers that are implemented as part of the
-            abstract command interface.
+            abstract command interface. Valid sizes are 0 - 16.
 
             A debugger must not access any Abstract Data locations that
             fall outside the range specified here.
@@ -336,7 +343,6 @@
             described for each abstract command.
         </field>
     </register>
-
 
     <register name="Abstract Data 0" short="data0" address="0x10">
         Basic read/write registers that may be read or changed by abstract
