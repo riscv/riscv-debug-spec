@@ -31,9 +31,9 @@
 
             4: Access the lowest 128 bits of the register.
 
-            If \Fsize specifies a size larger than the register is, then the
-            access must fail. If a register is accessible, then \Fsize matching
-            the register's actual size must be supported.
+            If \Fsize specifies a size larger than the register's actual size,
+            then the access must fail. If a register is accessible, then reads of \Fsize
+            less than or equal to the register's actual size must be supported.
         </field>
         <field name="preexec" bits="18">
             When 1, execute the program in the Program Buffer exactly once
