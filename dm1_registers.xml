@@ -51,7 +51,14 @@
             \Fauthbusy only becomes set in immediate response to an access to
             \Rauthdata.
         </field>
-        <field name="0" bits="5:4" reset="0" access="R" />
+        <field name="0" bits="5" reset="0" access="R" />
+        <field name="cfgstrvalid" bits="4" reset="Preset" access="R" />
+
+            0: \Fcfgsraddrzero - \Fcfgstraddrthree hold information which
+            is not the configuration string.
+
+            1: \Fcfgstraddrzero - \Fcfgstraddrthree registers hold the address of the
+            configuration string.
         <field name="version" bits="3:0" reset="1" access="R">
             0: There is no Debug Module present.
 
@@ -337,6 +344,27 @@
 	  cause the command in \Rcommand to be executed again.
       </field>
     </register>
+
+    <register name="Configuration String Addr 0" short="cfgstraddr0" address="0x08">
+
+      The Configuration String is described in the RISC-V Priviledged Specification.
+      When \Fcfgstrvalid is set,  reading this register returns bits 31:0 of the configuration
+      string address. Reading the other {\tt cfgstraddr} registers returns the upper bits of the
+      address.
+
+      When system bus mastering is implemented, this should be the
+      address that should be used with the System Bus Access module. Otherwise,
+      this should be the address that should be used to access the
+      config string when \Fhartsel=0.
+
+      If \Fcfgstrvalid is 0, then \Fcfgstraddrzero-\Fcfgstraddr3
+      hold identifier information which is not
+      further specified in this document.
+      <field name="addr" bits="31:0" access="R" reset="Preset"/>
+    </register>
+    <register name="Config String Addr 1" short="cfgstraddr1" address="0x09"/>
+    <register name="Config String Addr 2" short="cfgstraddr2" address="0x0a"/>
+    <register name="Config String Addr 3" short="cfgstraddr3" address="0x0b"/>
 
     <register name="Abstract Data 0" short="data0" address="0x10">
         Basic read/write registers that may be read or changed by abstract
