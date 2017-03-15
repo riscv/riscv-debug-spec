@@ -348,7 +348,7 @@
     <register name="Configuration String Addr 0" short="cfgstraddr0" address="0x08">
 
       The Configuration String is described in the RISC-V Priviledged Specification.
-      When \Fcfgstrvalid is set,  reading this register returns bits 31:0 of the configuration
+      When {\tt cfgstrvalid} is set,  reading this register returns bits 31:0 of the configuration
       string address. Reading the other {\tt cfgstraddr} registers returns the upper bits of the
       address.
 
@@ -357,7 +357,7 @@
       this should be the address that should be used to access the
       config string when \Fhartsel=0.
 
-      If \Fcfgstrvalid is 0, then \Fcfgstraddrzero-\Fcfgstraddr3
+      If {\tt cfgstrvalid} is 0, then the {\tt cfgstraddr} registers
       hold identifier information which is not
       further specified in this document.
       <field name="addr" bits="31:0" access="R" reset="Preset"/>
