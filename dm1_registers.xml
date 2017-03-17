@@ -2,7 +2,7 @@
 
     <!-- =============== halt/reset/select hart  =============== -->
 
-    <register name="Debug Module Status" short="dmstatus" address="0x00">
+    <register name="Debug Module Status" short="dmstatus" address="0x11">
         The address of this register will not change in the future, because it
         contains \Fversion.  It has changed from version 0.11 of this spec.
 
@@ -59,17 +59,23 @@
 
             1: \Fcfgstraddrzero - \Fcfgstraddrthree registers hold the address of the
             configuration string.
-        <field name="version" bits="3:0" reset="1" access="R">
-            0: There is no Debug Module present.
+        <field name="versionhi" bits="3:2" reset="0" access="R">
+            Reserved for future use. Reads as 0.
+        </field>
+        <field name="versionlo" bits="1:0" reset="1" access="R">
+            00: There is no Debug Module present.
 
-            1: There is a Debug Module and it conforms to version 0.13 of this
+            01: There is a Debug Module and it conforms to version 0.11 of this
             specification.
 
-            Other values are reserved for future use.
+            10: There is a Debug Module and it conforms to version 0.13 of this
+            specification.
+
+            11: Reserved for future use.
         </field>
     </register>
 
-    <register name="Debug Module Control" short="dmcontrol" address="0x01">
+    <register name="Debug Module Control" short="dmcontrol" address="0x10">
 
         This register controls the overall debug module
         as well as the currently selected harts, as defined in \Fhasel.
@@ -147,7 +153,7 @@
         </field>
     </register>
 
-    <register name="Hart Info" short="hartinfo" address="0x02">
+    <register name="Hart Info" short="hartinfo" address="0x12">
       This register gives information about the hart currently
       selected by \Fhartsel.
 
@@ -191,7 +197,7 @@
         </field>
     </register>
 
-    <register name="Halt Summary" short="haltsum" address="0x03">
+    <register name="Halt Summary" short="haltsum" address="0x13">
         This register contains a summary of which harts are halted.
 
         Each bit contains the logical OR of 32 halt bits. When there are a
@@ -235,7 +241,7 @@
 
     <!-- =============== Hart Array Registers =============== -->
 
-    <register name="Hart Array Window Select" short="hawindowsel" address="0x04">
+    <register name="Hart Array Window Select" short="hawindowsel" address="0x14">
 
       This register selects which of the 32-bit portion of the hart array mask register
       is accessible in \Rhawindow.
@@ -249,7 +255,7 @@
       <field name="hawindowsel" bits="4:0" access="R/W" reset="0" />
     </register>
 
-    <register name="Hart Array Window " short="hawindow" address="0x05">
+    <register name="Hart Array Window " short="hawindow" address="0x15">
       This register provides R/W access to a 32-bit portion of the
       hart array mask register. The position of the window is determined by
       \Rhawindowsel.
@@ -258,7 +264,7 @@
 
     <!-- =============== abstract commands =============== -->
 
-    <register name="Abstract Control and Status" short="abstractcs" address="0x06">
+    <register name="Abstract Control and Status" short="abstractcs" address="0x16">
         <field name="0" bits="31:29" access="R" reset="0" />
         <field name="progsize" bits="28:24" access="R" reset="Preset">
             Size of the Program Buffer, in 32-bit words. Valid sizes are 0 - 16.
@@ -297,14 +303,14 @@
 
             7 (other): The command failed for another reason.
         </field>
-        <field name="0" bits="7:6" access="R" reset="0"/>
-        <field name="datacount" bits="5:0" access="R" reset="Preset">
+        <field name="0" bits="7:5" access="R" reset="0"/>
+        <field name="datacount" bits="4:0" access="R" reset="Preset">
             Number of {\tt data} registers that are implemented as part of the
-            abstract command interface. Valid sizes are 0 - 16.
+            abstract command interface. Valid sizes are 0 - 8.
         </field>
     </register>
 
-    <register name="Abstract Command" short="command" address="0x07">
+    <register name="Abstract Command" short="command" address="0x17">
         Writes to this register cause the corresponding abstract command to be
         executed.
 
@@ -331,7 +337,7 @@
         </field>
     </register>
 
-    <register name ="Abstract Command Autoexec" short="abstractauto" address="0x08">
+    <register name ="Abstract Command Autoexec" short="abstractauto" address="0x18">
       This register is optional. Including it allows more efficient burst accesses.
       Debugger can attempt to set bits and read them back to determine if the functionality is supported.
 
@@ -339,13 +345,14 @@
           When a bit in this field is 1, read or write accesses the corresponding {\tt progbuf} word
 	  cause the command in \Rcommand to be executed again.
       </field>
-      <field name="autoexecdata" bits="15:0" access="R/W" reset="0">
+      <field name="0" bits ="15:8" access="R" reset = "0"/>
+      <field name="autoexecdata" bits="7:0" access="R/W" reset="0">
           When a bit in this field is 1, read or write accesses the corresponding {\tt data} word
 	  cause the command in \Rcommand to be executed again.
       </field>
     </register>
 
-    <register name="Configuration String Addr 0" short="cfgstraddr0" address="0x09">
+    <register name="Configuration String Addr 0" short="cfgstraddr0" address="0x19">
 
       The Configuration String is described in the RISC-V Priviledged Specification.
       When {\tt cfgstrvalid} is set,  reading this register returns bits 31:0 of the configuration
@@ -362,11 +369,11 @@
       further specified in this document.
       <field name="addr" bits="31:0" access="R" reset="Preset"/>
     </register>
-    <register name="Config String Addr 1" short="cfgstraddr1" address="0x0a"/>
-    <register name="Config String Addr 2" short="cfgstraddr2" address="0x0b"/>
-    <register name="Config String Addr 3" short="cfgstraddr3" address="0x0c"/>
+    <register name="Config String Addr 1" short="cfgstraddr1" address="0x1a"/>
+    <register name="Config String Addr 2" short="cfgstraddr2" address="0x1b"/>
+    <register name="Config String Addr 3" short="cfgstraddr3" address="0x1c"/>
 
-    <register name="Abstract Data 0" short="data0" address="0x10">
+    <register name="Abstract Data 0" short="data0" address="0x04">
         Basic read/write registers that may be read or changed by abstract
         commands.
 
@@ -381,21 +388,19 @@
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
 
-    <register name="Abstract Data 1" short="data1" address="0x11" />
-    <register name="Abstract Data 2" short="data2" address="0x12" />
-    <register name="Abstract Data 3" short="data3" address="0x13" />
-    <register name="Abstract Data 4" short="data4" address="0x14" />
-    <register name="Abstract Data 5" short="data5" address="0x15" />
-    <register name="Abstract Data 6" short="data6" address="0x16" />
-    <register name="Abstract Data 7" short="data7" address="0x17" />
-    <register name="Abstract Data 8" short="data8" address="0x18" />
-    <register name="Abstract Data 9" short="data9" address="0x19" />
-    <register name="Abstract Data 10" short="data10" address="0x1a" />
-    <register name="Abstract Data 11" short="data11" address="0x1b" />
-    <register name="Abstract Data 12" short="data11" address="0x1c" />
-    <register name="Abstract Data 13" short="data11" address="0x1d" />
-    <register name="Abstract Data 14" short="data11" address="0x1e" />
-    <register name="Abstract Data 15" short="data11" address="0x1f" />
+    <register name="Abstract Data 1" short="data1" address="0x05" />
+    <register name="Abstract Data 2" short="data2" address="0x06" />
+    <register name="Abstract Data 3" short="data3" address="0x07" />
+    <register name="Abstract Data 4" short="data4" address="0x08" />
+    <register name="Abstract Data 5" short="data5" address="0x09" />
+    <register name="Abstract Data 6" short="data6" address="0x0a" />
+    <register name="Abstract Data 7" short="data7" address="0x0b" />
+    <register name="Abstract Data 8" short="data8" address="0x0c" />
+    <register name="Abstract Data 9" short="data9" address="0x0d" />
+    <register name="Abstract Data 10" short="data10" address="0x0e" />
+    <register name="Abstract Data 11" short="data11" address="0x0f" />
+
+
 
     <!-- =============== Program Buffer =============== -->
 
@@ -421,7 +426,6 @@
     <register name="Program Buffer 14" short="progbuf11" address="0x2e" />
     <register name="Program Buffer 15" short="progbuf11" address="0x2f" />
  
-
     <!-- =============== authentication =============== -->
 
     <register name="Authentication Data" short="authdata" address="0x30">
