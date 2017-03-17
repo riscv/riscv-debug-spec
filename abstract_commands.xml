@@ -1,13 +1,13 @@
 <registers name="Abstract Commands" skip_index="1" skip_access="1"
         skip_reset="1" prefix="AC_">
     <register name="Access Register">
-        \begin{steps}{This command gives the debugger access to CPU registers.
+        \begin{steps}{This command gives the debugger access to CPU registers and program buffer. 
         It performs the following sequence of operations:}
-        \item Execute the Program Buffer, if \Fpreexec is set.
+        \item Execute the Program Buffer, if \Fpreexec is set. \textbf{WARNING: preeexec is considered for removal.}
         \item Copy data from the register specified by \Fregno into the
-	    {\tt arg0} region of {\tt data}, if \Fwrite is clear.
+	    {\tt arg0} region of {\tt data}, if \Fwrite is clear and \Ftransfer is set.
         \item Copy data from the {\tt arg0} region of {\tt data} into the
-	    register specified by \Fregno, if \Fwrite is set.
+	    register specified by \Fregno, if \Fwrite is set and \Ftransfer is set.
         \item Execute the Program Buffer, if \Fpostexec is set.
         \end{steps}
 
@@ -23,8 +23,8 @@
         <field name="cmdtype" bits="31:24">
             This is 0 to indicate Access Register Command.
         </field>
-        <field name="0" bits="23:22" />
-        <field name="size" bits="21:19">
+        <field name="0" bits="23" />
+        <field name="size" bits="22:20">
             2: Access the lowest 32 bits of the register.
 
             3: Access the lowest 64 bits of the register.
@@ -35,15 +35,22 @@
             then the access must fail. If a register is accessible, then reads of \Fsize
             less than or equal to the register's actual size must be supported.
         </field>
-        <field name="preexec" bits="18">
+        <field name="preexec" bits="19">
             When 1, execute the program in the Program Buffer exactly once
-            before performing the read/write.
+            before performing the transfer.
+	    \textbf{WARNING: preexec is considered for removal.}
         </field>
-        <field name="postexec" bits="17">
+        <field name="postexec" bits="18">
             When 1, execute the program in the Program Buffer exactly once
-            after performing the read/write.
+            after performing the transfer, if any.
+        </field>
+        <field name="transfer" bits = "17">
+            0: Don't do the operation specified by \Fwrite.
+
+            1: Do the operation specified by \Fwrite.
         </field>
         <field name="write" bits="16">
+            When \Ftransfer is set:
             0: Copy data from the specified register into {\tt arg0} portion
                of {\tt data}.
 
