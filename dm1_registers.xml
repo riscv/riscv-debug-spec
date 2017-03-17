@@ -258,7 +258,7 @@
 
     <!-- =============== abstract commands =============== -->
 
-    <register name="Abstract Control and Status" short="abstractcs" address="0x05">
+    <register name="Abstract Control and Status" short="abstractcs" address="0x06">
         <field name="0" bits="31:29" access="R" reset="0" />
         <field name="progsize" bits="28:24" access="R" reset="Preset">
             Size of the Program Buffer, in 32-bit words. Valid sizes are 0 - 16.
@@ -304,7 +304,7 @@
         </field>
     </register>
 
-    <register name="Abstract Command" short="command" address="0x06">
+    <register name="Abstract Command" short="command" address="0x07">
         Writes to this register cause the corresponding abstract command to be
         executed.
 
@@ -331,7 +331,7 @@
         </field>
     </register>
 
-    <register name ="Abstract Command Autoexec" short="abstractauto" address="0x07">
+    <register name ="Abstract Command Autoexec" short="abstractauto" address="0x08">
       This register is optional. Including it allows more efficient burst accesses.
       Debugger can attempt to set bits and read them back to determine if the functionality is supported.
 
@@ -345,7 +345,7 @@
       </field>
     </register>
 
-    <register name="Configuration String Addr 0" short="cfgstraddr0" address="0x08">
+    <register name="Configuration String Addr 0" short="cfgstraddr0" address="0x09">
 
       The Configuration String is described in the RISC-V Priviledged Specification.
       When {\tt cfgstrvalid} is set,  reading this register returns bits 31:0 of the configuration
@@ -362,9 +362,9 @@
       further specified in this document.
       <field name="addr" bits="31:0" access="R" reset="Preset"/>
     </register>
-    <register name="Config String Addr 1" short="cfgstraddr1" address="0x09"/>
-    <register name="Config String Addr 2" short="cfgstraddr2" address="0x0a"/>
-    <register name="Config String Addr 3" short="cfgstraddr3" address="0x0b"/>
+    <register name="Config String Addr 1" short="cfgstraddr1" address="0x0a"/>
+    <register name="Config String Addr 2" short="cfgstraddr2" address="0x0b"/>
+    <register name="Config String Addr 3" short="cfgstraddr3" address="0x0c"/>
 
     <register name="Abstract Data 0" short="data0" address="0x10">
         Basic read/write registers that may be read or changed by abstract
@@ -392,6 +392,10 @@
     <register name="Abstract Data 9" short="data9" address="0x19" />
     <register name="Abstract Data 10" short="data10" address="0x1a" />
     <register name="Abstract Data 11" short="data11" address="0x1b" />
+    <register name="Abstract Data 12" short="data11" address="0x1c" />
+    <register name="Abstract Data 13" short="data11" address="0x1d" />
+    <register name="Abstract Data 14" short="data11" address="0x1e" />
+    <register name="Abstract Data 15" short="data11" address="0x1f" />
 
     <!-- =============== Program Buffer =============== -->
 
@@ -412,6 +416,11 @@
     <register name="Program Buffer 9" short="progbuf9" address="0x29" />
     <register name="Program Buffer 10" short="progbuf10" address="0x2a" />
     <register name="Program Buffer 11" short="progbuf11" address="0x2b" />
+    <register name="Program Buffer 12" short="progbuf11" address="0x2c" />
+    <register name="Program Buffer 13" short="progbuf11" address="0x2d" />
+    <register name="Program Buffer 14" short="progbuf11" address="0x2e" />
+    <register name="Program Buffer 15" short="progbuf11" address="0x2f" />
+ 
 
     <!-- =============== authentication =============== -->
 

@@ -251,7 +251,7 @@ def write_chisel( fd, registers ):
         if (r.define and r.address):
             if r.description:
                 fd.write ("  /* " + r.description + "\n  */\n")
-            fd.write ("  def " + prefname + " = UInt(" + r.address + ")\n\n")
+            fd.write ("  def " + prefname + " =  "+ r.address + "\n\n")
 
     fd.write("}\n\n")
 
