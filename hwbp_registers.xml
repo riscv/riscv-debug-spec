@@ -1,6 +1,6 @@
 <registers name="Trigger Registers" prefix="CSR_">
-    The trigger registers are only accessible in machine and Halt Mode to
-    prevent untrusted user code from causing entry into Halt Mode without the
+    The trigger registers are only accessible in machine and Debug Mode to
+    prevent untrusted user code from causing entry into Debug Mode without the
     OS's permission.
 
     <register name="Trigger Select" short="tselect" address="0x7a0">
@@ -13,7 +13,7 @@
         written.  Debuggers should read back the value to confirm that what
         they wrote was a valid index.
 
-        Since triggers can be used both by Halt Mode and M Mode, the debugger
+        Since triggers can be used both by Debug Mode and M Mode, the debugger
         must restore this register if it modifies it.
 
         <field name="index" bits="XLEN-1:0" access="R/W" reset="0" />
@@ -41,10 +41,10 @@
             0: Both Debug and M Mode can write the {\tt tdata} registers at the
             selected \Rtselect.
 
-            1: Only Halt Mode can write the {\tt tdata} registers at the
+            1: Only Debug Mode can write the {\tt tdata} registers at the
             selected \Rtselect.  Writes from other modes are ignored.
 
-            This bit is only writable from Halt Mode.
+            This bit is only writable from Debug Mode.
         </field>
         <field name="data" bits="XLEN-6:0" access="R/W" reset="Preset">
             Trigger-specific data.
@@ -146,7 +146,7 @@
             0: Raise a breakpoint exception. (Used when software wants to use
             the trigger module without an external debugger attached.)
 
-            1: Enter Halt Mode. (Only supported when \Fhmode is 1.)
+            1: Enter Debug Mode. (Only supported when \Fhmode is 1.)
 
 	    2: Start tracing.
 
@@ -267,7 +267,7 @@
             0: Raise a debug exception. (Used when software wants to use the
             trigger module without an external debugger attached.)
 
-            1: Enter Halt Mode. (Only supported when \Fhmode is 1.)
+            1: Enter Debug Mode. (Only supported when \Fhmode is 1.)
 
 	    2: Start tracing.
 
