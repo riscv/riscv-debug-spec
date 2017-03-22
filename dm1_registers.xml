@@ -421,10 +421,10 @@
     <register name="Program Buffer 9" short="progbuf9" address="0x29" />
     <register name="Program Buffer 10" short="progbuf10" address="0x2a" />
     <register name="Program Buffer 11" short="progbuf11" address="0x2b" />
-    <register name="Program Buffer 12" short="progbuf11" address="0x2c" />
-    <register name="Program Buffer 13" short="progbuf11" address="0x2d" />
-    <register name="Program Buffer 14" short="progbuf11" address="0x2e" />
-    <register name="Program Buffer 15" short="progbuf11" address="0x2f" />
+    <register name="Program Buffer 12" short="progbuf12" address="0x2c" />
+    <register name="Program Buffer 13" short="progbuf13" address="0x2d" />
+    <register name="Program Buffer 14" short="progbuf14" address="0x2e" />
+    <register name="Program Buffer 15" short="progbuf15" address="0x2f" />
  
     <!-- =============== authentication =============== -->
 
