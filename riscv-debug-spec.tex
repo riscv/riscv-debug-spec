@@ -216,7 +216,7 @@ Sections \ref{abstractcommands}, \ref{abstractcs}, \ref{command},
 \subsubsection{Program Buffer}
 
 Sections \ref{programbuffer}, \ref{progbufcs}, \ref{progbuf0}, \ref{access
-register}, \ref{haltmode}, \ref{deb:regprogbuf}, \ref{deb:mrprogbuf}.
+register}, \ref{debugmode}, \ref{deb:regprogbuf}, \ref{deb:mrprogbuf}.
 
 \subsubsection{JTAG Debug Transport Module}
 
@@ -246,7 +246,7 @@ TODO
 
 \section{Background}
 
-There are two forms of external debugging. The first is \emph{halt mode}
+There are two forms of external debugging. The first is \emph{debug mode}
 debugging, where an external debugger will halt some or all components of a
 platform and inspect them while they are in stasis. Then the debugger can allow
 the hardware to either perform a single step or to run freely.
@@ -514,15 +514,15 @@ compressed {\tt nop} in the upper 16 bits.  If \Fprogsize is greater than 1,
 the debugger can write whatever program it likes, but the program must end with
 {\tt ebreak} or {\tt ebreak.c}.
 
-While these programs are executed, the hart does not leave Halt Mode (see
-Section~\ref{haltmode}).  If an exception is encountered during execution of
+While these programs are executed, the hart does not leave Debug Mode (see
+Section~\ref{debugmode}).  If an exception is encountered during execution of
 the Program Buffer, no more instructions are executed, the hart remains in Halt
 Mode, and \Fcmderr is set to 3.
 
 Executing the Program Buffer may clobber \Rdpc. If that is the case, it must be
 possible to read/write \Rdpc using an abstract command. The debugger must
 attempt to save \Rdpc between halting and executing a Program Buffer, and then
-restore \Rdpc before leaving Halt Mode.
+restore \Rdpc before leaving Debug Mode.
 
 \begin{commentary}
     Allowing Program Buffer execution to clobber \Rdpc allows for direct
@@ -624,16 +624,16 @@ are given in this section.
 \section{RISC-V Debug}
 
 Modifications to the RISC-V core to support debug are kept to a minimum.  There
-is a special execution mode (Halt Mode) and a few extra CSRs. The DM takes care
+is a special execution mode (Debug Mode) and a few extra CSRs. The DM takes care
 of the rest.
 
-\subsection{Halt Mode} \label{haltmode}
+\subsection{Debug Mode} \label{debugmode}
 
-Halt Mode is a special processor mode used only when the core is halted for
-external debugging. How Halt Mode is entered is implementation-specific.
+Debug Mode is a special processor mode used only when the core is halted for
+external debugging. How Debug Mode is entered is implementation-specific.
 
 \begin{steps}{When executing code from the Program Buffer, the processor stays
-    in Halt Mode and the following apply:}
+    in Debug Mode and the following apply:}
 \item All operations happen in machine mode.
 \item \Fmprv in \Rmstatus is ignored.
 \item All interrupts are masked.
@@ -649,20 +649,20 @@ external debugging. How Halt Mode is entered is implementation-specific.
     behavior.  This includes {\tt ecall}, {\tt mret}, {\tt hret}, {\tt sret},
     and {\tt uret}.  (To change the privilege level, the debugger can write
     \Fprv in \Rdcsr.) The exception is {\tt ebreak}. When that is executed in
-    Halt Mode, it halts the processor again but without updating \Rdpc.
+    Debug Mode, it halts the processor again but without updating \Rdpc.
 \end{steps}
 
 \subsection{Load-Reserved/Store-Conditional Instructions}
 
 The reservation registered by an {\tt lr} instruction on a memory address may
-be lost when entering Halt Mode or while in Halt Mode.  This means that there
-may be no forward progress if Halt Mode is entered between {\tt lr} and {\tt
+be lost when entering Debug Mode or while in Debug Mode.  This means that there
+may be no forward progress if Debug Mode is entered between {\tt lr} and {\tt
 sc} pairs.
 
 \subsection{Reset}
 
 If the halt signal is asserted when a core comes out of reset, the core must
-enter Halt Mode before executing any instructions, but after performing any
+enter Debug Mode before executing any instructions, but after performing any
 initialization that would usually happen before the first instruction is
 executed.
 
@@ -674,7 +674,7 @@ The Core Debug Registers must be implemented for each hart being debugged.
 
 \section{Trigger Module}
 
-Triggers can cause a debug exception, entry into Halt Mode, or a trace action
+Triggers can cause a debug exception, entry into Debug Mode, or a trace action
 without having to execute a special instruction. This makes them invaluable
 when debugging code from ROM. They can trigger on execution of instructions at
 a given memory address, or on the address/data in loads/stores.  These are all
@@ -842,21 +842,21 @@ match, or come up with their own design.
 
 \subsection{Direct}
 
-Halting happens by inhibiting instruction fetching in Halt Mode.
+Halting happens by inhibiting instruction fetching in Debug Mode.
 
 Muxes on the register file(s) allow for implementing those abstract commands.
 (TODO: Should we spec a suggested way of communicating between DM and hart, so
 that a reusable DM can be implemented?)
 
 To execute a program buffer, force \Rpc to the start of it, and re-enable
-instruction fetching (while staying in Halt Mode) until {\tt ebreak} is
+instruction fetching (while staying in Debug Mode) until {\tt ebreak} is
 encountered.
 
 \Rdpc is not physically a CSR. Instead, accessing it directly access \Rpc.
 
 \subsection{Plain Exception}
 
-In this implementation, Halt Mode acts more like a real exception, jumping to a
+In this implementation, Debug Mode acts more like a real exception, jumping to a
 memory region that is serviced by the DM. When taking this exception, \Rpc is
 saved to \Rdpc. To allow the DM to individually control one out of several
 halted harts, each hart jumps to a hard-coded unique address.

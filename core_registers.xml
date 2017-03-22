@@ -1,5 +1,5 @@
 <registers name="Core Debug Registers" prefix="CSR_">
-    These registers are only accessible from Halt Mode.
+    These registers are only accessible from Debug Mode.
     <register name="Debug Control and Status" short="dcsr" address="0x7b0">
         <field name="xdebugver" bits="31:30" access="R" reset="Preset">
           0: There is no external debug support.
@@ -10,24 +10,24 @@
         </field>
         <field name="0" bits="29:16" access="R" reset="0" />
         <field name="ebreakm" bits="15" access="R/W" reset="0">
-            When 1, {\tt ebreak} instructions in Machine Mode enter Halt Mode.
+            When 1, {\tt ebreak} instructions in Machine Mode enter Debug Mode.
         </field>
         <field name="ebreakh" bits="14" access="R/W" reset="0">
-            When 1, {\tt ebreak} instructions in Hypervisor Mode enter Halt Mode.
+            When 1, {\tt ebreak} instructions in Hypervisor Mode enter Debug Mode.
         </field>
         <field name="ebreaks" bits="13" access="R/W" reset="0">
-            When 1, {\tt ebreak} instructions in Supervisor Mode enter Halt Mode.
+            When 1, {\tt ebreak} instructions in Supervisor Mode enter Debug Mode.
         </field>
         <field name="ebreaku" bits="12" access="R/W" reset="0">
             When 1, {\tt ebreak} instructions in User/Application Mode enter
-            Halt Mode.
+            Debug Mode.
         </field>
         <field name="0" bits="11" access="R" reset="0" />
         <field name="stopcount" bits="10" access="R/W" reset="Preset">
 
             0: Increment counters as usual.
 
-            1: Don't increment any counters while in Halt Mode.  This includes
+            1: Don't increment any counters while in Debug Mode.  This includes
             the {\tt cycle} and {\tt instret} CSRs. This is preferred for most
             debugging scenarios.
 
@@ -39,7 +39,7 @@
         <field name="stoptime" bits="9" access="R/W" reset="Preset">
             0: Increment timers as usual.
 
-            1: Don't increment any hart-local timers while in Halt Mode.
+            1: Don't increment any hart-local timers while in Debug Mode.
 
             An implementation may choose not to support writing to this bit.
             The debugger must read back the value it writes to check whether
@@ -47,9 +47,9 @@
 
         </field>
         <field name="cause" bits="8:6" access="R" reset="0">
-            Explains why Halt Mode was entered.
+            Explains why Debug Mode was entered.
 
-            When there are multiple reasons to enter Halt Mode in a single
+            When there are multiple reasons to enter Debug Mode in a single
             cycle, the cause with the highest priority is the one written.
 
             1: A software breakpoint was hit. (priority 3)
@@ -66,15 +66,15 @@
         </field>
         <field name="0" bits="5:3" access="R" reset="0" />
         <field name="step" bits="2" access="R/W" reset="0">
-            When set and not in Halt Mode, the hart will only execute a single
-            instruction, and then enter Halt Mode. Interrupts are disabled
+            When set and not in Debug Mode, the hart will only execute a single
+            instruction, and then enter Debug Mode. Interrupts are disabled
             when this bit is set.
         </field>
         <field name="prv" bits="1:0" access="R/W" reset="0">
             Contains the privilege level the hart was operating in when Debug
             Mode was entered. The encoding is describe in Table
             \ref{tab:privlevel}.  A debugger can change this value to change
-            the hart's privilege level when exiting Halt Mode.
+            the hart's privilege level when exiting Debug Mode.
 
             Not all privilege levels are supported on all harts. If the
             encoding written is not supported or the debugger is not allowed to
@@ -83,7 +83,7 @@
     </register>
 
     <register name="Debug PC" short="dpc" address="0x7b1">
-        This register is only accessible in Halt Mode. Then it contains the
+        This register is only accessible in Debug Mode. Then it contains the
         address of the next instruction to be executed when resuming. It is
         writable so that the debugger can cause execution to continue somewhere
         else.
@@ -131,7 +131,7 @@
             Contains the privilege level the hart was operating in when Debug
             Mode was entered. The encoding is describe in Table
             \ref{tab:privlevel}. A user can write this value to change the
-            hart's privilege level when exiting Halt Mode.
+            hart's privilege level when exiting Debug Mode.
         </field>
     </register>
 </registers>
