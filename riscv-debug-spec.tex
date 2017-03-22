@@ -246,7 +246,7 @@ TODO
 
 \section{Background}
 
-There are two forms of external debugging. The first is \emph{debug mode}
+There are two forms of external debugging. The first is \emph{halt mode}
 debugging, where an external debugger will halt some or all components of a
 platform and inspect them while they are in stasis. Then the debugger can allow
 the hardware to either perform a single step or to run freely.
@@ -516,7 +516,7 @@ the debugger can write whatever program it likes, but the program must end with
 
 While these programs are executed, the hart does not leave Debug Mode (see
 Section~\ref{debugmode}).  If an exception is encountered during execution of
-the Program Buffer, no more instructions are executed, the hart remains in Halt
+the Program Buffer, no more instructions are executed, the hart remains in Debug
 Mode, and \Fcmderr is set to 3.
 
 Executing the Program Buffer may clobber \Rdpc. If that is the case, it must be
