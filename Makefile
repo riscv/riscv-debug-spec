@@ -14,7 +14,7 @@ REGISTERS_TEX += abstract_commands.tex
 REGISTERS_CHISEL += dm1_registers.scala
 REGISTERS_CHISEL += abstract_commands.scala
 
-FIGURES = *.eps
+FIGURES = fig/*
 
 all:	$(NAME).pdf debug_defines.h
 
