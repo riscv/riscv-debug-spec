@@ -18,7 +18,7 @@ FIGURES = fig/*
 
 all:	$(NAME).pdf debug_defines.h
 
-$(NAME).pdf: $(NAME).tex $(REGISTERS_TEX) debug_rom.S $(FIGURES) vc.tex changelog.tex
+$(NAME).pdf: $(NAME).tex $(REGISTERS_TEX) $(FIGURES) vc.tex changelog.tex
 	pdflatex -shell-escape $< && pdflatex -shell-escape $<
 
 publish:	$(NAME).pdf
