@@ -46,7 +46,7 @@ debug_defines.h:	$(REGISTERS_TEX:.tex=.h)
 %.eps: %.dot
 	dot -Teps $< -o $@
 
-%.tex %.h: %.xml registers.py
+%.tex %.h: xml/%.xml registers.py
 	./registers.py --custom --definitions $@.inc --cheader $(basename $@).h $< > $@
 
 
@@ -56,25 +56,9 @@ debug_defines.h:	$(REGISTERS_TEX:.tex=.h)
 %.o:	%.S
 	$(CC) -c $<
 
-# Remove 128-bit instructions since our assembler doesn't like them.
-%_no128.S:	%.S
-	sed "s/\([sl]q\)/nop\#\1/" < $< > $@
-
-debug_rom:	debug_rom_no128.o main.o
-	$(CC) -o $@ $^ -Os
-
-debug_ram:	debug_ram.o main.o
-	$(CC) -o $@ $^
-
-hello:	hello.c
-	$(CC) -o $@ $^ -Os
-
-hello.s:	hello.c
-	$(CC) -o $@ $^ -S -Os
-
 chisel: $(REGISTERS_CHISEL)
 
 clean:
 	rm -f $(NAME).pdf $(NAME).aux $(NAME).toc $(NAME).log $(REGISTERS_TEX) \
 	    $(REGISTERS_TEX:=.inc) *.o *_no128.S *.h $(NAME).lof $(NAME).lot $(NAME).out \
-	    $(NAME).hst $(NAME).pyg debug_defines.h
+	    $(NAME).hst $(NAME).pyg debug_defines.h *.scala
