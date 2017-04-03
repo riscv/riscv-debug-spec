@@ -1,0 +1,74 @@
+\chapter{Introduction}
+\label{sec:intro}
+
+When a design progresses from simulation to a hardware implementation, a users's
+control and understanding of the system's current state drops dramatically.
+To help bring up and debug low level software and hardware,
+it is critical to have good debugging support built into the hardware.
+When a robust OS is running on a core, software can handle many
+debugging tasks. Howevever, in many scenarios, hardware support is essential.
+
+This document outlines a standard architecture for external debug support 
+on RISC-V platforms. This architecture allows a variety of implementations and
+tradeoffs, which is complementary to the wide range of RISC-V implementations.
+At the same time, this specification defines common interfaces to
+allow debugging tools and components to target a variety of platforms based on the RISC-V ISA.
+
+System designers may choose to add additional hardware debug support,
+but this specification defines a standard interface for common
+functionality.
+
+\section{Terminology}
+
+A \emph{platform} is a single integrated circuit consisting of one or more
+\emph{components}. Some components may be RISC-V cores, while others may have a different
+function. Typically they will all be connected to a single system bus.
+A single RISC-V core contains one or more hardware threads, called
+\emph{harts}.
+
+\section{About This Document}
+
+\subsection{Structure}
+
+This document contains two parts. The main part of the document is the
+specification, which is given in the numbered sections. The second part
+of the document is a set of  appendices. The information
+in the appendix is intended to clarify and provide examples, but is
+not part of the actual specification.
+
+
+\subsection{Register Definition Format}
+
+All register definitions in this document follow the format shown in Section~\ref{shortname}.
+A simple graphic shows which fields are in the register. The
+upper and lower bit indices are shown to the top left and top right of each
+field. The total number of bits in the field are shown below it.
+
+After the graphic follows a table which for each field lists its name,
+description, allowed accesses, and reset value. The allowed accesses are listed
+in Table~\ref{tab:access}.
+
+\begin{table}[htp]
+    \centering
+    \caption{Register Access Abbreviations}
+    \label{tab:access}
+    \begin{tabulary}{\textwidth}{|l|L|}
+        \hline
+        R & Read-only. \\
+        \hline
+        R/W & Read/Write. \\
+        \hline
+        R/W0 & Read/Write. Only writing 0 has an effect.  \\
+        \hline
+        R/W1 & Read/Write. Only writing 1 has an effect.  \\
+        \hline
+        W & Write-only. When read this field returns 0. \\
+        \hline
+        W1 & Write-only. Only writing 1 has an effect. \\
+        \hline
+    \end{tabulary}
+\end{table}
+
+\input{sample_registers.tex}
+
+%\input{reading_order.tex}
