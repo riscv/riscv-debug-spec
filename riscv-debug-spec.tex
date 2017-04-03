@@ -114,10 +114,14 @@ I would like to thank the following people for their time, feedback, and ideas:
 Bruce Ableidinger,
 Krste Asanovic,
 Mark Beal,
+Alex Bradbury,
+Zhong-Ho Chen,
 Monte Dalrymple,
+Vyacheslav Dyanchenco,
 Peter Egold,
 Richard Herveille,
 Po-wei Huang,
+Scott Johnson,
 Aram Nahidipour,
 Gajinder Panesar,
 Klaus Kruse Pedersen,
@@ -211,7 +215,7 @@ first.
 
 \subsubsection{Halt/Resume}
 
-Sections \ref{dmi}, \ref{selectingharts}, \ref{haltcontrol}, \ref{dmcontrol},
+Sections \ref{dmi}, \ref{selectingharts}, \ref{haltcontrol}, \ref{dmcontrol}, \ref{dmstatus},
 \ref{haltsum}, \ref{deb:halt}.
 
 \subsubsection{Abstract Register Access}
@@ -219,14 +223,14 @@ Sections \ref{dmi}, \ref{selectingharts}, \ref{haltcontrol}, \ref{dmcontrol},
 Sections \ref{abstractcommands}, \ref{abstractcs}, \ref{command},
 \ref{data0}, \ref{deb:abstractreg}.
 
-\subsubsection{Instruction Supply}
+\subsubsection{Program Buffer}
 
-Sections \ref{programbuffer}, \ref{accesscs}, \ref{ibuf0}, \ref{access
-register}, \ref{haltmode}, \ref{deb:regprogbuf}, \ref{deb:mrprogbuf}.
+Sections \ref{programbuffer}, \ref{progbufcs}, \ref{progbuf0}, \ref{access
+register}, \ref{debugmode}, \ref{deb:regprogbuf}, \ref{deb:mrprogbuf}.
 
 \subsubsection{JTAG Debug Transport Module}
 
-Sections \ref{jtagdtm}, \ref{dbusaccess}.
+Sections \ref{dtm}, \ref{jtagdtm}, \ref{dbusaccess}.
 
 \subsubsection{System Bus Master}
 
@@ -336,6 +340,7 @@ The debug interface described in this specification supports the following featu
        and monitor, or as a general protocol between debugger and application.
    \item The debugger does not need to know anything about the microarchitecture
        of the cores it is debugging.
+   \item Multiple harts can be halted and resumed simultaneously.
 \end{enumerate}
 
 This document does not suggest a strategy or implementation for hardware test,
@@ -378,7 +383,7 @@ Each RISC-V core may implement a Trigger Module for each hart.  These can
 implement breakpoints, which cause a hart to halt spontaneously.  When that
 happens the hart signals the DM that it is halted.
 
-\section{Debug Transport Module (DTM)}
+\section{Debug Transport Module (DTM)} \label{dtm}
 
 Debug Transport Modules provide access to the DM over one or more transports
 (eg. JTAG or USB).
@@ -393,6 +398,9 @@ access to the Debug Module Interface.
 Using multiple DTMs at the same time is not supported. It is left to the user
 to ensure this does not happen.
 
+This specification defines a JTAG DTM in Section~\ref{jtagdtm}. Additional DTMs
+may be added in future versions of this specification.
+
 \section{Debug Module (DM)} \label{dm}
 
 \begin{steps}{The Debug Module is the interface between specific debug
@@ -406,6 +414,7 @@ to ensure this does not happen.
 \item Give the debugger necessary information about the implementation. (Required)
 \item Provide access to other hart registers. (Optional)
 \item Force the hart to execute arbitrary instructions. (Optional)
+\item Allow multiple harts to be halted, resumed, and/or reset at the same time (Optional)
 \end{steps}
 
 A single DM can debug up to 1024 harts.
@@ -417,10 +426,8 @@ or use a more full-featured bus like TileLink or the AMBA Advanced Peripheral
 Bus. The details are left to the system designer.
 
 The DMI uses between 7 and 32 address bits.  It supports read and write
-operations, which may return an error. (Errors are only used for protocol
-optimzation by the optional
-System Bus Access and Serial Port blocks).
-The bottom of the address space is
+operations, which may return an error. (Errors are only returned by the optional
+System Bus Access and Serial Port blocks). The bottom of the address space is
 used for the DM. Extra space can be used for custom debug devices, other cores,
 additional DMs, etc.
 
@@ -449,41 +456,47 @@ Transport Modules. The purpose of this feature is to allow debugging
 programs from the first instruction executed, so exactly what is affected
 by this reset is implementation dependent. Debug Module's own state and registers are
 generally reset at power-up and if and only if
-\Fdmactive in \Rdmcontrol is 0.
+\Fdmactive in \Rdmcontrol is 0. This means that the halt state of all harts is
+maintained provided that \Fdmactive is 1, although trigger CSRs may be cleared.
 
 \subsection{Selecting Harts} \label{selectingharts}
 
 Up to 1024 harts can be connected to the DM. The debugger can select any hart
 by writing its index to \Fhartsel. Hart indexes start at 0 and are continuous
 until the final index. This allows the debugger to enumerate all the harts
-attached to the DM by trying each index until \Fhartstatus is 3.
+attached to the DM by trying each index until \Fanynonexistent is 1.
 
 \subsection{Halt Control} \label{haltcontrol}
 
 This block controls halt signals from the Debug Module to a hart.  It is used
 to halt a hart, and let it run again.
 
-For each hart the block contains a single bit that is accessible through
-\Fhaltreq in \Rdmcontrol. When a debugger wants to halt a hart, it writes 1 to
-this bit, and then waits for \Fhartstatus to indicate the hart is halted.  To
-resume, the debugger writes 0 to \Fhaltreq, and waits for \Fhartstatus to
-indicate the hart is running.
+To control halting and resuming, there are \Fhaltreq and \Fresumereq bits in
+\Rdmcontrol.  When a debugger wants to halt a hart, it sets \Fhaltreq, waits
+for \Fallhalted to indicate the hart is halted, and clears \Fhaltreq.  To
+resume, the debugger sets \Fresumereq, waits for \Fallrunning to indicate the
+hart is running, and clears \Fresumereq.
 
 The Debug Module conceptually has a direct connection to the halt signal of
 every hart that has a halt signal. When set or cleared, a hart must respond in
 less than one second.  (How this is implemented is not further specified. A few
 clock cycles will be a more typical latency.)
 
+\subsection{Hart Array Mask Register} \label{hamask}
+
+TODO: Write this section.
+
 \subsection{Abstract Commands} \label{abstractcommands}
 
-A debugger can execute an abstract command by writing the command to \Rcommand.
-If the command takes arguments, the debugger must write them to the {\tt data}
-registers before writing to \Rcommand. If a command returns results, they are
-placed in the {\tt data} registers when the command is complete. Which {\tt
-data} registers are used for the arguments is described in
-Table~\ref{tab:datareg}.  In all cases the least-significant word is placed in
-the lowest-numbered {\tt data} register.  Depending on the implementation, it
-may be possible to perform abstract commands even when the hart is not halted.
+The DM supports a set of abstract commands, which a debugger can execute by
+writing the command to \Rcommand.  If the command takes arguments, the debugger
+must write them to the {\tt data} registers before writing to \Rcommand. If a
+command returns results, they are placed in the {\tt data} registers when the
+command is complete. Which {\tt data} registers are used for the arguments is
+described in Table~\ref{tab:datareg}.  In all cases the least-significant word
+is placed in the lowest-numbered {\tt data} register.  Depending on the
+implementation, it may be possible to perform abstract commands even when the
+hart is not halted.
 
 \begin{table}[htp]
     \centering
@@ -552,15 +565,15 @@ compressed {\tt nop} in the upper 16 bits.  If \Fprogsize is greater than 1,
 the debugger can write whatever program it likes, but the program must end with
 {\tt ebreak} or {\tt ebreak.c}.
 
-While these programs are executed, the hart does not leave Halt Mode (see
-Section~\ref{haltmode}).  If an exception is encountered during execution of
-the Program Buffer, no more instructions are executed, the hart remains in Halt
+While these programs are executed, the hart does not leave Debug Mode (see
+Section~\ref{debugmode}).  If an exception is encountered during execution of
+the Program Buffer, no more instructions are executed, the hart remains in Debug
 Mode, and \Fcmderr is set to 3.
 
 Executing the Program Buffer may clobber \Rdpc. If that is the case, it must be
 possible to read/write \Rdpc using an abstract command. The debugger must
 attempt to save \Rdpc between halting and executing a Program Buffer, and then
-restore \Rdpc before leaving Halt Mode.
+restore \Rdpc before leaving Debug Mode.
 
 \begin{commentary}
     Allowing Program Buffer execution to clobber \Rdpc allows for direct
@@ -621,10 +634,10 @@ afterwards, a reasonable solution could be to add a fuse bit to the Debug
 Module that can be used to be permanently disable it. Since this is technology
 specific, it is not further addressed in this spec.
 
-Another option is to allow the DM to be unlocked only by users who  have an
-access key. A simple mechanism is documented in Section~\ref{authdata0}. When
-\Fauthenticated is clear, the DM must not interact with the rest of the
-platform in any way.
+Another option is to allow the DM to be unlocked only by users who have an
+access key. A few bits in \Rdmstatus and \Rauthdata can support an arbitrarily
+complex authentication mechanism.  When \Fauthenticated is clear, the DM must
+not interact with the rest of the platform in any way.
 
 \subsection{Serial Ports}
 
@@ -641,9 +654,10 @@ All these uses require software support, and are not further specified here.
 
 \subsection{Debug Module Serial Registers} \label{dmsysbus}
 
-TODO: Figure out where these registers should really live on the system bus,
-and how to communicate that to software. Or maybe there are magic CSRs to
-access them as well?
+The Debug Module's serial port registers must be accessible from the
+component memory space. The Debug Module's system bus registers  base address
+is discoverable in the configuration string. The offsets from this base
+are given in this section.
 
 \input{dm2_registers.tex}
 
@@ -661,16 +675,16 @@ access them as well?
 \section{RISC-V Debug}
 
 Modifications to the RISC-V core to support debug are kept to a minimum.  There
-is a special execution mode (Halt Mode) and a few extra CSRs. The DM takes care
+is a special execution mode (Debug Mode) and a few extra CSRs. The DM takes care
 of the rest.
 
-\subsection{Halt Mode} \label{haltmode}
+\subsection{Debug Mode} \label{debugmode}
 
-Halt Mode is a special processor mode used only when the core is halted for
-external debugging. How Halt Mode is entered is implementation-specific.
+Debug Mode is a special processor mode used only when the core is halted for
+external debugging. How Debug Mode is entered is implementation-specific.
 
 \begin{steps}{When executing code from the Program Buffer, the processor stays
-    in Halt Mode and the following apply:}
+    in Debug Mode and the following apply:}
 \item All operations happen in machine mode.
 \item \Fmprv in \Rmstatus is ignored.
 \item All interrupts are masked.
@@ -679,21 +693,21 @@ external debugging. How Halt Mode is entered is implementation-specific.
     Program Buffer.
 \item No action is taken if a trigger matches.
 \item Trace is disabled.
-\item Cycle counters may be stopped, depending on \Fstopcycle in \Rdcsr.
+\item Counters may be stopped, depending on \Fstopcount in \Rdcsr.
 \item Timers may be stopped, depending on \Fstoptime in \Rdcsr.
 \item The {\tt wfi} instruction acts as a {\tt nop}.
 \item Almost all instructions that change the privilege level have undefined
     behavior.  This includes {\tt ecall}, {\tt mret}, {\tt hret}, {\tt sret},
     and {\tt uret}.  (To change the privilege level, the debugger can write
     \Fprv in \Rdcsr.) The exception is {\tt ebreak}. When that is executed in
-    Halt Mode, it halts the processor again but without updating \Rdpc.
+    Debug Mode, it halts the processor again but without updating \Rdpc.
 \end{steps}
 
 \subsection{Load-Reserved/Store-Conditional Instructions}
 
 The reservation registered by an {\tt lr} instruction on a memory address may
-be lost when entering Halt Mode or while in Halt Mode.  This means that there
-may be no forward progress if Halt Mode is entered between {\tt lr} and {\tt
+be lost when entering Debug Mode or while in Debug Mode.  This means that there
+may be no forward progress if Debug Mode is entered between {\tt lr} and {\tt
 sc} pairs.
 
 \subsection{Reset}
@@ -711,7 +725,7 @@ The Core Debug Registers must be implemented for each hart being debugged.
 
 \section{Trigger Module}
 
-Triggers can cause a debug exception, entry into Halt Mode, or a trace action
+Triggers can cause a debug exception, entry into Debug Mode, or a trace action
 without having to execute a special instruction. This makes them invaluable
 when debugging code from ROM. They can trigger on execution of instructions at
 a given memory address, or on the address/data in loads/stores.  These are all
@@ -725,9 +739,22 @@ separately.
 \item Read back \Rtselect to confirm this trigger exists. If not, exit.
 \item Read \Rtdataone, and possible \Rtdatatwo and \Rtdatathree depending on the
     trigger type.
-\item If \Ftype in \Rtdataone was 0, then there are no more triggers.
+\item If \Ftype is 0, this trigger doesn't exist. Exit the loop.
 \item Repeat, incrementing the value in \Rtselect.
 \end{steps}
+
+\begin{commentary}
+    There are two ways to check whether a given trigger is the last one to
+    support these implementations:
+    \begin{enumerate}
+        \item When no hardware triggers are implemented at all, all related
+            registers return 0. The algorithm above terminates when checking
+            \Ftype.
+        \item When 2 triggers are implemented, \Rtselect is just a single bit
+            that selects one of the two. When the debugger writes 2, it reads
+            back as 0 which terminates the enumeration.
+    \end{enumerate}
+\end{commentary}
 
 \subsection{Trigger Registers}
 
@@ -745,8 +772,9 @@ through the JTAG data register (DR).
 JTAG refers to IEEE Std 1149.1-2013. It is a standard that defines test logic
 that can be included in an integrated circuit to test the interconnections
 between integrated circuits, test the integrated circuit itself, and observe or
-modify circuit activity during the component’s normal operation. We're using it
-for the third case here.  The standard defines a Test Access Port (TAP) that
+modify circuit activity during the component’s normal operation.
+This specification uses the latter functionality.
+The JTAG standard defines a Test Access Port (TAP) that
 can be used to read and write a few custom registers, which can be used to
 communicate with debug hardware in a component.
 
@@ -845,12 +873,13 @@ All debug adapter pins other than GND should be current-limited to 20mA.
 
 \subsection{JTAG Registers}
 
-JTAG DTMs should use a 5-bit JTAG IR. When the TAP is reset, IR must default to
+JTAG TAPs used as a DTM must have an IR of at least 5 bits.
+When the TAP is reset, IR must default to
 00001, selecting the IDCODE instruction. A full list of JTAG registers along
 with their encoding is in Table~\ref{table:jtag_registers}. The only regular
-JTAG registers a debugger might use are BYPASS and IDCODE, but the JTAG
-standard recommends a lot of other instructions so we leave IR space for them.
-If they are not implemented, then they must select the BYPASS register.
+JTAG registers a debugger might use are BYPASS and IDCODE, but this
+specification leaves IR space for many other standard JTAG instructions.
+Unimplemented instructions must select the BYPASS register.
 
 \input{jtag_registers.tex}
 
@@ -864,21 +893,21 @@ match, or come up with their own design.
 
 \subsection{Direct}
 
-Halting happens by inhibiting instruction fetching in Halt Mode.
+Halting happens by inhibiting instruction fetching in Debug Mode.
 
 Muxes on the register file(s) allow for implementing those abstract commands.
 (TODO: Should we spec a suggested way of communicating between DM and hart, so
 that a reusable DM can be implemented?)
 
 To execute a program buffer, force \Rpc to the start of it, and re-enable
-instruction fetching (while staying in Halt Mode) until {\tt ebreak} is
+instruction fetching (while staying in Debug Mode) until {\tt ebreak} is
 encountered.
 
 \Rdpc is not physically a CSR. Instead, accessing it directly access \Rpc.
 
 \subsection{Plain Exception}
 
-In this implementation, Halt Mode acts more like a real exception, jumping to a
+In this implementation, Debug Mode acts more like a real exception, jumping to a
 memory region that is serviced by the DM. When taking this exception, \Rpc is
 saved to \Rdpc. To allow the DM to individually control one out of several
 halted harts, each hart jumps to a hard-coded unique address.
@@ -931,16 +960,16 @@ possibly while adding in some delay, or explicit checks for status bits.
 
 \subsection{Debug Bus Access} \label{dbusaccess}
 
-To read an arbitrary Debug Bus register, select \Rdbus, and scan in a value
+To read an arbitrary Debug Bus register, select \Rdmi, and scan in a value
 with \Fop set to 1, and \Faddress set to the desired register address. In
 Update-DR the operation will start, and in Capture-DR its results will be
 captured into \Fdata.  If the operation didn't complete in time, \Fop will be 3
 and the value in \Fdata must be ignored. The error condition must be cleared by
-writing \Fdbusreset in \Rdtmcontrol, and then the operation must be tried
+writing \Fdmireset in \Rdtmcs, and then the operation must be tried
 again. This time the debugger should allow for more time between Capture-DR and
 Update-DR.
 
-To write an arbitrary Debug Bus register, select \Rdbus, and scan in a value
+To write an arbitrary Debug Bus register, select \Rdmi, and scan in a value
 with \Fop set to 2, and \Faddress and \Fdata set to the desired register
 address and data respectively. From then on everything happens exactly as with
 a read, except that a write is also performed right after the read. The
@@ -957,7 +986,7 @@ halted.
 \subsection{Halting} \label{deb:halt}
 
 To halt a hart, the debugger sets \Fhartsel and \Fhaltreq. Then it waits for
-\Fhartstatus to become 0.
+\Fallhalted to become 1.
 
 \subsection{Accessing Registers}
 
@@ -1000,9 +1029,9 @@ registers can be accessed by moving their value into/out of GPRs.
     \hline
     Op & Address & Value & Comment \\
     \hline
-    Write & \Ribufzero & {\tt csrw s0, MSTATUS} & \\
+    Write & \Rprogbufzero & {\tt csrw s0, MSTATUS} & \\
     \hline
-    Write & \Ribufone & {\tt ebreak} & \\
+    Write & \Rprogbufone & {\tt ebreak} & \\
     \hline
     Write & \Rdatazero & new value & \\
     \hline
@@ -1018,9 +1047,9 @@ registers can be accessed by moving their value into/out of GPRs.
     \hline
     Op & Address & Value & Comment \\
     \hline
-    Write & \Ribufzero & {\tt fmv.x.s s0, f1} & \\
+    Write & \Rprogbufzero & {\tt fmv.x.s s0, f1} & \\
     \hline
-    Write & \Ribufone & {\tt ebreak} & \\
+    Write & \Rprogbufone & {\tt ebreak} & \\
     \hline
     Write & \Rcommand & \Fpreexec, 0x1008 & Execute program buffer, then read \Szero \\
     \hline
@@ -1081,9 +1110,9 @@ registers can be accessed by moving their value into/out of GPRs.
     \hline
     Op & Address & Value & Comment \\
     \hline
-    Write & \Ribufzero & {\tt lw s0, 0(s0)} & \\
+    Write & \Rprogbufzero & {\tt lw s0, 0(s0)} & \\
     \hline
-    Write & \Ribufone & {\tt ebreak} & \\
+    Write & \Rprogbufone & {\tt ebreak} & \\
     \hline
     Write & \Rdatazero & address & \\
     \hline
@@ -1102,11 +1131,11 @@ registers can be accessed by moving their value into/out of GPRs.
     \hline
     Op & Address & Value & Comment \\
     \hline
-    Write & \Ribufzero & {\tt lw s1, 0(s0)} & \\
+    Write & \Rprogbufzero & {\tt lw s1, 0(s0)} & \\
     \hline
-    Write & \Ribufone & {\tt addi s0, s0, 4} & \\
+    Write & \Rprogbufone & {\tt addi s0, s0, 4} & \\
     \hline
-    Write & \Ribuftwo & {\tt ebreak} & \\
+    Write & \Rprogbuftwo & {\tt ebreak} & \\
     \hline
     Write & \Rdatazero & address & \\
     \hline
@@ -1114,7 +1143,7 @@ registers can be accessed by moving their value into/out of GPRs.
     \hline
     Write & \Rcommand & \Fpostexec, 0x1009 & Read \Sone, then execute program buffer \\
     \hline
-    Write & \Rabstractcs & \Fautoexeczero & Set \Fautoexeczero \\
+    Write & \Rabstractcs & \Fautoexecdata[0] & Set \Fautoexecdata[0] \\
     \hline
     Read & \Rdatazero & - & Get value read from memory, then execute program buffer \\
     \hline
@@ -1122,7 +1151,7 @@ registers can be accessed by moving their value into/out of GPRs.
     \hline
     ... & ... & ... & ... \\
     \hline
-    Write & \Rabstractcs & 0 & Clear \Fautoexeczero \\
+    Write & \Rabstractcs & 0 & Clear \Fautoexecdata[0] \\
     \hline
     Read & \Rdatazero & - & Get last value read from memory. \\
     \hline
@@ -1238,9 +1267,9 @@ TODO: Just like reading memory.
     \hline
     Op & Address & Value & Comment \\
     \hline
-    Write & \Ribufzero & {\tt sw 0(s0), s1} & \\
+    Write & \Rprogbufzero & {\tt sw 0(s0), s1} & \\
     \hline
-    Write & \Ribufone & {\tt ebreak} & \\
+    Write & \Rprogbufone & {\tt ebreak} & \\
     \hline
     Write & \Rdatazero & value & \\
     \hline
@@ -1259,11 +1288,11 @@ TODO: Just like reading memory.
     \hline
     Op & Address & Value & Comment \\
     \hline
-    Write & \Ribufzero & {\tt sw s1, 0(s0)} & \\
+    Write & \Rprogbufzero & {\tt sw s1, 0(s0)} & \\
     \hline
-    Write & \Ribufone & {\tt addi s0, s0, 4} & \\
+    Write & \Rprogbufone & {\tt addi s0, s0, 4} & \\
     \hline
-    Write & \Ribuftwo & {\tt ebreak} & \\
+    Write & \Rprogbuftwo & {\tt ebreak} & \\
     \hline
     Write & \Rdatazero & address & \\
     \hline
@@ -1273,7 +1302,7 @@ TODO: Just like reading memory.
     \hline
     Write & \Rcommand & \Fwrite, \Fpostexec, 0x1009 & Write \Sone, then execute program buffer \\
     \hline
-    Write & \Rabstractcs & \Fautoexeczero & Set \Fautoexeczero \\
+    Write & \Rabstractcs & \Fautoexecdata[0] & Set \Fautoexecdata[0] \\
     \hline
     Write & \Rdatazero & value1 & \\
     \hline
@@ -1281,7 +1310,7 @@ TODO: Just like reading memory.
     \hline
     Write & \Rdatazero & valueN & \\
     \hline
-    Write & \Rabstractcs & 0 & Clear \Fautoexeczero \\
+    Write & \Rabstractcs & 0 & Clear \Fautoexecdata[0] \\
     \hline
 \end{tabulary}
 \medskip
@@ -1305,7 +1334,7 @@ TODO: Just like reading memory.
 \subsection{Running}
 
 First, the debugger should restore any registers that it has clobbered.  Once
-that's done, it can let the core run by clearing \Fhaltreq.
+that's done, it can let the core run by setting \Fresumereq.
 
 \subsection{Single Step}
 
@@ -1346,21 +1375,21 @@ the pseudo-op {\tt transfer dest, src} to represent all these options.
     \hline
     Op & Address & Value & Comment \\
     \hline
-    Write & \Ribufzero & {\tt transfer arg2, s0} & \\
+    Write & \Rprogbufzero & {\tt transfer arg2, s0} & \\
     \hline
-    Write & \Ribufone & {\tt transfer s0, arg0} & \\
+    Write & \Rprogbufone & {\tt transfer s0, arg0} & \\
     \hline
-    Write & \Ribuftwo & {\tt transfer arg0, s1} & \\
+    Write & \Rprogbuftwo & {\tt transfer arg0, s1} & \\
     \hline
-    Write & \Ribufthree & {\tt transfer s1, arg1} & \\
+    Write & \Rprogbufthree & {\tt transfer s1, arg1} & \\
     \hline
-    Write & \Ribuffour & {\tt sw 0(s0), s1} & \\
+    Write & \Rprogbuffour & {\tt sw 0(s0), s1} & \\
     \hline
-    Write & \Ribuffive & {\tt transfer arg1, s1} & \\
+    Write & \Rprogbuffive & {\tt transfer arg1, s1} & \\
     \hline
-    Write & \Ribufsix & {\tt transfer arg2, s0} & \\
+    Write & \Rprogbufsix & {\tt transfer arg2, s0} & \\
     \hline
-    Write & \Ribufseven & {\tt ebreak} & \\
+    Write & \Rprogbufseven & {\tt ebreak} & \\
     \hline
     Write & \Rdatazero & address & \\
     \hline

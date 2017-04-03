@@ -2,22 +2,144 @@
 
     <!-- =============== halt/reset/select hart  =============== -->
 
-    <register name="Control" short="dmcontrol" address="0x00">
+    <register name="Debug Module Status" short="dmstatus" address="0x11">
         The address of this register will not change in the future, because it
         contains \Fversion.  It has changed from version 0.11 of this spec.
 
-        <field name="haltreq" bits="31" access="R/W" reset="0">
-            Halt request signal for the hart selected by \Fhartsel.  Writes
-            apply to the new value of \Fhartsel.
+        This register reports status for the overall debug module
+        as well as the currently selected harts, as defined in \Fhasel.
+
+        <field name="0" bits="31:16" access="R" reset="0" />
+        <field name="allnonexistent" bits="15" access="R" reset="-">
+          This field is 1 when all currently selected harts do not exist in this system.
         </field>
-        <field name="reset" bits="30" access="R/W" reset="0">
+        <field name="anynonexistent" bits="14" access="R" reset="-">
+          This field is 1 when any currently selected hart does not exist in this system.
+        </field>
+        <field name="allunavail" bits="13" access="R" reset="-">
+          This field is 1 when all currently selected harts are unavailable.
+        </field>
+        <field name="anyunavail" bits="12" access="R" reset="-">
+          This field is 1 when any currently selected hart is unavailable.
+        </field>
+        <field name="allrunning" bits="11" access="R" reset="-">
+          This field is 1 when all currently selected harts are running.
+        </field>
+        <field name="anyrunning" bits="10" access="R" reset="-">
+          This field is 1 when any currently selected hart is running.
+        </field>
+        <field name="allhalted" bits="9" access="R" reset="-">
+          This field is 1 when all currently selected harts are halted.
+        </field>
+        <field name="anyhalted" bits="8" access="R" reset="-">
+          This field is 1 when any currently selected hart is halted.
+        </field>
+
+        <!-- Fields that apply to the entire DM. -->
+        <field name="authenticated" bits="7" access="R" reset="Preset">
+            0 when authentication is required before using the DM.  1 when the
+            authentication check has passed. On components that don't implement
+            authentication, this bit must be preset as 1.
+        </field>
+        <field name="authbusy" bits="6" access="R" reset="0">
+            0: The authentication module is ready to process the next
+            read/write to \Rauthdata.
+
+            1: The authentication module is busy. Accessing \Rauthdata results
+            in unspecified behavior.
+
+            \Fauthbusy only becomes set in immediate response to an access to
+            \Rauthdata.
+        </field>
+        <field name="0" bits="5" reset="0" access="R" />
+        <field name="cfgstrvalid" bits="4" reset="Preset" access="R" />
+
+            0: \Fcfgsraddrzero - \Fcfgstraddrthree hold information which
+            is not the configuration string.
+
+            1: \Fcfgstraddrzero - \Fcfgstraddrthree registers hold the address of the
+            configuration string.
+        <field name="versionhi" bits="3:2" reset="0" access="R">
+            Reserved for future use. Reads as 0.
+        </field>
+        <field name="versionlo" bits="1:0" reset="1" access="R">
+            00: There is no Debug Module present.
+
+            01: There is a Debug Module and it conforms to version 0.11 of this
+            specification.
+
+            10: There is a Debug Module and it conforms to version 0.13 of this
+            specification.
+
+            11: Reserved for future use.
+        </field>
+    </register>
+
+    <register name="Debug Module Control" short="dmcontrol" address="0x10">
+
+        This register controls the overall debug module
+        as well as the currently selected harts, as defined in \Fhasel.
+
+        <!-- Fields that apply to a specific hart. -->
+        <field name="haltreq" bits="31" access="R/W" reset="0">
+            Halt request signal for all currently selected harts. When 1, the
+            hart will halt if it is not currently halted.
+            Setting both \Fhaltreq and \Fresumereq leads to undefined behavior.
+
+            Writes apply to the new value of \Fhartsel and \Fhasel.
+        </field>
+        <field name="resumereq" bits="30" access="R/W" reset="0">
+            Resume request signal for all currently selected harts. When 1,
+            the hart will resume if it is currently halted.
+            Setting both \Fhaltreq and \Fresumereq leads to undefined behavior.
+
+            Writes apply to the new value of \Fhartsel and \Fhasel.
+        </field>
+        <field name="hartreset" bits="29" access="R/W" reset="0">
+            This optional bit controls reset to all the currently selected harts.
+            To perform a reset the debugger writes 1, and then writes 0 to
+            deassert the reset signal.
+
+            If this feature is not implemented, the bit always stays 0, so
+            after writing 1 the debugger can read the register back to see if
+            the feature is supported.
+
+            Writes apply to the new value of \Fhartsel and \Fhasel.
+        </field>
+        <field name="0" bits="28:27" reset="0" access="R" />
+         <field name="hasel" bits="26" access="R/W" reset = "0">
+            Selects the  definition of currently selected harts.
+
+            0: There is a single currently selected hart, that selected by \Fhartsel.
+
+            1: There may be multiple currently selected harts -- that selected by \Fhartsel,
+               plus those selected by the hart array mask register.
+
+            An implementation which does not implement the hart array mask register
+            should tie this field to 0. A debugger which wishes to use the hart array
+            mask register feature should set this bit and read back to see if the functionality
+            is supported.
+        </field>
+        <field name="hartsel" bits="25:16" access="R/W" reset="0">
+            The DM-specific index of the hart to select. This hart is always part of the
+            currently selected harts.
+        </field>
+        <!-- Fields that apply to the entire DM. -->
+        <field name="0" bits="15:2" access="R" reset="0" />
+        <field name="ndmreset" bits="1" access="R/W" reset="0">
             This bit controls the reset signal from the DM to the rest of the
             system. To perform a reset the debugger writes 1, and then writes 0
             to deassert the reset.
         </field>
-        <field name="dmactive" bits="29" access="R/W" reset="0">
+        <field name="dmactive" bits="0" access="R/W" reset="0">
             This bit serves as a reset signal for the Debug Module itself.
-            When 0, the module is held in reset. When 1, it functions normally.
+
+            0: The module's state, including authentication mechanism,
+            takes its reset values (the \Fdmactive bit is the only bit which can
+            be written to something other than its reset value).
+
+            1: The module functions normally.
+
             No other mechanism should exist that may result in resetting the
             Debug Module after power up, including the platform's system reset
             or Debug Transport reset signals.
@@ -29,56 +151,28 @@
             preventing the Debug Module from being power gated while debugging
             is active.
         </field>
-        <field name="0" bits="28" access="R" reset="0" />
-        <field name="hartstatus" bits="27:26" access="R" reset="-">
-            The status of the currently selected hart.
-
-            0: Halted.
-
-            1: Running.
-
-            2: Unavailable (eg. powered down, held in reset).
-
-            3: \Fhartsel specifies a hart that does not exist in this system.
-        </field>
-        <field name="hartsel" bits="25:16" access="R/W" reset="0">
-            The DM-specific index of the hart to select.
-        </field>
-        <field name="0" bits="15:8" access="R" reset="0" />
-        <field name="authenticated" bits="7" access="R" reset="Preset">
-            0 when authentication is required before using the DM.  1 when the
-            authentication check has passed. On components that don't implement
-            authentication, this bit must be preset as 1.
-        </field>
-        <field name="authbusy" bits="6" reset="0" access="R">
-            While 1, writes to \Rauthdatazero and \Rauthdataone may be ignored
-            or may result in authentication failing.  Authentication mechanisms
-            that are slow (or intentionally delayed) must set this bit when
-            they're not ready to process another write.
-        </field>
-        <field name="authtype" bits="5:4" reset="Preset" access="R">
-          Defines the kind of authentication required to use this DM.
-
-	  0: No authentication is required.
-
-          1: A password is required.
-
-	  2: A challenge-response mechanism is in place.
-
-	  3: Reserved for future use.
-        </field>
-        <field name="version" bits="3:0" reset="1" access="R">
-            0: There is no Debug Module present.
-
-            1: There is a Debug Module and it conforms to version 0.12 of this
-            specification.
-
-            Other values are reserved for future use.
-        </field>
     </register>
 
-    <register name="Hart Info" short="hartinfo" address="0x01">
-        <field name="0" bits="31:17" access="R" reset="0" />
+    <register name="Hart Info" short="hartinfo" address="0x12">
+      This register gives information about the hart currently
+      selected by \Fhartsel.
+
+      This register is optional. If it is not present it should
+      read all-zero.
+
+      If this register is included, the debugger can do more with
+      the Program Buffer by writing programs which
+      explicitly access the {\tt data} and/or {\tt dscratch}
+      registers.
+
+        <field name="0" bits="31:24" access="R" reset="0" />
+        <field name="nscratch" bits="23:20" access="R" reset="Preset">
+            Number of {\tt dscratch} registers available for the debugger
+            to use during program buffer execution, starting from \Rdscratchzero.
+            The debugger can make no assumptions about the contents of these
+            registers between commands.
+        </field>
+        <field name="0" bits="19:17" access="R" reset="0" />
         <field name="dataaccess" bits="16" access="R" reset="Preset">
             0: The {\tt data} registers are shadowed in the hart by CSR
             registers. Each CSR register is XLEN bits in size, and corresponds
@@ -103,7 +197,7 @@
         </field>
     </register>
 
-    <register name="Halt Summary" short="haltsum" address="0x02">
+    <register name="Halt Summary" short="haltsum" address="0x13">
         This register contains a summary of which harts are halted.
 
         Each bit contains the logical OR of 32 halt bits. When there are a
@@ -145,9 +239,283 @@
         <field name="halt1023:992" bits="31" access="R" reset="0" />
     </register>
 
+    <!-- =============== Hart Array Registers =============== -->
+
+    <register name="Hart Array Window Select" short="hawindowsel" address="0x14">
+
+      This register selects which of the 32-bit portion of the hart array mask register
+      is accessible in \Rhawindow.
+
+      The hart array mask register provides a mask of all harts controlled by
+      the debug module. A hart is part of the currently selected harts if
+      the corresponding bit is set in the hart array mask register and
+      \Fhasel in \Rdmcontrol is 1, or if the hart is selected by \Fhartsel.
+
+      <field name="0" bits="31:5" access="R/W" reset="0" />
+      <field name="hawindowsel" bits="4:0" access="R/W" reset="0" />
+    </register>
+
+    <register name="Hart Array Window " short="hawindow" address="0x15">
+      This register provides R/W access to a 32-bit portion of the
+      hart array mask register. The position of the window is determined by
+      \Rhawindowsel.
+      <field name="maskdata" bits="31:0" access="R/W" reset="0" />
+    </register>
+
+    <!-- =============== abstract commands =============== -->
+
+    <register name="Abstract Control and Status" short="abstractcs" address="0x16">
+        <field name="0" bits="31:29" access="R" reset="0" />
+        <field name="progsize" bits="28:24" access="R" reset="Preset">
+            Size of the Program Buffer, in 32-bit words. Valid sizes are 0 - 16.
+
+            TODO: Explain what can be done with each size of the buffer, to suggest
+            why you would want more or less words.
+
+        </field>
+        <field name="0" bits="23:13" access="R" reset="0" />
+        <field name="busy" bits="12" access="R" reset="0">
+            1: An abstract command is currently being executed.
+
+            This bit is set as soon as \Rcommand is written, and is
+            not cleared until that command has completed.
+        </field>
+        <field name="0" bits="11" access="R" reset="0" />
+        <field name="cmderr" bits="10:8" access="R/W0" reset="0">
+            Gets set if an abstract command fails. The bits in this field remain set until
+            they are cleared by writing 1 to them. No abstract command is
+            started until the value is reset to 0.
+
+            0 (none): No error.
+
+            1 (busy): An abstract command was executing while \Rcommand or one
+            of the {\tt data} registers was accessed.
+
+            2 (not supported): The requested command is not supported. A
+            command that is not supported while the hart is running may be
+            supported when it is halted.
+
+            3 (exception): An exception occurred while executing the command
+            (eg. while executing the Program Buffer).
+
+            4 (halt/resume): An abstract command couldn't execute because the
+            hart wasn't in the expected state (running/halted).
+
+            7 (other): The command failed for another reason.
+        </field>
+        <field name="0" bits="7:5" access="R" reset="0"/>
+        <field name="datacount" bits="4:0" access="R" reset="Preset">
+            Number of {\tt data} registers that are implemented as part of the
+            abstract command interface. Valid sizes are 0 - 8.
+        </field>
+    </register>
+
+    <register name="Abstract Command" short="command" address="0x17">
+        Writes to this register cause the corresponding abstract command to be
+        executed.
+
+        Writing while an abstract command is executing causes \Fcmderr to be set.
+
+        If \Fcmderr is non-zero, writes to this register are ignored.
+
+        \begin{commentary}
+            \Fcmderr inhibits starting a new command to accommodate debuggers
+            that, for performance reasons, send several commands to be executed
+            in a row without checking \Fcmderr in between. They can safely do
+            so and check \Fcmderr at the end without worrying that one command
+            failed but then a later command (which might have depended on the
+            previous one succeeding) passed.
+        \end{commentary}
+
+        <field name="cmdtype"    bits="31:24" access="W" reset="0">
+            The type determines the overall functionality of this
+            abstract command.
+        </field>
+        <field name="control" bits="23:0" access="W" reset="0" >
+            This field is interpreted in a command-specific manner,
+            described for each abstract command.
+        </field>
+    </register>
+
+    <register name ="Abstract Command Autoexec" short="abstractauto" address="0x18">
+      This register is optional. Including it allows more efficient burst accesses.
+      Debugger can attempt to set bits and read them back to determine if the functionality is supported.
+
+      <field name="autoexecprogbuf" bits="31:16" access="R/W" reset="0">
+          When a bit in this field is 1, read or write accesses the corresponding {\tt progbuf} word
+	  cause the command in \Rcommand to be executed again.
+      </field>
+      <field name="0" bits ="15:12" access="R" reset = "0"/>
+      <field name="autoexecdata" bits="11:0" access="R/W" reset="0">
+          When a bit in this field is 1, read or write accesses the corresponding {\tt data} word
+	  cause the command in \Rcommand to be executed again.
+      </field>
+    </register>
+
+    <register name="Configuration String Addr 0" short="cfgstraddr0" address="0x19">
+
+      The Configuration String is described in the RISC-V Priviledged Specification.
+      When {\tt cfgstrvalid} is set,  reading this register returns bits 31:0 of the configuration
+      string address. Reading the other {\tt cfgstraddr} registers returns the upper bits of the
+      address.
+
+      When system bus mastering is implemented, this should be the
+      address that should be used with the System Bus Access module. Otherwise,
+      this should be the address that should be used to access the
+      config string when \Fhartsel=0.
+
+      If {\tt cfgstrvalid} is 0, then the {\tt cfgstraddr} registers
+      hold identifier information which is not
+      further specified in this document.
+      <field name="addr" bits="31:0" access="R" reset="Preset"/>
+    </register>
+    <register name="Config String Addr 1" short="cfgstraddr1" address="0x1a"/>
+    <register name="Config String Addr 2" short="cfgstraddr2" address="0x1b"/>
+    <register name="Config String Addr 3" short="cfgstraddr3" address="0x1c"/>
+
+    <register name="Abstract Data 0" short="data0" address="0x04">
+        Basic read/write registers that may be read or changed by abstract
+        commands.
+
+        Accessing them while an abstract command is executing causes \Fcmderr
+        to be set.
+
+        The values in these registers may not be preserved after an abstract
+        command is executed. The only guarantees on their contents are the ones
+        offered by the command in question. If the command fails, no
+        assumptions can be made about the contents of these registers.
+
+        <field name="data" bits="31:0" access="R/W" reset="0" />
+    </register>
+
+    <register name="Abstract Data 1" short="data1" address="0x05" />
+    <register name="Abstract Data 2" short="data2" address="0x06" />
+    <register name="Abstract Data 3" short="data3" address="0x07" />
+    <register name="Abstract Data 4" short="data4" address="0x08" />
+    <register name="Abstract Data 5" short="data5" address="0x09" />
+    <register name="Abstract Data 6" short="data6" address="0x0a" />
+    <register name="Abstract Data 7" short="data7" address="0x0b" />
+    <register name="Abstract Data 8" short="data8" address="0x0c" />
+    <register name="Abstract Data 9" short="data9" address="0x0d" />
+    <register name="Abstract Data 10" short="data10" address="0x0e" />
+    <register name="Abstract Data 11" short="data11" address="0x0f" />
+
+
+
+    <!-- =============== Program Buffer =============== -->
+
+    <register name="Program Buffer 0" short="progbuf0" address="0x20">
+        The {\tt progbuf} registers provide read/write access to the optional
+        program buffer.
+        <field name="data" bits="31:0" access="R/W" reset="0" />
+    </register>
+
+    <register name="Program Buffer 1" short="progbuf1" address="0x21" />
+    <register name="Program Buffer 2" short="progbuf2" address="0x22" />
+    <register name="Program Buffer 3" short="progbuf3" address="0x23" />
+    <register name="Program Buffer 4" short="progbuf4" address="0x24" />
+    <register name="Program Buffer 5" short="progbuf5" address="0x25" />
+    <register name="Program Buffer 6" short="progbuf6" address="0x26" />
+    <register name="Program Buffer 7" short="progbuf7" address="0x27" />
+    <register name="Program Buffer 8" short="progbuf8" address="0x28" />
+    <register name="Program Buffer 9" short="progbuf9" address="0x29" />
+    <register name="Program Buffer 10" short="progbuf10" address="0x2a" />
+    <register name="Program Buffer 11" short="progbuf11" address="0x2b" />
+    <register name="Program Buffer 12" short="progbuf12" address="0x2c" />
+    <register name="Program Buffer 13" short="progbuf13" address="0x2d" />
+    <register name="Program Buffer 14" short="progbuf14" address="0x2e" />
+    <register name="Program Buffer 15" short="progbuf15" address="0x2f" />
+ 
+    <!-- =============== authentication =============== -->
+
+    <register name="Authentication Data" short="authdata" address="0x30">
+        This register serves as a 32-bit serial port to the authentication
+        module.
+
+        When \Fauthbusy is clear, the debugger can communicate with the
+        authentication module by reading or writing this register. There is no
+        separate mechanism to signal overflow/underflow.
+
+        <field name="data" bits="31:0" access="R/W" reset="0" />
+    </register>
+
+    <!-- =============== serial ports =============== -->
+
+    <register name="Serial Control and Status" short="sercs" address="0x34">
+        If \Fserialcount is 0, this register is not present.
+
+        <field name="serialcount" bits="31:28" access="R" reset="Preset">
+            Number of supported serial ports.
+        </field>
+        <field name="0" bits="27" access="R" reset="0" />
+        <field name="serial" bits="26:24" access="R/W" reset="0">
+            Select which serial port is accessed by \Rserrx and \Rsertx.
+        </field>
+        <field name="error7" bits="23" access="R" reset="0"/>
+        <field name="valid7" bits="22" access="R" reset="0" />
+        <field name="full7" bits="21" access="R/W0" reset="0" />
+        <field name="error6" bits="20" access="R" reset="0"/>
+        <field name="valid6" bits="19" access="R" reset="0" />
+        <field name="full6" bits="18" access="R/W0" reset="0" />
+        <field name="error5" bits="17" access="R" reset="0"/>
+        <field name="valid5" bits="16" access="R" reset="0" />
+        <field name="full5" bits="15" access="R/W0" reset="0" />
+        <field name="error4" bits="14" access="R" reset="0"/>
+        <field name="valid4" bits="13" access="R" reset="0" />
+        <field name="full4" bits="12" access="R/W0" reset="0" />
+        <field name="error3" bits="11" access="R" reset="0"/>
+        <field name="valid3" bits="10" access="R" reset="0" />
+        <field name="full3" bits="9" access="R/W0" reset="0" />
+        <field name="error2" bits="8" access="R" reset="0"/>
+        <field name="valid2" bits="7" access="R" reset="0" />
+        <field name="full2" bits="6" access="R/W0" reset="0" />
+        <field name="error1" bits="5" access="R" reset="0"/>
+        <field name="valid1" bits="4" access="R" reset="0" />
+        <field name="full1" bits="3" access="R/W0" reset="0" />
+        <field name="error0" bits="2" access="R" reset="0">
+            1 when the debugger-to-core queue for serial port 0 has
+            over or underflowed. This bit will remain set until it is reset by
+            writing 1 to this bit.
+        </field>
+        <field name="valid0" bits="1" access="R" reset="0">
+            1 when the core-to-debugger queue for serial port 0 is not empty.
+        </field>
+        <field name="full0" bits="0" access="R/W0" reset="0">
+            1 when the debugger-to-core queue for serial port 0 is full.
+        </field>
+    </register>
+
+    <register name="Serial TX Data" short="sertx" address="0x35">
+        If \Fserialcount is 0, this register is not present.
+
+        This register provides access to the write data queue of the serial port
+        selected by \Fserial in \Rsercs.
+
+        If the {\tt error} bit is not set and the queue is not full, a write to this register
+        adds the written data to the core-to-debugger queue.
+        Otherwise the {\tt error} bit is set and the write returns error.
+
+        A read to this register returns the last data written.
+
+        <field name="data" bits="31:0" access="R/W" reset="0" />
+    </register>
+
+    <register name="Serial RX Data" short="serrx" address="0x36">
+        If \Fserialcount is 0, this register is not present.
+
+        This register provides access to the read data queues of the serial port
+        selected by \Fserial in \Rsercs.
+
+        If the {\tt error} bit is not set and the queue is not empty, a read from this register reads the
+        oldest entry in the debugger-to-core queue, and removes that entry from the queue.
+        Otherwise the {\tt error} bit is set and the read returns error.
+
+        <field name="data" bits="31:0" access="R" reset="0" />
+    </register>
+
     <!-- =============== system bus mastering =============== -->
 
-    <register name="System Bus Access Control" short="sbcs" address="0x03">
+    <register name="System Bus Access Control and Status" short="sbcs" address="0x38">
         <field name="0" bits="31:21" access="R" reset="0" />
         <field name="sbsingleread" bits="20" access="W1" reset="0">
             When a 1 is written here, triggers a read at the address in {\tt
@@ -157,19 +525,19 @@
             Select the access size to use for system bus accesses triggered by
             writes to the {\tt sbaddress} registers or \Rsbdatazero.
 
-	    0: 8-bit
+            0: 8-bit
 
             1: 16-bit
 
-	    2: 32-bit
+            2: 32-bit
 
-	    3: 64-bit
+            3: 64-bit
 
-	    4: 128-bit
+            4: 128-bit
 
             If an unsupported system bus access size is written here,
-	    the DM may not
-            perform the access, or may perform the access with any access size
+            the DM may not perform the access, or may perform the access
+            with any access size.
         </field>
         <field name="sbautoincrement" bits="16" access="R/W" reset="0">
             When 1, the internal address value (used by the system bus master)
@@ -181,10 +549,10 @@
             bus read at the new address.
         </field>
         <field name="sberror" bits="14:12" access="R/W0" reset="0">
-          When the debug module's system bus
-	  master causes a bus error, this field gets set.
-          It remains set until 0 is written to any bit in this field. Until
-          that happens, the system bus master is busy and no more accesses can be
+            When the debug module's system bus
+            master causes a bus error, this field gets set. The bits in this
+            field remain set until they are cleared by writing 1 to them.
+            While this field is non-zero, no more system bus accesses can be
             initiated by the debug module.
 
             0: There was no bus error.
@@ -195,8 +563,11 @@
 
             3: There was some other error (eg. alignment).
 
-            4: The system bus master was busy when a one of the {\tt sbaddress} or
-            {\tt sbdata} registers was written.
+            4: The system bus master was busy when a one of the
+            {\tt sbaddress} or {\tt sbdata} registers was written,
+            or the {\tt sbdata} register was read when it had
+            stale data.
+
         </field>
         <field name="sbasize" bits="11:5" access="R" reset="Preset">
             Width of system bus addresses in bits. (0 indicates there is no bus
@@ -219,17 +590,17 @@
         </field>
     </register>
 
-    <register name="System Bus Address 31:0" short="sbaddress0" address="0x04">
+    <register name="System Bus Address 31:0" short="sbaddress0" address="0x39">
         If \Fsbasize is 0, then this register is not present.
 
         When the system bus master is busy,
-	writes to this register will return error
+        writes to this register will return error
         and \Fsberror is set.
 
         If \Fsberror is 0 and \Fsbautoread is set then the system bus
-	master will start
+        master will start
         to read after updating the address from \Faddress. The access size is
-        controlled by \Fsbaccess in \Rdmcontrol.
+        controlled by \Fsbaccess in \Rsbcs.
 
         If \Fsbsingleread is set, the bit is cleared.
 
@@ -238,46 +609,50 @@
         </field>
     </register>
 
-    <register name="System Bus Address 63:32" short="sbaddress1" address="0x05">
+    <register name="System Bus Address 63:32" short="sbaddress1" address="0x3a">
         <field name="address" bits="31:0" access="R/W" reset="0">
             Accesses bits 63:32 of the internal address (if the system address
             bus is that wide).
         </field>
     </register>
 
-    <register name="System Bus Address 91:61" short="sbaddress2" address="0x06">
+    <register name="System Bus Address 95:64" short="sbaddress2" address="0x3b">
         If \Fsbasize is less than 65, then this register is not present.
 
-        <field name="busy" bits="31" access="R" reset="0">
-            The same as \Fbusy in \Rsbaddresszero.
-        </field>
-        <field name="address" bits="30:0" access="R/W" reset="0">
-            Accesses bits 91:61 of the internal address (if the system address
+        <field name="address" bits="31:0" access="R/W" reset="0">
+            Accesses bits 95:64 of the internal address (if the system address
             bus is that wide).
         </field>
     </register>
 
-    <register name="System Bus Data 31:0" short="sbdata0" address="0x07">
+    <register name="System Bus Data 31:0" short="sbdata0" address="0x3c">
         If all of the {\tt sbaccess} bits in \Rsbcs are 0, then this register
         is not present.
 
         If \Fsberror isn't 0 then accesses return error, and don't do anything
         else.
 
-        If the bus master is busy then accesses set \Fsberror, return error,
+        Writes to this register:
+
+        1. If the bus master is busy then accesses set \Fsberror, return error,
         and don't do anything else.
 
-        Writes to this register:
-        1. Update internal data.
-        2. Start a bus write of the internal data to the internal address.
-        3. If \Fsbautoincrement is set, increment the internal address.
+        2. Update internal data.
+
+        3. Start a bus write of the internal data to the internal address.
+
+        4. If \Fsbautoincrement is set, increment the internal address.
 
         Reads to this register:
+
         1. If bits 31:0 of the internal data register haven't been updated
         since the last time this register was read, then set \Fsberror, return
         error, and don't do anything else.
-        2. "Return" the data.
+
+        2. ``Return'' the data.
+
         3. If \Fsbautoincrement is set, increment the internal address.
+
         4. If \Fsbautoread is set, start another system bus read.
 
         <field name="data" bits="31:0" access="R/W" reset="0">
@@ -285,7 +660,7 @@
         </field>
     </register>
 
-    <register name="System Bus Data 63:32" short="sbdata1" address="0x08">
+    <register name="System Bus Data 63:32" short="sbdata1" address="0x3d">
         If \Fsbaccesssixtyfour and \Fsbaccessonetwentyeight are 0, then this
         register is not present.
 
@@ -295,7 +670,7 @@
         </field>
     </register>
 
-    <register name="System Bus Data 95:64" short="sbdata2" address="0x09">
+    <register name="System Bus Data 95:64" short="sbdata2" address="0x3e">
         This register only exists if \Fsbaccessonetwentyeight is 1.
 
         <field name="data" bits="31:0" access="R/W" reset="0">
@@ -304,7 +679,7 @@
         </field>
     </register>
 
-    <register name="System Bus Data 127:96" short="sbdata3" address="0x0a">
+    <register name="System Bus Data 127:96" short="sbdata3" address="0x3f">
         This register only exists if \Fsbaccessonetwentyeight is 1.
 
         <field name="data" bits="31:0" access="R/W" reset="0">
@@ -312,224 +687,5 @@
             that wide).
         </field>
     </register>
-
-    <!-- =============== authentication =============== -->
-
-    <register name="Authentication Data 0" short="authdata0" address="0x0b">
-        If \Fauthtype is 0, this register is not present.
-
-        If \Fauthtype is 1, writing a correct password to this register and
-        \Rauthdataone enables the DM. The DM is disabled either by writing an
-        invalid password, or by resetting it. 0 must not be used as a password.
-        If an implementation wants to use a well-known password, the
-        recommended value is 0x5551212. Reading from the register returns 0.
-
-        If \Fauthtype is 2, things are a bit more complicated. Reading from the
-        register pair reads the last challenge generated. Writing the correct
-        response to \Rauthdataone and \Rauthdatazero enables the DM. The DM
-        is disabled either by writing an incorrect response, or by resetting
-        it.  Writing to \Rauthdatazero triggers validation, so if a 64-bit
-        value is required then \Rauthdataone must be written first.  If the
-        combined value in \Rauthdatazero and \Rauthdataone is not a valid
-        response after writing \Rauthdatazero, then a new challenge must be
-        generated.  Depending on the implementation, there may not be a valid
-        challenge until the first write to this register.
-
-        <field name="data" bits="31:0" access="R/W" reset="0" />
-    </register>
-
-    <register name="Authentication Data 1" short="authdata1" address="0x0c">
-        This register contains the upper 32 bits of a 64-bit password
-        or challenge/response as described in \Rauthdatazero.
-
-        <field name="data" bits="31:0" access="R/W" reset="0" />
-    </register>
-
-    <!-- =============== abstract commands =============== -->
-
-    <register name="Abstract Control" short="abstractcs" address="0x0e">
-        <field name="0" bits="31:16" access="R" reset="0" />
-        <field name="autoexec7" bits="15" access="R/W" reset="0" />
-        <field name="autoexec6" bits="14" access="R/W" reset="0" />
-        <field name="autoexec5" bits="13" access="R/W" reset="0" />
-        <field name="autoexec4" bits="12" access="R/W" reset="0" />
-        <field name="autoexec3" bits="11" access="R/W" reset="0" />
-        <field name="autoexec2" bits="10" access="R/W" reset="0" />
-        <field name="autoexec1" bits="9" access="R/W" reset="0" />
-        <field name="autoexec0" bits="8" access="R/W" reset="0">
-            When 1, accesses to \Rdatazero cause the command in \Rcommand to be
-            executed again.
-
-            The same is true for other other autoexec bits: When 1, accesses to
-            {\tt data}N cause the command in \Rcommand to be executed again.
-        </field>
-        <field name="cmderr" bits="7:5" access="R/W0" reset="0">
-            Gets set if an abstract command fails. No abstract command is
-            started until the value is reset to 0.
-
-            0 (none): No error.
-
-            1 (busy): An abstract command was executing while \Rcommand or one
-            of the {\tt data} registers was accessed.
-
-            2 (not supported): The requested command is not supported. A
-            command that is not supported while the hart is running may be
-            supported when it is halted.
-
-            3 (exception): An exception occurred while executing the command
-            (eg. while executing the Program Buffer).
-
-            4 (halt/resume): An abstract command couldn't execute because the
-            hart wasn't in the expected state (running/halted).
-
-            7 (other): The command failed for another reason.
-        </field>
-        <field name="busy" bits="4" access="R" reset="0">
-            1: An abstract command is currently being executed.
-
-            This bit is set as soon as \Rcommand is written, and isn't cleared
-            until that command has completed.
-        </field>
-        <field name="datacount" bits="3:0" access="R" reset="Preset">
-            Number of {\tt data} registers that are implemented as part of the
-            abstract command interface. If it's 0 then no abstract interface is
-            implemented at all.
-        </field>
-    </register>
-
-    <register name="Abstract Command" short="command" address="0x0f">
-        Writes to this register cause the corresponding abstract command to be
-        executed.
-
-        Writing while an abstract command is executing causes \Fcmderr to be set.
-
-        If \Fcmderr is non-zero, writes to this register are ignored.
-
-        \begin{commentary}
-            \Fcmderr inhibits starting a new command to accommodate debuggers
-            that, for performance reasons, send several commands to be executed
-            in a row without checking \Fcmderr in between. They can safely do
-            so and check \Fcmderr at the end without worrying that one command
-            failed but then a later command (which might have depended on the
-            previous one succeeding) passed.
-        \end{commentary}
-
-        <field name="command" bits="31:0" access="W" reset="0" />
-    </register>
-
-    <register name="Abstract Data 0" short="data0" address="0x10">
-        Basic read/write registers that may be read or changed by abstract
-        commands.
-
-        Accessing them while an abstract command is executing causes \Fcmderr
-        to be set.
-
-        The values in these registers may not be preserved after an abstract
-        command is executed. The only guarantees on their contents are the ones
-        offered by the command in question. If the command fails, no
-        assumptions can be made about the contents of these registers.
-
-        <field name="data" bits="31:0" access="R/W" reset="0" />
-    </register>
-
-    <register name="Abstract Data 1" short="data1" address="0x11" />
-    <register name="Abstract Data 2" short="data2" address="0x12" />
-    <register name="Abstract Data 3" short="data3" address="0x13" />
-    <register name="Abstract Data 4" short="data4" address="0x14" />
-    <register name="Abstract Data 5" short="data5" address="0x15" />
-    <register name="Abstract Data 6" short="data6" address="0x16" />
-    <register name="Abstract Data 7" short="data7" address="0x17" />
-    <register name="Abstract Data 8" short="data8" address="0x18" />
-    <register name="Abstract Data 9" short="data9" address="0x19" />
-    <register name="Abstract Data 10" short="data10" address="0x1a" />
-    <register name="Abstract Data 11" short="data11" address="0x1b" />
-
-    <!-- =============== serial ports =============== -->
-
-    <register name="Serial Data" short="serdata" address="0x1c">
-        If \Fserialcount is 0, this register is not present.
-
-        This register provides access to the data queues of the serial port
-        selected by \Fserial in \Rdmcontrol.
-
-        A read from this register reads the oldest entry in the
-        debugger-to-core queue, and removes that entry from the queue.  If the
-        queue is empty, then the read fails.
-
-        A write to this register adds the written data to the core-to-debugger
-        queue. If that queue is already full or its overflow bit is set, then
-        the write fails and the overflow bit becomes set.
-
-        <field name="data" bits="31:0" access="R/W" reset="0" />
-    </register>
-
-    <register name="Serial Status" short="serstatus" address="0x1d">
-        If \Fserialcount is 0, this register is not present.
-
-        <field name="serialcount" bits="31:28" access="R" reset="Preset">
-            Number of supported serial ports.
-        </field>
-        <field name="0" bits="27:19" access="R" reset="0" />
-        <field name="serial" bits="18:16" access="R/W" reset="0">
-            Select which serial port is accessed by \Rserdata.
-        </field>
-        <field name="valid7" bits="15" access="R" reset="0" />
-        <field name="full/overflow7" bits="14" access="R/W0" reset="0" />
-        <field name="valid6" bits="13" access="R" reset="0" />
-        <field name="full/overflow6" bits="12" access="R/W0" reset="0" />
-        <field name="valid5" bits="11" access="R" reset="0" />
-        <field name="full/overflow5" bits="10" access="R/W0" reset="0" />
-        <field name="valid4" bits="9" access="R" reset="0" />
-        <field name="full/overflow4" bits="8" access="R/W0" reset="0" />
-        <field name="valid3" bits="7" access="R" reset="0" />
-        <field name="full/overflow3" bits="6" access="R/W0" reset="0" />
-        <field name="valid2" bits="5" access="R" reset="0" />
-        <field name="full/overflow2" bits="4" access="R/W0" reset="0" />
-        <field name="valid1" bits="3" access="R" reset="0" />
-        <field name="full/overflow1" bits="2" access="R/W0" reset="0" />
-        <field name="valid0" bits="1" access="R" reset="0">
-            1 when the core-to-debugger queue for serial port 0 is not empty.
-        </field>
-        <field name="full/overflow0" bits="0" access="R/W0" reset="0">
-            1 when the debugger-to-core queue for serial port 0 is either full,
-            or has overflowed. Overflow state is sticky, and can be reset by
-            writing 0 to this bit.
-        </field>
-    </register>
-
-    <!-- =============== instruction supply =============== -->
-
-    <register name="Access Status and Control" short="accesscs" address="0x1f">
-        <field name="0" bits="31:4" access="R" reset="0" />
-        <field name="progsize" bits="3:0" access="R" reset="Preset">
-            Size of the Program Buffer, in 32-bit words. Valid sizes are 0, 1, 4,
-            and 8.
-
-            A debugger must not access any Instruction Buffer locations that
-            fall outside the range specified here.
-        </field>
-    </register>
-
-    <register name="Program Buffer 0" short="ibuf0" address="0x20">
-        The ibuf registers provide read/write access to the optional
-        instruction buffer.
-
-        If \Fautoexeczero is set, then after this register is accessed the
-        command in \Rcommand is executed again.
-
-        <field name="data" bits="31:0" access="R/W" reset="0" />
-    </register>
-
-    <register name="Program Buffer 1" short="ibuf1" address="0x21" />
-    <register name="Program Buffer 2" short="ibuf2" address="0x22" />
-    <register name="Program Buffer 3" short="ibuf3" address="0x23" />
-    <register name="Program Buffer 4" short="ibuf4" address="0x24" />
-    <register name="Program Buffer 5" short="ibuf5" address="0x25" />
-    <register name="Program Buffer 6" short="ibuf6" address="0x26" />
-    <register name="Program Buffer 7" short="ibuf7" address="0x27" />
-    <register name="Program Buffer 8" short="ibuf8" address="0x28" />
-    <register name="Program Buffer 9" short="ibuf9" address="0x29" />
-    <register name="Program Buffer 10" short="ibuf10" address="0x2a" />
-    <register name="Program Buffer 11" short="ibuf11" address="0x2b" />
 
 </registers>

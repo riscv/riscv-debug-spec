@@ -1,5 +1,5 @@
 <registers name="Trigger Registers" prefix="CSR_">
-    The trigger registers are only accessible in machine and debug mode to
+    The trigger registers are only accessible in machine and Debug Mode to
     prevent untrusted user code from causing entry into Debug Mode without the
     OS's permission.
 
@@ -9,8 +9,9 @@
         be contiguous.
 
         Writes of values greater than or equal to the number of supported
-        triggers result in an undefined value in \Rtselect. Debuggers should
-        read back the value to confirm that what they wrote was a valid index.
+        triggers may result in a different value in this register than what was
+        written.  Debuggers should read back the value to confirm that what
+        they wrote was a valid index.
 
         Since triggers can be used both by Debug Mode and M Mode, the debugger
         must restore this register if it modifies it.
@@ -25,16 +26,18 @@
             1: The trigger is a legacy SiFive address match trigger. These
             should not be implemented and aren't further documented here.
 
-            2: The trigger is an address/data match trigger.
+            2: The trigger is an address/data match trigger. The remaining bits
+            in this register act as described in \Rmcontrol.
 
-            3: The trigger is an instruction count trigger.
+            3: The trigger is an instruction count trigger. The remaining bits
+            in this register act as described in \Ricount.
 
             15: This trigger exists (so enumeration shouldn't terminate), but
             is not currently available.
 
             Other values are reserved for future use.
         </field>
-        <field name="dmode" bits="XLEN-5" access="R/W" reset="0">
+        <field name="hmode" bits="XLEN-5" access="R/W" reset="0">
             0: Both Debug and M Mode can write the {\tt tdata} registers at the
             selected \Rtselect.
 
@@ -68,14 +71,36 @@
 
         Address and data trigger implementation are heavily dependent on how
         the processor core is implemented. To accommodate various
-        implementations, load and store address and data triggers may fire at
+        implementations, execute, load, and store address/data triggers may fire at
         whatever point in time is most convenient for the implementation.
-        Following the suggestions in the definitions of \Fstore and \Fload will
-        lead to the best user experience, however.
+        The debugger may request specific timings as described in \Ftiming.
+        Table~\ref{tab:hwbp_timing} suggests timings for the best user experience.
+
+	\begin{table}[H]
+	\centering
+	\caption{Suggested Breakpoint Timings}
+	\label{tab:hwbp_timing}
+	\begin{tabular}{|r|l|}
+	\hline
+	Match Type                  &amp; Suggested Trigger Timing \\
+	\hline
+	Execute Address             &amp; Before \\
+	Execute Instruction         &amp; Before \\
+	Execute Address+Instruction &amp; Before \\
+	Load Address                &amp; Before \\
+	Load Data                   &amp; After \\
+	Load Address+Data           &amp; After \\
+	Store Address               &amp; Before \\
+	Store Data                  &amp; Before \\
+	Store Address+Data          &amp; Before \\
+	\hline
+	\end{tabular}
+	\end{table}
+
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="2" />
         <field name="dmode" bits="XLEN-5" access="R/W" reset="0" />
-        <field name="maskmax" bits="XLEN-6:XLEN-11" access="R" reset="0">
+        <field name="maskmax" bits="XLEN-6:XLEN-11" access="R" reset="Preset">
             Specifies the largest naturally aligned powers-of-two (NAPOT) range
             supported by the hardware. The value is the logarithm base 2 of the
             number of bytes in that range.  A value of 0 indicates that only
@@ -85,7 +110,7 @@
         </field>
         <field name="0" bits="XLEN-12:20" access="R" reset="0" />
         <field name="select" bits="19" access="R/W" reset="0">
-            0: Perform a match on the address.
+            0: Perform a match on the virtual address.
 
             1: Perform a match on the data value loaded/stored, or the
             instruction executed.
@@ -108,7 +133,7 @@
 
             Data load triggers with \Ftiming of 0 will result in the same load
             happening again when the debugger lets the core run. For data load
-            triggers debuggers must first attempt to set the breakpoint with
+            triggers, debuggers must first attempt to set the breakpoint with
             \Ftiming of 1.
 
             A chain of triggers that don't all have the same \Ftiming value
@@ -121,7 +146,7 @@
             0: Raise a breakpoint exception. (Used when software wants to use
             the trigger module without an external debugger attached.)
 
-            1: Enter Debug Mode. (Only supported when \Fdmode is 1.)
+            1: Enter Debug Mode. (Only supported when \Fhmode is 1.)
 
 	    2: Start tracing.
 
@@ -173,14 +198,14 @@
             When set, enable this trigger in U mode.
         </field>
         <field name="execute" bits="2" access="R/W" reset="0">
-            When set, the trigger fires on the address or opcode of an
+            When set, the trigger fires on the virtual address or opcode of an
             instruction that is executed.
         </field>
         <field name="store" bits="1" access="R/W" reset="0">
-            When set, the trigger fires on the address or data of a store.
+            When set, the trigger fires on the virtual address or data of a store.
         </field>
         <field name="load" bits="0" access="R/W" reset="0">
-            When set, the trigger fires on the address or data of a load.
+            When set, the trigger fires on the virtual address or data of a load.
         </field>
     </register>
 
@@ -242,7 +267,7 @@
             0: Raise a debug exception. (Used when software wants to use the
             trigger module without an external debugger attached.)
 
-            1: Enter Debug Mode. (Only supported when \Fdmode is 1.)
+            1: Enter Debug Mode. (Only supported when \Fhmode is 1.)
 
 	    2: Start tracing.
 
