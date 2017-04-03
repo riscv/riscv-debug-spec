@@ -4,55 +4,51 @@
 Below are two possible implementations. A designer could choose one, mix and
 match, or come up with their own design.
 
-\section{Direct}
+\section{Abstract Command Based}
 
-Halting happens by inhibiting instruction fetching in Debug Mode.
+Halting happens by stalling the processor execution pipeline.
 
-Muxes on the register file(s) allow for implementing those abstract commands.
-(TODO: Should we spec a suggested way of communicating between DM and hart, so
-that a reusable DM can be implemented?)
+Muxes on the register file(s) allow for accessing GPRs and CSRs
+using the Access Register abstract command.
 
-To execute a program buffer, force \Rpc to the start of it, and re-enable
-instruction fetching (while staying in Debug Mode) until {\tt ebreak} is
-encountered.
+\section{Execution Based}
 
-\Rdpc is not physically a CSR. Instead, accessing it directly access \Rpc.
+This implementation only implements the Access Register abstract commannd
+for GPRs on a halted hart, and relies on the Program Buffer for all other
+operations.
 
-\section{Plain Exception}
+This method uses the processor's existing pipeline
+and ability to execute from arbitrary memory locations to avoid
+modifications to a processors datapath.
+When \Fhaltreq is set, the Debug Module raises a special interrupt
+to the selected hart. This interrupt causes the
+hart to enter Debug Mode and jump to a 
+memory region that is serviced by the DM and execute a 'park loop'.
+When taking this exception, \Rpc is saved to \Rdpc.
+In
+the park loop the hart writes its \Rmhartid to a memory location within the Debug
+Module to indicate that it is halted.
+To allow the DM to individually control one out of several
+halted harts, each hart polls a specific memory location or bit in a \Rdscratch
+CSR to determine whether the debugger wants it to continue.
 
-In this implementation, Debug Mode acts more like a real exception, jumping to a
-memory region that is serviced by the DM. When taking this exception, \Rpc is
-saved to \Rdpc. To allow the DM to individually control one out of several
-halted harts, each hart jumps to a hard-coded unique address.
+\Rdatazero etc. are mapped into regular memory at an address relative to \Rzero
+with only a 12-bit {\tt imm}. The exact address is an implementation
+detail that a debugger must not rely on.
 
-\Rdatazero etc. are mapped into regular memory at address 0x400. The important
-property of that address is that it's reachable relative to \Rzero. The exact
-address is an implementation detail that a debugger must not rely on.
-
-When first halting, the code there looks like this:
-\begin{minted}{gas}
-dm_park_hart_0:
-        nop
-        j       dm_park_hart_0
-
-dm_exception_hart_0:
-        j       dm_park_hart_0
-\end{minted}
-
-The DM assumes that every instruction fetched from it is executed.
-
-To implement the abstract 32-bit GPR access instructions, the {\tt nop} is
-changed (for a single fetch) to {\tt lw <gpr>, 0x400(zero)} or {\tt sw
-0x400(zero), <gpr>}. 64- and 128-bit accesses use {\tt ld}/{\tt sd} and {\tt
+To implement the abstract 32-bit GPR access instructions, the debugger causes
+the hart to  execute {\tt lw <gpr>, 0x400(zero)} or {\tt sw0x400(zero), <gpr>}.
+64- and 128-bit accesses use {\tt ld}/{\tt sd} and {\tt
 lq}/{\tt sq} respectively.
 
-To execute the Program Buffer, the {\tt nop} is changed to {\tt j
-dm\_program\_buffer}. When {\tt ebreak} is executed (indicating the end of the
+To execute the Program Buffer, the debugger causes the hart to execute
+{\tt j dm\_program\_buffer}. When {\tt ebreak} is executed (indicating the end of the
 Program Buffer code) the hart jumps back to its park loop. If an exception is
-encountered, the hart jumps to its debug exception address, which in turn
-contains a jump back to its park loop. The DM infers from the fetch at the park
-address that there was an exception, and sets \Fcmderr appropriately.
+encountered, the hart jumps to its debug exception address, which
+writes to an address in the Debug Module which indicates exception, then
+contains a jump back to the hart's park loop.
+The DM infers from the write that there was an exception, and sets \Fcmderr appropriately.
 
-To resume execution, the {\tt nop} is changed to {\tt dret}.  When {\tt dret}
-is executed, \Rpc is restored from \Rdpc and normal execution resumes at the
+To resume execution, the debug module causes the core to execute a {\tt dret}.
+When {\tt dret} is executed, \Rpc is restored from \Rdpc and normal execution resumes at the
 privilege set by \Fprv.
