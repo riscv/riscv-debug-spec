@@ -1,0 +1,455 @@
+\chapter{Debugger Implementation}
+
+This section details how an external debugger might use the described debug
+interface to perform some common operations on RISC-V cores using the JTAG DTM.
+All these examples assume a 32-bit core but it should be easy to adapt the
+examples to 64- or 128-bit cores.
+
+To keep the examples readable, they all assume that everything succeeds, and
+that they complete faster than the debugger can perform the next access. This
+will be the case in a typical JTAG setup. However, the debugger must always
+check the sticky error status bits after performing a sequence of actions. If
+it sees any that are set, then it should attempt the same actions again,
+possibly while adding in some delay, or explicit checks for status bits.
+
+\section{Debug Bus Access} \label{dbusaccess}
+
+To read an arbitrary Debug Bus register, select \Rdmi, and scan in a value
+with \Fop set to 1, and \Faddress set to the desired register address. In
+Update-DR the operation will start, and in Capture-DR its results will be
+captured into \Fdata.  If the operation didn't complete in time, \Fop will be 3
+and the value in \Fdata must be ignored. The error condition must be cleared by
+writing \Fdmireset in \Rdtmcs, and then the operation must be tried
+again. This time the debugger should allow for more time between Capture-DR and
+Update-DR.
+
+To write an arbitrary Debug Bus register, select \Rdmi, and scan in a value
+with \Fop set to 2, and \Faddress and \Fdata set to the desired register
+address and data respectively. From then on everything happens exactly as with
+a read, except that a write is also performed right after the read. The
+operation isn't considered complete until the write has happened.
+
+It should almost never be necessary to scan IR, avoiding a big part of the
+inefficiency in typical JTAG use.
+
+\section{Main Loop}
+
+A debugger continuously monitors \Rhaltsum to see if any harts have spontaneously
+halted.
+
+\section{Halting} \label{deb:halt}
+
+To halt a hart, the debugger sets \Fhartsel and \Fhaltreq. Then it waits for
+\Fallhalted to become 1.
+
+\section{Accessing Registers}
+
+\subsubsection{Using Abstract Command} \label{deb:abstractreg}
+
+\noindent Read \Szero using abstract command:
+
+\begin{tabulary}{\textwidth}{|r|r|r|L|}
+    \hline
+    Op & Address & Value & Comment \\
+    \hline
+    Write & \Rcommand & \Fsize$=2$, 0x1008 & Read \Szero \\
+    \hline
+    Read & \Rdatazero & - & Returns value that was in \Szero \\
+    \hline
+\end{tabulary}
+\medskip
+
+\noindent Write \Rmstatus using abstract command:
+
+\begin{tabulary}{\textwidth}{|r|r|r|L|}
+    \hline
+    Op & Address & Value & Comment \\
+    \hline
+    Write & \Rdatazero & new value & \\
+    \hline
+    Write & \Rcommand & \Fsize$=2$, \Fwrite, 0x300 & Write \Rmstatus \\
+    \hline
+\end{tabulary}
+\medskip
+
+\subsubsection{Using Program Buffer} \label{deb:regprogbuf}
+
+Abstract commands are used to exchange data with GPRs. Using this mechanism, other
+registers can be accessed by moving their value into/out of GPRs.
+
+\noindent Write \Rmstatus using program buffer:
+
+\begin{tabulary}{\textwidth}{|r|r|r|L|}
+    \hline
+    Op & Address & Value & Comment \\
+    \hline
+    Write & \Rprogbufzero & {\tt csrw s0, MSTATUS} & \\
+    \hline
+    Write & \Rprogbufone & {\tt ebreak} & \\
+    \hline
+    Write & \Rdatazero & new value & \\
+    \hline
+    Write & \Rcommand & \Fsize$=2$, \Fpostexec, \Fwrite, 0x1008 &
+        Write \Szero, then execute program buffer \\
+    \hline
+\end{tabulary}
+\medskip
+
+\noindent Read \Fone using program buffer:
+
+\begin{tabulary}{\textwidth}{|r|r|r|L|}
+    \hline
+    Op & Address & Value & Comment \\
+    \hline
+    Write & \Rprogbufzero & {\tt fmv.x.s s0, f1} & \\
+    \hline
+    Write & \Rprogbufone & {\tt ebreak} & \\
+    \hline
+    Write & \Rcommand & \Fpreexec, 0x1008 & Execute program buffer, then read \Szero \\
+    \hline
+    Read & \Rdatazero & - & Returns the value that was in \Fone \\
+    \hline
+\end{tabulary}
+\medskip
+
+\section{Reading Memory}
+
+\subsubsection{Using System Bus Access} \label{deb:mrsysbus}
+
+\noindent Read a word from memory using system bus access:
+
+\begin{tabulary}{\textwidth}{|r|r|r|L|}
+    \hline
+    Op & Address & Value & Comment \\
+    \hline
+    Write & \Rsbaddresszero & address & \\
+    \hline
+    Write & \Rsbcs & \Fsbaccess$=2$, \Fsbsingleread & Perform a read \\
+    \hline
+    Read & \Rsbdatazero & - & Value read from memory \\
+    \hline
+\end{tabulary}
+\medskip
+
+\noindent Read block of memory using system bus access:
+
+\begin{tabulary}{\textwidth}{|r|r|L|L|}
+    \hline
+    Op & Address & Value & Comment \\
+    \hline
+    Write & \Rsbaddresszero & address & \\
+    \hline
+    Write & \Rsbcs & \Fsbaccess$=2$, \Fsbsingleread, \Fsbautoread,
+        \Fsbautoincrement & Turn on autoread and autoincrement, and perform a
+        read \\
+    \hline
+    Read & \Rsbdatazero & - & Value read from memory \\
+    \hline
+    Read & \Rsbdatazero & - & Next value read from memory \\
+    \hline
+    ... & ... & ... & ... \\
+    \hline
+    Write & \Rsbcs & 0 & Clear \Fsbautoread \\
+    \hline
+    Read & \Rdatazero & - & Get last value read from memory. \\
+    \hline
+\end{tabulary}
+\medskip
+
+\subsubsection{Using Program Buffer} \label{deb:mrprogbuf}
+
+\noindent Read a word from memory using program buffer:
+
+\begin{tabulary}{\textwidth}{|r|r|r|L|}
+    \hline
+    Op & Address & Value & Comment \\
+    \hline
+    Write & \Rprogbufzero & {\tt lw s0, 0(s0)} & \\
+    \hline
+    Write & \Rprogbufone & {\tt ebreak} & \\
+    \hline
+    Write & \Rdatazero & address & \\
+    \hline
+    Write & \Rcommand & \Fwrite, \Fpostexec, 0x1008 & Write \Szero, then execute program buffer \\
+    \hline
+    Write & \Rcommand & 0x1008 & Read \Szero \\
+    \hline
+    Read & \Rdatazero & - & Value read from memory \\
+    \hline
+\end{tabulary}
+\medskip
+
+\noindent Read block of memory using program buffer:
+
+\begin{tabulary}{\textwidth}{|r|r|r|L|}
+    \hline
+    Op & Address & Value & Comment \\
+    \hline
+    Write & \Rprogbufzero & {\tt lw s1, 0(s0)} & \\
+    \hline
+    Write & \Rprogbufone & {\tt addi s0, s0, 4} & \\
+    \hline
+    Write & \Rprogbuftwo & {\tt ebreak} & \\
+    \hline
+    Write & \Rdatazero & address & \\
+    \hline
+    Write & \Rcommand & \Fwrite, \Fpostexec, 0x1008 & Write \Szero, then execute program buffer \\
+    \hline
+    Write & \Rcommand & \Fpostexec, 0x1009 & Read \Sone, then execute program buffer \\
+    \hline
+    Write & \Rabstractcs & \Fautoexecdata[0] & Set \Fautoexecdata[0] \\
+    \hline
+    Read & \Rdatazero & - & Get value read from memory, then execute program buffer \\
+    \hline
+    Read & \Rdatazero & - & Get next value read from memory, then execute program buffer \\
+    \hline
+    ... & ... & ... & ... \\
+    \hline
+    Write & \Rabstractcs & 0 & Clear \Fautoexecdata[0] \\
+    \hline
+    Read & \Rdatazero & - & Get last value read from memory. \\
+    \hline
+\end{tabulary}
+\medskip
+
+TODO: Table~\ref{tab:memread} shows the scans involved in reading a single word using
+this method.
+
+\begin{table}[htp]
+    \centering
+    \caption{Memory Read Timeline}
+    \label{tab:memread}
+    \begin{tabulary}{\textwidth}{|r|l|L|}
+        \hline
+        & JTAG State & Activity \\
+        \hline
+        TODO & TODO & TODO \\
+%        1 & Shift-DR & Debugger shifts in write of 0x41002403 to dram[0], and
+%        gets back the result of whatever happened previously. \\
+%        & Update-DR & DTM starts read from dram[0], followed by write to
+%        dram[0]. \\
+%        \hline
+%        2 & Capture-DR & DTM captures results of read from dram[0]. \\
+%        & Shift-DR & Debugger shifts in write of 0x42483 to dram[1], and gets
+%        back the old contents of the first word in Debug RAM. \\
+%        & Update-DR & DTM starts read from dram[1], followed by write to
+%        dram[1]. \\
+%        \hline
+%        3 & Capture-DR & DTM captures results of read from dram[1]. \\
+%        & Shift-DR & Debugger shifts in write of 0x40902823 to dram[2], and
+%        gets back the old contents of the second word in Debug RAM. \\
+%        & Update-DR & DTM starts read from dram[2], followed by write to
+%        dram[2]. \\
+%        \hline
+%        4 & Capture-DR & DTM captures results of read from dram[2]. \\
+%        & Shift-DR & Debugger shifts in write of 0x3f80006f to dram[3], and
+%        gets back the old contents of the third word in Debug RAM. \\
+%        & Update-DR & DTM starts read from dram[3], followed by write to
+%        dram[3]. \\
+%        \hline
+%        5 & Capture-DR & DTM captures results of read from dram[3]. \\
+%        & Shift-DR & Debugger shifts in write of the address the user wants to
+%        read from to dram[4], using the interrupting Debug RAM register to assert
+%        the Debug Interrupt. The old contents of the fourth word in Debug RAM
+%        are shifted out. \\
+%        & Update-DR & DTM starts read from dram[4], followed by write to
+%        dram[4], and then sets the interrupt bit. The hart will respond to the
+%        Debug Interrupt by executing the program in Debug RAM which in this
+%        case will read the address written, and replace the entry in Debug RAM
+%        with the data at that address. \\
+%        \hline
+%        6 & Capture-DR & DTM captures results of read from dram[4]. \\
+%        & Shift-DR & Debugger shifts in read from dram[4], and gets back the
+%        old contents of the fourth word in Debug RAM. (This is the value that
+%        was there just before the address was written there.) \\
+%        & Update-DR & DTM starts read from dram[4]. \\
+%        \hline
+%        7 & Capture-DR & DTM captures results of read from dram[4]. \\
+%        & Shift-DR & Debugger shifts in nop, and gets back the contents of the
+%        fourth word in Debug RAM. This is the value that was there during the
+%        previous Update-DR, which is the result of the Debug Program execution.
+%        \\
+        \hline
+    \end{tabulary}
+\end{table}
+
+\section{Writing Memory} \label{writemem}
+
+TODO: Just like reading memory.
+
+\subsubsection{Using System Bus Access} \label{deb:mrsysbus}
+
+\noindent Write a word to memory using system bus access:
+
+\begin{tabulary}{\textwidth}{|r|r|r|L|}
+    \hline
+    Op & Address & Value & Comment \\
+    \hline
+    Write & \Rsbaddresszero & address & \\
+    \hline
+    Write & \Rsbdatazero & value & \\
+    \hline
+\end{tabulary}
+\medskip
+
+\noindent Write block of memory using system bus access:
+
+\begin{tabulary}{\textwidth}{|r|r|L|L|}
+    \hline
+    Op & Address & Value & Comment \\
+    \hline
+    Write & \Rsbaddresszero & address & \\
+    \hline
+    Write & \Rsbcs & \Fsbaccess$=2$, \Fsbautoincrement & Turn on autoincrement \\
+    \hline
+    Write & \Rsbdatazero & value0 & \\
+    \hline
+    Write & \Rsbdatazero & value1 & \\
+    \hline
+    ... & ... & ... & ... \\
+    \hline
+    Write & \Rsbdatazero & valueN & \\
+    \hline
+\end{tabulary}
+\medskip
+
+\subsubsection{Using Program Buffer} \label{deb:mrprogbuf}
+
+\noindent Write a word to memory using program buffer:
+
+\begin{tabulary}{\textwidth}{|r|r|r|L|}
+    \hline
+    Op & Address & Value & Comment \\
+    \hline
+    Write & \Rprogbufzero & {\tt sw 0(s0), s1} & \\
+    \hline
+    Write & \Rprogbufone & {\tt ebreak} & \\
+    \hline
+    Write & \Rdatazero & value & \\
+    \hline
+    Write & \Rcommand & \Fwrite, 0x1008 & Write \Szero \\
+    \hline
+    Write & \Rdatazero & address & \\
+    \hline
+    Write & \Rcommand & \Fwrite, \Fpostexec, 0x1009 & Write \Sone, then execute program buffer \\
+    \hline
+\end{tabulary}
+\medskip
+
+\noindent Write block of memory using program buffer:
+
+\begin{tabulary}{\textwidth}{|r|r|r|L|}
+    \hline
+    Op & Address & Value & Comment \\
+    \hline
+    Write & \Rprogbufzero & {\tt sw s1, 0(s0)} & \\
+    \hline
+    Write & \Rprogbufone & {\tt addi s0, s0, 4} & \\
+    \hline
+    Write & \Rprogbuftwo & {\tt ebreak} & \\
+    \hline
+    Write & \Rdatazero & address & \\
+    \hline
+    Write & \Rcommand & \Fwrite, 0x1008 & Write \Szero \\
+    \hline
+    Write & \Rdatazero & value0 & \\
+    \hline
+    Write & \Rcommand & \Fwrite, \Fpostexec, 0x1009 & Write \Sone, then execute program buffer \\
+    \hline
+    Write & \Rabstractcs & \Fautoexecdata[0] & Set \Fautoexecdata[0] \\
+    \hline
+    Write & \Rdatazero & value1 & \\
+    \hline
+    ... & ... & ... & ... \\
+    \hline
+    Write & \Rdatazero & valueN & \\
+    \hline
+    Write & \Rabstractcs & 0 & Clear \Fautoexecdata[0] \\
+    \hline
+\end{tabulary}
+\medskip
+
+\begin{commentary}
+    % Select-DR-Scan to Shift-DR: 2
+    % Shift-DR to Exit1-DR: dbus register is abits+33 bits, so 38
+    % Exit1-DR to Select-DR-Scan: 2
+    % Total: 42
+
+    TODO: maybe update
+
+    After the instruction buffer is configured, each word can be written to the
+    target in 42 TCK cycles. That's 76\% efficient, and translates to a
+    download speed of 930KB/s at a 10MHz TCK.  That should be good enough that
+    it's not worth making the JTAG interface more complex to improve the
+    efficiency. (This assumes the Debug Bus uses 5 address bits and that the
+    debugger never has to wait for the core.)
+\end{commentary}
+
+\section{Running}
+
+First, the debugger should restore any registers that it has clobbered.  Once
+that's done, it can let the core run by setting \Fresumereq.
+
+\section{Single Step}
+
+A debugger can single step the core by setting a breakpoint on the next
+instruction and letting the core run, or by asking the hardware to perform a
+single step. The former requires the debugger to have much more knowledge of
+the hardware than the latter, so the latter is preferred.
+
+Using the hardware single step feature is almost the same as regular running.
+The debugger just sets \Fstep in \Rdcsr before letting the core run. The core
+behaves exactly as in the running case, except that interrupts are left off and
+it only fetches and executes a single instruction before re-entering Debug
+Mode.
+
+\section{Handling Exceptions}
+
+Generally the debugger can avoid exceptions by being careful with the programs
+it writes. Sometimes they are unavoidable though, eg. if the user asks to
+access memory or a CSR that is not implemented. A typical debugger will not
+know enough about the platform to know what's going to happen, and must attempt
+the access to determine the outcome.
+
+When an exception occurs while executing the Program Buffer, \Fcmderr becomes
+set. The debugger can check this field to see whether a program encountered an
+exception.  If there was an exception, it's left to the debugger to know what
+must have caused it.
+
+\section{Quick Access} \label{quickaccess}
+
+Halt the hart for a minimum amount of time to perform a single memory write.
+
+There are 2 different instructions to transfer data between GPRs and the {\tt
+data} registers. They are either loads/stores or CSR reads/writes. The specific
+addresses also vary. This is all specified in \Rhartinfo. The example here uses
+the pseudo-op {\tt transfer dest, src} to represent all these options.
+
+\begin{tabulary}{\textwidth}{|r|r|l|L|}
+    \hline
+    Op & Address & Value & Comment \\
+    \hline
+    Write & \Rprogbufzero & {\tt transfer arg2, s0} & \\
+    \hline
+    Write & \Rprogbufone & {\tt transfer s0, arg0} & \\
+    \hline
+    Write & \Rprogbuftwo & {\tt transfer arg0, s1} & \\
+    \hline
+    Write & \Rprogbufthree & {\tt transfer s1, arg1} & \\
+    \hline
+    Write & \Rprogbuffour & {\tt sw 0(s0), s1} & \\
+    \hline
+    Write & \Rprogbuffive & {\tt transfer arg1, s1} & \\
+    \hline
+    Write & \Rprogbufsix & {\tt transfer arg2, s0} & \\
+    \hline
+    Write & \Rprogbufseven & {\tt ebreak} & \\
+    \hline
+    Write & \Rdatazero & address & \\
+    \hline
+    Write & \Rdataone & data & \\
+    \hline
+    Write & \Rcommand & 0x10000000 & Perform quick access \\
+    \hline
+\end{tabulary}
+\medskip
