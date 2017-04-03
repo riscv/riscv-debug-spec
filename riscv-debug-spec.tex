@@ -1,51 +1,14 @@
-\documentclass{article}
+%=======================================================================
+% riscv-privileged.tex
+%-----------------------------------------------------------------------
 
-\usepackage{tabulary}
-\usepackage{listings}
-\usepackage{algorithmicx}
-\usepackage{minted}
-\usepackage{program}
-\usepackage{graphicx}
-\usepackage[colorlinks=true,linkcolor=blue]{hyperref}
-\usepackage[nochapter]{vhistory}
-\usepackage{siunitx}
+\documentclass[twoside,11pt]{book}
 
-% If LaTeX just doesn't do what I want, buy http://www.amazon.com/gp/product/0201362996
-
-% Used for tables that can span pages:
-\usepackage{xtab}
-
-% Keep spacing normal in enumerated instead of adding extra space between
-% items.
-\usepackage{enumitem}
-%\setlist{nolistsep}
-
-\newenvironment{commentary}
-{
-   \begin{quotation}
-   \noindent
-   \small \em
-   \rule{\linewidth}{1pt}\\
-}
-{
-   \end{quotation}
-}
-
-\newenvironment{steps}[1]
-{
-   \vspace{1ex}
-   \noindent
-   #1
-   \begin{enumerate}[nosep]
-}
-{
-   \end{enumerate}
-   \vspace{1ex}
-}
-
+\input{preamble}
 
 % All registers are named here. That way when we rename one we'll get errors if
 % there are still references to the old name.
+
 \usepackage{xspace}
 \newcommand{\defregname}[2]{\providecommand{#1}{{\tt #2}\xspace}}
 \newcommand{\deffieldname}[2]{\providecommand{#1}{{$|#2|$}\xspace}}
@@ -88,51 +51,32 @@
 \newcommand{\shortdate}{jan24}
 \newcommand{\longdate}{January 24, 2017}
 
+
+\begin{document}
+
 \title{RISC-V External Debug Support\\
 Version \versionnum\\
 \GITHash
 }
 \author{Tim Newsome \textless tim@sifive.com\textgreater}
 \date{\GITAuthorDate}
-
-\begin{document}
 \maketitle
 
-{\bf Warning! This draft specification will change before being accepted as
-standard, so implementations made to this draft specification will likely not
-conform to the future standard.}
+\markboth{foo\versionnum}
+{foo\versionnum}
+\thispagestyle{empty}
+
+\frontmatter
+
+\input{preface.tex}
 
 \tableofcontents
 \listoffigures
 \listoftables
 
+\mainmatter
+
 \newpage
-
-\section*{Acknowledgments}
-
-I would like to thank the following people for their time, feedback, and ideas:
-Bruce Ableidinger,
-Krste Asanovic,
-Mark Beal,
-Alex Bradbury,
-Zhong-Ho Chen,
-Monte Dalrymple,
-Vyacheslav Dyanchenco,
-Peter Egold,
-Richard Herveille,
-Po-wei Huang,
-Scott Johnson,
-Aram Nahidipour,
-Gajinder Panesar,
-Klaus Kruse Pedersen,
-Antony Pavlov,
-Ken Pettit,
-Wesley Terpstra,
-Megan Wachs,
-Stefan Wallentowitz,
-Ray Van De Walker,
-Andrew Waterman,
-and Andy Wright.
 
 \section{Introduction}
 
