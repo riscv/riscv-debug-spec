@@ -78,7 +78,7 @@ Version \versionnum\\
 
 \newpage
 
-\section{Introduction}
+\chapter{Introduction}
 
 Software contains bugs, and to help find these bugs it is critical to have good
 debugging tools. Unless a robust OS is running on a core, with convenient
@@ -86,9 +86,9 @@ access to it (eg. over a network interface), hardware support is required to
 provide visibility into what is going on in that core.  This document outlines
 how that support should be provided on RISC-V platforms.
 
-\section{About This Document}
+\chapter{About This Document}
 
-\subsection{Structure}
+\section{Structure}
 
 This document contains two parts. The main part of the document is the
 specification, which is given in the numbered sections. The second part
@@ -96,7 +96,7 @@ of the document is a set of  appendices. The information
 in the appendix is intended to clarify and provide examples, but is
 not part of the actual specification.
 
-\subsection{Terminology}
+\section{Terminology}
 
 A \emph{platform} is a single integrated circuit consisting of one or more
 \emph{components}.
@@ -105,7 +105,7 @@ function. Typically they will all be connected to a single system bus.
 A single RISC-V core contains one or more hardware threads, called
 \emph{harts}.
 
-\subsection{Register Definition Format}
+\section{Register Definition Format}
 
 All register definitions in this document follow the format shown in Section~\ref{shortname}.
 A simple graphic shows which fields are in the register. The
@@ -139,7 +139,7 @@ in Table~\ref{tab:access}.
 
 \input{sample_registers.tex}
 
-\subsection{Reading Order}
+\section{Reading Order}
 
 This section describes the minimal parts of the spec required to understand a
 given piece of functionality. It's still best to read the whole thing, but it
@@ -188,7 +188,7 @@ TODO
 
 TODO
 
-\section{Background}
+\chapter{Background}
 
 There are two forms of external debugging. The first is \emph{halt mode}
 debugging, where an external debugger will halt some or all components of a
@@ -210,7 +210,7 @@ it could be used to implement a serial interface that firmware could use to
 provide a simple CLI. This can use the same serial ports used for run-mode
 debugging.
 
-\section{Supported Features}
+\chapter{Supported Features}
 The debug interface described out here supports the following features:
 \begin{enumerate}
    \item RV32, RV64, and future RV128 are all supported.
@@ -240,7 +240,7 @@ The debug interface described out here supports the following features:
    \item Multiple harts can be halted and resumed simultaneously.
 \end{enumerate}
 
-\section{System Overview} \label{overview}
+\chapter{System Overview} \label{overview}
 
 The Debug System is designed to allow (at least) 2 different implementations.
 The direct implementation is intrusive into a core's data path, but enables a
@@ -275,7 +275,7 @@ implement breakpoints, which cause a hart to halt spontaneously.  When that
 happens the DM notices because the hart will signal the DM that it's ready for
 an instruction.
 
-\section{Debug Transport Module (DTM)} \label{dtm}
+\chapter{Debug Transport Module (DTM)} \label{dtm}
 
 Debug Transport Modules provide access to the DM over one or more transports
 (eg. JTAG or USB).
@@ -293,7 +293,7 @@ to ensure this does not happen.
 This specification defines a JTAG DTM in Section~\ref{jtagdtm}. Additional DTMs
 may be added in future versions of this specification.
 
-\section{Debug Module (DM)} \label{dm}
+\chapter{Debug Module (DM)} \label{dm}
 
 \begin{steps}{The Debug Module is the interface between specific debug
     operations and their implementation. It might support the following
@@ -312,7 +312,7 @@ may be added in future versions of this specification.
 
 A single DM can debug up to 1024 harts.
 
-\subsection{Debug Module Interface (DMI)} \label{dmi}
+\section{Debug Module Interface (DMI)} \label{dmi}
 
 The Debug Module Interface can be a trivial bus with one master and one slave,
 or use a more full-featured bus like TileLink or the AMBA Advanced Peripheral
@@ -340,7 +340,7 @@ additional DMs, etc.
     \end{tabulary}
 \end{table}
 
-\subsection{Reset Control} \label{reset}
+\section{Reset Control} \label{reset}
 
 This block is connected to a global reset signal, which can
 reset, or hold in reset, every component in the platform,
@@ -352,14 +352,14 @@ generally reset at power-up and if and only if
 \Fdmactive in \Rdmcontrol is 0. This means that the halt state of all harts is
 maintained provided that \Fdmactive is 1, although trigger CSRs may be cleared.
 
-\subsection{Selecting Harts} \label{selectingharts}
+\section{Selecting Harts} \label{selectingharts}
 
 Up to 1024 harts can be connected to the DM. The debugger can select any hart
 by writing its index to \Fhartsel. Hart indexes start at 0 and are continuous
 until the final index. This allows the debugger to enumerate all the harts
 attached to the DM by trying each index until \Fanynonexistent is 1.
 
-\subsection{Halt Control} \label{haltcontrol}
+\section{Halt Control} \label{haltcontrol}
 
 This block controls halt signals from the Debug Module to a hart.  It is used
 to halt a hart, and let it run again.
@@ -375,11 +375,11 @@ every hart that has a halt signal. When set or cleared, a hart must respond in
 less than one second.  (How this is implemented is not further specified. A few
 clock cycles will be a more typical latency.)
 
-\subsection{Hart Array Mask Register} \label{hamask}
+\section{Hart Array Mask Register} \label{hamask}
 
 TODO: Write this section.
 
-\subsection{Abstract Commands} \label{abstractcommands}
+\section{Abstract Commands} \label{abstractcommands}
 
 The DM supports a set of abstract commands, which a debugger can execute by
 writing the command to \Rcommand.  If the command takes arguments, the debugger
@@ -442,7 +442,7 @@ Figure~\ref{fig:abstract_sm} shows a conceptual view of the states
 passed through by a hart during run/halt debugging as influenced
 by the different fields of \Rcommand.
 
-\subsection{Program Buffer} \label{programbuffer}
+\section{Program Buffer} \label{programbuffer}
 
 To support executing arbitrary instructions on a halted hart, there may be a
 Program Buffer that a debugger can write small programs to. Systems that don't
@@ -474,7 +474,7 @@ restore \Rdpc before leaving Debug Mode.
     the PC when executing the Program Buffer.
 \end{commentary}
 
-\subsection{System Bus Access} \label{systembusaccess}
+\section{System Bus Access} \label{systembusaccess}
 
 In a minimal configuration a debugger can access the system bus by having a
 RISC-V hart perform the accesses it requires. Optionally a Bus Access block may
@@ -500,7 +500,7 @@ This will make implementing,
 configuring, and using a debugger more complex so should be avoided if
 possible.
 
-\subsection{Quick Access}
+\section{Quick Access}
 
 Some systems can only be halted very briefly. There are several mechanisms that
 can still allow accessing resources in such a running system.
@@ -519,7 +519,7 @@ of a hundred or less cycles.
 Third, if the System Bus Access block is implemented, it can be used while a
 hart is running to access memory.
 
-\subsection{Security}
+\section{Security}
 
 To protect intellectual property it may be desirable to lock access to the
 Debug Module.  To allow access during a manufacturing process and not
@@ -532,7 +532,7 @@ access key. A few bits in \Rdmstatus and \Rauthdata can support an arbitrarily
 complex authentication mechanism.  When \Fauthenticated is clear, the DM must
 not interact with the rest of the platform in any way.
 
-\subsection{Serial Ports}
+\section{Serial Ports}
 
 The Debug Module may implement up to 8 serial ports. They support basic flow
 control and full duplex data transfer between a component and the debugger.
@@ -541,11 +541,11 @@ equivalent of printf debugging, to provide a simple CLI without requiring any
 extra peripherals, or more generally to emulate devices that aren't present.
 All these uses require software support, and are not further specified here.
 
-\subsection{Debug Module DMI Registers} \label{dmdebbus}
+\section{Debug Module DMI Registers} \label{dmdebbus}
 
 \input{dm1_registers.tex}
 
-\subsection{Debug Module Serial Registers} \label{dmsysbus}
+\section{Debug Module Serial Registers} \label{dmsysbus}
 
 The Debug Module's serial port registers must be accessible from the
 component memory space. The Debug Module's system bus registers  base address
@@ -554,7 +554,7 @@ are given in this section.
 
 \input{dm2_registers.tex}
 
-%\section{Device Tree Additions TODO}
+%\chapter{Device Tree Additions TODO}
 %
 %The device tree is a data structure in ROM that all RISC-V platforms should
 %have. It contains a variety of information about every component in the
@@ -565,13 +565,13 @@ are given in this section.
 %their IDs are. It should expose each hart to the user as a separately
 %debuggable entity. (Usually it will be called either a thread or a core.)
 
-\section{RISC-V Debug}
+\chapter{RISC-V Debug}
 
 Modifications to the RISC-V core to support debug are kept to a minimum.  There
 is a special execution mode (Debug Mode) and a few extra CSRs. The DM takes care
 of the rest.
 
-\subsection{Debug Mode} \label{debugmode}
+\section{Debug Mode} \label{debugmode}
 
 Debug Mode is a special processor mode used only when the core is halted for
 external debugging. How Debug Mode is entered is implementation-specific.
@@ -596,27 +596,27 @@ external debugging. How Debug Mode is entered is implementation-specific.
     Debug Mode, it halts the processor again but without updating \Rdpc.
 \end{steps}
 
-\subsection{Load-Reserved/Store-Conditional Instructions}
+\section{Load-Reserved/Store-Conditional Instructions}
 
 The reservation registered by an {\tt lr} instruction on a memory address may
 be lost when entering Debug Mode or while in Debug Mode.  This means that there
 may be no forward progress if Debug Mode is entered between {\tt lr} and {\tt
 sc} pairs.
 
-\subsection{Reset}
+\section{Reset}
 
 If the halt signal is asserted when a core comes out of reset, the core must
 enter Debug Mode before executing any instructions, but after performing any
 initialization that would usually happen before the first instruction is
 executed.
 
-\subsection{Core Debug Registers} \label{debreg}
+\section{Core Debug Registers} \label{debreg}
 
 The Core Debug Registers must be implemented for each hart being debugged.
 
 \input{core_registers.tex}
 
-\section{Trigger Module}
+\chapter{Trigger Module}
 
 Triggers can cause a debug exception, entry into Debug Mode, or a trace action
 without having to execute a special instruction. This makes them invaluable
@@ -649,18 +649,18 @@ separately.
     \end{enumerate}
 \end{commentary}
 
-\subsection{Trigger Registers}
+\section{Trigger Registers}
 
 \input{hwbp_registers.tex}
 
-\section{JTAG Debug Transport Module} \label{jtagdtm}
+\chapter{JTAG Debug Transport Module} \label{jtagdtm}
 
 This Debug Transport Module is based around a normal JTAG Test Access Port
 (TAP).  The JTAG TAP allows access to arbitrary JTAG registers by first
 selecting one using the JTAG instruction register (IR), and then accessing it
 through the JTAG data register (DR).
 
-\subsection{Background}
+\section{Background}
 
 JTAG refers to IEEE Std 1149.1-2013. It is a standard that defines test logic
 that can be included in an integrated circuit to test the interconnections
@@ -671,7 +671,7 @@ The JTAG standard defines a Test Access Port (TAP) that
 can be used to read and write a few custom registers, which can be used to
 communicate with debug hardware in a component.
 
-\subsection{JTAG Connector}
+\section{JTAG Connector}
 
 Every target's JTAG connector seems to have its own pinout. To make it easy to
 acquire debug hardware, this spec recommends a connector that is compatible
@@ -764,7 +764,7 @@ threshold (i.e. unisolated, 250V, etc.).
 
 All debug adapter pins other than GND should be current-limited to 20mA.
 
-\subsection{JTAG Registers}
+\section{JTAG Registers}
 
 JTAG TAPs used as a DTM must have an IR of at least 5 bits.
 When the TAP is reset, IR must default to
@@ -779,12 +779,12 @@ Unimplemented instructions must select the BYPASS register.
 \newpage
 \appendix
 
-\section{Hardware Implementations}
+\chapter{Hardware Implementations}
 
 Below are two possible implementations. A designer could choose one, mix and
 match, or come up with their own design.
 
-\subsection{Direct}
+\section{Direct}
 
 Halting happens by inhibiting instruction fetching in Debug Mode.
 
@@ -798,7 +798,7 @@ encountered.
 
 \Rdpc is not physically a CSR. Instead, accessing it directly access \Rpc.
 
-\subsection{Plain Exception}
+\section{Plain Exception}
 
 In this implementation, Debug Mode acts more like a real exception, jumping to a
 memory region that is serviced by the DM. When taking this exception, \Rpc is
@@ -837,7 +837,7 @@ To resume execution, the {\tt nop} is changed to {\tt dret}.  When {\tt dret}
 is executed, \Rpc is restored from \Rdpc and normal execution resumes at the
 privilege set by \Fprv.
 
-\section{Debugger Implementation}
+\chapter{Debugger Implementation}
 
 This section details how an external debugger might use the described debug
 interface to perform some common operations on RISC-V cores using the JTAG DTM.
@@ -851,7 +851,7 @@ check the sticky error status bits after performing a sequence of actions. If
 it sees any that are set, then it should attempt the same actions again,
 possibly while adding in some delay, or explicit checks for status bits.
 
-\subsection{Debug Bus Access} \label{dbusaccess}
+\section{Debug Bus Access} \label{dbusaccess}
 
 To read an arbitrary Debug Bus register, select \Rdmi, and scan in a value
 with \Fop set to 1, and \Faddress set to the desired register address. In
@@ -871,17 +871,17 @@ operation isn't considered complete until the write has happened.
 It should almost never be necessary to scan IR, avoiding a big part of the
 inefficiency in typical JTAG use.
 
-\subsection{Main Loop}
+\section{Main Loop}
 
 A debugger continuously monitors \Rhaltsum to see if any harts have spontaneously
 halted.
 
-\subsection{Halting} \label{deb:halt}
+\section{Halting} \label{deb:halt}
 
 To halt a hart, the debugger sets \Fhartsel and \Fhaltreq. Then it waits for
 \Fallhalted to become 1.
 
-\subsection{Accessing Registers}
+\section{Accessing Registers}
 
 \subsubsection{Using Abstract Command} \label{deb:abstractreg}
 
@@ -951,7 +951,7 @@ registers can be accessed by moving their value into/out of GPRs.
 \end{tabulary}
 \medskip
 
-\subsection{Reading Memory}
+\section{Reading Memory}
 
 \subsubsection{Using System Bus Access} \label{deb:mrsysbus}
 
@@ -1112,7 +1112,7 @@ this method.
     \end{tabulary}
 \end{table}
 
-\subsection{Writing Memory} \label{writemem}
+\section{Writing Memory} \label{writemem}
 
 TODO: Just like reading memory.
 
@@ -1224,12 +1224,12 @@ TODO: Just like reading memory.
     debugger never has to wait for the core.)
 \end{commentary}
 
-\subsection{Running}
+\section{Running}
 
 First, the debugger should restore any registers that it has clobbered.  Once
 that's done, it can let the core run by setting \Fresumereq.
 
-\subsection{Single Step}
+\section{Single Step}
 
 A debugger can single step the core by setting a breakpoint on the next
 instruction and letting the core run, or by asking the hardware to perform a
@@ -1242,7 +1242,7 @@ behaves exactly as in the running case, except that interrupts are left off and
 it only fetches and executes a single instruction before re-entering Debug
 Mode.
 
-\subsection{Handling Exceptions}
+\section{Handling Exceptions}
 
 Generally the debugger can avoid exceptions by being careful with the programs
 it writes. Sometimes they are unavoidable though, eg. if the user asks to
@@ -1255,7 +1255,7 @@ set. The debugger can check this field to see whether a program encountered an
 exception.  If there was an exception, it's left to the debugger to know what
 must have caused it.
 
-\subsection{Quick Access} \label{quickaccess}
+\section{Quick Access} \label{quickaccess}
 
 Halt the hart for a minimum amount of time to perform a single memory write.
 
@@ -1293,7 +1293,7 @@ the pseudo-op {\tt transfer dest, src} to represent all these options.
 \end{tabulary}
 \medskip
 
-\section{Trace Module}
+\chapter{Trace Module}
 
 {\bf This part of the spec needs work before it's ready to be implemented,
 which is why it's in the appendix. It's left here to give a rough idea of some
@@ -1322,7 +1322,7 @@ Trace data may be stored to a special on-core RAM, RAM on the system bus, or to
 a dedicated off-chip interface. Only the system RAM destination is covered
 here.
 
-\subsection{Trace Data Format}
+\section{Trace Data Format}
 
 Trace data should be both compact and easy to generate. Ideally it's also easy
 to decode, but since decoding doesn't have to happen in real time and will
@@ -1398,7 +1398,7 @@ packet which contains a single number N.  It is followed by N+1 4-bit packets
 which contain the value. The first packet contains bits 3:0 of the value. The
 next packet contains bits 7:4, and so on.
 
-\subsection{Trace Events}
+\section{Trace Events}
 
 Trace events are events that occur when a core is running that result in trace
 packets being emitted. They are listed in Table~\ref{tab:traceevents}.
@@ -1448,7 +1448,7 @@ packets being emitted. They are listed in Table~\ref{tab:traceevents}.
    \end{tabulary}
 \end{table}
 
-\subsection{Synchronization}
+\section{Synchronization}
 
 If a trace buffer wraps, it is no longer clear what in the buffer is a header
 and what isn't. To guarantee that a trace decoder can sync up easily, each
@@ -1465,11 +1465,11 @@ synchronization point, but bandwidth might prevent that. A trace source should
 attempt to send one full value for each of these (assuming they're enabled)
 soon after each synchronization point.
 
-\subsection{Trace Registers}
+\section{Trace Registers}
 
 \input{trace_registers.tex}
 
-\section{Future Ideas}
+\chapter{Future Ideas}
 Some future version of this spec may implement some of the following features.
 
 \begin{enumerate}
@@ -1495,7 +1495,7 @@ Some future version of this spec may implement some of the following features.
       running hart.
 \end{enumerate}
 
-\section{Change Log}
+\chapter{Change Log}
 
 \begin{versionhistory}
     \input{changelog.tex}
