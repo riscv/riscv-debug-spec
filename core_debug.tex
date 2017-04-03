@@ -1,0 +1,51 @@
+\chapter{RISC-V Debug}
+\label{sec:core_debug}
+
+Modifications to the RISC-V core to support debug are kept to a minimum.  There
+is a special execution mode (Debug Mode) and a few extra CSRs. The DM takes care
+of the rest.
+
+\section{Debug Mode} \label{debugmode}
+
+Debug Mode is a special processor mode used only when the core is halted for
+external debugging. How Debug Mode is entered is implementation-specific.
+
+\begin{steps}{When executing code from the Program Buffer, the processor stays
+    in Debug Mode and the following apply:}
+\item All operations happen in machine mode.
+\item \Fmprv in \Rmstatus is ignored.
+\item All interrupts are masked.
+\item Exceptions don't update any registers.  That includes {\tt cause}, {\tt
+    epc}, {\tt badaddr}, {\tt dpc}, and \Rmstatus. They do end execution of the
+    Program Buffer.
+\item No action is taken if a trigger matches.
+\item Trace is disabled.
+\item Counters may be stopped, depending on \Fstopcount in \Rdcsr.
+\item Timers may be stopped, depending on \Fstoptime in \Rdcsr.
+\item The {\tt wfi} instruction acts as a {\tt nop}.
+\item Almost all instructions that change the privilege level have undefined
+    behavior.  This includes {\tt ecall}, {\tt mret}, {\tt hret}, {\tt sret},
+    and {\tt uret}.  (To change the privilege level, the debugger can write
+    \Fprv in \Rdcsr.) The exception is {\tt ebreak}. When that is executed in
+    Debug Mode, it halts the processor again but without updating \Rdpc.
+\end{steps}
+
+\section{Load-Reserved/Store-Conditional Instructions}
+
+The reservation registered by an {\tt lr} instruction on a memory address may
+be lost when entering Debug Mode or while in Debug Mode.  This means that there
+may be no forward progress if Debug Mode is entered between {\tt lr} and {\tt
+sc} pairs.
+
+\section{Reset}
+
+If the halt signal is asserted when a core comes out of reset, the core must
+enter Debug Mode before executing any instructions, but after performing any
+initialization that would usually happen before the first instruction is
+executed.
+
+\section{Core Debug Registers} \label{debreg}
+
+The Core Debug Registers must be implemented for each hart being debugged.
+
+\input{core_registers.tex}
