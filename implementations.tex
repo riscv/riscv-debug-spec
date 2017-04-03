@@ -29,15 +29,16 @@ In
 the park loop the hart writes its \Rmhartid to a memory location within the Debug
 Module to indicate that it is halted.
 To allow the DM to individually control one out of several
-halted harts, each hart polls a specific memory location or bit in a \Rdscratch
+halted harts, each hart polls a specific memory location or bit in a {\tt dscratch}
 CSR to determine whether the debugger wants it to continue.
 
 \Rdatazero etc. are mapped into regular memory at an address relative to \Rzero
 with only a 12-bit {\tt imm}. The exact address is an implementation
-detail that a debugger must not rely on.
+detail that a debugger must not rely on. For example, the {\tt data}
+registers might be mapped to $0x400$.
 
 To implement the abstract 32-bit GPR access instructions, the debugger causes
-the hart to  execute {\tt lw <gpr>, 0x400(zero)} or {\tt sw0x400(zero), <gpr>}.
+the hart to  execute {\tt lw <gpr>, 0x400(zero)} or {\tt sw 0x400(zero), <gpr>}.
 64- and 128-bit accesses use {\tt ld}/{\tt sd} and {\tt
 lq}/{\tt sq} respectively.
 
@@ -52,3 +53,4 @@ The DM infers from the write that there was an exception, and sets \Fcmderr appr
 To resume execution, the debug module causes the core to execute a {\tt dret}.
 When {\tt dret} is executed, \Rpc is restored from \Rdpc and normal execution resumes at the
 privilege set by \Fprv.
+

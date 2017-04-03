@@ -52,7 +52,7 @@
             When there are multiple reasons to enter Debug Mode in a single
             cycle, the cause with the highest priority is the one written.
 
-            1: An \{tt ebreak} instruction was executed. (priority 3)
+            1: An {\tt ebreak} instruction was executed. (priority 3)
 
             2: The Trigger Module caused a halt. (priority 4)
 
