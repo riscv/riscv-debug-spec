@@ -82,6 +82,7 @@ Version \versionnum\\
 \input{overview}
 \input{debug_module}
 \input{core_debug}
+\input{trigger}
 
 %\chapter{Device Tree Additions TODO}
 %
@@ -93,44 +94,6 @@ Version \versionnum\\
 %information to determine how many harts there are in the platform, and what
 %their IDs are. It should expose each hart to the user as a separately
 %debuggable entity. (Usually it will be called either a thread or a core.)
-
-
-\chapter{Trigger Module}
-
-Triggers can cause a debug exception, entry into Debug Mode, or a trace action
-without having to execute a special instruction. This makes them invaluable
-when debugging code from ROM. They can trigger on execution of instructions at
-a given memory address, or on the address/data in loads/stores.  These are all
-features that can be useful without having the Debug Module present, so the
-Trigger Module is broken out as a separate piece that can be implemented
-separately.
-
-\begin{steps}{Each trigger may support a variety of features. A debugger can
-    build a list of all triggers and their features as follows:}
-\item Write 0 to \Rtselect.
-\item Read back \Rtselect to confirm this trigger exists. If not, exit.
-\item Read \Rtdataone, and possible \Rtdatatwo and \Rtdatathree depending on the
-    trigger type.
-\item If \Ftype is 0, this trigger doesn't exist. Exit the loop.
-\item Repeat, incrementing the value in \Rtselect.
-\end{steps}
-
-\begin{commentary}
-    There are two ways to check whether a given trigger is the last one to
-    support these implementations:
-    \begin{enumerate}
-        \item When no hardware triggers are implemented at all, all related
-            registers return 0. The algorithm above terminates when checking
-            \Ftype.
-        \item When 2 triggers are implemented, \Rtselect is just a single bit
-            that selects one of the two. When the debugger writes 2, it reads
-            back as 0 which terminates the enumeration.
-    \end{enumerate}
-\end{commentary}
-
-\section{Trigger Registers}
-
-\input{hwbp_registers.tex}
 
 \chapter{Debug Transport Module (DTM)} \label{dtm}
 
