@@ -79,99 +79,6 @@ Version \versionnum\\
 \newpage
 
 \input{introduction}
-\chapter{Background}
-
-There are several use cases for dedicated debugging hardware, both
-internal to a CPU core and with an external connection.
-This specification defines techniques to support all of the use cases
-listed below. Some are optional to allow system designers to make
-cost vs capability tradeoffs.
-
-\begin{itemize}
-
-\item Debugging low-level software in the absence of an OS or other software.
-
-\item Debugging issues in the OS itself.
-
-\item Bootstrapping a system to test, configure, and program components before
-  there is any executable code path in the system.
-
-\item Accessing hardware on the system without a working CPU.
-
-\item Accessing custom registers that could be added to aid in hardware debug, system bringup,
-etc.
-
-\item Writing code and data to memory, e.g. boot code and manufacturing constants.
-
-\item Analyzing low-level performance issues using profiling and sampling techniques.
-
-\item Providing a general transport for firmware running on a component to communicate with the
-  outside world.
-
-\end{itemize}
-
-In addition, even without a hardware debugging interface,
-architectural support in a RISC-V CPU can aid software debugging and
-performance analysis by allowing hardware triggers and breakpoints.
-This specification aims to define common resources which can be used
-for different cases.
-
-When debugging software, this specification distinguishes between two
-forms of external debugging. The first is \emph{halt mode} debugging,
-where an external debugger halts some or all components of a
-platform and inspects their state while they are in stasis.
-The debugger can read and/or modify state, then direct the hardware
-to execute a single instruction, or continue to run freely.
-
-The second is \emph{run mode} debugging. In this mode a software
-debug agent runs on a component (eg.  triggered by a timer interrupt or breakpoint
-on a RISC-V core) which transfers data to or from the debugger
-without halting the component, only briefly interrupting its program flow.
-This functionality is essential if the component is controlling some real-time system (like a
-hard drive) where long timing delays could lead to physical damage.
-This requires additional software support (both on the system as well as on the debugger),
-and efficient communication channels between the component and the debugger.
-
-%MAW -- where does Quick Access fit in the above description? Is it fair to call
-% it run-mode debugging?
-
-\chapter{Supported Features}
-The debug interface described in this specification supports the following features:
-\begin{enumerate}
-   \item RV32, RV64, and future RV128 are all supported.
-   \item Any hart in the platform can be independently debugged.
-   \item A debugger can discover almost everything it needs to know itself,
-       without user configuration.
-   \item An optional extension allows arbitrary instructions to be executed on
-       a halted hart. That means no new debug functionality is needed when a
-       core has additional or custom instructions or state, as
-       long as there exist programs
-       that can move that state into GPRs.
-   \item An implementation can choose to provide register access without
-       halting.
-   \item An implemenation can choose to provide the ability to automatically
-     halt and resume a hart without debugger intervention.
-   \item A system bus master can be implemented to allow memory access without
-       involving any hart.
-   \item Debugging can be supported over multiple transports.
-   \item Code can be downloaded efficiently.
-   \item Each hart can be debugged from the very first instruction executed.
-   \item A RISC-V core can be halted when a software breakpoint instruction is
-       executed.
-   \item Hardware can step over any instruction.
-   \item A RISC-V core can be halted when a trigger matches the PC, read/write
-       address/data, or an instruction opcode.
-   \item Optional serial ports can be used for communication between debugger
-       and monitor, or as a general protocol between debugger and application.
-   \item The debugger does not need to know anything about the microarchitecture
-       of the cores it is debugging.
-   \item Multiple harts can be halted and resumed simultaneously.
-\end{enumerate}
-
-This document does not suggest a strategy or implementation for hardware test,
-debugging or error detection techniqes. Scan, BIST, etc. are out of scope of
-this specification, but this specification does not intend to limit their use 
-in RISC-V systems.
 
 \chapter{System Overview} \label{overview}
 
@@ -207,24 +114,6 @@ hart execute arbitrary instructions while halted.
 Each RISC-V core may implement a Trigger Module for each hart.  These can
 implement breakpoints, which cause a hart to halt spontaneously.  When that
 happens the hart signals the DM that it is halted.
-
-\chapter{Debug Transport Module (DTM)} \label{dtm}
-
-Debug Transport Modules provide access to the DM over one or more transports
-(eg. JTAG or USB).
-
-There may be multiple DTMs in a single platform. Ideally every component that
-communicates with the outside world includes a DTM, allowing a platform to be
-debugged through every transport it supports.  For instance a USB component
-could include a DTM. This would trivially allow any platform to be debugged
-over USB. All that is required is that the USB module already in use also has
-access to the Debug Module Interface.
-
-Using multiple DTMs at the same time is not supported. It is left to the user
-to ensure this does not happen.
-
-This specification defines a JTAG DTM in Section~\ref{jtagdtm}. Additional DTMs
-may be added in future versions of this specification.
 
 \chapter{Debug Module (DM)} \label{dm}
 
@@ -408,29 +297,20 @@ restore \Rdpc before leaving Debug Mode.
 
 \section{System Bus Access} \label{systembusaccess}
 
-In a minimal configuration a debugger can access the system bus by having a
-RISC-V hart perform the accesses it requires. Optionally a Bus Access block may
-be implemented. Because the System Bus Access block performs accesses directly
-from the DM, it only uses physical addresses.
+When a Program Buffer is present, a debugger can access the system bus by having a
+RISC-V hart perform the accesses it requires.
+An alternative is to implement a System Bus Access block.
+The System Bus Access block uses physical addresses.
 
-Implementing a System Bus Access block has several benefits.
+\begin{commentary}
+Implementing a System Bus Access block has several benefits even
+when a Debug Module also implements a Program Buffer. 
 First, it is possible to
 access memory in a running system with minimal impact.  Second, it may improve
-performance when downloading programs. (There is only a benefit if JTAG TCK is a
-significant fraction of the RISC-V hart's clock speed.)  Third, it may provide
-access to devices that a hart does not have access to. A hart may be unable to
-access all devices in a system (eg. for security reasons) and in this case the
-debugger needs another path to access them.
-
-To keep implementing, configuring, and using a debugger as simple as possible,
-systems should use the same memory map for each hart. That means that a given
-address maps to the same device no matter which hart performs the access.
-(Different harts may not all have permission to access the same devices.) If
-different harts do have unique memory maps then the system should provide
-access to all devices using the Sytem Bus Access block.
-This will make implementing,
-configuring, and using a debugger more complex so should be avoided if
-possible.
+performance when accessing memory.
+Third, it may provide
+access to devices that a hart does not have access to.
+\end{commentary}
 
 \section{Quick Access}
 
@@ -585,128 +465,23 @@ separately.
 
 \input{hwbp_registers.tex}
 
-\chapter{JTAG Debug Transport Module} \label{jtagdtm}
+\chapter{Debug Transport Module (DTM)} \label{dtm}
 
-This Debug Transport Module is based around a normal JTAG Test Access Port
-(TAP).  The JTAG TAP allows access to arbitrary JTAG registers by first
-selecting one using the JTAG instruction register (IR), and then accessing it
-through the JTAG data register (DR).
+Debug Transport Modules provide access to the DM over one or more transports
+(eg. JTAG or USB).
 
-\section{Background}
+There may be multiple DTMs in a single platform. Ideally every component that
+communicates with the outside world includes a DTM, allowing a platform to be
+debugged through every transport it supports.  For instance a USB component
+could include a DTM. This would trivially allow any platform to be debugged
+over USB. All that is required is that the USB module already in use also has
+access to the Debug Module Interface.
 
-JTAG refers to IEEE Std 1149.1-2013. It is a standard that defines test logic
-that can be included in an integrated circuit to test the interconnections
-between integrated circuits, test the integrated circuit itself, and observe or
-modify circuit activity during the component’s normal operation.
-This specification uses the latter functionality.
-The JTAG standard defines a Test Access Port (TAP) that
-can be used to read and write a few custom registers, which can be used to
-communicate with debug hardware in a component.
+Using multiple DTMs at the same time is not supported. It is left to the user
+to ensure this does not happen.
 
-\section{JTAG Connector}
-
-Every target's JTAG connector seems to have its own pinout. To make it easy to
-acquire debug hardware, this spec recommends a connector that is compatible
-with the Cortex Debug Connector, as described below.
-
-The connector is a .05"-spaced, gold-plated male header with .016" thick
-hardened copper or beryllium bronze square posts (SAMTEC FTSH-105 or
-equivalent). Female connectors are compatible \SI{20}{\micro\metre} gold
-connectors in order to prevent oxide build-up on tin connectors.
-
-Viewing the male header from above (the pins pointing at your eye), a target's
-connector looks as it does in Table~\ref{tab:header}. The function of each pin
-is described in Table~\ref{tab:pinout}.
-
-This header does not include the optional JTAG TRST signal. If an implementation
-requires TRST to be driven at Power-On, this must be handled at the
-PCB level and is not exported to this header.
-
-TODO: If the above is too harsh of a requirement, we should pick a different header to
-standardize on, such as the also very common AVR JTAG Header.
-
-\begin{table}[htp]
-    \centering
-    \caption{JTAG Connector Diagram}
-    \label{tab:header}
-    \begin{tabulary}{\textwidth}{|r|r|r|l|}
-        \hline
-        VCC & 1 & 2 & TMS \\
-        \hline
-        GND & 3 & 4 & TCK \\
-        \hline
-        GND & 5 & 6 & TDO \\
-        \hline
-        KEY & 7 & 8 & TDI \\
-        \hline
-        N/C & 9 & 10 & RESET \\
-        \hline
-    \end{tabulary}
-\end{table}
-
-\begin{table}[htp]
-    \centering
-    \caption{JTAG Connector Pinout}
-    \label{tab:pinout}
-    \begin{tabulary}{\textwidth}{|r|l|L|}
-        \hline
-        1 & VCC & Power provided by the target, which may be used to power the
-        debug adapter. Must be able to source at least 25mA. This signal also
-        serves as the reference voltage for logic high.
-
-        This pin must be clearly marked in both male and female headers.\\
-        \hline
-        2 & TMS & JTAG TMS signal, driven by debug adapter. \\
-        \hline
-        3 & GND & Target ground. \\
-        \hline
-        4 & TCK & JTAG TCK signal, driven by the debug adapter. \\
-        \hline
-        5 & GND & Target ground. \\
-        \hline
-        6 & TDO & JTAG TDO signal, driven by the target. \\
-        \hline
-        7 & KEY & This pin should be clipped in male connectors, and plugged in
-        female connectors. Electrically it must not be connected. \\
-        \hline
-        8 & TDI & JTAG TDI signal, driven by the debug adapter.
-
-        This pin may be used by a target to sense a debugger at reset by weakly
-        pulling this signal high during a brief detection period at reset.
-        Debuggers should drive TDI low when the interface is idle. \\
-        \hline
-        9 & N/C & Not connected in either target or debug adapter. May be used
-        in future specs. \\
-        \hline
-        10 & RESET & Reset signal, driven by the debug adapter. This may be
-        active low or active high, depending on the target's requirements. A
-        debug adapter must accommodate either option. Asserting reset should
-        reset any RISC-V cores as well as any other peripherals on the PCB.
-        It should not reset the debug logic.
-        If not implemented in a target, this pin must not be connected. \\
-        \hline
-    \end{tabulary}
-\end{table}
-
-Target connectors may be shrouded. In that case the key slot should be next to
-pin 5. Female headers should have a matching key.
-
-Debug adapters should be tagged or marked with their isolation voltage
-threshold (i.e. unisolated, 250V, etc.).
-
-All debug adapter pins other than GND should be current-limited to 20mA.
-
-\section{JTAG Registers}
-
-JTAG TAPs used as a DTM must have an IR of at least 5 bits.
-When the TAP is reset, IR must default to
-00001, selecting the IDCODE instruction. A full list of JTAG registers along
-with their encoding is in Table~\ref{table:jtag_registers}. The only regular
-JTAG registers a debugger might use are BYPASS and IDCODE, but this
-specification leaves IR space for many other standard JTAG instructions.
-Unimplemented instructions must select the BYPASS register.
-
-\input{jtag_registers.tex}
+This specification defines a JTAG DTM in Appendix~\ref{jtagdtm}. Additional DTMs
+may be added in future versions of this specification.
 
 \newpage
 \appendix
