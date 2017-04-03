@@ -82,14 +82,14 @@
 
         <!-- Fields that apply to a specific hart. -->
         <field name="haltreq" bits="31" access="R/W" reset="0">
-            Halt request signal for all currently selected harts. When 1, the
+            Halt request signal for all currently selected harts. When set to 1, the
             hart will halt if it is not currently halted.
             Setting both \Fhaltreq and \Fresumereq leads to undefined behavior.
 
             Writes apply to the new value of \Fhartsel and \Fhasel.
         </field>
         <field name="resumereq" bits="30" access="R/W" reset="0">
-            Resume request signal for all currently selected harts. When 1,
+            Resume request signal for all currently selected harts. When set to 1,
             the hart will resume if it is currently halted.
             Setting both \Fhaltreq and \Fresumereq leads to undefined behavior.
 

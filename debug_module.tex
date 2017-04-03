@@ -1,24 +1,26 @@
 
 \chapter{Debug Module (DM)} \label{dm}
 
-\begin{steps}{The Debug Module is the interface between specific debug
-    operations and their implementation. It might support the following
+\begin{steps}{The Debug Module implements interface between abstract debug
+    operations and their specific implementation. It might support the following
     operations:}
-\item Provide access to a reset signal that allows debugging out of reset.
-    (Required)
+\item Give the debugger necessary information about the implementation. (Required)
 \item Allow any individual hart to be halted and resumed. (Required)
 \item Provide status on which harts are halted. (Required)
 \item Provide read and write access to a halted hart's GPRs. (Required)
-\item Give the debugger necessary information about the implementation. (Required)
+\item Provide access to a reset signal that allows debugging out of reset.(Required)
 \item Provide access to other hart registers. (Optional)
-\item Force the hart to execute arbitrary instructions. (Optional)
-\item Allow multiple harts to be halted, resumed, and/or reset at the same time (Optional)
+\item Provide an interface to force the hart to execute arbitrary instructions. (Optional)
+\item Allow multiple harts to be halted, resumed, and/or reset at the same time. (Optional)
+\item Allow system memory accesses. (Optional)
 \end{steps}
 
 A single DM can debug up to 1024 harts.
 
 \section{Debug Module Interface (DMI)} \label{dmi}
 
+The Debug Module is a slave to a bus called the Debug Module Interface (DMI). The
+master of the bus is the Debug Transport Module(s).
 The Debug Module Interface can be a trivial bus with one master and one slave,
 or use a more full-featured bus like TileLink or the AMBA Advanced Peripheral
 Bus. The details are left to the system designer.
@@ -28,6 +30,8 @@ operations, which may return an error. (Errors are only returned by the optional
 System Bus Access and Serial Port blocks). The bottom of the address space is
 used for the DM. Extra space can be used for custom debug devices, other cores,
 additional DMs, etc.
+
+The Debug Module is controlled via register accesses to its DMI address space.
 
 \begin{table}[htp]
     \centering
@@ -69,16 +73,17 @@ attached to the DM by trying each index until \Fanynonexistent is 1.
 This block controls halt signals from the Debug Module to a hart.  It is used
 to halt a hart, and let it run again.
 
-To control halting and resuming, there are \Fhaltreq and \Fresumereq bits in
-\Rdmcontrol.  When a debugger wants to halt a hart, it sets \Fhaltreq, waits
-for \Fallhalted to indicate the hart is halted, and clears \Fhaltreq.  To
-resume, the debugger sets \Fresumereq, waits for \Fallrunning to indicate the
-hart is running, and clears \Fresumereq.
+When a debugger wants to halt a hart it uses \Rdmcontrol.
+It selects the hart in \Fhartsel and sets \Fhaltreq, then waits
+for \Fallhalted to indicate the hart is halted.
+To resume, the debugger selects the hart with \Fhartsel,
+sets \Fresumereq, then waits for \Fallrunning to indicate the
+hart is running.
 
 The Debug Module conceptually has a direct connection to the halt signal of
 every hart that has a halt signal. When set or cleared, a hart must respond in
 less than one second.  (How this is implemented is not further specified. A few
-clock cycles will be a more typical latency.)
+clock cycles will be a more typical latency).
 
 \section{Hart Array Mask Register} \label{hamask}
 
@@ -86,15 +91,21 @@ TODO: Write this section.
 
 \section{Abstract Commands} \label{abstractcommands}
 
-The DM supports a set of abstract commands, which a debugger can execute by
-writing the command to \Rcommand.  If the command takes arguments, the debugger
+The DM supports a set of abstract commands, most of which
+are optional. Depending on the implementation, it may be possible to perform
+some abstract commands even when the
+hart is not halted.
+Debuggers can only determine which abstract commands
+are supported by a given hart in a given state by attempting them
+and then looking at \Fcmderr in \Rabstractcs to see if they were successful.
+
+Debuggers execute abstract commands by writing them to \Rcommand.
+If the command takes arguments, the debugger
 must write them to the {\tt data} registers before writing to \Rcommand. If a
 command returns results, they are placed in the {\tt data} registers when the
 command is complete. Which {\tt data} registers are used for the arguments is
 described in Table~\ref{tab:datareg}.  In all cases the least-significant word
-is placed in the lowest-numbered {\tt data} register.  Depending on the
-implementation, it may be possible to perform abstract commands even when the
-hart is not halted.
+is placed in the lowest-numbered {\tt data} register.
 
 \begin{table}[htp]
     \centering
@@ -131,8 +142,12 @@ hart is not halted.
     \end{tabulary}
 \end{table}
 
-\input{abstract_commands.tex}
+\subsection{Abstract Command Listing}
 
+This section describes each of the different abstract commands
+and how their fields should be interpreted when written to \Rcommand.
+
+\input{abstract_commands.tex}
 
 \begin{figure}
    \centering
@@ -149,13 +164,15 @@ by the different fields of \Rcommand.
 
 \section{Program Buffer} \label{programbuffer}
 
-To support executing arbitrary instructions on a halted hart, there may be a
-Program Buffer that a debugger can write small programs to. Systems that don't
-need any access beyond the abstract commands described in
-Section~\ref{abstractcommands} may choose to omit this functionality.
+To support executing arbitrary instructions on a halted hart,
+a Debug Module can include a 
+Program Buffer that a debugger can write small programs to. Systems
+that support all necessary functionality using abstract commands
+only may choose to omit the Program Buffer.
 
-A debugger can write a small program to the optional Program Buffer, and then
-execute it exactly once using the \Fpreexec or \Fpostexec bits in \Rcommand.
+A debugger can write a small program to the Program Buffer, and then
+execute it exactly once with the Access Register Abstract Command,
+setting the \Fpostexec bit in \Rcommand.
 If \Fprogsize is 1, the Program Buffer may only hold a single instruction.
 This can be a 32-bit
 instruction, or a compressed instruction in the lower 16 bits accompanied by a
@@ -166,12 +183,12 @@ the debugger can write whatever program it likes, but the program must end with
 While these programs are executed, the hart does not leave Debug Mode (see
 Section~\ref{debugmode}).  If an exception is encountered during execution of
 the Program Buffer, no more instructions are executed, the hart remains in Debug
-Mode, and \Fcmderr is set to 3.
+Mode, and \Fcmderr is set to 3({\tt exception error}).
 
 Executing the Program Buffer may clobber \Rdpc. If that is the case, it must be
-possible to read/write \Rdpc using an abstract command. The debugger must
-attempt to save \Rdpc between halting and executing a Program Buffer, and then
-restore \Rdpc before leaving Debug Mode.
+possible to read/write \Rdpc using an abstract command with \Fpostexec not set.
+The debugger must attempt to save \Rdpc between halting and
+executing a Program Buffer, and then restore \Rdpc before leaving Debug Mode.
 
 \begin{commentary}
     Allowing Program Buffer execution to clobber \Rdpc allows for direct
@@ -183,7 +200,8 @@ restore \Rdpc before leaving Debug Mode.
 
 When a Program Buffer is present, a debugger can access the system bus by having a
 RISC-V hart perform the accesses it requires.
-An alternative is to implement a System Bus Access block.
+Alternatively, a Debug Module can include a System Bus Access block to provide memory access without
+hart intervention.
 The System Bus Access block uses physical addresses.
 
 \begin{commentary}
@@ -198,11 +216,11 @@ access to devices that a hart does not have access to.
 
 \section{Quick Access}
 
-Some systems can only be halted very briefly. There are several mechanisms that
-can still allow accessing resources in such a running system.
+Depending on the task it is performing, some harts can only be halted very briefly.
+There are several mechanisms that allow accessing resources in such a running system
+with a minimal impact on the running hart.
 
-First, an implementation may implement abstract commands that work without
-halting the hart.
+First, an implementation may allow some abstract commands to execute without halting the hart.
 
 Second, the Quick Access abstract command can be used to halt a hart, quickly
 execute the contents of the Program Buffer, and let the hart run again.
@@ -213,7 +231,7 @@ intrusive, but many systems that can't be halted can bear an occasional hiccup
 of a hundred or less cycles.
 
 Third, if the System Bus Access block is implemented, it can be used while a
-hart is running to access memory.
+hart is running to access system memory.
 
 \section{Security}
 

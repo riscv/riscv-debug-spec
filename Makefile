@@ -59,6 +59,6 @@ debug_defines.h:	$(REGISTERS_TEX:.tex=.h)
 chisel: $(REGISTERS_CHISEL)
 
 clean:
-	rm -f $(NAME).pdf $(NAME).aux $(NAME).toc $(NAME).log $(REGISTERS_TEX) \
+	rm -f $(NAME).pdf *.aux $(NAME).toc $(NAME).log $(REGISTERS_TEX) \
 	    $(REGISTERS_TEX:=.inc) *.o *_no128.S *.h $(NAME).lof $(NAME).lot $(NAME).out \
 	    $(NAME).hst $(NAME).pyg debug_defines.h *.scala
