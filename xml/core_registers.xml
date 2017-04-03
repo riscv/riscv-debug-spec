@@ -52,15 +52,13 @@
             When there are multiple reasons to enter Debug Mode in a single
             cycle, the cause with the highest priority is the one written.
 
-            1: A software breakpoint was hit. (priority 3)
+            1: An \{tt ebreak} instruction was executed. (priority 3)
 
             2: The Trigger Module caused a halt. (priority 4)
 
-            3: The debug interrupt was asserted by the Debug Module. (priority 2)
+            3: \Fhaltreq was set. (priority 2)
 
             4: The hart single stepped because \Fstep was set. (priority 1)
-
-            5: \Fhaltreq was set. (priority 0)
 
             Other values are reserved for future use.
         </field>
@@ -72,7 +70,7 @@
         </field>
         <field name="prv" bits="1:0" access="R/W" reset="0">
             Contains the privilege level the hart was operating in when Debug
-            Mode was entered. The encoding is describe in Table
+            Mode was entered. The encoding is described in Table
             \ref{tab:privlevel}.  A debugger can change this value to change
             the hart's privilege level when exiting Debug Mode.
 
@@ -109,7 +107,7 @@
         was running in when the hart halted. To facilitate this, debuggers
         should expose the privilege level in this virtual register. (A virtual
         register is one that doesn't exist directly in the hardware, but that
-        the debugger exposes as if it does.)
+        the debugger exposes as if it does).
 
         \begin{table}
         \centering
@@ -129,7 +127,7 @@
 
         <field name="prv" bits="1:0" access="R/W" reset="0">
             Contains the privilege level the hart was operating in when Debug
-            Mode was entered. The encoding is describe in Table
+            Mode was entered. The encoding is described in Table
             \ref{tab:privlevel}. A user can write this value to change the
             hart's privilege level when exiting Debug Mode.
         </field>
