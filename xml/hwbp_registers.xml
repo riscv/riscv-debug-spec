@@ -264,7 +264,7 @@
         <field name="action" bits="5:0" access="R/W" reset="0">
             Determines what happens when this trigger matches.
 
-            0: Raise a debug exception. (Used when software wants to use the
+            0: Raise a breakpoint exception. (Used when software wants to use the
             trigger module without an external debugger attached.)
 
             1: Enter Debug Mode. (Only supported when \Fhmode is 1.)
