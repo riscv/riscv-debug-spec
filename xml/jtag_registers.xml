@@ -1,4 +1,4 @@
-<registers name="JTAG TAP Registers" label="table:jtag_registers" prefix="DTM_">
+<registers name="JTAG DTM TAP Registers" label="table:jtag_registers" prefix="DTM_">
     <!-- JTAG standard registers, everything starting with 0 -->
     <register name="BYPASS" address="0x00" sdesc="JTAG recommends this encoding"/>
     <register name="IDCODE" address="0x01" sdesc="JTAG recommends this encoding">
@@ -20,22 +20,6 @@
         </field>
         <field name="1" bits="0" access="R" reset="1"></field>
     </register>
-
-    <register name="Unused (BYPASS)" address="0x02" sdesc="Reserved for other TAP uses" />
-    <register name="Unused (BYPASS)" address="0x03" sdesc="Reserved for other TAP uses" />
-    <register name="Unused (BYPASS)" address="0x04" sdesc="Reserved for other TAP uses" />
-    <register name="Unused (BYPASS)" address="0x05" sdesc="Reserved for other TAP uses"/>
-    <register name="Unused (BYPASS)" address="0x06" sdesc="Reserved for other TAP uses"/>
-    <register name="Unused (BYPASS)" address="0x07" sdesc="Reserved for other TAP uses"/>
-    <register name="Unused (BYPASS)" address="0x08" sdesc="Reserved for other TAP uses"/>
-    <register name="Unused (BYPASS)" address="0x09" sdesc="Reserved for other TAP uses"/>
-    <register name="Unused (BYPASS)" address="0x0a" sdesc="Reserved for other TAP uses"/>
-    <register name="Unused (BYPASS)" address="0x0b" sdesc="Reserved for other TAP uses"/>
-    <register name="Unused (BYPASS)" address="0x0c" sdesc="Reserved for other TAP uses"/>
-    <register name="Unused (BYPASS)" address="0x0d" sdesc="Reserved for other TAP uses"/>
-    <register name="Unused (BYPASS)" address="0x0e" sdesc="Reserved for other TAP uses"/>
-    <register name="Unused (BYPASS)" address="0x0f" sdesc="Reserved for other TAP uses"/>
-
     <!-- All our registers start with 1. -->
 
     <register name="DTM Control and Status" short="dtmcs" address="0x10"
@@ -60,7 +44,7 @@
         <field name="idle" bits="14:12" access="R" reset="Preset">
             This is a hint to the debugger of the minimum number of
             cycles a debugger should spend in
-            Run-Test/Idle after every DMI scan to avoid a 'busy'
+            Run-Test/Idle after every DMI scan to avoid a `busy'
             return code (\Fdmistat of 3). A debugger must still
             check \Fdmistat when necessary.
 
@@ -172,13 +156,6 @@
     <register name="Reserved (BYPASS)" address="0x15" sdesc="Reserved for future RISC-V standards"/>
     <register name="Reserved (BYPASS)" address="0x16" sdesc="Reserved for future RISC-V standards"/>
     <register name="Reserved (BYPASS)" address="0x17" sdesc="Reserved for future RISC-V standards"/>
-    <register name="Unused (BYPASS)" address="0x18" sdesc="Reserved for customization"/>
-    <register name="Unused (BYPASS)" address="0x19" sdesc="Reserved for customization"/>
-    <register name="Unused (BYPASS)" address="0x1a" sdesc="Reserved for customization"/>
-    <register name="Unused (BYPASS)" address="0x1b" sdesc="Reserved for customization"/>
-    <register name="Unused (BYPASS)" address="0x1c" sdesc="Reserved for customization"/>
-    <register name="Unused (BYPASS)" address="0x1d" sdesc="Reserved for customization"/>
-    <register name="Unused (BYPASS)" address="0x1e" sdesc="Reserved for customization"/>
 
     <register name="BYPASS" address="0x1f" sdesc="JTAG requires this encoding">
         1-bit register that has no effect. It is used when a debugger does not
