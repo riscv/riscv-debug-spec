@@ -288,21 +288,13 @@ not interact with the rest of the platform in any way.
 \section{Serial Ports}
 
 The Debug Module may implement up to 8 serial ports. They support basic flow
-control and full duplex data transfer between a component and the debugger.
-They can be used to communicate with a debug monitor running on a hart, for the
-equivalent of printf debugging, to provide a simple CLI without requiring any
-extra peripherals, or more generally to emulate devices that aren't present.
-All these uses require software support, and are not further specified here.
+control and full duplex data transfer between a component and the debugger,
+essentially allowing the Debug Transport to be used to communicate
+with a debug monitor running on a hart, or more generally emulate devices which
+aren't present. All these uses require software support, and are not further specified here.
+Only the DMI side of the Debug Module serial registers are defined in this
+specification as the core side interface should look like a peripheral device.
 
 \section{Debug Module DMI Registers} \label{dmdebbus}
 
 \input{dm1_registers.tex}
-
-\section{Debug Module Serial Registers} \label{dmsysbus}
-
-The Debug Module's serial port registers must be accessible from the
-component memory space. The Debug Module's system bus registers  base address
-is discoverable in the configuration string. The offsets from this base
-are given in this section.
-
-\input{dm2_registers.tex}
