@@ -278,8 +278,6 @@ this method.
 
 \section{Writing Memory} \label{writemem}
 
-TODO: Just like reading memory.
-
 \subsubsection{Using System Bus Access} \label{deb:mrsysbus}
 
 \noindent Write a word to memory using system bus access:
@@ -371,22 +369,6 @@ TODO: Just like reading memory.
     \hline
 \end{tabulary}
 \medskip
-
-\begin{commentary}
-    % Select-DR-Scan to Shift-DR: 2
-    % Shift-DR to Exit1-DR: dbus register is abits+33 bits, so 38
-    % Exit1-DR to Select-DR-Scan: 2
-    % Total: 42
-
-    TODO: maybe update
-
-    After the instruction buffer is configured, each word can be written to the
-    target in 42 TCK cycles. That's 76\% efficient, and translates to a
-    download speed of 930KB/s at a 10MHz TCK.  That should be good enough that
-    it's not worth making the JTAG interface more complex to improve the
-    efficiency. (This assumes the Debug Bus uses 5 address bits and that the
-    debugger never has to wait for the core.)
-\end{commentary}
 
 \section{Running}
 
