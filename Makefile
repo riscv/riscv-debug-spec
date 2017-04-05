@@ -5,13 +5,12 @@ NAME=riscv-debug-spec
 REGISTERS_TEX = jtag_registers.tex
 REGISTERS_TEX += core_registers.tex
 REGISTERS_TEX += hwbp_registers.tex
-REGISTERS_TEX += dm1_registers.tex
-REGISTERS_TEX += dm2_registers.tex
+REGISTERS_TEX += dm_registers.tex
 REGISTERS_TEX += trace_registers.tex
 REGISTERS_TEX += sample_registers.tex
 REGISTERS_TEX += abstract_commands.tex
 
-REGISTERS_CHISEL += dm1_registers.scala
+REGISTERS_CHISEL += dm_registers.scala
 REGISTERS_CHISEL += abstract_commands.scala
 
 FIGURES = fig/*
