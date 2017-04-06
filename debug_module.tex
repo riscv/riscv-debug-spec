@@ -107,11 +107,17 @@ and sets \Fhaltreq, then waits
 for \Fallhalted to indicate the hart is halted.
 Writing \Fhaltreq has no effect on a hart which is already halted.
 To resume, the debugger selects the hart with \Fhartsel,
-sets \Fresumereq, then waits for \Fallresumed to indicate the
-hart is running.
+and sets \Fresumereq. This action conceptually sets the hart's
+{\tt resumeack} bit to 0. Once the hart has resumed, it
+sets its conceptual {\tt resumeack} bit to 1. Thus, the
+debugger should wait for \Fallresumeack to indicate the
+hart has resumed.
+If a debugger reads \Fallresumeack
+and \Fallhalted in the same cycle, the hart must have resumed
+and then halted again.
 
 \begin{commentary}
-  A debugger should use \Fallresumed, not \Fallrunning
+  A debugger should use \Fallresumeack, not \Fallrunning
   or \Fallhalted,
   because the hart may immediately halt again due to
   trigger or step conditions.
@@ -120,6 +126,8 @@ hart is running.
 To halt or resume multiple harts at the same time, the debugger first
 sets the hart's bits in the hart array mask register, then
 follows the same procedure but with \Fhasel set to 1.
+Depending on the desired operation, the debugger might consider the {\tt any*}
+versions of the status instead of {\tt all*}.
 
 When halt or resume is requested, a hart must respond in
 less than one second, unless it is unavailable.
