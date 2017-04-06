@@ -49,7 +49,7 @@ debug_defines.h:	$(REGISTERS_TEX:.tex=.h)
 	./registers.py --custom --definitions $@.inc --cheader $(basename $@).h $< > $@
 
 
-%.scala: %.xml registers.py
+%.scala: xml/%.xml registers.py
 	./registers.py --chisel $(basename $@).scala $< > /dev/null
 
 %.o:	%.S
