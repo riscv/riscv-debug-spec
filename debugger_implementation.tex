@@ -86,7 +86,7 @@ registers can be accessed by moving their value into/out of GPRs.
     \hline
     Write & \Rprogbufzero & {\tt csrw s0, MSTATUS} & \\
     \hline
-    Write & \Rprogbufone & {\tt ebreak} & \\
+    Write & {\tt progbuf1} & {\tt ebreak} & \\
     \hline
     Write & \Rdatazero & new value & \\
     \hline
@@ -104,7 +104,7 @@ registers can be accessed by moving their value into/out of GPRs.
     \hline
     Write & \Rprogbufzero & {\tt fmv.x.s s0, f1} & \\
     \hline
-    Write & \Rprogbufone & {\tt ebreak} & \\
+    Write & {\tt progbuf1} & {\tt ebreak} & \\
     \hline
     Write & \Rcommand & \Fpostexec & Execute program buffer \\
     \hline
@@ -169,7 +169,7 @@ registers can be accessed by moving their value into/out of GPRs.
     \hline
     Write & \Rprogbufzero & {\tt lw s0, 0(s0)} & \\
     \hline
-    Write & \Rprogbufone & {\tt ebreak} & \\
+    Write & {\tt progbuf1} & {\tt ebreak} & \\
     \hline
     Write & \Rdatazero & address & \\
     \hline
@@ -190,9 +190,9 @@ registers can be accessed by moving their value into/out of GPRs.
     \hline
     Write & \Rprogbufzero & {\tt lw s1, 0(s0)} & \\
     \hline
-    Write & \Rprogbufone & {\tt addi s0, s0, 4} & \\
+    Write & {\tt progbuf1} & {\tt addi s0, s0, 4} & \\
     \hline
-    Write & \Rprogbuftwo & {\tt ebreak} & \\
+    Write & {\tt progbuf2} & {\tt ebreak} & \\
     \hline
     Write & \Rdatazero & address & \\
     \hline
@@ -324,7 +324,7 @@ this method.
     \hline
     Write & \Rprogbufzero & {\tt sw 0(s0), s1} & \\
     \hline
-    Write & \Rprogbufone & {\tt ebreak} & \\
+    Write & {\tt progbuf1} & {\tt ebreak} & \\
     \hline
     Write & \Rdatazero & value & \\
     \hline
@@ -345,9 +345,9 @@ this method.
     \hline
     Write & \Rprogbufzero & {\tt sw s1, 0(s0)} & \\
     \hline
-    Write & \Rprogbufone & {\tt addi s0, s0, 4} & \\
+    Write & {\tt progbuf1} & {\tt addi s0, s0, 4} & \\
     \hline
-    Write & \Rprogbuftwo & {\tt ebreak} & \\
+    Write & {\tt progbuf2} & {\tt ebreak} & \\
     \hline
     Write & \Rdatazero & address & \\
     \hline
@@ -416,23 +416,23 @@ the pseudo-op {\tt transfer dest, src} to represent all these options.
     \hline
     Write & \Rprogbufzero & {\tt transfer arg2, s0} & \\
     \hline
-    Write & \Rprogbufone & {\tt transfer s0, arg0} & \\
+    Write & {\tt progbuf1} & {\tt transfer s0, arg0} & \\
     \hline
-    Write & \Rprogbuftwo & {\tt transfer arg0, s1} & \\
+    Write & {\tt progbuf2} & {\tt transfer arg0, s1} & \\
     \hline
-    Write & \Rprogbufthree & {\tt transfer s1, arg1} & \\
+    Write & {\tt progbuf3} & {\tt transfer s1, arg1} & \\
     \hline
-    Write & \Rprogbuffour & {\tt sw 0(s0), s1} & \\
+    Write & {\tt progbuf4} & {\tt sw 0(s0), s1} & \\
     \hline
-    Write & \Rprogbuffive & {\tt transfer arg1, s1} & \\
+    Write & {\tt progbuf5} & {\tt transfer arg1, s1} & \\
     \hline
-    Write & \Rprogbufsix & {\tt transfer arg2, s0} & \\
+    Write & {\tt progbuf6} & {\tt transfer arg2, s0} & \\
     \hline
-    Write & \Rprogbufseven & {\tt ebreak} & \\
+    Write & {\tt progbuf7} & {\tt ebreak} & \\
     \hline
     Write & \Rdatazero & address & \\
     \hline
-    Write & \Rdataone & data & \\
+    Write & {\tt data1} & data & \\
     \hline
     Write & \Rcommand & 0x10000000 & Perform quick access \\
     \hline
