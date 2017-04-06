@@ -103,13 +103,21 @@ at once, Abstract Commands apply only to the hart selected by
 The Debug Module can halt harts and allow them to run again using
 the \Rdmcontrol register.
 When a debugger wants to halt a single hart it selects it in \Fhartsel
-and sets \Fhaltreq then waits
+and sets \Fhaltreq, then waits
 for \Fallhalted to indicate the hart is halted.
+Writing \Fhaltreq has no effect on a hart which is already halted.
 To resume, the debugger selects the hart with \Fhartsel,
-sets \Fresumereq, then waits for \Fallrunning to indicate the
+sets \Fresumereq, then waits for \Fallresumed to indicate the
 hart is running.
 
-To halt multiple harts at the same time, the debugger first
+\begin{commentary}
+  A debugger should use \Fallresumed, not \Fallrunning
+  or \Fallhalted,
+  because the hart may immediately halt again due to
+  trigger or step conditions.
+\end{commentary}
+
+To halt or resume multiple harts at the same time, the debugger first
 sets the hart's bits in the hart array mask register, then
 follows the same procedure but with \Fhasel set to 1.
 
@@ -147,11 +155,11 @@ is placed in the lowest-numbered {\tt data} register.
         \hline
         XLEN & arg0/return value & arg1 & arg2 \\
         \hline
-        32 & \Rdatazero & \Rdataone & \Rdatatwo \\
+        32 & \Rdatazero & {\tt data1} & {\tt data2} \\
         \hline
-        64 & \Rdatazero, \Rdataone & \Rdatatwo, \Rdatathree & \Rdatafour, \Rdatafive \\
+        64 & \Rdatazero, {\tt data1}  & {\tt data2} , {\tt data3} & {\tt data4}, {\tt data5} \\
         \hline
-        128 & \Rdatazero--\Rdatathree & \Rdatafour--\Rdataseven & \Rdataeight--\Rdataeleven \\
+        128 & \Rdatazero-- {\tt data3} & {\tt data4} -- {\tt data7} & {\tt data8} -- {\tt data11} \\
         \hline
     \end{tabulary}
 \end{table}
