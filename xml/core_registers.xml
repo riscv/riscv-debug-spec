@@ -65,8 +65,11 @@
         <field name="0" bits="5:3" access="R" reset="0" />
         <field name="step" bits="2" access="R/W" reset="0">
             When set and not in Debug Mode, the hart will only execute a single
-            instruction, and then enter Debug Mode. Interrupts are disabled
-            when this bit is set.
+            instruction and then enter Debug Mode.
+            Interrupts are disabled when this bit is set.
+            If the instruction does not complete due to an exception,
+            the hart will immediately enter Debug Mode before executing
+            the trap handler, with appropriate exception registers set.
         </field>
         <field name="prv" bits="1:0" access="R/W" reset="0">
             Contains the privilege level the hart was operating in when Debug

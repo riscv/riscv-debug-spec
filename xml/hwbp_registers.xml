@@ -245,19 +245,19 @@
         </field>
 
         <field name="m" bits="9" access="R/W" reset="0">
-            When set, every instruction completed in M mode decrements \Fcount
+            When set, every instruction completed or exception taken in M mode decrements \Fcount
             by 1.
         </field>
         <field name="h" bits="8" access="R/W" reset="0">
-            When set, every instruction completed in H mode decrements \Fcount
+            When set, every instruction completed or exception taken in in H mode decrements \Fcount
             by 1.
         </field>
         <field name="s" bits="7" access="R/W" reset="0">
-            When set, every instruction completed in S mode decrements \Fcount
+            When set, every instruction completed or exception taken in S mode decrements \Fcount
             by 1.
         </field>
         <field name="u" bits="6" access="R/W" reset="0">
-            When set, every instruction completed in U mode decrements \Fcount
+            When set, every instruction completed or exception taken in U mode decrements \Fcount
             by 1.
         </field>
 
