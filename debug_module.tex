@@ -125,7 +125,7 @@ and then halted again.
 \end{commentary}
 
 Setting \Fresumereq has no effect on a hart which is running,
-but it does clear \Fresumeack and
+but it does clear {\tt resumeack} and
 may cause a hart which halts in the future to immediately
 resume. Debuggers should not depend on this behavior and should not
 set \Fresumereq on running harts.
