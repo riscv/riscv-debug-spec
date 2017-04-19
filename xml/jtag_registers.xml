@@ -113,7 +113,12 @@
         <field name="op" bits="1:0" access="R/W" reset="2">
             When the debugger writes this field, it has the following meaning:
 
-            0: Ignore \Fdata. (nop)
+            0: Ignore \Fdata and \Faddress. (nop)
+
+	    Don't send anything over the DMI during Update-DR.
+	    This operation should never result in a busy or error response.
+	    The address and data reported in the following Capture-DR
+	    are undefined.
 
             1: Read from \Faddress. (read)
 
