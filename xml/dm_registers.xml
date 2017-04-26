@@ -294,8 +294,9 @@
 
             0 (none): No error.
 
-            1 (busy): An abstract command was executing while \Rcommand or one
-            of the {\tt data} registers was accessed.
+            1 (busy): An abstract command was executing while \Rcommand,
+	    \Rabstractcs, \Rabstractauto was written, or when one
+            of the {\tt data} or {\tt progbuf} registers was read or written.
 
             2 (not supported): The requested command is not supported. A
             command that is not supported while the hart is running may be
@@ -386,6 +387,8 @@
         Accessing them while an abstract command is executing causes \Fcmderr
         to be set.
 
+	Attempts to write them while \Fbusy is set does not change their value.
+
         The values in these registers may not be preserved after an abstract
         command is executed. The only guarantees on their contents are the ones
         offered by the command in question. If the command fails, no
@@ -413,6 +416,12 @@
     <register name="Program Buffer 0" short="progbuf0" address="0x20">
         The {\tt progbuf} registers provide read/write access to the optional
         program buffer.
+
+        Accessing them while an abstract command is executing causes \Fcmderr
+        to be set.
+
+	Attempts to write them while \Fbusy is set does not change their value.
+
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
     
