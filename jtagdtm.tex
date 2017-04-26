@@ -35,7 +35,7 @@ Unimplemented instructions must select the BYPASS register.
 
 Every target's JTAG connector seems to have its own pinout. To make it easy to
 acquire debug hardware, this spec recommends a connector that is compatible
-with the Cortex Debug Connector, as described below.
+with the Atmel AVR JTAG Connector, as described below.
 
 The connector is a .05"-spaced, gold-plated male header with .016" thick
 hardened copper or beryllium bronze square posts (SAMTEC FTSH-105 or
@@ -46,28 +46,21 @@ Viewing the male header from above (the pins pointing at your eye), a target's
 connector looks as it does in Table~\ref{tab:header}. The function of each pin
 is described in Table~\ref{tab:pinout}.
 
-This header does not include the optional JTAG TRST signal. If an implementation
-requires TRST to be driven at Power-On, this must be handled at the
-PCB level and is not exported to this header.
-
-TODO: If the above is too harsh of a requirement, we should pick a different header to
-standardize on, such as the also very common AVR JTAG Header.
-
 \begin{table}[htp]
     \centering
     \caption{JTAG Connector Diagram}
     \label{tab:header}
-    \begin{tabulary}{\textwidth}{|r|r|r|l|}
+    \begin{tabulary}{\textwidth}{|R|c|c|L|}
         \hline
-        VCC & 1 & 2 & TMS \\
+        TCK & 1 & 2 & GND \\
         \hline
-        GND & 3 & 4 & TCK \\
+        TDO & 3 & 4 & VCC \\
         \hline
-        GND & 5 & 6 & TDO \\
+        TMS & 5 & 6 & (SRSTn) \\
         \hline
-        KEY & 7 & 8 & TDI \\
+        (NC) & 7 & 8 & (TRSTn) \\
         \hline
-        N/C & 9 & 10 & RESET \\
+        TDI & 9 & 10 & GND \\
         \hline
     \end{tabulary}
 \end{table}
@@ -76,43 +69,35 @@ standardize on, such as the also very common AVR JTAG Header.
     \centering
     \caption{JTAG Connector Pinout}
     \label{tab:pinout}
-    \begin{tabulary}{\textwidth}{|r|l|L|}
-        \hline
-        1 & VCC & Power provided by the target, which may be used to power the
-        debug adapter. Must be able to source at least 25mA. This signal also
-        serves as the reference voltage for logic high.
-
-        This pin must be clearly marked in both male and female headers.\\
-        \hline
-        2 & TMS & JTAG TMS signal, driven by debug adapter. \\
-        \hline
-        3 & GND & Target ground. \\
-        \hline
-        4 & TCK & JTAG TCK signal, driven by the debug adapter. \\
-        \hline
-        5 & GND & Target ground. \\
-        \hline
-        6 & TDO & JTAG TDO signal, driven by the target. \\
-        \hline
-        7 & KEY & This pin should be clipped in male connectors, and plugged in
-        female connectors. Electrically it must not be connected. \\
-        \hline
-        8 & TDI & JTAG TDI signal, driven by the debug adapter.
-
-        This pin may be used by a target to sense a debugger at reset by weakly
-        pulling this signal high during a brief detection period at reset.
-        Debuggers should drive TDI low when the interface is idle. \\
-        \hline
-        9 & N/C & Not connected in either target or debug adapter. May be used
-        in future specs. \\
-        \hline
-        10 & RESET & Reset signal, driven by the debug adapter. This may be
-        active low or active high, depending on the target's requirements. A
-        debug adapter must accommodate either option. Asserting reset should
-        reset any RISC-V cores as well as any other peripherals on the PCB.
-        It should not reset the debug logic.
-        If not implemented in a target, this pin must not be connected. \\
-        \hline
+    \begin{tabulary}{\textwidth}{|r|c|L|}
+      \hline
+      1 & TCK & JTAG TCK signal, driven by the debug adapter.
+      This pin must be clearly marked in both male and female headers.\\
+      \hline
+      5 & TMS & JTAG TMS signal, driven by debug adapter. \\
+      \hline
+      9 & TDI & JTAG TDI signal, driven by the debug adapter. \\
+      \hline
+      3 & TDO & JTAG TDO signal, driven by the target. \\
+      \hline
+      8 & TRSTn & Test Reset (optional, only used by some devices. Used to reset the JTAG TAP Controller).\\
+      \hline
+      4 & VCC & Power provided by the target, which may be used to power the
+      debug adapter. Must be able to source at least 25mA.
+      This signal also
+      serves as the reference voltage for logic high. \\
+      \hline
+      2, 10 & GND & Target ground. \\
+      \hline
+      6 & SRSTn & Active-low reset signal, driven by the debug adapter.
+      Asserting reset should
+      reset any RISC-V cores as well as any other peripherals on the PCB.
+      It should not reset the debug logic.
+      Although connecting this pin is optional, it is recommended as it allows
+      the debugger to hold the target device in a reset state, which may be essential
+      to debug some scenarios.
+      If not implemented in a target, this pin must not be connected. \\
+      \hline
     \end{tabulary}
 \end{table}
 
