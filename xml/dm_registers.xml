@@ -90,6 +90,9 @@
         <field name="haltreq" bits="31" access="R/W" reset="0">
             Halt request signal for all currently selected harts. When set to 1, the
             hart will halt if it is not currently halted.
+
+	    Writing 1 or 0 has no effect on a hart which is already halted, but
+	    the bit should be cleared to 0 before the hart is resumed.
             Setting both \Fhaltreq and \Fresumereq leads to undefined behavior.
 
             Writes apply to the new value of \Fhartsel and \Fhasel.
