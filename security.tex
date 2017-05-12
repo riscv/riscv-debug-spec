@@ -1,0 +1,251 @@
+\chapter{Debug Security}
+
+{\bf This part of the spec needs work before it's ready to be implemented,
+which is why it's in the appendix. It's left here to give a rough idea of some
+of the issues to consider.}
+
+\section{Rationale}
+
+Security is imperative within any computing ecosystem, but especially in the context of a debugging model for any given processing architecture. The RISC-V debugging architecture has been designed for flexibility, ease, and modularity. As such, ensuring security can be enforced as much as is reasonably possible is a critical part of the RISC-V debug specification. The following considerations illuminate this position:
+\begin{itemize}
+    \item Common debug authentication models considered inadequate.
+    \item A hart or core may never know it is being debugged.
+    \item With an optional System Bus in place, it may be impossible for a core/hart to know it is being debugged.
+    \item DM global reset can hold in reset every component in the system (including RTC?).
+    \item DTM may be accessible from many transports (USB, I2C, SPI, etc.).
+    \item Multiple DTMs can be used in parallel; up to use to ensure this doesn't happen.
+    \item The DMI may not be point-to-point, but may be implemented within TileLink, AMBA, or another robust interface.
+    \item Implementations where Program Buffer is implemented as a subset of main memory.
+    \item DM can be active regardless of whether the authenticated bit is unset.
+    \item If Triggers can use the Program Buffer, code may be executed from M-Mode through the abuse of triggers.
+    \item Since trace data {\bf may} be stored in RAM on the system bus, generated trace data could be used to subvert system security.
+\end{itemize}
+
+\subsection{Common Authentication Models}
+The security of a computing technology is often heavily pinned on its ability to control access to its incorporated hardware debugging interfaces. The most common access controls deployed are as follows:
+\begin{itemize}
+    \item Fuses that disable access to debug functionality
+    \item A static security token stored in the DM
+    \item A bootloader that disables DM access on startup and re-enables it through an authentication protocol
+\end{itemize}
+
+While fuses are the most concrete technology for disabling access to a debug module, they are bypassible and, more importantly, deny valid, authorized users access to a critical resource. While security analysts commonly recommend disabling access to debugging modules, it isn't a realistic practice. Hardware and software faults occur in production. Access to the debug module is often a critical path for realizing the source of faults in deployed systems. Furthermore, attacks against fuses have been a proven and cost-effective strategy for bypassing fuses. Glitching, for example, is one of the most well known and repeatedly proven strategies of attack. Thus, fuses, while often used, can be considered a technology that limits {\em legitimate} use while reducing the attack surface to only those individuals with the ability to perform attacks such as glitching. 
+
+Static security tokens, such as passwords, are problematic for less obvious reasons. During production, these keys cannot be made unique to each manufactured unit. This is because it is exceptionally challenging to alter the production process to create a static, unique key and associate it with one specific manufactured unit. The overhead for this process is often unmaintainable. As a result, solutions commonly end up sharing the same static key throughout a deployment. The result is that any individual capable of guessing the key, or any leak of the key, opens up the entire environment to adversarial debugging. As such, any static key (whether it be an encryption key used in challenge-response, or simply a binary number) should not be used in production. 
+
+The bootloader model is problematic for the reasons described in the paragraph above, but also incorporates the TOCTOU security tisk. TOCTOU (Time of Check, Time of Use) is a race condition where the attacker attempts to win a race with a computing system for access to a given resource. On processor reset, the processor's core will enable and configure internal modules (such as the debug module) prior to execution of the first instruction. This means that there is a period of time when the debug module is enabled and accessible prior to the bootloader disabling it in software. An attacker's advantage is the ability to automate the process and perform it an infinite number of times until they have successfully won the race. At this point, the attacker can simply extract the security key from system memory and will never have to race the bootloader again. 
+
+\subsection{Attestation}
+Attestation is a critical piece of the security puzzle for embedded systems, Internet of Things (IoT), and production server environments. In the context of debug security, attestation is challenging to enforce. How can running code {\em know} that it is being instrumented by a debugger? That challenge is augmented without adequate authentication and authorizatoin controls. 
+
+With the System Bus option in use, a debugger can access system memory or any peripheral device enabled on the target system without having to explicitly control any given hart. The result is a bypass of attestation controls that would otherwise enable a hart to identify whether it has been forced into debug mode. 
+
+With global reset, it is possible, depending on the implementation, that a debug module could place into stasis any device that would otherwise indicate to a hart that it is being instrumented. One such example of this is a real time clock (RTC) that runs independently of the RISC-V core. If the global reset can affect such an RTC implemented on a SoC, software running on the core may not be able to use its {\em perception} of its ecosystem to detect debug behaviors. 
+
+\subsection{Transport Security}
+This document recommends that the DTM be accessible over almost any transport. This includes transports such as USB, I2C, SPI, and more. While this shall prove useful for engineers that need access to the DM, but can't always spare room on a PCB for the common JTAG headers, it is also a concern in the context of the authentication models discussed earlier in this section. 
+
+Malicious software can be placed in components with less security (or no security), that are accessed by a RISC-V processor or SoC over USB, I2C, or SPI. These components can abuse their position to brute force access to, or simply instrument, the DTM. A more realistic attack is simply allowing DM access over USB, then allowing a consumer to connect a RISC-V enabled device to a compromised public device over the USB port, resulting in a full system compromise through the DM. 
+
+On a shared bus such as I2C and SPI, it may be possible for a malicious component to {\em listen} to debug communication traffic. If this communication includes a static authentication token, the malicious component can intercept and replay authentication at a later time.
+
+This document also suggests that multiple transports can be active in parallel. In other words, a legitimate user may access the DM over USB while a second user could also access the DM over I2C. It's important to note that there is only one DM and, thus, only one authentication mechanism. If the legitimate user over USB authenticates to and enables the DM, all other transports will then be open for instrumentation. 
+
+\subsection{DM as a Pivot Target}
+Though an unlikely target to abuse due to the small threat surface, when the DMI is implemented on more robust interfaces, such as TileLink and AMBA that have access to other critical peripherals, it may be desirable to attack the debug module. In this model, the DM or DTM could be used to gain access to the DMI, which is also attached to TileLink, AMBA, etc. Once control over the DMI is obtained, the underlying interface could be used to manipulate other peripherals. 
+
+Despite a low risk, it is important to point out that this target may always be present in any given system. The reason for this is that a DM and DTM (and thus, DMI) will be reachable even on systems where authentication is permanently disabled. Because of this, the potential for an advanced actor to subvert these technologies must be incorporated into a full threat model. 
+
+\subsection{Effects on Main Memory}
+Any technology that uses main memory to store data, retrieve data, or execute instructions, could also be used by a malicious application. Text or binary structures, for example, written to main memory by a trace module could be used as instructions by software that does not have the ability to inject new code into a system. This is similar to using existing executable code in a return-oriented-programming (ROP) attack. 
+
+This style of attack is unlikely on fully implemented processors with memory management units (MMU) and input-output MMU (IOMMU). Systems designed for microcontroller or SoC use may be more affected by this attack model. 
+
+\subsection{Bypassing Authentication Checks}
+It's notable that the only authentication check that can be performed by the DM is interpreting its own {\em authenticated} bit in \ref{dmstatus}. If this bit is checked by the DM after an external authentication module denies a user access, a glitching (or similar) attack {\em may} be used to trick the DM into interpreting the bit as {\bf true}.
+
+\section{Solutions to Security Concerns}
+
+\subsection{Solutions Specific to a Particular Risk}
+
+\subsubsection{DMI Security}
+To ensure that an adversary can't abuse the DM or DTM with the purpose of controlling or manipulating the underlying bus used by DMI, some implementations may consider reducing the attack surface. To accomplish this, implementing a simplistic, point-to-point bus solely used for the DMI may be a viable option. 
+
+Migrating the DMI away from TileLink, AMBA, or a similar bus interface will provide isolation from critical core components, and will ensure that any functionality abused within the DM subsystem can only affect the DM subsystem. 
+
+\subsubsection{Main Memory}
+For systems that require a high level of trustworthiness, modules that require memory buffers should avoid the use of main memory. This includes the Trace Module's trace buffer, the DM's Program Buffer, etc. It is reasonable for implementers to prefer the use of main memory, as it reduces system costs. However, as noted earlier in this document, this may allow malicious programs to abuse these areas of memory with the intent of executing otherwise unavailable instructions, or to load malicious implants into areas of memory that are very challenging to inspect or validate. 
+
+Thus, an example of a simple alternative is a cache RAM implementation using SRAM. Small capacity SRAM chips, perfect for use in caches, are reasonably cost effective and will provide isolation from main memory. In addition, SRAM can easily be incorporated into SoC designs so that external memory is not required for critical core components. 
+
+\subsubsection{Bypassing Authentication Checks}
+Authentication checks in a RISC-V core are only bypassable when certain conditions are met. In most cases, adversaries attempt to induce these conditions through fault injection attacks. This document does not suggest specific enhancements toward the protection of physical fault injection attacks. However, the author does suggest that any organization developing an implementation of the RISC-V core targeted toward secure processing be designed with fault injection in mind and audited by a third party capable of evaluating such risks. 
+
+It should be noted, regardless, that the DM is a well-suited target of fault injection (specifically, glitching attacs) that circumvent any authentication scheme built into the system. If a non-trivial authentication scheme is implemented, protection from fault injection attacks {\em should} be assessed to ensure the complexity of the authentication module is not superficially bypassed through the use of simplistic physical attacks.
+
+\subsection{Common Solutions}
+
+\subsubsection{Strong Authentication Model}
+Strong authentication is, of course, a category that includes a wide array of technologies. This document will not attempt to define what strong authentication {\em is}. However, it will provide a guideline for implementing strong authentication technology within the context of a debug module. The following sections define how strong authentication must be implemented within a RISC-V authentication module.
+
+\paragraph{Identification}
+The first and most critical part of interacting with an Authentication Module (AM) is determining its capabilities. Upon connection to a DM through a DTM, a debugger interacting with a module that implements authentication must query the {\em authenticated} bit in the dmstatus register. If this bit is zero, the debugger should tell the AM that it needs to perform peer authentication. The AM responds by sending a go-ahead message that encodes a 16-bit field declaring its capabilities. The debugger responds by selecting one (or none) of the authentication capabilities presented by the AM. If none, the session is considered {\em closed} and no further transactions shall be made. If a selection has been made, communication will continue with the peer authentication phase. 
+
+The 16-bit capability field in the AM response to an authentication request should be unique to the {\em implementation} of a particular authentication scheme. For example, if one AM implementer chooses 0x007f as their authentication scheme identifier, it should represent a unique set of steps implemented using the serial protocol defined within this section. In this fashion, there shall be an adequate number of possible implementation models that can be accommodated by the generic RISC-V specification, while still ensuring that implementations of a specific AM scheme can be shared across multiple manufacturers. 
+
+\paragraph{Peer Authentication}
+In order to validate that a Debugger or Debug Translator is talking to an AM connected to the Debug Module, the AM must be capable of proving itself in some fashion. Typically, this is achieved using public key certificates, where a unique asymmetric key pair is generated per each RISC-V core. The public key is then signed by a master private key owned by the implementing organization. The signature and unique asymmetric key pair are stored in a protected memory region of the RISC-V core. Upon connecting to the DM, the AM presents the signature and public key to the Debugger over the DTM. It's notable that this model {\em does not require} substantial features such as PKI, X.509 parsing, and similarly complicated binary formats. 
+
+It is also notable that asymmetric cryptography may not be required to fulfill a model for signature verification. Symmetric cryptography may also be used, reducing the overall complexity of the AM. However, if symmetric cryptography is used, the {\em master} signing key used to authenticate a per-core key {\em should} be protected from physical attacks that can reproduce the original key, such as simple power analysis (SPA) and differential power analysis (DPA). If the master key is exposed by any single attacker, all unique keys signed by the master key will be at risk of impersonation. Additionally, arbitrary devices may then be {\em signed} by the exposed master key. 
+
+Without proper guidance, the symmetric model is much more challenging to implement correctly. Obviously, in the public key model, the private key for generating the signature is never stored on the core. And, while the private key {\em is} stored on the core and could also be extracted through DPA and SPA attacks (or similar), the signature only represents one single core and does not reduce the security of an arbitrary number of cores.
+
+\paragraph{Key Exchange}
+Once the DM has been authenticated by a debugger, the debugger can exchange keys with the AM. Key exchange should be implemented in one of the following ways
+\begin{itemize}
+    \item The authentication token is directly encrypted with the AM's key
+    \item The debugger's [public] key is encrypted with the AM's key
+    \item An existing secure key exchange protocol can be implemented here
+\end{itemize}
+
+After the exchange occurs, the AM must disclose a 32-bit pattern that describes the Granular Access Rights for this session. This is necessary, so that the debugger knows what it is and is not capable of instrumenting during the debug session. This also ensures that multiple tiers of access to the system can be acquired. For example, an authenticated debugger whose key is proven to be signed by the {\em RISC-V implementer} shall have access to {\em all} resources attached to the RISC-V core. However, an authenticated debugger whose key is proven to be signed by a quality assurance team may not have access to the System Bus and may be required to access peripherals through each hart in the SoC. This may be useful to restrict access to sensitive peripherals on the System Bus that a {\em hart} would not have access to, but a System Bus would. 
+
+\paragraph{Secure Session}
+If a unique symmetric session key was negotiated in the Key Exchange phase, and the authentication token was not simply passed to the DM, a secure session can be implemented. In this model, the entire debugging session shall be encrypted with a secure key, ensuring that any malicious component on the same physical bus is unable to inject or intercept data from the core. This model is a best fit for implementations of a RISC-V core that must ensure that each core is physically secured from tampering, and do not wish to solely protect RISC-V cores from arbitrary adversaries wishing to access debug capability. While secure sessions are {\em recommended}, it is not necessary to implement a secure session to remediate the primary risk to the DM, which is an adversary accessing and abusing the DM for malicious purposes. 
+
+\paragraph{Session Deconstruction}
+Ensure that sessions either {\em time out} or are implicitly closed. A timed-out session, identified by the DM (and/or AM) must be immediately closed. An error message must be sent to the debugger, followed by unsetting the {\em authenticated} bit in dmstatus. A debugger can close a session with the DM. When the DM or DTM identifies a detached debugger, the AM should be notified to disable the current session and destroy any temporal session key(s). 
+
+\paragraph{Best Practice Recommendations}
+For each implementation of a secure communication protocol, the following strategies must be used:
+\begin{itemize}
+    \item Disallow token reuse (Don't use the same symmetric key for multiple sessions or authentication tokens).
+    \item Ensure authorized users are authenticated using a signature verification model and not simply a secure token.
+    \item Enforce the use of truly random numbers to increase message entropy.
+    \item Ensure message interception by third parties does not create risk.
+    \item Enforce message validation to disallow message tampering.
+    \item Ensure the identity of the component can be verified.
+    \item Be resilient to brute-force attack.
+    \item Disable access to the DM from {\em all} other DTMs when one DTM has authenticated.
+    \item Always use cryptographic algorithms recommended by best-practices authorities.
+    \item Ensure the cryotographic algorithm has a lifespan that should, according to best-practices authorities, outlive the supported lifespan of the RISC-V core.
+    \item Never implement custom cryptographic algorithms.
+    \item Never use algorithms often confused with encryption algorithms, such as compression algorithms, base64, or xor.
+\end{itemize}
+
+\subsubsection{Granular Access Rights}
+While it may be desirable for some debugging features to be accessed by consumers, in-field agents, or quality assurance workers, there are many scenarios where complete system access reduces the overall security and trustworthiness of the system. For these environments, granular access rights (GAR) can assist in limiting control over features and peripherals that could destabilize the integrity of a SoC or core. 
+
+GAR is a conglomeration of features, presented as a set of read-only bits, that the debugger can access once authentication has been performed (or even if authentication is unnecessary) to determine what features can be used during the debug session. The AM can provision different sets of features according to the level of access granted by the authentication token. For example, if a debugger authenticates with a manufacturer's key, the AM can grant {\em full} access rights. On the same system, if a consumer connects a debugger to the core, a default set of access rights can be provided {\em without any authentication}. This gives the manufacturer control over critical components that manage the core's security features while ensuring consumer debug access does not affect system integrity. This is valuable in an environment with a security layer containing cryptographic keys, keys that should not be manipulated by anyone but the manufacturer. 
+
+An important side effect of this model is that it grants the ability for implementations to create sets of privileges even for highly authorized users. For example, if a security analyst is evaluating the state of a potentially compromised system and needs to ensure the highest level of integrity possible, GAR can be used. The analyst can authenticate with a highest level of privilege, but can authenticate to a profile that disables, for example, multiple DTM Transports enabled during a debug session. This ensures that no other component on the motherboard (from, say, a compromised SPI component) can manipulate the debug session in parallel. This augmentation can not only impede the work of extremely specialized implants, it can {\em catch them} in the act. 
+
+\begin{table}[htp]
+    \begin{center}
+        \caption{Example Granular Access Rights Bits}
+        \label{tab:gartable}
+        \begin{tabular}{|r|l|}
+            \hline
+            Bit Position & Name \\
+            \hline
+            0 & Global Reset Line \\
+            1 & Direct System Bus Access \\
+            2 & Enable M-Mode Debugging \\
+            3 & Global Hart Access \\
+            4 & DTM Transports Disabled on Auth \\
+            5 & Disallow Tampering with Debug CSR Writes \\
+            6 & Expose dmstate to M-Mode \\
+            7 - 31 & Reserved For Future Use \\
+            \hline
+        \end{tabular}
+    \end{center}
+\end{table}
+
+The \ref{tab:gartable} depicts example bits that could be used to implement GAR in the DM (or AM), through either an actual or virtual Debug CSR. The privileges described below are references to problems described earlier in this chapter.
+
+\subsection{Serial Protocol for Authentication}
+The serial protocol for authentication is simple, taking on the Type, Length, Value (TLV) packet format. This format shall ensure that all messages transmitted over the 32-bit \Rauthdata {\em serial port} are clearly transmitted with adequate opportunities for error correction. 
+
+An authentication packet always takes the following format:
+\begin{center}
+	\begin{tabular}{p{4.0 ex}p{4.0 ex}p{8.0 ex}p{16.0 ex}}
+		{\scriptsize 31} & \multicolumn{1}{r}{\scriptsize 24}
+		&
+		{\scriptsize 23} & \multicolumn{1}{r}{\scriptsize 0} \\
+		\hline
+		\multicolumn{2}{|c|}{$|Type|$} & \multicolumn{2}{c|}{$|Length|$} \\
+		\hline
+		\multicolumn{2}{c}{\scriptsize 8} & \multicolumn{2}{c}{\scriptsize 24} \\
+	\end{tabular}
+\end{center}
+
+\begin{center}
+	\begin{xtabular}{|l|p{0.5\textwidth}|c|l|}
+	\hline
+    Field & Description \\
+	\hline
+	|Type| & The type of message being sent to the AM.\\
+    |Length| & The bytes in the value, in MSB, padded to a multiple of 4.\\
+	\hline
+	\end{xtabular}
+\end{center}
+
+The length of each message is sent in MSB order, and must always be a multiple of 4, since the {\em serial port} is, essentially, a 32-bit register. The padding used to create a message with a multiple of 4 must be an octet of all zero bits (0x00). The length value is right-shifted by two bits, since the bottom two bits of any message length will always be zero. The length value {\em only} indicates the length of the value and does {\em not} include the type/length word, nor the appended CRC32.
+
+The value is sent once an {\bf OK} message is received from the AM. This can be achieved by polling the {\tt authbusy} bit. When zero, the debugger can read the response from \Rauthdata. If the value returned by the AM is anything other than {\bf OK}, the debugger should either close, or try again, depending on the error condition returned.
+
+A simple 32-bit cyclic redundancy check (CRC) is appended to each message. This helps ensure that large messages containing cryptographic data are transmitted correctly across the DTM Transport, the DMI, and the serial port connecting the DM to the AM. The CRC value should be sent in MSB order. The CRC is calculated on both the value {\em and} the type/length header. 
+
+\subsubsection{Transceiving}
+The overall process for sending a message to the AM is as follows:
+
+\paragraph{Message Construction}
+\begin{enumerate}
+    \item Pad the message, if necessary, to a multiple of 4 octets.
+    \item Determine the message type.
+    \item Construct the message type/length header word. 
+    \item Prepend the type/length header to the message.
+    \item Calculate the CRC32 checksum across the header and the message.
+    \item Append the CRC32 checksum to the message.
+\end{enumerate}
+
+\paragraph{Message Transmission}
+For each 32-bit word in the message:
+\begin{enumerate}
+    \item Write the 32-bit word in MSB format to \Rauthdata.
+    \item Wait for the {\tt authbusy} bit to change to zero.
+    \item Read the 32-bit word in MSB format from \Rauthdata.
+    \item Continue if the value equates to {\bf OK}
+    \item If the value does {\em not} equal {\bf OK}, stop and raise an error.
+\end{enumerate}
+
+\paragraph{Message Reception}
+If the response to a write through \Rauthdata is {\bf Response} rather than {\bf OK}, the AM has a message for the debugger. This is typically a response to a command. The following list describes this process:
+\begin{enumerate}
+    \item Ensure the {\tt authbusy} bit is zero.
+    \item Read from \Rauthdata.
+    \item If the value is not {\bf Response}, stop.
+    \item Write a message type of {\bf OK} to \Rauthdata.
+    \item Query the {\tt authbusy} bit until it is zero.
+    \item Read from \Rauthdata.
+    \item Parse the type/length header.
+    \item Write a message type of {\bf OK} to \Rauthdata.
+    \item Continue querying {\tt authbusy} until zero, reading from \Rauthdata, and writing {\bf OK} until the total message is received.
+    \item Once fully received, ensure the CRC32 value is correct.
+\end{enumerate}
+
+The design of the message types allows for opaque transmission of authentication data (of any type and complexity) to and from the AM. This ensures that this specification is not affixed to a specific set of authentication types, and enables future enhancements to be seamless with pre-existing implementations. The following message types are currently supported. More types may be added in the future. 
+\begin{center}
+	\begin{tabular}{ |l|l|l| }
+	\hline
+    Message Type & Value & Description \\
+	\hline
+	|OK| & 0 & The message was received without error.\\
+    |Error| & 1 & An error occurred, the value of which is in the {\em length} field.\\
+    |Send| & 2 & Send data to the AM.\\
+    |Receive| & 3 & Query the AM for data.\\
+    |Reserved| & 4-255 & These values are currently reserved.\\
+	\hline
+	\end{tabular}
+\end{center}
+
