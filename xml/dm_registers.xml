@@ -290,7 +290,7 @@
             not cleared until that command has completed.
         </field>
         <field name="0" bits="11" access="R" reset="0" />
-        <field name="cmderr" bits="10:8" access="R/W0" reset="0">
+        <field name="cmderr" bits="10:8" access="R/W1C" reset="0">
             Gets set if an abstract command fails. The bits in this field remain set until
             they are cleared by writing 1 to them. No abstract command is
             started until the value is reset to 0.
