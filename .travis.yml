@@ -3,16 +3,16 @@ git:
 
 language: latex
 
-addons:
-  apt:
-    packages:
-      - make
-      - python
-      - python-sympy
-      - graphviz
-      - texlive-full
-      - python-pygments
+before_install:
+- sudo apt-get qq update && \
+    sudo apt-get install -y --no-install-recommends \
+    make \
+    python \
+    python-sympy \
+    graphviz \
+    texlive-full \
+    python-pygments 
 
 script:
-  - make
+- make
 
