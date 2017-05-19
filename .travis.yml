@@ -4,7 +4,8 @@ git:
 language: latex
 
 before_install:
-- sudo apt-get install \
+  - sudo apt-get -qq update
+  - sudo apt-get install \
     make \
     python \
     python-sympy \
@@ -13,5 +14,5 @@ before_install:
     python-pygments 
 
 script:
-- make
+  - make
 
