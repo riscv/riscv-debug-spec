@@ -4,7 +4,7 @@ git:
 language: latex
 
 before_install:
-- sudo apt-get qq update && \
+- sudo apt-get -qq update && \
     sudo apt-get install -y --no-install-recommends \
     make \
     python \
