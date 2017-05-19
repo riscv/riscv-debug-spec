@@ -11,8 +11,9 @@ addons:
       - python-sympy
       - graphviz
       - texlive-full
+      - texlive-latex-extra
       - python-pygments
-
+      
 script:
   - make
 
