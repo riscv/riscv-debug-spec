@@ -5,13 +5,12 @@ language: latex
 
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install \
-    make \
-    python \
-    python-sympy \
-    graphviz \
-    texlive-full \
-    python-pygments 
+  - sudo apt-get install -y make
+  - sudo apt-get install -y python
+  - sudo apt-get install -y python-sympy
+  - sudo apt-get install -y graphviz
+  - sudo apt-get install -y texlive-full
+  - sudo apt-get install -y python-pygments 
 
 script:
   - make
