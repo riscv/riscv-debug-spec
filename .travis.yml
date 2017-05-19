@@ -13,6 +13,9 @@ addons:
       - texlive-full
       - python-pygments
 
+install:
+ - tlmgr install minted
+
 script:
   - make
 
