@@ -3,6 +3,16 @@ git:
 
 language: latex
 
+addons:
+  apt:
+    packages:
+      - make
+      - python
+      - python-sympy
+      - graphviz
+      - texlive-full
+      - python-pygments
+
 script:
   - make
 
