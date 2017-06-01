@@ -65,19 +65,14 @@
 
             1: \Fcfgstraddrzero - \Fcfgstraddrthree registers hold the address of the
             configuration string.
-        <field name="versionhi" bits="3:2" reset="0" access="R">
-            Reserved for future use. Reads as 0.
-        </field>
-        <field name="versionlo" bits="1:0" reset="1" access="R">
-            00: There is no Debug Module present.
+        <field name="version" bits="3:0" reset="2" access="R">
+            0: There is no Debug Module present.
 
-            01: There is a Debug Module and it conforms to version 0.11 of this
+            1: There is a Debug Module and it conforms to version 0.11 of this
             specification.
 
-            10: There is a Debug Module and it conforms to version 0.13 of this
+            2: There is a Debug Module and it conforms to version 0.13 of this
             specification.
-
-            11: Reserved for future use.
         </field>
     </register>
 
@@ -88,8 +83,8 @@
 
         <!-- Fields that apply to a specific hart. -->
         <field name="haltreq" bits="31" access="R/W" reset="0">
-            Halt request signal for all currently selected harts. When set to 1, the
-            hart will halt if it is not currently halted.
+            Halt request signal for all currently selected harts. When set to
+            1, each selected hart will halt if it is not currently halted.
 
 	    Writing 1 or 0 has no effect on a hart which is already halted, but
 	    the bit should be cleared to 0 before the hart is resumed.
@@ -99,7 +94,7 @@
         </field>
         <field name="resumereq" bits="30" access="R/W" reset="0">
             Resume request signal for all currently selected harts. When set to 1,
-            the hart will resume if it is currently halted.
+            each selected hart will resume if it is currently halted.
             Setting both \Fhaltreq and \Fresumereq leads to undefined behavior.
 
             Writes apply to the new value of \Fhartsel and \Fhasel.
@@ -153,8 +148,8 @@
             Debug Module after power up, including the platform's system reset
             or Debug Transport reset signals.
 
-            A debugger should pulse this bit low to ensure that the Debug
-            Module is fully reset and ready to use.
+            When first connecting, a debugger should pulse this bit low to
+            ensure that the Debug Module is fully reset and ready to use.
 
             Implementations may use this bit to aid debugging, for example by
             preventing the Debug Module from being power gated while debugging
@@ -493,7 +488,7 @@
         <field name="error1" bits="5" access="R" reset="0"/>
         <field name="valid1" bits="4" access="R" reset="0" />
         <field name="full1" bits="3" access="R/W0" reset="0" />
-        <field name="error0" bits="2" access="R" reset="0">
+        <field name="error0" bits="2" access="R/W1C" reset="0">
             1 when the debugger-to-core queue for serial port 0 has
             over or underflowed. This bit will remain set until it is reset by
             writing 1 to this bit.
@@ -570,7 +565,7 @@
             bus read at the new address.
         </field>
         <field name="sberror" bits="14:12" access="R/W0" reset="0">
-            When the debug module's system bus
+            When the Debug Module's system bus
             master causes a bus error, this field gets set. The bits in this
             field remain set until they are cleared by writing 1 to them.
             While this field is non-zero, no more system bus accesses can be
@@ -584,7 +579,7 @@
 
             3: There was some other error (eg. alignment).
 
-            4: The system bus master was busy when a one of the
+            4: The system bus master was busy when one of the
             {\tt sbaddress} or {\tt sbdata} registers was written,
             or the {\tt sbdata} register was read when it had
             stale data.
@@ -664,7 +659,7 @@
 
         4. If \Fsbautoincrement is set, increment the internal address.
 
-        Reads to this register:
+        Reads from this register:
 
         1. If bits 31:0 of the internal data register haven't been updated
         since the last time this register was read, then set \Fsberror, return

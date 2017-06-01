@@ -222,7 +222,8 @@
 
         \begin{commentary} This trigger type is intended to be used as a single
         step that's useful both for external debuggers and for software monitor
-        programs. As such it is not necessary to support \Fcount greater than
+        programs. For that case it is not necessary to support \Fcount greater
+        than
         1. The only two combinations of the mode bits that are useful in those
         scenarios are \Fu by itself, or \Fm, \Fh, \Fs, and \Fu all set.
 
