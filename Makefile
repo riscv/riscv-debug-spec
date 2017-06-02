@@ -14,11 +14,23 @@ REGISTERS_TEX += sw_registers.tex
 REGISTERS_CHISEL += dm_registers.scala
 REGISTERS_CHISEL += abstract_commands.scala
 
+INCLUDES_TEX = introduction.tex
+INCLUDES_TEX += overview.tex
+INCLUDES_TEX += debug_module.tex
+INCLUDES_TEX += core_debug.tex
+INCLUDES_TEX += trigger.tex
+INCLUDES_TEX += dtm.tex
+INCLUDES_TEX += jtagdtm.tex
+INCLUDES_TEX += implementations.tex
+INCLUDES_TEX += debugger_implementation.tex
+INCLUDES_TEX += trace.tex
+INCLUDES_TEX += future.tex
+
 FIGURES = fig/*
 
 all:	$(NAME).pdf debug_defines.h
 
-$(NAME).pdf: $(NAME).tex $(REGISTERS_TEX) $(FIGURES) vc.tex changelog.tex
+$(NAME).pdf: $(NAME).tex $(REGISTERS_TEX) $(FIGURES) $(INCLUDES_TEX) vc.tex changelog.tex
 	pdflatex -shell-escape $< && pdflatex -shell-escape $<
 
 publish:	$(NAME).pdf
