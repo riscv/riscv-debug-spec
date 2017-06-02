@@ -322,20 +322,24 @@ def print_latex_index( registers ):
     print "      \\caption{%s}" % registers.name
     print "      \\label{%s}" % registers.label
     if any( r.sdesc for r in registers.registers ):
+        print "      \\begin{tabular}{|r|l|l|l|}"
+        print "      \\hline"
+        print "      Address & Name & Description & Page \\\\"
+    else:
         print "      \\begin{tabular}{|r|l|l|}"
         print "      \\hline"
-        print "      Address & Name & Description \\\\"
-    else:
-        print "      \\begin{tabular}{|r|l|}"
-        print "      \\hline"
-        print "      Address & Name \\\\"
+        print "      Address & Name & Page \\\\"
     print "      \\hline"
     for r in sorted( registers.registers,
             cmp=lambda a, b: compare_address(a.address, b.address)):
-        if r.sdesc:
-            print "%s & %s & %s \\\\" % ( r.address, r.name, r.sdesc )
+        if r.fields and r.short:
+            page = "\\pageref{%s}" % r.short
         else:
-            print "%s & %s \\\\" % ( r.address, r.name )
+            page = ""
+        if r.sdesc:
+            print "%s & %s & %s & %s \\\\" % ( r.address, r.name, r.sdesc, page )
+        else:
+            print "%s & %s & %s \\\\" % ( r.address, r.name, page )
     print "         \hline"
     print "      \end{tabular}"
     print "   \end{center}"
