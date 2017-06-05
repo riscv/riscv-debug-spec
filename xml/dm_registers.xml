@@ -148,8 +148,8 @@
             Debug Module after power up, including the platform's system reset
             or Debug Transport reset signals.
 
-            When first connecting, a debugger should pulse this bit low to
-            ensure that the Debug Module is fully reset and ready to use.
+            A debugger may pulse this bit low to get the debug module into a
+            known state.
 
             Implementations may use this bit to aid debugging, for example by
             preventing the Debug Module from being power gated while debugging

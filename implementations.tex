@@ -23,7 +23,7 @@ modifications to a processor's datapath.
 When \Fhaltreq is set, the Debug Module raises a special interrupt
 to the selected hart. This interrupt causes the
 hart to enter Debug Mode and jump to a 
-memory region that is serviced by the DM and execute a "park loop".
+memory region that is serviced by the DM and execute a ``park loop''.
 When taking this exception, \Rpc is saved to \Rdpc.
 In
 the park loop the hart writes its \Rmhartid to a memory location within the Debug
