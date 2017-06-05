@@ -1,6 +1,16 @@
 <registers name="Core Debug Registers" prefix="CSR_">
     These registers are only accessible from Debug Mode.
     <register name="Debug Control and Status" short="dcsr" address="0x7b0">
+        \begin{commentary}
+            \Fintdisable is intended to be used in conjunction with \Fstep.
+            Usually it is necessary to disable interrupts so that single step
+            debugging is not constantly interrupted by jumps to the exception
+            handler. Occasionally a user will want to step into the exception
+            handler, and for those cases the interrupt behavior is controllable
+            here. Having the debugger use mstatus.ie for this functionality is
+            not desirable because it has side effects when stepping through
+            code that accesses mstatus itself.
+        \end{commentary}
         <field name="xdebugver" bits="31:30" access="R" reset="Preset">
           0: There is no external debug support.
 
@@ -22,7 +32,15 @@
             When 1, {\tt ebreak} instructions in User/Application Mode enter
             Debug Mode.
         </field>
-        <field name="0" bits="11" access="R" reset="0" />
+        <field name="intdisable" bits="11" access="R/W" reset="0">
+            0: Interrupts are handled as usual.
+
+            1: Interrupts are disabled. This bit supersedes mstatus.ie.
+
+            This feature may not exist in implementations from early in the
+            specification process.  The debugger must read back the value it
+            writes to check whether the feature is supported.
+        </field>
         <field name="stopcount" bits="10" access="R/W" reset="Preset">
 
             0: Increment counters as usual.
@@ -66,7 +84,6 @@
         <field name="step" bits="2" access="R/W" reset="0">
             When set and not in Debug Mode, the hart will only execute a single
             instruction and then enter Debug Mode.
-            Interrupts are disabled when this bit is set.
             If the instruction does not complete due to an exception,
             the hart will immediately enter Debug Mode before executing
             the trap handler, with appropriate exception registers set.
