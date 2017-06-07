@@ -84,11 +84,11 @@
     </register>
 
     <register name="Debug PC" short="dpc" address="0x7b1">
-        This register is only accessible in Debug Mode. Then it contains the
-        address of the next instruction to be executed when resuming. It is
-        writable so that the debugger can cause execution to continue somewhere
-        else.
+        Upon entry to debug mode, \Rdpc is written with the
+        virtual address of the instruction that encountered the exception.
 
+        When resuming, the hart's PC is updated to the virtual address stored in
+        \Rdpc. A debugger may write \Rdpc to change where the hart resumes.
         <field name="dpc" bits="XLEN-1:0" access="R/W" reset="0" />
     </register>
 
