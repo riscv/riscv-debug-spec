@@ -4,8 +4,8 @@
         \begin{commentary}
             \Fintdisable is intended to be used in conjunction with \Fstep.
             Usually it is necessary to disable interrupts so that single step
-            debugging is not constantly interrupted by jumps to the exception
-            handler. Occasionally a user will want to step into the exception
+            debugging is not constantly interrupted by jumps to the interrupt
+            handler. Occasionally a user will want to step into the interrupt
             handler, and for those cases the interrupt behavior is controllable
             here. Having the debugger use mstatus.ie for this functionality is
             not desirable because it has side effects when stepping through
@@ -35,7 +35,7 @@
         <field name="intdisable" bits="11" access="R/W" reset="0">
             0: Interrupts are handled as usual.
 
-            1: Interrupts are disabled. This bit supersedes mstatus.ie.
+            1: Interrupts are disabled. This bit supersedes mstatus.mie.
 
             This feature may not exist in implementations from early in the
             specification process.  The debugger must read back the value it
