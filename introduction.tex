@@ -62,8 +62,7 @@ in Table~\ref{tab:access}.
         \hline
         R/W1 & Read/Write. Only writing 1 has an effect.  \\
         \hline
-        R/W1C & Read/Write. Writing every bit high clears the field. Writing
-        other values has no effect. \\
+        R/W1C & Read/Write. For each bit in the field, writing 1 clears that bit. Writing 0 has no effect. \\
         \hline
         W & Write-only. When read this field returns 0. \\
         \hline
