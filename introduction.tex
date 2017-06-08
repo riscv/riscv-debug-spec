@@ -1,12 +1,12 @@
 \chapter{Introduction}
 \label{sec:intro}
 
-When a design progresses from simulation to a hardware implementation, a users's
+When a design progresses from simulation to hardware implementation, a user's
 control and understanding of the system's current state drops dramatically.
 To help bring up and debug low level software and hardware,
 it is critical to have good debugging support built into the hardware.
 When a robust OS is running on a core, software can handle many
-debugging tasks. Howevever, in many scenarios, hardware support is essential.
+debugging tasks. However, in many scenarios, hardware support is essential.
 
 This document outlines a standard architecture for external debug support 
 on RISC-V platforms. This architecture allows a variety of implementations and
@@ -61,6 +61,8 @@ in Table~\ref{tab:access}.
         R/W0 & Read/Write. Only writing 0 has an effect.  \\
         \hline
         R/W1 & Read/Write. Only writing 1 has an effect.  \\
+        \hline
+        R/W1C & Read/Write. For each bit in the field, writing 1 clears that bit. Writing 0 has no effect. \\
         \hline
         W & Write-only. When read this field returns 0. \\
         \hline

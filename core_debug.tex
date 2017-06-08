@@ -26,8 +26,8 @@ external debugging. How Debug Mode is entered is implementation-specific.
 \item Almost all instructions that change the privilege level have undefined
     behavior.  This includes {\tt ecall}, {\tt mret}, {\tt hret}, {\tt sret},
     and {\tt uret}.  (To change the privilege level, the debugger can write
-    \Fprv in \Rdcsr.) The exception is {\tt ebreak}. When that is executed in
-    Debug Mode, it halts the processor again but without updating \Rdpc.
+    \Fprv in \Rdcsr). The only exception is {\tt ebreak}. When that is executed
+    in Debug Mode, it halts the processor again but without updating \Rdpc or \Rdcsr.
 \end{steps}
 
 \section{Load-Reserved/Store-Conditional Instructions}
@@ -46,7 +46,8 @@ executed.
 
 \section{Core Debug Registers} \label{debreg}
 
-The Core Debug Registers must be implemented for each hart being debugged.
+The supported Core Debug Registers must be implemented for each hart that can
+be debugged.
 
 \input{core_registers.tex}
 

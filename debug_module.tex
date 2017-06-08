@@ -57,15 +57,19 @@ except for the Debug Module and Debug
 Transport Modules. The purpose of this feature is to allow debugging
 programs from the first instruction executed, so exactly what is affected
 by this reset is implementation dependent.
-The Debug Module's own state and registers are
-generally reset at power-up and if and only if
-\Fdmactive in \Rdmcontrol is 0. This means that the halt state of all harts is
-maintained provided that \Fdmactive is 1, although trigger CSRs may be cleared.
+The Debug Module's own state and registers should only be
+reset at power-up and while
+\Fdmactive in \Rdmcontrol is 0.
+The halt state of harts should be
+maintained across system reset provided that \Fdmactive is 1,
+although trigger CSRs may be cleared.
 
 Due to clock and power domain crossing issues,
-it may not be possible to perform arbitrary DMI accesses across reset,
-even if the Debug Module state is maintained. It must always be possible to access
-the \Rdmcontrol register regardless of the system's reset state.
+it may not be possible to perform arbitrary DMI accesses across
+system reset.
+While \Fndmreset or any external reset is asserted, the only supported DM
+operation is accessing \Rdmcontrol. The behavior of other accesses is
+undefined.
 
 \section{Selecting Harts} \label{selectingharts}
 
@@ -159,8 +163,8 @@ reading \Fbusy in \Rabstractcs.
 If the command takes arguments, the debugger
 must write them to the {\tt data} registers before writing to \Rcommand. If a
 command returns results, the Debug Module must ensure they are placed
-in the {\tt data} registers when the
-command is complete. Which {\tt data} registers are used for the arguments is
+in the {\tt data} registers before \Fbusy is cleared.
+Which {\tt data} registers are used for the arguments is
 described in Table~\ref{tab:datareg}.  In all cases the least-significant word
 is placed in the lowest-numbered {\tt data} register.
 
@@ -242,7 +246,7 @@ the debugger can write whatever program it likes, but the program must end with
 While these programs are executed, the hart does not leave Debug Mode (see
 Section~\ref{debugmode}).  If an exception is encountered during execution of
 the Program Buffer, no more instructions are executed, the hart remains in Debug
-Mode, and \Fcmderr is set to 3({\tt exception error}).
+Mode, and \Fcmderr is set to 3 ({\tt exception error}).
 
 Executing the Program Buffer may clobber \Rdpc. If that is the case, it must be
 possible to read/write \Rdpc using an abstract command with \Fpostexec not set.
@@ -264,7 +268,8 @@ If so, the debugger has more flexibility in what it can do with the program buff
 
 When a Program Buffer is present, a debugger can access the system bus by having a
 RISC-V hart perform the accesses it requires.
-A Debug Module may include a System Bus Access block to provide memory access without
+A Debug Module may also include a System Bus Access block to provide memory
+access without
 involving a hart, regardless of whether Program Buffer is implemented.
 The System Bus Access block uses physical addresses.
 

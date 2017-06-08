@@ -23,7 +23,7 @@ When the TAP is reset, IR must default to
 00001, selecting the IDCODE instruction. A full list of JTAG registers along
 with their encoding is in Table~\ref{table:jtag_registers}.
 If the IR actually has more than 5 bits, then the encodings in
-Table~\ref{table:jtag_registers} should be appended with 0's in their
+Table~\ref{table:jtag_registers} should be extended with 0's in their
 most significant bits.
 The only regular JTAG registers a debugger might use are BYPASS and IDCODE, but this
 specification leaves IR space for many other standard JTAG instructions.
@@ -33,14 +33,14 @@ Unimplemented instructions must select the BYPASS register.
 
 \section{JTAG Connector}
 
-Every target's JTAG connector seems to have its own pinout. To make it easy to
+To make it easy to
 acquire debug hardware, this spec recommends a connector that is compatible
 with the Atmel AVR JTAG Connector, as described below.
 
 The connector is a .05"-spaced, gold-plated male header with .016" thick
 hardened copper or beryllium bronze square posts (SAMTEC FTSH-105 or
 equivalent). Female connectors are compatible $20\mu m$ gold
-connectors in order to prevent oxide build-up on tin connectors.
+connectors.
 
 Viewing the male header from above (the pins pointing at your eye), a target's
 connector looks as it does in Table~\ref{tab:header}. The function of each pin
