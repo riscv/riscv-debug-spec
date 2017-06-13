@@ -11,6 +11,8 @@ Halting happens by stalling the processor execution pipeline.
 Muxes on the register file(s) allow for accessing GPRs and CSRs
 using the Access Register abstract command.
 
+System Bus Access allows main memory access.
+
 \section{Execution Based}
 
 This implementation only implements the Access Register abstract command
@@ -21,36 +23,45 @@ This method uses the processor's existing pipeline
 and ability to execute from arbitrary memory locations to avoid
 modifications to a processor's datapath.
 When \Fhaltreq is set, the Debug Module raises a special interrupt
-to the selected hart. This interrupt causes the
-hart to enter Debug Mode and jump to a 
-memory region that is serviced by the DM and execute a ``park loop''.
-When taking this exception, \Rpc is saved to \Rdpc.
-In
-the park loop the hart writes its \Rmhartid to a memory location within the Debug
-Module to indicate that it is halted.
+to the selected hart(s). This interrupt causes each
+hart to enter Debug Mode and jump to a defined
+memory region that is serviced by the DM.
+When taking this exception, \Rpc is saved to \Rdpc and \Fcause is updated
+in \Rdcsr.
+
+The code in the Debug Module causes the hart to execute a ``park loop''.
+In the park loop the hart writes its \Rmhartid to a
+memory location within the Debug Module to indicate that it is halted.
 To allow the DM to individually control one out of several
-halted harts, each hart polls a specific memory location or bit in a {\tt dscratch}
-CSR to determine whether the debugger wants it to continue.
+halted harts, each hart polls for flags in a DM-controlled memory location
+to determine whether the debugger wants it to
+execute the Program Buffer or perform a resume.
+
+To execute an abstract command, the DM first populates some internal words of
+program buffer according to \Rcommand. When \Ftransfer is set, the debugger
+populates these words with {\tt lw <gpr>, 0x400(zero)} or {\tt sw 0x400(zero), <gpr>}.
+64- and 128-bit accesses use {\tt ld}/{\tt sd} and {\tt lq}/{\tt sq}
+respectively. If \Ftransfer is not set, these instructions are populated as {\tt nop}s.
+If \Fexecute is set, execution continues to the debugger-controlled Program Buffer,
+otherwise the debug module causes a {\tt ebreak} to execute immediately.
+
+When {\tt ebreak} is executed (indicating the end of the
+Program Buffer code) the hart returns to its park loop. If an exception is
+encountered, the hart jumps to a defined debug exception address within
+the Debug Module. The code at that address causes the hart to
+write to an address in the Debug Module which indicates exception.
+Then the hart jumps back to the park loop.
+The DM infers from the write that there was an exception, and sets \Fcmderr appropriately.
+
+To resume execution, the debug module sets a flag which causes the core to execute a {\tt dret}.
+When {\tt dret} is executed, \Rpc is restored from \Rdpc and normal execution resumes at the
+privilege set by \Fprv.
 
 \Rdatazero etc. are mapped into regular memory at an address relative to \Rzero
 with only a 12-bit {\tt imm}. The exact address is an implementation
 detail that a debugger must not rely on. For example, the {\tt data}
 registers might be mapped to $0x400$.
 
-To implement the abstract 32-bit GPR access instructions, the debugger causes
-the hart to  execute {\tt lw <gpr>, 0x400(zero)} or {\tt sw 0x400(zero), <gpr>}.
-64- and 128-bit accesses use {\tt ld}/{\tt sd} and {\tt
-lq}/{\tt sq} respectively.
-
-To execute the Program Buffer, the debugger causes the hart to execute
-{\tt j dm\_program\_buffer}. When {\tt ebreak} is executed (indicating the end of the
-Program Buffer code) the hart jumps back to its park loop. If an exception is
-encountered, the hart jumps to its debug exception address, which
-writes to an address in the Debug Module which indicates exception, then
-contains a jump back to the hart's park loop.
-The DM infers from the write that there was an exception, and sets \Fcmderr appropriately.
-
-To resume execution, the debug module causes the core to execute a {\tt dret}.
-When {\tt dret} is executed, \Rpc is restored from \Rdpc and normal execution resumes at the
-privilege set by \Fprv.
-
+For additional flexibility, \Rprogbufzero, etc. are mapped into regular memory
+immediately preceding \Rdatazero, in order to form a contiguous region of memory which
+can be used for either program execution or data transfer.
