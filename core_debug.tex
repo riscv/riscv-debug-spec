@@ -44,6 +44,19 @@ enter Debug Mode before executing any instructions, but after performing any
 initialization that would usually happen before the first instruction is
 executed.
 
+\subsection{{\tt dret} Instruction} \label{dret}
+
+To return from Debug Mode, a new instruction is defined: {\tt dret}. It has an
+encoding of 0x7b200073. On implementations which support this instruction,
+executing {\tt dret} in Debug Mode changes \Rpc to the value
+stored in \Rdpc. The current privilege level is changed to that specified by
+\Fprv in \Rdcsr. 
+
+It is not necessary for the debugger to know whether an implementation supports
+{\tt dret}, as the Debug Module will ensure that it is executed if necessary.
+It is defined in this specification only to allow for portable Debug Module
+implementations.
+
 \section{Core Debug Registers} \label{debreg}
 
 The supported Core Debug Registers must be implemented for each hart that can
