@@ -1,11 +1,11 @@
-\chapter{JTAG Debug Transport Module} \label{jtagdtm}
+\section{JTAG Debug Transport Module} \label{sec:jtagdtm}
 
 This Debug Transport Module is based around a normal JTAG Test Access Port
 (TAP).  The JTAG TAP allows access to arbitrary JTAG registers by first
 selecting one using the JTAG instruction register (IR), and then accessing it
 through the JTAG data register (DR).
 
-\section{Background}
+\subsection{JTAG Background}
 
 JTAG refers to IEEE Std 1149.1-2013. It is a standard that defines test logic
 that can be included in an integrated circuit to test the interconnections
@@ -16,7 +16,7 @@ The JTAG standard defines a Test Access Port (TAP) that
 can be used to read and write a few custom registers, which can be used to
 communicate with debug hardware in a component.
 
-\section{JTAG Registers}
+\subsection{JTAG DTM Registers}
 
 JTAG TAPs used as a DTM must have an IR of at least 5 bits.
 When the TAP is reset, IR must default to
@@ -31,7 +31,7 @@ Unimplemented instructions must select the BYPASS register.
 
 \input{jtag_registers.tex}
 
-\section{JTAG Connector}
+\subsection{Recommended JTAG Connector}
 
 To make it easy to
 acquire debug hardware, this spec recommends a connector that is compatible
