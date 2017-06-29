@@ -54,7 +54,10 @@
                specified register.
         </field>
         <field name="regno" bits="15:0">
-            Number of the register to access, as described in Table~\ref{tab:regno}.
+          Number of the register to access, as described in
+          Table~\ref{tab:regno}.
+          \Rdpc may be used as an alias for PC if this command is
+          supported on a non-halted hart.
         </field>
     </register>
 

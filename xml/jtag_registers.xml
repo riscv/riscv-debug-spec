@@ -72,7 +72,7 @@
         <field name="version" bits="3:0" access="R" reset="1">
             0: Version described in spec version 0.11.
 
-            1: Version described in spec version 0.12 (and later?), which
+            1: Version described in spec version 0.13 (and later?), which
             reduces the DMI data width to 32 bits.
 
             Other values are reserved for future use.
@@ -99,7 +99,7 @@
 
         For instance a series of scans may write a Debug Program and execute
         it.  If one of the writes fails but the execution continues, then the
-        Debug Program may hang, or have other unexpected side effects.
+        Debug Program may hang or have other unexpected side effects.
         \end{commentary}
 
         <field name="address" bits="abits+33:34" access="R/W" reset="0">

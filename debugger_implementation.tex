@@ -2,7 +2,7 @@
 
 This section details how an external debugger might use the described debug
 interface to perform some common operations on RISC-V cores using the JTAG DTM
-described in Appendix~\ref{sec:jtagdtm}.
+described in Appendix~\ref{jtagdtm}.
 All these examples assume a 32-bit core but it should be easy to adapt the
 examples to 64- or 128-bit cores.
 
@@ -80,7 +80,7 @@ registers can be accessed by moving their value into/out of GPRs.
 
 \noindent Write \Rmstatus using program buffer:
 
-\begin{tabulary}{\textwidth}{|r|r|r|L|}
+\begin{tabulary}{\textwidth}{|r|r|R|L|}
     \hline
     Op & Address & Value & Comment \\
     \hline
@@ -136,7 +136,7 @@ registers can be accessed by moving their value into/out of GPRs.
 
 \noindent Read block of memory using system bus access:
 
-\begin{tabulary}{\textwidth}{|r|r|L|L|}
+\begin{tabulary}{\textwidth}{|r|r|R|L|}
     \hline
     Op & Address & Value & Comment \\
     \hline
@@ -295,7 +295,7 @@ this method.
 
 \noindent Write block of memory using system bus access:
 
-\begin{tabulary}{\textwidth}{|r|r|L|L|}
+\begin{tabulary}{\textwidth}{|r|r|R|L|}
     \hline
     Op & Address & Value & Comment \\
     \hline

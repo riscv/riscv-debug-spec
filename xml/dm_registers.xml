@@ -65,19 +65,14 @@
 
             1: \Fcfgstraddrzero - \Fcfgstraddrthree registers hold the address of the
             configuration string.
-        <field name="versionhi" bits="3:2" reset="0" access="R">
-            Reserved for future use. Reads as 0.
-        </field>
-        <field name="versionlo" bits="1:0" reset="1" access="R">
-            00: There is no Debug Module present.
+        <field name="version" bits="3:0" reset="2" access="R">
+            0: There is no Debug Module present.
 
-            01: There is a Debug Module and it conforms to version 0.11 of this
+            1: There is a Debug Module and it conforms to version 0.11 of this
             specification.
 
-            10: There is a Debug Module and it conforms to version 0.13 of this
+            2: There is a Debug Module and it conforms to version 0.13 of this
             specification.
-
-            11: Reserved for future use.
         </field>
     </register>
 
@@ -88,8 +83,8 @@
 
         <!-- Fields that apply to a specific hart. -->
         <field name="haltreq" bits="31" access="R/W" reset="0">
-            Halt request signal for all currently selected harts. When set to 1, the
-            hart will halt if it is not currently halted.
+            Halt request signal for all currently selected harts. When set to
+            1, each selected hart will halt if it is not currently halted.
 
 	    Writing 1 or 0 has no effect on a hart which is already halted, but
 	    the bit should be cleared to 0 before the hart is resumed.
@@ -99,7 +94,7 @@
         </field>
         <field name="resumereq" bits="30" access="R/W" reset="0">
             Resume request signal for all currently selected harts. When set to 1,
-            the hart will resume if it is currently halted.
+            each selected hart will resume if it is currently halted.
             Setting both \Fhaltreq and \Fresumereq leads to undefined behavior.
 
             Writes apply to the new value of \Fhartsel and \Fhasel.
@@ -137,8 +132,11 @@
         <field name="0" bits="15:2" access="R" reset="0" />
         <field name="ndmreset" bits="1" access="R/W" reset="0">
             This bit controls the reset signal from the DM to the rest of the
-            system. To perform a reset the debugger writes 1, and then writes 0
-            to deassert the reset.
+            system. To perform a system reset the debugger writes 1,
+            and then writes 0
+            to deassert the reset. This bit must not reset the Debug Module
+            registers. What it does reset is platform-specific (it may
+            reset nothing).
         </field>
         <field name="dmactive" bits="0" access="R/W" reset="0">
             This bit serves as a reset signal for the Debug Module itself.
@@ -153,8 +151,8 @@
             Debug Module after power up, including the platform's system reset
             or Debug Transport reset signals.
 
-            A debugger should pulse this bit low to ensure that the Debug
-            Module is fully reset and ready to use.
+            A debugger may pulse this bit low to get the debug module into a
+            known state.
 
             Implementations may use this bit to aid debugging, for example by
             preventing the Debug Module from being power gated while debugging
@@ -316,7 +314,7 @@
         <field name="0" bits="7:5" access="R" reset="0"/>
         <field name="datacount" bits="4:0" access="R" reset="Preset">
             Number of {\tt data} registers that are implemented as part of the
-            abstract command interface. Valid sizes are 0 - 8.
+            abstract command interface. Valid sizes are 0 - 12.
         </field>
     </register>
 
@@ -472,28 +470,28 @@
         <field name="serial" bits="26:24" access="R/W" reset="0">
             Select which serial port is accessed by \Rserrx and \Rsertx.
         </field>
-        <field name="error7" bits="23" access="R" reset="0"/>
+        <field name="error7" bits="23" access="R/W1C" reset="0"/>
         <field name="valid7" bits="22" access="R" reset="0" />
-        <field name="full7" bits="21" access="R/W0" reset="0" />
-        <field name="error6" bits="20" access="R" reset="0"/>
+        <field name="full7" bits="21" access="R" reset="0" />
+        <field name="error6" bits="20" access="R/W1C" reset="0"/>
         <field name="valid6" bits="19" access="R" reset="0" />
-        <field name="full6" bits="18" access="R/W0" reset="0" />
-        <field name="error5" bits="17" access="R" reset="0"/>
+        <field name="full6" bits="18" access="R" reset="0" />
+        <field name="error5" bits="17" access="R/W1C" reset="0"/>
         <field name="valid5" bits="16" access="R" reset="0" />
-        <field name="full5" bits="15" access="R/W0" reset="0" />
-        <field name="error4" bits="14" access="R" reset="0"/>
+        <field name="full5" bits="15" access="R" reset="0" />
+        <field name="error4" bits="14" access="R/W1C" reset="0"/>
         <field name="valid4" bits="13" access="R" reset="0" />
-        <field name="full4" bits="12" access="R/W0" reset="0" />
-        <field name="error3" bits="11" access="R" reset="0"/>
+        <field name="full4" bits="12" access="R" reset="0" />
+        <field name="error3" bits="11" access="R/W1C" reset="0"/>
         <field name="valid3" bits="10" access="R" reset="0" />
-        <field name="full3" bits="9" access="R/W0" reset="0" />
-        <field name="error2" bits="8" access="R" reset="0"/>
+        <field name="full3" bits="9" access="R" reset="0" />
+        <field name="error2" bits="8" access="R/W1C" reset="0"/>
         <field name="valid2" bits="7" access="R" reset="0" />
-        <field name="full2" bits="6" access="R/W0" reset="0" />
-        <field name="error1" bits="5" access="R" reset="0"/>
+        <field name="full2" bits="6" access="R" reset="0" />
+        <field name="error1" bits="5" access="R/W1C" reset="0"/>
         <field name="valid1" bits="4" access="R" reset="0" />
-        <field name="full1" bits="3" access="R/W0" reset="0" />
-        <field name="error0" bits="2" access="R" reset="0">
+        <field name="full1" bits="3" access="R" reset="0" />
+        <field name="error0" bits="2" access="R/W1C" reset="0">
             1 when the debugger-to-core queue for serial port 0 has
             over or underflowed. This bit will remain set until it is reset by
             writing 1 to this bit.
@@ -501,7 +499,7 @@
         <field name="valid0" bits="1" access="R" reset="0">
             1 when the core-to-debugger queue for serial port 0 is not empty.
         </field>
-        <field name="full0" bits="0" access="R/W0" reset="0">
+        <field name="full0" bits="0" access="R" reset="0">
             1 when the debugger-to-core queue for serial port 0 is full.
         </field>
     </register>
@@ -569,7 +567,7 @@
             When 1, every read from \Rsbdatazero automatically triggers a system
             bus read at the new address.
         </field>
-        <field name="sberror" bits="14:12" access="R/W0" reset="0">
+        <field name="sberror" bits="14:12" access="R/W1C" reset="0">
             When the debug module's system bus
             master causes a bus error, this field gets set. The bits in this
             field remain set until they are cleared by writing 1 to them.
@@ -584,7 +582,7 @@
 
             3: There was some other error (eg. alignment).
 
-            4: The system bus master was busy when a one of the
+            4: The system bus master was busy when one of the
             {\tt sbaddress} or {\tt sbdata} registers was written,
             or the {\tt sbdata} register was read when it had
             stale data.
@@ -664,7 +662,7 @@
 
         4. If \Fsbautoincrement is set, increment the internal address.
 
-        Reads to this register:
+        Reads from this register:
 
         1. If bits 31:0 of the internal data register haven't been updated
         since the last time this register was read, then set \Fsberror, return
