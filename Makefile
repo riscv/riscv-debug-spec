@@ -6,7 +6,6 @@ REGISTERS_TEX = jtag_registers.tex
 REGISTERS_TEX += core_registers.tex
 REGISTERS_TEX += hwbp_registers.tex
 REGISTERS_TEX += dm_registers.tex
-REGISTERS_TEX += trace_registers.tex
 REGISTERS_TEX += sample_registers.tex
 REGISTERS_TEX += abstract_commands.tex
 REGISTERS_TEX += sw_registers.tex
@@ -23,7 +22,6 @@ INCLUDES_TEX += dtm.tex
 INCLUDES_TEX += jtagdtm.tex
 INCLUDES_TEX += implementations.tex
 INCLUDES_TEX += debugger_implementation.tex
-INCLUDES_TEX += trace.tex
 INCLUDES_TEX += future.tex
 
 FIGURES = fig/*
