@@ -1,4 +1,8 @@
 \chapter{Future Ideas}
+\label{sec:future}
+
+\textbf{All items in this section are future ideas and should not be considered part of the specification.}
+
 Some future version of this spec may implement some of the following features.
 
 \begin{enumerate}
@@ -22,4 +26,18 @@ Some future version of this spec may implement some of the following features.
       piece of code.
    \item The debugger can non-intrusively sample a recent PC value from any
       running hart.
+   \item The Debug Module can include a serial interface for re-using
+      the DTM interface as a generic communication interface.
 \end{enumerate}
+
+\section{Serial Ports}
+
+The Debug Module may implement up to 8 serial ports. They support basic flow
+control and full duplex data transfer between a component and the debugger,
+essentially allowing the Debug Transport to be used to communicate
+with a debug monitor running on a hart, or more generally emulate devices which
+aren't present. All these uses require software support, and are not further specified here.
+Only the DMI side of the Debug Module serial registers are defined in this
+specification as the core side interface should look like a peripheral device.
+
+\input{serial.tex}

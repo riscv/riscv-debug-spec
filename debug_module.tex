@@ -27,7 +27,7 @@ Bus. The details are left to the system designer.
 
 The DMI uses between 7 and 32 address bits.  It supports read and write
 operations, which may return an error. (Errors are only returned by the optional
-System Bus Access and Serial Port blocks). The bottom of the address space is
+System Bus Access block). The bottom of the address space is
 used for the DM. Extra space can be used for custom debug devices, other cores,
 additional DMs, etc.
 
@@ -314,16 +314,6 @@ Another option is to allow the DM to be unlocked only by users who have an
 access key. A few bits in \Rdmstatus and \Rauthdata can support an arbitrarily
 complex authentication mechanism.  When \Fauthenticated is clear, the DM must
 not interact with the rest of the platform in any way.
-
-\section{Serial Ports}
-
-The Debug Module may implement up to 8 serial ports. They support basic flow
-control and full duplex data transfer between a component and the debugger,
-essentially allowing the Debug Transport to be used to communicate
-with a debug monitor running on a hart, or more generally emulate devices which
-aren't present. All these uses require software support, and are not further specified here.
-Only the DMI side of the Debug Module serial registers are defined in this
-specification as the core side interface should look like a peripheral device.
 
 \section{Debug Module DMI Registers} \label{dmdebbus}
 
