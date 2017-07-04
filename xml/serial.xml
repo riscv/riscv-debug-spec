@@ -1,0 +1,76 @@
+<registers name="Debug Module Debug Bus Registers" prefix="DMI_">
+
+    <!-- =============== serial ports =============== -->
+
+    <register name="Serial Control and Status" short="sercs" address="0x34">
+        If \Fserialcount is 0, this register is not present.
+
+        <field name="serialcount" bits="31:28" access="R" reset="Preset">
+            Number of supported serial ports.
+        </field>
+        <field name="0" bits="27" access="R" reset="0" />
+        <field name="serial" bits="26:24" access="R/W" reset="0">
+            Select which serial port is accessed by \Rserrx and \Rsertx.
+        </field>
+        <field name="error7" bits="23" access="R/W1C" reset="0"/>
+        <field name="valid7" bits="22" access="R" reset="0" />
+        <field name="full7" bits="21" access="R" reset="0" />
+        <field name="error6" bits="20" access="R/W1C" reset="0"/>
+        <field name="valid6" bits="19" access="R" reset="0" />
+        <field name="full6" bits="18" access="R" reset="0" />
+        <field name="error5" bits="17" access="R/W1C" reset="0"/>
+        <field name="valid5" bits="16" access="R" reset="0" />
+        <field name="full5" bits="15" access="R" reset="0" />
+        <field name="error4" bits="14" access="R/W1C" reset="0"/>
+        <field name="valid4" bits="13" access="R" reset="0" />
+        <field name="full4" bits="12" access="R" reset="0" />
+        <field name="error3" bits="11" access="R/W1C" reset="0"/>
+        <field name="valid3" bits="10" access="R" reset="0" />
+        <field name="full3" bits="9" access="R" reset="0" />
+        <field name="error2" bits="8" access="R/W1C" reset="0"/>
+        <field name="valid2" bits="7" access="R" reset="0" />
+        <field name="full2" bits="6" access="R" reset="0" />
+        <field name="error1" bits="5" access="R/W1C" reset="0"/>
+        <field name="valid1" bits="4" access="R" reset="0" />
+        <field name="full1" bits="3" access="R" reset="0" />
+        <field name="error0" bits="2" access="R/W1C" reset="0">
+            1 when the debugger-to-core queue for serial port 0 has
+            over or underflowed. This bit will remain set until it is reset by
+            writing 1 to this bit.
+        </field>
+        <field name="valid0" bits="1" access="R" reset="0">
+            1 when the core-to-debugger queue for serial port 0 is not empty.
+        </field>
+        <field name="full0" bits="0" access="R" reset="0">
+            1 when the debugger-to-core queue for serial port 0 is full.
+        </field>
+    </register>
+
+    <register name="Serial TX Data" short="sertx" address="0x35">
+        If \Fserialcount is 0, this register is not present.
+
+        This register provides access to the write data queue of the serial port
+        selected by \Fserial in \Rsercs.
+
+        If the {\tt error} bit is not set and the queue is not full, a write to this register
+        adds the written data to the core-to-debugger queue.
+        Otherwise the {\tt error} bit is set and the write returns error.
+
+        A read to this register returns the last data written.
+
+        <field name="data" bits="31:0" access="R/W" reset="0" />
+    </register>
+
+    <register name="Serial RX Data" short="serrx" address="0x36">
+        If \Fserialcount is 0, this register is not present.
+
+        This register provides access to the read data queues of the serial port
+        selected by \Fserial in \Rsercs.
+
+        If the {\tt error} bit is not set and the queue is not empty, a read from this register reads the
+        oldest entry in the debugger-to-core queue, and removes that entry from the queue.
+        Otherwise the {\tt error} bit is set and the read returns error.
+
+        <field name="data" bits="31:0" access="R" reset="0" />
+    </register>
+</registers>
