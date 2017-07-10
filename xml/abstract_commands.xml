@@ -18,8 +18,10 @@
         Debug Modules must implement this command
 	and must support accessing GPRs when the selected hart is halted.
         Debug Modules may optionally support accessing other registers,
-	or accessing registers when the hart is running.
-
+	or accessing registers when the hart is running. If this command is 
+	supported for a register while the hart is running, it must also
+	be supported for a register while the hart is halted.
+	    
         <field name="cmdtype" bits="31:24">
             This is 0 to indicate Access Register Command.
         </field>
