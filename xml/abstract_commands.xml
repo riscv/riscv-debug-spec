@@ -16,10 +16,12 @@
         that would cause failure.
 
         Debug Modules must implement this command
-	and must support accessing GPRs when the selected hart is halted.
+	and must support read and write access to all GPRs when the selected hart is halted.
         Debug Modules may optionally support accessing other registers,
-	or accessing registers when the hart is running.
-
+	or accessing registers when the hart is running. 
+	Each individual register (aside from GPRs) may be supported differently
+	across read, write, and halt status.
+	
         <field name="cmdtype" bits="31:24">
             This is 0 to indicate Access Register Command.
         </field>
