@@ -207,9 +207,9 @@ def write_cheader( fd, registers ):
             if r.width() <= 32:
                 suffix = ""
             else:
-                suffix = "L"
+                suffix = "LL"
         except TypeError:
-            suffix = "L"
+            suffix = "LL"
         for f in r.fields:
             if f.define:
                 if f.description:
