@@ -61,9 +61,9 @@
 
             1: An {\tt ebreak} instruction was executed. (priority 3)
 
-            2: The Trigger Module caused a halt. (priority 4)
+            2: The Trigger Module caused a breakpoint exception. (priority 4)
 
-            3: \Fhaltreq was set. (priority 2)
+            3: The debugger requested entry to Debug Mode. (priority 2)
 
             4: The hart single stepped because \Fstep was set. (priority 1)
 
