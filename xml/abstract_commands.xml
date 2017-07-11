@@ -68,17 +68,13 @@
 
     <register name="Quick Access">
         \begin{steps}{Perform the following sequence of operations:}
-        \item Halt the hart. If the hart is already halted, the entire command
-            fails.
-        \item Execute the Program Buffer.
-        \item Resume the hart. If the hart is already running, the entire
-            command fails.
+	\item If the hart is halted, the command  sets \Fcmderr to \texttt{halt/resume} and does not continue.
+        \item Halt the hart. If the hart halts for some other reason (e.g. breakpoint), the command
+            sets \Fcmderr to \texttt{halt/resume} and does not continue.
+        \item Execute the Program Buffer. If an exception occurs, \Fcmderr is set to \texttt{exception} 
+	    and the program buffer execution ends, but the quick access command continues.
+        \item Resume the hart.
         \end{steps}
-
-        If any of these operations fail, \Fcmderr is set and none of the
-        remaining steps are executed. An implementation may detect an upcoming
-        failure early, and fail the overall command before it reaches the step
-        that would cause failure.
 
         Implementing this command is optional.
 
