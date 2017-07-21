@@ -91,11 +91,32 @@
 
     <register name="Debug PC" short="dpc" address="0x7b1">
         Upon entry to debug mode, \Rdpc is updated with the virtual address of
-        the next instruction to be executed.  {\tt ebreak} instructions are an
-        exception to this. When an {\tt ebreak} instruction is executed, \Rdpc
-        is set to the address of the {\tt ebreak} instruction. (Another way to
-        think of this is that {\tt ebreak} instructions act like illegal
-        instruction exceptions.)
+        the next instruction to be executed. The behavior is described in more
+        detail in Table~\ref{tab:dpc}.
+
+        \begin{table}[H]
+        \centering
+        \caption{Virtual address in DPC upon Debug Mode Entry}
+        \label{tab:dpc}
+        \begin{tabular}{|l|L|}
+        \hline
+        Cause &amp; Virtual Address in DPC \\
+        \hline
+        {\tt ebreak} &amp; Virtual address of the {\tt ebreak} instruction \\
+        \hline
+        single step &amp; Virtual address of the instruction after the single
+        instruction that was executed \\
+        \hline
+        trigger module &amp; If \Ftiming is 0, the virtual address of the
+        instruction which caused the trigger to fire. If \Ftiming is 1, the
+        virtual address of the next instruction to be executed at the time that
+        debug mode was entered \\
+        \hline
+        halt request &amp; Virtual address of the next instruction to be
+        executed at the time that debug mode was entered \\
+        \hline
+        \end{tabular}
+        \end{table}
 
         When resuming, the hart's PC is updated to the virtual address stored in
         \Rdpc. A debugger may write \Rdpc to change where the hart resumes.
