@@ -90,12 +90,11 @@
     </register>
 
     <register name="Debug PC" short="dpc" address="0x7b1">
-        Upon entry to debug mode, \Rdpc is updated with the virtual address of
-        the next instruction to be executed.  {\tt ebreak} instructions are an
-        exception to this. When an {\tt ebreak} instruction is executed, \Rdpc
-        is set to the address of the {\tt ebreak} instruction. (Another way to
-        think of this is that {\tt ebreak} instructions act like illegal
-        instruction exceptions.)
+        Upon entry to debug mode due to a halt request, 
+	\Rdpc is updated with the virtual address of
+        the next instruction to be executed. Upon entry to debug
+	mode due to a breakpoint exception, \Rdpc
+        is set to the address of the instruction which caused the exception.
 
         When resuming, the hart's PC is updated to the virtual address stored in
         \Rdpc. A debugger may write \Rdpc to change where the hart resumes.
