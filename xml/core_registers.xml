@@ -102,17 +102,17 @@
         \hline
         Cause &amp; Virtual Address in DPC \\
         \hline
-        {\tt ebreak} &amp; Virtual address of the {\tt ebreak} instruction \\
+        {\tt ebreak} &amp; Address of the {\tt ebreak} instruction \\
         \hline
-        single step &amp; Virtual address of the instruction after the single
-        instruction that was executed \\
+        single step &amp; Address of the instruction after the one
+        that was stepped over \\
         \hline
-        trigger module &amp; If \Ftiming is 0, the virtual address of the
+        trigger module &amp; If \Ftiming is 0, the address of the
         instruction which caused the trigger to fire. If \Ftiming is 1, the
-        virtual address of the next instruction to be executed at the time that
-        debug mode was entered \\
+        address of the next instruction to be executed at the time that
+        debug mode was entered. \\
         \hline
-        halt request &amp; Virtual address of the next instruction to be
+        halt request &amp; Address of the next instruction to be
         executed at the time that debug mode was entered \\
         \hline
         \end{tabular}
