@@ -75,7 +75,7 @@
             1: Version described in spec version 0.13 (and later?), which
             reduces the DMI data width to 32 bits.
 
-            Other values are reserved for future use.
+            15: Version not described in any available version of this spec.
         </field>
     </register>
 
