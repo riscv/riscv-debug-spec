@@ -82,10 +82,10 @@ is described in Table~\ref{tab:pinout}.
       \hline
       8 & TRSTn & Test Reset (optional, only used by some devices. Used to reset the JTAG TAP Controller).\\
       \hline
-      4 & VCC & Power provided by the target, which may be used to power the
-      debug adapter. Must be able to source at least 25mA.
-      This signal also
-      serves as the reference voltage for logic high. \\
+      4 & VCC &
+      Reference voltage for logic high. A debug adapter may attempt to draw up
+      to 20mA from this pin to power itself, but a target is not obligated to
+      provide that power. \\
       \hline
       2, 10 & GND & Target ground. \\
       \hline
