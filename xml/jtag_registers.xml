@@ -75,7 +75,7 @@
             1: Version described in spec version 0.13 (and later?), which
             reduces the DMI data width to 32 bits.
 
-            Other values are reserved for future use.
+            15: Version not described in any available version of this spec.
         </field>
     </register>
 
@@ -136,8 +136,10 @@
             this access will be ignored.  This status is sticky and can be
             cleared by writing \Fdmireset in \Rdtmcs.
 
-            This indicates that the DM itself responded with an error, e.g.
-            in the System Bus and Serial Port overflow/underflow cases.
+            This indicates that the DM itself responded with an error.
+	    Note: there are no specified cases in which the DM would
+	    respond with an error, and DMI is not required to support
+	    returning errors.
 
             3: An operation was attempted while a DMI request is still in
             progress. The data scanned into \Rdmi in this access will be

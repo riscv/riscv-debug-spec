@@ -73,6 +73,9 @@
 
             2: There is a Debug Module and it conforms to version 0.13 of this
             specification.
+
+            15: There is a Debug Module but it does not conform to any
+            available version of this spec.
         </field>
     </register>
 
@@ -539,8 +542,7 @@
         If \Fsbasize is 0, then this register is not present.
 
         When the system bus master is busy,
-        writes to this register will return error
-        and \Fsberror is set.
+        writes to this register will set \Fsberror.
 
         If \Fsberror is 0 and \Fsbautoread is set then the system bus
         master will start
@@ -574,12 +576,11 @@
         If all of the {\tt sbaccess} bits in \Rsbcs are 0, then this register
         is not present.
 
-        If \Fsberror isn't 0 then accesses return error, and don't do anything
-        else.
-
+        If \Fsberror isn't 0 then accesses do nothing.
+        
         Writes to this register:
 
-        1. If the bus master is busy then accesses set \Fsberror, return error,
+        1. If the bus master is busy then accesses set \Fsberror,
         and don't do anything else.
 
         2. Update internal data.
@@ -591,8 +592,8 @@
         Reads from this register:
 
         1. If bits 31:0 of the internal data register haven't been updated
-        since the last time this register was read, then set \Fsberror, return
-        error, and don't do anything else.
+        since the last time this register was read, then set \Fsberror,
+	and don't do anything else.
 
         2. ``Return'' the data.
 

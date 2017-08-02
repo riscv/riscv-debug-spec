@@ -5,6 +5,9 @@
           0: There is no external debug support.
 
           4: External debug support exists as it is described in this document.
+
+          15: There is external debug support, but it does not conform to any
+          available version of this spec.
         </field>
         <field name="0" bits="27:16" access="R" reset="0" />
         <field name="ebreakm" bits="15" access="R/W" reset="0">
@@ -90,8 +93,33 @@
     </register>
 
     <register name="Debug PC" short="dpc" address="0x7b1">
-        Upon entry to debug mode, \Rdpc is written with the
-        virtual address of the instruction that encountered the exception.
+        Upon entry to debug mode, \Rdpc is updated with the virtual address of
+        the next instruction to be executed. The behavior is described in more
+        detail in Table~\ref{tab:dpc}.
+
+        \begin{table}[H]
+        \centering
+        \caption{Virtual address in DPC upon Debug Mode Entry}
+        \label{tab:dpc}
+        \begin{tabular}{|l|L|}
+        \hline
+        Cause &amp; Virtual Address in DPC \\
+        \hline
+        {\tt ebreak} &amp; Address of the {\tt ebreak} instruction \\
+        \hline
+        single step &amp; Address of the instruction after the one
+        that was stepped over \\
+        \hline
+        trigger module &amp; If \Ftiming is 0, the address of the
+        instruction which caused the trigger to fire. If \Ftiming is 1, the
+        address of the next instruction to be executed at the time that
+        debug mode was entered. \\
+        \hline
+        halt request &amp; Address of the next instruction to be
+        executed at the time that debug mode was entered \\
+        \hline
+        \end{tabular}
+        \end{table}
 
         When resuming, the hart's PC is updated to the virtual address stored in
         \Rdpc. A debugger may write \Rdpc to change where the hart resumes.
