@@ -10,8 +10,13 @@ addons:
       - python
       - python-sympy
       - graphviz
-      - texlive-full
+      - texlive-base
+      - texlive-latex-base
+      - texlive-latex-extra
+      - texlive-fonts-extra
+      - texlive-science
 
+# sympy ends up in /usr/lib/python2.7/dist-packages, which is not part of the
+# default python path.
 script:
-  - make
-
+  - PYTHONPATH=$PYTHONPATH:/usr/lib/python2.7/dist-packages make
