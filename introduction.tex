@@ -79,9 +79,9 @@ in Table~\ref{tab:access}.
 
 There are several use cases for dedicated debugging hardware, both
 internal to a CPU core and with an external connection.
-This specification defines techniques to support all of the use cases
-listed below. Some are optional to allow system designers to make
-cost vs capability tradeoffs.
+This specification addresses the use cases listed below. Implementations
+can choose not to implement every feature, which means some use cases might
+not be supported.
 
 \begin{itemize}
 
@@ -92,17 +92,7 @@ cost vs capability tradeoffs.
 \item Bootstrapping a system to test, configure, and program components before
   there is any executable code path in the system.
 
-\item Accessing hardware on the system without a working CPU.
-
-\item Accessing custom registers that could be added to aid in hardware debug, system bringup,
-etc.
-
-\item Writing code and data to memory, e.g. boot code and manufacturing constants.
-
-\item Analyzing low-level performance issues using profiling and sampling techniques.
-
-\item Providing a general transport for firmware running on a component to communicate with the
-  outside world.
+\item Accessing hardware on a system without a working CPU.
 
 \end{itemize}
 
@@ -140,30 +130,28 @@ The debug interface described in this specification supports the following featu
    \item Any hart in the platform can be independently debugged.
    \item A debugger can discover almost everything it needs to know itself,
        without user configuration.
-   \item An optional extension allows arbitrary instructions to be executed on
-       a halted hart. That means no new debug functionality is needed when a
-       core has additional or custom instructions or state, as
-       long as there exist programs
-       that can move that state into GPRs.
-   \item An implementation can choose to provide register access without
-       halting.
-   \item An implemenation can choose to provide the ability to automatically
-     halt and resume a hart without debugger intervention.
-   \item A system bus master can be implemented to allow memory access without
-       involving any hart.
-   \item Debugging can be supported over multiple transports.
-   \item Code can be downloaded efficiently.
    \item Each hart can be debugged from the very first instruction executed.
    \item A RISC-V hart can be halted when a software breakpoint instruction is
        executed.
-   \item Hardware can step over any instruction.
-   \item A RISC-V hart can be halted when a trigger matches the PC, read/write
-       address/data, or an instruction opcode.
-   \item Optional serial ports can be used for communication between debugger
-       and monitor, or as a general protocol between debugger and application.
+   \item Hardware single-step can execute one instruction at a time.
+   \item Debug functionality is independent of the debug transport used.
    \item The debugger does not need to know anything about the microarchitecture
        of the cores it is debugging.
-   \item Multiple harts can be halted and resumed simultaneously.
+
+   \item Arbitrary subsets of harts can be halted and resumed simultaneously.
+       (Optional)
+   \item Arbitrary instructions can be executed on
+       a halted hart. That means no new debug functionality is needed when a
+       core has additional or custom instructions or state, as
+       long as there exist programs
+       that can move that state into GPRs. (Optional)
+   \item Registers can be accessed without halting. (Optional)
+   \item A running hart can be directed to execute a short sequence
+       of instructions, with little overhead. (Optional)
+   \item A system bus master allows memory access without
+       involving any hart. (Optional)
+   \item A RISC-V hart can be halted when a trigger matches the PC,
+       read/write address/data, or an instruction opcode. (Optional)
 \end{enumerate}
 
 This document does not suggest a strategy or implementation for hardware test,
