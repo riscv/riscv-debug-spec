@@ -208,6 +208,24 @@ This section describes each of the different abstract commands
 and how their fields should be interpreted when
 they are written to \Rcommand.
 
+Each abstract command is a 32-bit value. The top 8 bits contain \Fcmdtype which
+determines the kind of command. Table~\ref{tab:cmdtype} lists all commands.
+
+\begin{table}[htp]
+    \centering
+    \caption{Meaning of \Fcmdtype}
+    \label{tab:cmdtype}
+    \begin{tabulary}{\textwidth}{|r|l|l|l|}
+        \hline
+        \Fcmdtype & Command & Page \\
+        \hline
+        0 & Access Register Command & \pageref{access register} \\
+        \hline
+        1 & Quick Access & \pageref{quick access} \\
+        \hline
+    \end{tabulary}
+\end{table}
+
 \input{abstract_commands.tex}
 
 \begin{figure}
