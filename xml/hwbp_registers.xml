@@ -171,9 +171,10 @@
             \Rtdatatwo. M is XLEN-1 minus the index of the least-significant
             bit containing 0 in \Rtdatatwo.
 
-            2: Matches when the value is greater than or equal to \Rtdatatwo.
+            2: Matches when the value is greater than (unsigned) or equal to
+            \Rtdatatwo.
 
-            3: Matches when the value is less than \Rtdatatwo.
+            3: Matches when the value is less than (unsigned) \Rtdatatwo.
 
             4: Matches when the lower half of the value equals the lower half
             of \Rtdatatwo after the lower half of the value is ANDed with the
