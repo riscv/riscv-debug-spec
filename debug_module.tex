@@ -253,15 +253,15 @@ only may choose to omit the Program Buffer.
 A debugger can write a small program to the Program Buffer, and then
 execute it exactly once with the Access Register Abstract Command,
 setting the \Fpostexec bit in \Rcommand. The program in the 
-program buffer must end with {\tt ebreak} or {\tt ebreak.c}.
+program buffer must end with {\tt ebreak} or {\tt c.ebreak}.
 If \Fprogbufsize is 1, the final {\tt ebreak} is implied and 
 the debugger need not write it. The contents of \Rprogbufzero
 can be a 32-bit
 instruction, or a compressed instruction in the lower 16 bits accompanied by a
-{\tt nop.c} in the upper 16 bits. 
+{\tt c.nop} in the upper 16 bits. 
 If \Fprogbufsize is greater than 1,
 the debugger can write any program, but it must
-write an {\tt ebreak} or {\tt ebreak.c} at the end of the program. Failure
+write an {\tt ebreak} or {\tt c.ebreak} at the end of the program. Failure
 to do so will result in undefined behavior by the hart being debugged.
 
 While these programs are executed, the hart does not leave Debug Mode (see
