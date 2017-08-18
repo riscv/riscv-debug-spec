@@ -322,7 +322,7 @@ this method.
     \hline
     Op & Address & Value & Comment \\
     \hline
-    Write & \Rprogbufzero & {\tt sw 0(s0), s1} & \\
+    Write & \Rprogbufzero & {\tt sw s1, 0(s0)} & \\
     \hline
     Write & {\tt progbuf1} & {\tt ebreak} & \\
     \hline
@@ -422,7 +422,7 @@ the pseudo-op {\tt transfer dest, src} to represent all these options.
     \hline
     Write & {\tt progbuf3} & {\tt transfer s1, arg1} & Read second argument (data) \\
     \hline
-    Write & {\tt progbuf4} & {\tt sw 0(s0), s1} & \\
+    Write & {\tt progbuf4} & {\tt sw s1, 0(s0)} & \\
     \hline
     Write & {\tt progbuf5} & {\tt transfer s1, arg0} & Restore \Sone \\
     \hline

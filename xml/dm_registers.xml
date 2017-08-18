@@ -58,13 +58,12 @@
             \Rauthdata.
         </field>
         <field name="0" bits="5" reset="0" access="R" />
-        <field name="cfgstrvalid" bits="4" reset="Preset" access="R" />
+        <field name="devtreevalid" bits="4" reset="Preset" access="R" />
+            0: \Fdevtreeaddrzero - \Fdevtreeaddrthree hold information which
+            is not relevant to the Device Tree.
 
-            0: \Fcfgsraddrzero - \Fcfgstraddrthree hold information which
-            is not the configuration string.
-
-            1: \Fcfgstraddrzero - \Fcfgstraddrthree registers hold the address of the
-            configuration string.
+            1: \Fdevtreeaddrzero - \Fdevtreeaddrthree registers hold the address of the
+            Device Tree.
         <field name="version" bits="3:0" reset="2" access="R">
             0: There is no Debug Module present.
 
@@ -359,26 +358,27 @@
       </field>
     </register>
 
-    <register name="Configuration String Addr 0" short="cfgstraddr0" address="0x19">
+    <register name="Device Tree Addr 0" short="devtreeaddr0" address="0x19">
+      When {\tt devtreevalid} is set, reading this register returns bits 31:0
+      of the Device Tree address. Reading the other {\tt devtreeaddr}
+      registers returns the upper bits of the address.
 
-      The Configuration String is described in the RISC-V Priviledged Specification.
-      When {\tt cfgstrvalid} is set,  reading this register returns bits 31:0 of the configuration
-      string address. Reading the other {\tt cfgstraddr} registers returns the upper bits of the
-      address.
+      When system bus mastering is implemented, this must be an
+      address that can be used with the System Bus Access module. Otherwise,
+      this must be an address that can be used to access the
+      Device Tree from the hart with ID 0.
 
-      When system bus mastering is implemented, this should be the
-      address that should be used with the System Bus Access module. Otherwise,
-      this should be the address that should be used to access the
-      config string when \Fhartsel=0.
-
-      If {\tt cfgstrvalid} is 0, then the {\tt cfgstraddr} registers
+      If {\tt devtreevalid} is 0, then the {\tt devtreeaddr} registers
       hold identifier information which is not
       further specified in this document.
+
+      The Device Tree itself is described in the RISC-V Privileged
+      Specification.
       <field name="addr" bits="31:0" access="R" reset="Preset"/>
     </register>
-    <register name="Config String Addr 1" short="cfgstraddr1" address="0x1a"/>
-    <register name="Config String Addr 2" short="cfgstraddr2" address="0x1b"/>
-    <register name="Config String Addr 3" short="cfgstraddr3" address="0x1c"/>
+    <register name="Device Tree Addr 1" short="devtreeaddr1" address="0x1a"/>
+    <register name="Device Tree Addr 2" short="devtreeaddr2" address="0x1b"/>
+    <register name="Device Tree Addr 3" short="devtreeaddr3" address="0x1c"/>
 
     <register name="Abstract Data 0" short="data0" address="0x04">
         Basic read/write registers that may be read or changed by abstract
