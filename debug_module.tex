@@ -59,9 +59,9 @@ The Debug Module controls a global reset signal, \Fndmreset (non-debug module
 reset),
 which can reset, or hold in reset, every component in the platform,
 except for the Debug Module and Debug
-Transport Modules. The purpose of this feature is to allow debugging
-programs from the first instruction executed, so exactly what is affected
-by this reset is implementation dependent.
+Transport Modules.
+Exactly what is affected by this reset is implementation dependent, as long as
+it is possible to debug programs from the first instruction executed.
 The Debug Module's own state and registers should only be
 reset at power-up and while
 \Fdmactive in \Rdmcontrol is 0.
