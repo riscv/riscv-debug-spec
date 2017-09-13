@@ -219,7 +219,8 @@ determines the kind of command. Table~\ref{tab:cmdtype} lists all commands.
     \label{tab:regno}
     \begin{tabulary}{\textwidth}{|r|l|}
         \hline
-        0x0000 -- 0x0fff & CSRs \\
+        0x0000 -- 0x0fff & CSRs. The ``PC'' can be accessed here through \Rdpc.
+        \\
         \hline
         0x1000 -- 0x101f & GPRs \\
         \hline
