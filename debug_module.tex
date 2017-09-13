@@ -8,12 +8,16 @@
 \item Allow any individual hart to be halted and resumed. (Required)
 \item Provide status on which harts are halted. (Required)
 \item Provide read and write access to a halted hart's GPRs. (Required)
-\item Provide access to a reset signal that allows debugging out of reset.(Required)
+\item Provide access to a reset signal that allows debugging from the very
+    first instruction after reset. (Required)
 \item Provide access to other hart registers. (Optional)
-\item Provide an interface to force the hart to execute arbitrary instructions. (Optional)
+\item Provide a Program Buffer to force the hart to execute arbitrary instructions. (Optional)
 \item Allow multiple harts to be halted, resumed, and/or reset at the same time. (Optional)
-\item Allow system memory accesses. (Optional)
+\item Allow direct System Bus Access. (Optional)
 \end{steps}
+
+In order to implement memory access, a target must implement either the Program
+Buffer or System Bus Access.
 
 A single DM can debug up to 1024 harts.
 
