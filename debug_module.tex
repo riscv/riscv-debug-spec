@@ -55,7 +55,8 @@ The Debug Module is controlled via register accesses to its DMI address space.
 
 \section{Reset Control} \label{reset}
 
-The Debug Module controls a global reset signal, \Fndmreset,
+The Debug Module controls a global reset signal, \Fndmreset (non-debug module
+reset),
 which can reset, or hold in reset, every component in the platform,
 except for the Debug Module and Debug
 Transport Modules. The purpose of this feature is to allow debugging
