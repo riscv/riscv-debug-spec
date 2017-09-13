@@ -110,22 +110,19 @@ at once, Abstract Commands apply only to the hart selected by
 
 \section{Run Control} \label{runcontrol}
 
-The Debug Module can halt harts and allow them to run again using
+The Debug Module can halt selected harts and allow them to run again using
 the \Rdmcontrol register.
-When a debugger wants to halt a single hart it selects it in \Fhartsel
-and sets \Fhaltreq, then waits
-for \Fallhalted to indicate the hart is halted before clearing \Fhaltreq
-to 0. Setting \Fhaltreq has no effect on a hart which is already halted.
+After selecting harts, it sets \Fhaltreq, then waits for \Fallhalted to
+indicate the harts are halted before clearing \Fhaltreq to 0. Setting \Fhaltreq
+has no effect on harts which are already halted.
 
-To resume, the debugger selects the hart with \Fhartsel,
-and sets \Fresumereq. This action sets the hart's
-{\tt resumeack} bit to 0. Once the hart has resumed, it
+To resume, the debugger sets \Fresumereq. This action sets each selected hart's
+{\tt resumeack} bit to 0. Once a hart has resumed, it
 sets its {\tt resumeack} bit to 1. Thus, the
-debugger should wait for \Fallresumeack to indicate the
-hart has resumed before clearing \Fresumereq to 0.
-If a debugger reads \Fallresumeack
-and \Fallhalted in the same cycle, the hart must have resumed
-and then halted again.
+debugger should wait for \Fallresumeack to indicate all
+hart have resumed before clearing \Fresumereq to 0.
+If a debugger reads \Fanyresumeack and \Fanyhalted in the same cycle, then some
+selected harts must have resumed and then halted again.
 
 \begin{commentary}
   When waiting for a hart to resume, a debugger should
