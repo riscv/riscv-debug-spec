@@ -187,24 +187,6 @@ is placed in the lowest-numbered {\tt data} register.
     \end{tabulary}
 \end{table}
 
-\begin{table}[htp]
-    \centering
-    \caption{Abstract Register Numbers}
-    \label{tab:regno}
-    \begin{tabulary}{\textwidth}{|r|l|}
-        \hline
-        0x0000 -- 0x0fff & CSRs \\
-        \hline
-        0x1000 -- 0x101f & GPRs \\
-        \hline
-        0x1020 -- 0x103f & Floating point registers \\
-        \hline
-        0xc000 -- 0xffff & Reserved for non-standard extensions and internal
-        use. \\
-        \hline
-    \end{tabulary}
-\end{table}
-
 \subsection{Abstract Command Listing}
 
 This section describes each of the different abstract commands
@@ -230,6 +212,24 @@ determines the kind of command. Table~\ref{tab:cmdtype} lists all commands.
 \end{table}
 
 \input{abstract_commands.tex}
+
+\begin{table}[htp]
+    \centering
+    \caption{Abstract Register Numbers}
+    \label{tab:regno}
+    \begin{tabulary}{\textwidth}{|r|l|}
+        \hline
+        0x0000 -- 0x0fff & CSRs \\
+        \hline
+        0x1000 -- 0x101f & GPRs \\
+        \hline
+        0x1020 -- 0x103f & Floating point registers \\
+        \hline
+        0xc000 -- 0xffff & Reserved for non-standard extensions and internal
+        use. \\
+        \hline
+    \end{tabulary}
+\end{table}
 
 \begin{figure}
    \centering
