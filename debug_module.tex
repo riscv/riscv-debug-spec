@@ -120,7 +120,7 @@ To resume, the debugger sets \Fresumereq. This action sets each selected hart's
 {\tt resumeack} bit to 0. Once a hart has resumed, it
 sets its {\tt resumeack} bit to 1. Thus, the
 debugger should wait for \Fallresumeack to indicate all
-hart have resumed before clearing \Fresumereq to 0.
+harts have resumed before clearing \Fresumereq to 0.
 If a debugger reads \Fanyresumeack and \Fanyhalted in the same operation, then
 some selected harts must have resumed and then halted again.
 
