@@ -205,11 +205,11 @@ def write_cheader( fd, registers ):
             definitions.append((prefname, r.address))
         try:
             if r.width() <= 32:
-                suffix = ""
+                suffix = "U"
             else:
-                suffix = "LL"
+                suffix = "ULL"
         except TypeError:
-            suffix = "LL"
+            suffix = "ULL"
         for f in r.fields:
             if f.define:
                 if f.description:
