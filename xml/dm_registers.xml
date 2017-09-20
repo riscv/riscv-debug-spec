@@ -590,27 +590,21 @@
 
         If \Fsberror isn't 0 then accesses do nothing.
         
-        Writes to this register:
+        \begin{steps}{Writes to this register:}
+            \item If the bus master is busy then accesses set \Fsberror, and
+            don't do anything else.
+            \item Start a bus write of {\tt sbdata} to {\tt sbaddress}.
+            \item If \Fsbautoincrement is set, increment {\tt sbaddress}.
+        \end{steps}
 
-        1. If the bus master is busy then accesses set \Fsberror,
-        and don't do anything else.
-
-        2. Start a bus write of {\tt sbdata} to {\tt sbaddress}.
-
-        3. If \Fsbautoincrement is set, increment {\tt sbaddress}.
-
-        Reads from this register:
-
-        1. If the register is marked stale, then set \Fsberror and don't do
-        anything else.
-
-        2. ``Return'' the data.
-
-        3. Mark the register stale.
-
-        4. If \Fsbautoincrement is set, increment {\tt sbaddress}.
-
-        5. If \Fsbautoread is set, start another system bus read.
+        \begin{steps}{Reads from this register:}
+            \item If the register is marked stale, then set \Fsberror and don't
+            do anything else.
+            \item ``Return'' the data.
+            \item Mark the register stale.
+            \item If \Fsbautoincrement is set, increment {\tt sbaddress}.
+            \item If \Fsbautoread is set, start another system bus read.
+        \end{steps}
 
         Only \Rsbdatazero has this behavior. The other {\tt sbdata} registers
         have no side effects. On systems that have buses wider than 32 bits, a
