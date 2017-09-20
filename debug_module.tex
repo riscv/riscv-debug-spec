@@ -248,7 +248,9 @@ This can be a 32-bit
 instruction, or a compressed instruction in the lower 16 bits accompanied by a
 compressed {\tt nop} in the upper 16 bits.  If \Fprogsize is greater than 1,
 the debugger can write whatever program it likes, but the program must end with
-{\tt ebreak} or {\tt ebreak.c}.
+{\tt ebreak} or {\tt ebreak.c}. If the debugger executes a program that does not
+terminate with an {\tt ebreak} instruction, the hart will be stuck in Debug Mode
+until it is reset.
 
 While these programs are executed, the hart does not leave Debug Mode (see
 Section~\ref{debugmode}).  If an exception is encountered during execution of
