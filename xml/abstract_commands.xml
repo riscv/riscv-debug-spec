@@ -24,7 +24,11 @@
 	be supported for a register while the hart is halted.
 	Each individual register (aside from GPRs) may be supported differently
 	across read, write, and halt status.
-	
+
+        \begin{commentary}
+            The encoding of \Fsize was chosen to match \Fsbaccess in \Rsbcs.
+        \end{commentary}
+
         <field name="cmdtype" bits="31:24">
             This is 0 to indicate Access Register Command.
         </field>
