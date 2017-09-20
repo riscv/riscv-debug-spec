@@ -499,9 +499,8 @@
             with any access size.
         </field>
         <field name="sbautoincrement" bits="16" access="R/W" reset="0">
-            When 1, the internal address value (used by the system bus master)
-            is incremented by the access size (in bytes) selected in \Fsbaccess
-            after every system bus access.
+            When 1, {\tt sbaddress} is incremented by the access size (in
+            bytes) selected in \Fsbaccess after every system bus access.
         </field>
         <field name="sbautoread" bits="15" access="R/W" reset="0">
             When 1, every read from \Rsbdatazero automatically triggers a
@@ -562,14 +561,14 @@
         If \Fsbsingleread is set, the bit is cleared.
 
         <field name="address" bits="31:0" access="R/W" reset="0">
-            Accesses bits 31:0 of the internal address.
+            Accesses bits 31:0 of {\tt sbaddress}.
         </field>
     </register>
 
     <register name="System Bus Address 63:32" short="sbaddress1" address="0x3a">
         <field name="address" bits="31:0" access="R/W" reset="0">
-            Accesses bits 63:32 of the internal address (if the system address
-            bus is that wide).
+            Accesses bits 63:32 of {\tt sbaddress} (if the system address bus
+            is that wide).
         </field>
     </register>
 
@@ -577,8 +576,8 @@
         If \Fsbasize is less than 65, then this register is not present.
 
         <field name="address" bits="31:0" access="R/W" reset="0">
-            Accesses bits 95:64 of the internal address (if the system address
-            bus is that wide).
+            Accesses bits 95:64 of {\tt sbaddress} (if the system address bus
+            is that wide).
         </field>
     </register>
 
@@ -596,11 +595,9 @@
         1. If the bus master is busy then accesses set \Fsberror,
         and don't do anything else.
 
-        2. Update internal data.
+        2. Start a bus write of {\tt sbdata} to {\tt sbaddress}.
 
-        3. Start a bus write of the internal data to the internal address.
-
-        4. If \Fsbautoincrement is set, increment the internal address.
+        3. If \Fsbautoincrement is set, increment {\tt sbaddress}.
 
         Reads from this register:
 
@@ -611,12 +608,12 @@
 
         3. Mark the register stale.
 
-        4. If \Fsbautoincrement is set, increment the internal address.
+        4. If \Fsbautoincrement is set, increment {\tt sbaddress}.
 
         5. If \Fsbautoread is set, start another system bus read.
 
         <field name="data" bits="31:0" access="R/W" reset="0">
-            Accesses bits 31:0 of the internal data.
+            Accesses bits 31:0 of {\tt sbdata}.
         </field>
     </register>
 
@@ -625,8 +622,8 @@
         register is not present.
 
         <field name="data" bits="31:0" access="R/W" reset="0">
-            Accesses bits 63:32 of the internal data (if the system bus is
-            that wide).
+            Accesses bits 63:32 of {\tt sbdata} (if the system bus is that
+            wide).
         </field>
     </register>
 
@@ -634,8 +631,8 @@
         This register only exists if \Fsbaccessonetwentyeight is 1.
 
         <field name="data" bits="31:0" access="R/W" reset="0">
-            Accesses bits 95:64 of the internal data (if the system bus is
-            that wide).
+            Accesses bits 95:64 of {\tt sbdata} (if the system bus is that
+            wide).
         </field>
     </register>
 
@@ -643,8 +640,8 @@
         This register only exists if \Fsbaccessonetwentyeight is 1.
 
         <field name="data" bits="31:0" access="R/W" reset="0">
-            Accesses bits 127:96 of the internal data (if the system bus is
-            that wide).
+            Accesses bits 127:96 of {\tt sbdata} (if the system bus is that
+            wide).
         </field>
     </register>
 
