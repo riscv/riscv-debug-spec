@@ -9,6 +9,14 @@
         This register reports status for the overall debug module
         as well as the currently selected harts, as defined in \Fhasel.
 
+        Harts are nonexistent if they will never be part of this system, no
+        matter how long a user waits. Eg. in a simple single-hart system only
+        one hart exists, and all others are nonexistent.
+
+        Harts are unavailable if they might exist/become available at a later
+        time.  Eg. in a multi-hart system some might temporarily be powered
+        down, or a system might support hot-swapping harts.
+
         <field name="0" bits="31:18" access="R" reset="0" />
 	<field name="allresumeack" bits="17" access="R" reset="-">
           This field is 1 when all currently selected harts have acknowledged the previous \Fresumereq.
