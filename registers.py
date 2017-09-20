@@ -367,8 +367,12 @@ def print_latex_custom( registers ):
         if r.label and r.define:
             print "\\label{%s}" % r.label
         print r.description
+        print
 
         if r.fields:
+            if all(f.access in ('R', '0') for f in r.fields):
+                print "This entire register is read-only."
+
             print "\\begin{center}"
 
             totalWidth = sum( ( 3 + f.columnWidth() ) for f in r.fields )
