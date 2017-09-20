@@ -12,7 +12,7 @@ external debugging. How Debug Mode is implemented is not specified here.
 
 \begin{steps}{When executing code from the Program Buffer, the processor stays
     in Debug Mode and the following apply:}
-\item All operations happen in machine mode.
+\item All operations are executed at machine mode privilege level.
 \item \Fmprv in \Rmstatus is ignored.
 \item All interrupts are masked.
 \item Exceptions don't update any registers.  That includes {\tt cause}, {\tt
