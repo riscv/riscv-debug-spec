@@ -612,6 +612,11 @@
 
         5. If \Fsbautoread is set, start another system bus read.
 
+        Only \Rsbdatazero has this behavior. The other {\tt sbdata} registers
+        have no side effects. On systems that have buses wider than 32 bits, a
+        debugger should access \Rsbdatazero after accessing the other {\tt
+        sbdata} registers.
+
         <field name="data" bits="31:0" access="R/W" reset="0">
             Accesses bits 31:0 of {\tt sbdata}.
         </field>
