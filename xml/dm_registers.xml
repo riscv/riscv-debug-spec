@@ -524,8 +524,7 @@
 
             4: The system bus master was busy when one of the
             {\tt sbaddress} or {\tt sbdata} registers was written,
-            or the {\tt sbdata} register was read when it had
-            stale data.
+            or \Rsbdatazero was read when it had stale data.
 
         </field>
         <field name="sbasize" bits="11:5" access="R" reset="Preset">
@@ -587,6 +586,9 @@
         If all of the {\tt sbaccess} bits in \Rsbcs are 0, then this register
         is not present.
 
+        Any successful system bus read updates the data in this register, and
+        marks it no longer stale.
+
         If \Fsberror isn't 0 then accesses do nothing.
         
         Writes to this register:
@@ -602,15 +604,16 @@
 
         Reads from this register:
 
-        1. If bits 31:0 of the internal data register haven't been updated
-        since the last time this register was read, then set \Fsberror,
-	and don't do anything else.
+        1. If the register is marked stale, then set \Fsberror and don't do
+        anything else.
 
         2. ``Return'' the data.
 
-        3. If \Fsbautoincrement is set, increment the internal address.
+        3. Mark the register stale.
 
-        4. If \Fsbautoread is set, start another system bus read.
+        4. If \Fsbautoincrement is set, increment the internal address.
+
+        5. If \Fsbautoread is set, start another system bus read.
 
         <field name="data" bits="31:0" access="R/W" reset="0">
             Accesses bits 31:0 of the internal data.
