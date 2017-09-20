@@ -53,6 +53,9 @@
             0: Don't do the operation specified by \Fwrite.
 
             1: Do the operation specified by \Fwrite.
+
+            This bit can be used to just execute the Program Buffer without
+            having to worry about placing valid values into \Fsize or \Fregno.
         </field>
         <field name="write" bits="16">
             When \Ftransfer is set:
