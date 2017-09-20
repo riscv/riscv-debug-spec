@@ -211,7 +211,7 @@
             shadowing the {\tt data} registers.
 
             If \Fdataaccess is 1: Signed address of RAM where the {\tt data}
-            registers are shadowed.
+            registers are shadowed, to be used to access relative to \Rzero.
         </field>
     </register>
 
