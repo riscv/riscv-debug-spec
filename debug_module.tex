@@ -270,7 +270,8 @@ executing a Program Buffer, and then restore \Rdpc before leaving Debug Mode.
 
 The Program Buffer may be implemented as RAM which is accessible to the
 hart as RAM memory. A debugger can determine if this is the case by executing small
-programs that attempt to write relative to \Rpc while executing from the Program Buffer.
+programs that attempt to write and read back relative to \Rpc while executing
+from the Program Buffer.
 If so, the debugger has more flexibility in what it can do with the program buffer.
 
 \section{Overview of States}
