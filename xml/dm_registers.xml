@@ -504,8 +504,8 @@
             after every system bus access.
         </field>
         <field name="sbautoread" bits="15" access="R/W" reset="0">
-            When 1, every read from \Rsbdatazero automatically triggers a system
-            bus read at the new address.
+            When 1, every read from \Rsbdatazero automatically triggers a
+            system bus read at the (possibly auto-incremented) address.
         </field>
         <field name="sberror" bits="14:12" access="R/W1C" reset="0">
             When the debug module's system bus
