@@ -1,5 +1,5 @@
 <registers name="Abstract Commands" skip_index="1" skip_access="1"
-        skip_reset="1" prefix="AC_">
+        skip_reset="1" prefix="AC_" depth="2">
     <register name="Access Register">
         \begin{steps}{This command gives the debugger access to CPU registers and program buffer. 
         It performs the following sequence of operations:}
