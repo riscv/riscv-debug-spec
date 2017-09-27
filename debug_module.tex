@@ -232,20 +232,6 @@ determines the kind of command. Table~\ref{tab:cmdtype} lists all commands.
     \end{tabulary}
 \end{table}
 
-\begin{figure}
-   \centering
-   \includegraphics[width=\textwidth]{fig/abstract_commands.pdf}
-   \caption[Run/Halt Debug State Machine]{Run/Halt Debug State Machine.
-     As only a small amount of state is visibile to the debugger,
-     the states and transitions are conceptual.}
-   \label{fig:abstract_sm}
-\end{figure}
-
-Figure~\ref{fig:abstract_sm} shows a conceptual view of the states
-passed through by a hart during run/halt debugging as influenced
-by the different fields of \Rdmcontrol, \Rabstractcs, \Rabstractauto, and
-\Rcommand.
-
 \section{Program Buffer} \label{programbuffer}
 
 To support executing arbitrary instructions on a halted hart,
@@ -262,7 +248,9 @@ This can be a 32-bit
 instruction, or a compressed instruction in the lower 16 bits accompanied by a
 compressed {\tt nop} in the upper 16 bits.  If \Fprogsize is greater than 1,
 the debugger can write whatever program it likes, but the program must end with
-{\tt ebreak} or {\tt ebreak.c}.
+{\tt ebreak} or {\tt ebreak.c}. If the debugger executes a program that does not
+terminate with an {\tt ebreak} instruction, the hart will be stuck in Debug Mode
+until it is reset.
 
 While these programs are executed, the hart does not leave Debug Mode (see
 Section~\ref{debugmode}).  If an exception is encountered during execution of
@@ -282,8 +270,25 @@ executing a Program Buffer, and then restore \Rdpc before leaving Debug Mode.
 
 The Program Buffer may be implemented as RAM which is accessible to the
 hart as RAM memory. A debugger can determine if this is the case by executing small
-programs that attempt to write relative to \Rpc while executing from the Program Buffer.
+programs that attempt to write and read back relative to \Rpc while executing
+from the Program Buffer.
 If so, the debugger has more flexibility in what it can do with the program buffer.
+
+\section{Overview of States}
+
+Figure~\ref{fig:abstract_sm} shows a conceptual view of the states
+passed through by a hart during run/halt debugging as influenced
+by the different fields of \Rdmcontrol, \Rabstractcs, \Rabstractauto, and
+\Rcommand.
+
+\begin{figure}
+   \centering
+   \includegraphics[width=\textwidth]{fig/abstract_commands.pdf}
+   \caption[Run/Halt Debug State Machine]{Run/Halt Debug State Machine.
+     As only a small amount of state is visibile to the debugger,
+     the states and transitions are conceptual.}
+   \label{fig:abstract_sm}
+\end{figure}
 
 \section{System Bus Access} \label{systembusaccess}
 

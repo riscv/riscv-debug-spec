@@ -9,6 +9,14 @@
         This register reports status for the overall debug module
         as well as the currently selected harts, as defined in \Fhasel.
 
+        Harts are nonexistent if they will never be part of this system, no
+        matter how long a user waits. Eg. in a simple single-hart system only
+        one hart exists, and all others are nonexistent.
+
+        Harts are unavailable if they might exist/become available at a later
+        time.  Eg. in a multi-hart system some might temporarily be powered
+        down, or a system might support hot-swapping harts.
+
         <field name="0" bits="31:18" access="R" reset="0" />
 	<field name="allresumeack" bits="17" access="R" reset="-">
           This field is 1 when all currently selected harts have acknowledged the previous \Fresumereq.
@@ -58,12 +66,13 @@
             \Rauthdata.
         </field>
         <field name="0" bits="5" reset="0" access="R" />
-        <field name="devtreevalid" bits="4" reset="Preset" access="R" />
-            0: \Fdevtreeaddrzero - \Fdevtreeaddrthree hold information which
+        <field name="devtreevalid" bits="4" reset="Preset" access="R">
+            0: \Rdevtreeaddrzero--\Rdevtreeaddrthree hold information which
             is not relevant to the Device Tree.
 
-            1: \Fdevtreeaddrzero - \Fdevtreeaddrthree registers hold the address of the
+            1: \Rdevtreeaddrzero--\Rdevtreeaddrthree registers hold the address of the
             Device Tree.
+        </field>
         <field name="version" bits="3:0" reset="2" access="R">
             0: There is no Debug Module present.
 
@@ -202,7 +211,7 @@
             shadowing the {\tt data} registers.
 
             If \Fdataaccess is 1: Signed address of RAM where the {\tt data}
-            registers are shadowed.
+            registers are shadowed, to be used to access relative to \Rzero.
         </field>
     </register>
 
@@ -266,8 +275,10 @@
 
     <register name="Hart Array Window " short="hawindow" address="0x15">
       This register provides R/W access to a 32-bit portion of the
-      hart array mask register. The position of the window is determined by
-      \Rhawindowsel.
+      hart array mask register.
+      The position of the window is determined by \Rhawindowsel. I.e. bit 0
+      refers to hart $\Rhawindowsel * 32$, while bit 31 refers to hart
+      $\Rhawindowsel * 32 + 31$.
       <field name="maskdata" bits="31:0" access="R/W" reset="0" />
     </register>
 
@@ -488,13 +499,12 @@
             with any access size.
         </field>
         <field name="sbautoincrement" bits="16" access="R/W" reset="0">
-            When 1, the internal address value (used by the system bus master)
-            is incremented by the access size (in bytes) selected in \Fsbaccess
-            after every system bus access.
+            When 1, {\tt sbaddress} is incremented by the access size (in
+            bytes) selected in \Fsbaccess after every system bus access.
         </field>
         <field name="sbautoread" bits="15" access="R/W" reset="0">
-            When 1, every read from \Rsbdatazero automatically triggers a system
-            bus read at the new address.
+            When 1, every read from \Rsbdatazero automatically triggers a
+            system bus read at the (possibly auto-incremented) address.
         </field>
         <field name="sberror" bits="14:12" access="R/W1C" reset="0">
             When the debug module's system bus
@@ -513,8 +523,7 @@
 
             4: The system bus master was busy when one of the
             {\tt sbaddress} or {\tt sbdata} registers was written,
-            or the {\tt sbdata} register was read when it had
-            stale data.
+            or \Rsbdatazero was read when it had stale data.
 
         </field>
         <field name="sbasize" bits="11:5" access="R" reset="Preset">
@@ -552,14 +561,14 @@
         If \Fsbsingleread is set, the bit is cleared.
 
         <field name="address" bits="31:0" access="R/W" reset="0">
-            Accesses bits 31:0 of the internal address.
+            Accesses bits 31:0 of {\tt sbaddress}.
         </field>
     </register>
 
     <register name="System Bus Address 63:32" short="sbaddress1" address="0x3a">
         <field name="address" bits="31:0" access="R/W" reset="0">
-            Accesses bits 63:32 of the internal address (if the system address
-            bus is that wide).
+            Accesses bits 63:32 of {\tt sbaddress} (if the system address bus
+            is that wide).
         </field>
     </register>
 
@@ -567,8 +576,8 @@
         If \Fsbasize is less than 65, then this register is not present.
 
         <field name="address" bits="31:0" access="R/W" reset="0">
-            Accesses bits 95:64 of the internal address (if the system address
-            bus is that wide).
+            Accesses bits 95:64 of {\tt sbaddress} (if the system address bus
+            is that wide).
         </field>
     </register>
 
@@ -576,33 +585,34 @@
         If all of the {\tt sbaccess} bits in \Rsbcs are 0, then this register
         is not present.
 
+        Any successful system bus read updates the data in this register, and
+        marks it no longer stale.
+
         If \Fsberror isn't 0 then accesses do nothing.
         
-        Writes to this register:
+        \begin{steps}{Writes to this register:}
+            \item If the bus master is busy then accesses set \Fsberror, and
+            don't do anything else.
+            \item Start a bus write of {\tt sbdata} to {\tt sbaddress}.
+            \item If \Fsbautoincrement is set, increment {\tt sbaddress}.
+        \end{steps}
 
-        1. If the bus master is busy then accesses set \Fsberror,
-        and don't do anything else.
+        \begin{steps}{Reads from this register:}
+            \item If the register is marked stale, then set \Fsberror and don't
+            do anything else.
+            \item ``Return'' the data.
+            \item Mark the register stale.
+            \item If \Fsbautoincrement is set, increment {\tt sbaddress}.
+            \item If \Fsbautoread is set, start another system bus read.
+        \end{steps}
 
-        2. Update internal data.
-
-        3. Start a bus write of the internal data to the internal address.
-
-        4. If \Fsbautoincrement is set, increment the internal address.
-
-        Reads from this register:
-
-        1. If bits 31:0 of the internal data register haven't been updated
-        since the last time this register was read, then set \Fsberror,
-	and don't do anything else.
-
-        2. ``Return'' the data.
-
-        3. If \Fsbautoincrement is set, increment the internal address.
-
-        4. If \Fsbautoread is set, start another system bus read.
+        Only \Rsbdatazero has this behavior. The other {\tt sbdata} registers
+        have no side effects. On systems that have buses wider than 32 bits, a
+        debugger should access \Rsbdatazero after accessing the other {\tt
+        sbdata} registers.
 
         <field name="data" bits="31:0" access="R/W" reset="0">
-            Accesses bits 31:0 of the internal data.
+            Accesses bits 31:0 of {\tt sbdata}.
         </field>
     </register>
 
@@ -611,8 +621,8 @@
         register is not present.
 
         <field name="data" bits="31:0" access="R/W" reset="0">
-            Accesses bits 63:32 of the internal data (if the system bus is
-            that wide).
+            Accesses bits 63:32 of {\tt sbdata} (if the system bus is that
+            wide).
         </field>
     </register>
 
@@ -620,8 +630,8 @@
         This register only exists if \Fsbaccessonetwentyeight is 1.
 
         <field name="data" bits="31:0" access="R/W" reset="0">
-            Accesses bits 95:64 of the internal data (if the system bus is
-            that wide).
+            Accesses bits 95:64 of {\tt sbdata} (if the system bus is that
+            wide).
         </field>
     </register>
 
@@ -629,8 +639,8 @@
         This register only exists if \Fsbaccessonetwentyeight is 1.
 
         <field name="data" bits="31:0" access="R/W" reset="0">
-            Accesses bits 127:96 of the internal data (if the system bus is
-            that wide).
+            Accesses bits 127:96 of {\tt sbdata} (if the system bus is that
+            wide).
         </field>
     </register>
 

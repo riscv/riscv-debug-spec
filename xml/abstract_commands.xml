@@ -1,5 +1,5 @@
 <registers name="Abstract Commands" skip_index="1" skip_access="1"
-        skip_reset="1" prefix="AC_">
+        skip_reset="1" prefix="AC_" depth="2">
     <register name="Access Register">
         \begin{steps}{This command gives the debugger access to CPU registers and program buffer. 
         It performs the following sequence of operations:}
@@ -24,7 +24,11 @@
 	be supported for a register while the hart is halted.
 	Each individual register (aside from GPRs) may be supported differently
 	across read, write, and halt status.
-	
+
+        \begin{commentary}
+            The encoding of \Fsize was chosen to match \Fsbaccess in \Rsbcs.
+        \end{commentary}
+
         <field name="cmdtype" bits="31:24">
             This is 0 to indicate Access Register Command.
         </field>
@@ -49,6 +53,9 @@
             0: Don't do the operation specified by \Fwrite.
 
             1: Do the operation specified by \Fwrite.
+
+            This bit can be used to just execute the Program Buffer without
+            having to worry about placing valid values into \Fsize or \Fregno.
         </field>
         <field name="write" bits="16">
             When \Ftransfer is set:
