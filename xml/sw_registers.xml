@@ -19,7 +19,6 @@
         \hline
         0 &amp; User/Application \\
         1 &amp; Supervisor \\
-        2 &amp; Hypervisor \\
         3 &amp; Machine \\
         \hline
         \end{tabular}
@@ -28,8 +27,9 @@
         <field name="prv" bits="1:0" access="R/W" reset="0">
             Contains the privilege level the hart was operating in when Debug
             Mode was entered. The encoding is described in Table
-            \ref{tab:privlevel}. A user can write this value to change the
-            hart's privilege level when exiting Debug Mode.
+            \ref{tab:privlevel}, and matches the privilege level encoding from
+            the RISC-V Privileged ISA Specification. A user can write this
+            value to change the hart's privilege level when exiting Debug Mode.
         </field>
     </register>
 </registers>
