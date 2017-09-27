@@ -106,8 +106,10 @@
         \hline
         {\tt ebreak} &amp; Address of the {\tt ebreak} instruction \\
         \hline
-        single step &amp; Address of the instruction after the one
-        that was stepped over \\
+        single step &amp; Address of the instruction that would be executed
+        next if no debugging was going on. Ie. $\Rpc+4$ for 32-bit instructions
+        that don't change program flow, the destination PC on taken
+        jumps/branches, etc. \\
         \hline
         trigger module &amp; If \Ftiming is 0, the address of the
         instruction which caused the trigger to fire. If \Ftiming is 1, the
