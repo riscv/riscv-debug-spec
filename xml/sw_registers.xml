@@ -4,10 +4,14 @@
      A virtual register is one that doesn't exist directly in the hardware, but that the debugger exposes as if it does. 
     
      <register name="Privilege Level" short="priv" address="virtual">
-        User can read this register to  inspect the privilege level that
+        User can read this register to inspect the privilege level that
         the hart was running in when the hart halted.
         User can write this register to change the privilege level that
         the hart will run in when it resumes.
+
+        This register contains \Fprv from \Rdcsr, but in a place that the user
+        is expected to access. The user should not access \Rdcsr directly,
+        because doing so might interfere with the debugger.
 
         \begin{table}
         \centering
