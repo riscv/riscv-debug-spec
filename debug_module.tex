@@ -261,7 +261,7 @@ program buffer must end with {\tt ebreak} or {\tt c.ebreak}.
 If \Fprogbufsize is 1, the final {\tt ebreak} is implied and 
 the debugger need not write it. The contents of \Rprogbufzero
 can be a 32-bit
-instruction, or a compressed instruction in the lower 16 bits accompanied by a
+instruction, or a compressed instruction in the lower 16 bits accompanied by
 {\tt c.nop} in the upper 16 bits. 
 If \Fprogbufsize is greater than 1,
 the debugger can write any program, but it must
