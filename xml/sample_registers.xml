@@ -1,4 +1,4 @@
-<registers name="Sample Registers" skip_index="1">
+<registers name="Sample Registers" skip_index="1" depth="2">
     Description of what this register is about.
     <register name="Long Name" short="shortname" address="0x123">
         <field name="0" bits="31:8" access="R" reset="0" />
