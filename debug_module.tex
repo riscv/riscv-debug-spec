@@ -112,7 +112,7 @@ at once, Abstract Commands apply only to the hart selected by
 
 The Debug Module can halt selected harts and allow them to run again using
 the \Rdmcontrol register.
-After selecting harts, it sets \Fhaltreq, then waits for \Fallhalted to
+After selecting harts, it sets \Fhaltreq, then waits for \Frunstate to
 indicate the harts are halted before clearing \Fhaltreq to 0. Setting \Fhaltreq
 has no effect on harts which are already halted.
 
@@ -121,13 +121,12 @@ To resume, the debugger sets \Fresumereq. This action sets each selected hart's
 sets its {\tt resumeack} bit to 1. Thus, the
 debugger should wait for \Fallresumeack to indicate all
 harts have resumed before clearing \Fresumereq to 0.
-If a debugger reads \Fanyresumeack and \Fanyhalted in the same operation, then
+If a debugger reads \Fanyresumeack and \Frunstate<2 in the same operation, then
 some selected harts must have resumed and then halted again.
 
 \begin{commentary}
   When waiting for a hart to resume, a debugger should
-  examine \Fallresumeack, not \Fallrunning
-  or \Fallhalted,
+  examine \Fallresumeack, not \Frunstate,
   because the hart may immediately halt again due to
   trigger or step conditions.
 \end{commentary}
