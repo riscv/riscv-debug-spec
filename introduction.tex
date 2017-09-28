@@ -155,6 +155,10 @@ The debug interface described in this specification supports the following featu
        read/write address/data, or an instruction opcode. (Optional)
 \end{enumerate}
 
+While both the mechanism to execute arbitrary instructions and the system bus
+master are optional, at least one of them must be implemented. Otherwise there
+is no mechanism to access memory.
+
 This document does not suggest a strategy or implementation for hardware test,
 debugging or error detection techniqes. Scan, BIST, etc. are out of scope of
 this specification, but this specification does not intend to limit their use 
