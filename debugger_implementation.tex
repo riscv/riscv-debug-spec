@@ -50,11 +50,6 @@ that's done, it can let the core run by setting \Fresumereq.
 
 \section{Single Step}
 
-A debugger can single step the core by setting a breakpoint on the next
-instruction and letting the core run, or by asking the hardware to perform a
-single step. The former requires the debugger to have much more knowledge of
-the hardware than the latter, so the latter is preferred.
-
 Using the hardware single step feature is almost the same as regular running.
 The debugger just sets \Fstep in \Rdcsr before letting the core run. The core
 behaves exactly as in the running case, except that interrupts are left off and
