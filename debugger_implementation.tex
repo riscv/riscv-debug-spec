@@ -52,9 +52,9 @@ that's done, it can let the core run by setting \Fresumereq.
 
 Using the hardware single step feature is almost the same as regular running.
 The debugger just sets \Fstep in \Rdcsr before letting the core run. The core
-behaves exactly as in the running case, except that interrupts are left off and
-it only fetches and executes a single instruction before re-entering Debug
-Mode.
+behaves exactly as in the running case, except that interrupts may be disabled
+(depending on \Fstepie) and it only fetches and executes a single instruction
+before re-entering Debug Mode.
 
 \section{Accessing Registers}
 
