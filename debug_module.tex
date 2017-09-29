@@ -257,7 +257,8 @@ until it is reset.
 While these programs are executed, the hart does not leave Debug Mode (see
 Section~\ref{debugmode}).  If an exception is encountered during execution of
 the Program Buffer, no more instructions are executed, the hart remains in Debug
-Mode, and \Fcmderr is set to 3 ({\tt exception error}).
+Mode, and \Fcmderr is set to 3 ({\tt exception error}).  If the debugger
+executes a program that doesn't terminate, then it loses control of the hart.
 
 Executing the Program Buffer may clobber \Rdpc. If that is the case, it must be
 possible to read/write \Rdpc using an abstract command with \Fpostexec not set.
