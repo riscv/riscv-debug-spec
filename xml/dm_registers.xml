@@ -286,12 +286,8 @@
 
     <register name="Abstract Control and Status" short="abstractcs" address="0x16">
         <field name="0" bits="31:29" access="R" reset="0" />
-        <field name="progsize" bits="28:24" access="R" reset="Preset">
+        <field name="progbufsize" bits="28:24" access="R" reset="Preset">
             Size of the Program Buffer, in 32-bit words. Valid sizes are 0 - 16.
-
-            TODO: Explain what can be done with each size of the buffer, to suggest
-            why you would want more or less words.
-
         </field>
         <field name="0" bits="23:13" access="R" reset="0" />
         <field name="busy" bits="12" access="R" reset="0">

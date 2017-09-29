@@ -235,22 +235,24 @@ determines the kind of command. Table~\ref{tab:cmdtype} lists all commands.
 \section{Program Buffer} \label{programbuffer}
 
 To support executing arbitrary instructions on a halted hart,
-a Debug Module can include a 
-Program Buffer that a debugger can write small programs to. Systems
+a Debug Module can include a Program Buffer that a debugger
+can write small programs to. Systems
 that support all necessary functionality using abstract commands
 only may choose to omit the Program Buffer.
 
 A debugger can write a small program to the Program Buffer, and then
 execute it exactly once with the Access Register Abstract Command,
+
 setting the \Fpostexec bit in \Rcommand.
-If \Fprogsize is 1, the Program Buffer may only hold a single instruction.
+If \Fprogbufsize is 1, the Program Buffer may only hold a single instruction.
 This can be a 32-bit
 instruction, or a compressed instruction in the lower 16 bits accompanied by a
-compressed {\tt nop} in the upper 16 bits.  If \Fprogsize is greater than 1,
+compressed {\tt nop} in the upper 16 bits.  If \Fprogbufsize is greater than 1,
 the debugger can write whatever program it likes, but the program must end with
 {\tt ebreak} or {\tt ebreak.c}. If the debugger executes a program that does not
-terminate with an {\tt ebreak} instruction, the hart will be stuck in Debug Mode
+terminate with an {\tt ebreak} instruction, the hart will remain in Debug Mode
 until it is reset.
+
 
 While these programs are executed, the hart does not leave Debug Mode (see
 Section~\ref{debugmode}).  If an exception is encountered during execution of
