@@ -109,14 +109,14 @@
 
 	    Writing 1 or 0 has no effect on a hart which is already halted, but
 	    the bit should be cleared to 0 before the hart is resumed.
-            Setting both \Fhaltreq and \Fresumereq leads to undefined behavior.
 
             Writes apply to the new value of \Fhartsel and \Fhasel.
         </field>
         <field name="resumereq" bits="30" access="R/W" reset="0">
             Resume request signal for all currently selected harts. When set to 1,
             each selected hart will resume if it is currently halted.
-            Setting both \Fhaltreq and \Fresumereq leads to undefined behavior.
+
+            This bit is ignored while \Fhaltreq is set.
 
             Writes apply to the new value of \Fhartsel and \Fhasel.
         </field>
