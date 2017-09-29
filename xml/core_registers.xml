@@ -35,7 +35,7 @@
 
             0: Increment counters as usual.
 
-            1: Don't increment any counters while in Debug Mode and on {\tt
+            1: Don't increment any counters while in Debug Mode or on {\tt
             ebreak} instructions that cause entry into Debug Mode.  These
             counters include the {\tt cycle} and {\tt instret} CSRs. This is
             preferred for most debugging scenarios.
