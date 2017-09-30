@@ -144,7 +144,8 @@
         <field name="ndmreset" bits="1" access="R/W" reset="0">
             This bit controls the reset signal from the DM to the rest of the
             system. The signal should reset every part of the system, including
-            every hart, except for the DM.
+            every hart, except for the DM and any logic required to access the
+            DM.
             To perform a system reset the debugger writes 1,
             and then writes 0
             to deassert the reset.
