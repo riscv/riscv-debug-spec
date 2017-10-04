@@ -8,12 +8,12 @@ of the rest.
 \section{Debug Mode} \label{debugmode}
 
 Debug Mode is a special processor mode used only when the core is halted for
-external debugging. How Debug Mode is entered is implementation-specific.
+external debugging. How Debug Mode is implemented is not specified here.
 
 \begin{steps}{When executing code from the Program Buffer, the processor stays
     in Debug Mode and the following apply:}
-\item All operations happen in machine mode.
-\item \Fmprv in \Rmstatus is ignored.
+\item All operations are executed at machine mode privilege level, except that
+    \Fmprv in \Rmstatus is ignored.
 \item All interrupts are masked.
 \item Exceptions don't update any registers.  That includes {\tt cause}, {\tt
     epc}, {\tt badaddr}, {\tt dpc}, and \Rmstatus. They do end execution of the

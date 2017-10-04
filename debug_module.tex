@@ -8,12 +8,16 @@
 \item Allow any individual hart to be halted and resumed. (Required)
 \item Provide status on which harts are halted. (Required)
 \item Provide read and write access to a halted hart's GPRs. (Required)
-\item Provide access to a reset signal that allows debugging out of reset.(Required)
+\item Provide access to a reset signal that allows debugging from the very
+    first instruction after reset. (Required)
 \item Provide access to other hart registers. (Optional)
-\item Provide an interface to force the hart to execute arbitrary instructions. (Optional)
+\item Provide a Program Buffer to force the hart to execute arbitrary instructions. (Optional)
 \item Allow multiple harts to be halted, resumed, and/or reset at the same time. (Optional)
-\item Allow system memory accesses. (Optional)
+\item Allow direct System Bus Access. (Optional)
 \end{steps}
+
+In order to implement memory access, a target must implement either the Program
+Buffer or System Bus Access.
 
 A single DM can debug up to 1024 harts.
 
@@ -40,8 +44,9 @@ The Debug Module is controlled via register accesses to its DMI address space.
         \hline
         0x00 -- 0x3f & Registers described in Section~\ref{dmdebbus}. \\
         \hline
-        0x40 -- 0x5f & There are 1024 bits here, one for each hart controlled
-        by this debug module. If the hart is halted, the bit is 1.  Otherwise
+        0x40 -- 0x5f & This is called the `halt region`.  These 32 addresses
+        for 32-bit words provide access to the halt bit for up to 1024 harts.
+        If the hart is halted, the bit is 1.  Otherwise
         the bit is 0. The bit for hart 0 is the LSB in the 32-bit word at 0x40.
         The bit for hart 1023 is the MSB in the 32-bit word at 0x5f. \\
         \hline
@@ -50,12 +55,13 @@ The Debug Module is controlled via register accesses to its DMI address space.
 
 \section{Reset Control} \label{reset}
 
-The Debug Module controls a global reset signal, \Fndmreset,
+The Debug Module controls a global reset signal, \Fndmreset (non-debug module
+reset),
 which can reset, or hold in reset, every component in the platform,
 except for the Debug Module and Debug
-Transport Modules. The purpose of this feature is to allow debugging
-programs from the first instruction executed, so exactly what is affected
-by this reset is implementation dependent.
+Transport Modules.
+Exactly what is affected by this reset is implementation dependent, as long as
+it is possible to debug programs from the first instruction executed.
 The Debug Module's own state and registers should only be
 reset at power-up and while
 \Fdmactive in \Rdmcontrol is 0.
@@ -82,13 +88,13 @@ until \Fanynonexistent in \Rdmstatus is 1.
 
 The debugger can discover the mapping between hart indices and
 \Rmhartid by using the interface to read \Rmhartid, or by
-reading the system's Configuration String.
+reading the system's Device Tree.
 
 \subsection {Selecting a Single Hart}
 
 All debug modules must support selecting a single hart.
 The debugger can select a hart by writing its index to \Fhartsel.
-Hart indexes start at 0 and are continuous until the final index.
+Hart indexes start at 0 and are contiguous until the final index.
 
 \subsection {Selecting Multiple Harts}
 
@@ -102,24 +108,21 @@ Only the actions initiated by \Rdmcontrol can apply to multiple harts
 at once, Abstract Commands apply only to the hart selected by
 \Fhartsel.
 
-\section{Halt Control} \label{haltcontrol}
+\section{Run Control} \label{runcontrol}
 
-The Debug Module can halt harts and allow them to run again using
+The Debug Module can halt selected harts and allow them to run again using
 the \Rdmcontrol register.
-When a debugger wants to halt a single hart it selects it in \Fhartsel
-and sets \Fhaltreq, then waits
-for \Fallhalted to indicate the hart is halted before clearing \Fhaltreq
-to 0. Setting \Fhaltreq has no effect on a hart which is already halted.
+After selecting harts, it sets \Fhaltreq, then waits for \Fallhalted to
+indicate the harts are halted before clearing \Fhaltreq to 0. Setting \Fhaltreq
+has no effect on harts which are already halted.
 
-To resume, the debugger selects the hart with \Fhartsel,
-and sets \Fresumereq. This action sets the hart's
-{\tt resumeack} bit to 0. Once the hart has resumed, it
+To resume, the debugger sets \Fresumereq. This action sets each selected hart's
+{\tt resumeack} bit to 0. Once a hart has resumed, it
 sets its {\tt resumeack} bit to 1. Thus, the
-debugger should wait for \Fallresumeack to indicate the
-hart has resumed before clearing \Fresumereq to 0.
-If a debugger reads \Fallresumeack
-and \Fallhalted in the same cycle, the hart must have resumed
-and then halted again.
+debugger should wait for \Fallresumeack to indicate all
+harts have resumed before clearing \Fresumereq to 0.
+If a debugger reads \Fanyresumeack and \Fanyhalted in the same operation, then
+some selected harts must have resumed and then halted again.
 
 \begin{commentary}
   When waiting for a hart to resume, a debugger should
@@ -184,13 +187,40 @@ is placed in the lowest-numbered {\tt data} register.
     \end{tabulary}
 \end{table}
 
+\subsection{Abstract Command Listing}
+
+This section describes each of the different abstract commands
+and how their fields should be interpreted when
+they are written to \Rcommand.
+
+Each abstract command is a 32-bit value. The top 8 bits contain \Fcmdtype which
+determines the kind of command. Table~\ref{tab:cmdtype} lists all commands.
+
+\begin{table}[htp]
+    \centering
+    \caption{Meaning of \Fcmdtype}
+    \label{tab:cmdtype}
+    \begin{tabulary}{\textwidth}{|r|l|l|l|}
+        \hline
+        \Fcmdtype & Command & Page \\
+        \hline
+        0 & Access Register Command & \pageref{access register} \\
+        \hline
+        1 & Quick Access & \pageref{quick access} \\
+        \hline
+    \end{tabulary}
+\end{table}
+
+\input{abstract_commands.tex}
+
 \begin{table}[htp]
     \centering
     \caption{Abstract Register Numbers}
     \label{tab:regno}
     \begin{tabulary}{\textwidth}{|r|l|}
         \hline
-        0x0000 -- 0x0fff & CSRs \\
+        0x0000 -- 0x0fff & CSRs. The ``PC'' can be accessed here through \Rdpc.
+        \\
         \hline
         0x1000 -- 0x101f & GPRs \\
         \hline
@@ -202,50 +232,33 @@ is placed in the lowest-numbered {\tt data} register.
     \end{tabulary}
 \end{table}
 
-\subsection{Abstract Command Listing}
-
-This section describes each of the different abstract commands
-and how their fields should be interpreted when
-they are written to \Rcommand.
-
-\input{abstract_commands.tex}
-
-\begin{figure}
-   \centering
-   \includegraphics[width=\textwidth]{fig/abstract_commands.pdf}
-   \caption[Run/Halt Debug State Machine]{Run/Halt Debug State Machine.
-     As only a small amount of state is visibile to the debugger,
-     the states and transitions are conceptual.}
-   \label{fig:abstract_sm}
-\end{figure}
-
-Figure~\ref{fig:abstract_sm} shows a conceptual view of the states
-passed through by a hart during run/halt debugging as influenced
-by the different fields of \Rdmcontrol, \Rabstractcs, \Rabstractauto, and
-\Rcommand.
-
 \section{Program Buffer} \label{programbuffer}
 
 To support executing arbitrary instructions on a halted hart,
-a Debug Module can include a 
-Program Buffer that a debugger can write small programs to. Systems
+a Debug Module can include a Program Buffer that a debugger
+can write small programs to. Systems
 that support all necessary functionality using abstract commands
 only may choose to omit the Program Buffer.
 
 A debugger can write a small program to the Program Buffer, and then
 execute it exactly once with the Access Register Abstract Command,
+
 setting the \Fpostexec bit in \Rcommand.
-If \Fprogsize is 1, the Program Buffer may only hold a single instruction.
+If \Fprogbufsize is 1, the Program Buffer may only hold a single instruction.
 This can be a 32-bit
 instruction, or a compressed instruction in the lower 16 bits accompanied by a
-compressed {\tt nop} in the upper 16 bits.  If \Fprogsize is greater than 1,
+compressed {\tt nop} in the upper 16 bits.  If \Fprogbufsize is greater than 1,
 the debugger can write whatever program it likes, but the program must end with
-{\tt ebreak} or {\tt ebreak.c}.
+{\tt ebreak} or {\tt ebreak.c}. If the debugger executes a program that does not
+terminate with an {\tt ebreak} instruction, the hart will remain in Debug Mode
+until it is reset.
+
 
 While these programs are executed, the hart does not leave Debug Mode (see
 Section~\ref{debugmode}).  If an exception is encountered during execution of
 the Program Buffer, no more instructions are executed, the hart remains in Debug
-Mode, and \Fcmderr is set to 3 ({\tt exception error}).
+Mode, and \Fcmderr is set to 3 ({\tt exception error}).  If the debugger
+executes a program that doesn't terminate, then it loses control of the hart.
 
 Executing the Program Buffer may clobber \Rdpc. If that is the case, it must be
 possible to read/write \Rdpc using an abstract command with \Fpostexec not set.
@@ -260,8 +273,25 @@ executing a Program Buffer, and then restore \Rdpc before leaving Debug Mode.
 
 The Program Buffer may be implemented as RAM which is accessible to the
 hart as RAM memory. A debugger can determine if this is the case by executing small
-programs that attempt to write relative to \Rpc while executing from the Program Buffer.
+programs that attempt to write and read back relative to \Rpc while executing
+from the Program Buffer.
 If so, the debugger has more flexibility in what it can do with the program buffer.
+
+\section{Overview of States}
+
+Figure~\ref{fig:abstract_sm} shows a conceptual view of the states
+passed through by a hart during run/halt debugging as influenced
+by the different fields of \Rdmcontrol, \Rabstractcs, \Rabstractauto, and
+\Rcommand.
+
+\begin{figure}
+   \centering
+   \includegraphics[width=\textwidth]{fig/abstract_commands.pdf}
+   \caption[Run/Halt Debug State Machine]{Run/Halt Debug State Machine.
+     As only a small amount of state is visibile to the debugger,
+     the states and transitions are conceptual.}
+   \label{fig:abstract_sm}
+\end{figure}
 
 \section{System Bus Access} \label{systembusaccess}
 
@@ -315,5 +345,8 @@ complex authentication mechanism.  When \Fauthenticated is clear, the DM must
 not interact with the rest of the platform in any way.
 
 \section{Debug Module DMI Registers} \label{dmdebbus}
+
+When read, unimplemented Debug Module DMI Registers return 0. Writing them has
+no effect.
 
 \input{dm_registers.tex}

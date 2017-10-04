@@ -43,9 +43,22 @@ halted.
 To halt a hart, the debugger sets \Fhartsel and \Fhaltreq. Then it waits for
 \Fallhalted to become 1.
 
+\section{Running}
+
+First, the debugger should restore any registers that it has clobbered.  Once
+that's done, it can let the core run by setting \Fresumereq.
+
+\section{Single Step}
+
+Using the hardware single step feature is almost the same as regular running.
+The debugger just sets \Fstep in \Rdcsr before letting the core run. The core
+behaves exactly as in the running case, except that interrupts may be disabled
+(depending on \Fstepie) and it only fetches and executes a single instruction
+before re-entering Debug Mode.
+
 \section{Accessing Registers}
 
-\subsubsection{Using Abstract Command} \label{deb:abstractreg}
+\subsection{Using Abstract Command} \label{deb:abstractreg}
 
 \noindent Read \Szero using abstract command:
 
@@ -73,7 +86,7 @@ To halt a hart, the debugger sets \Fhartsel and \Fhaltreq. Then it waits for
 \end{tabulary}
 \medskip
 
-\subsubsection{Using Program Buffer} \label{deb:regprogbuf}
+\subsection{Using Program Buffer} \label{deb:regprogbuf}
 
 Abstract commands are used to exchange data with GPRs. Using this mechanism, other
 registers can be accessed by moving their value into/out of GPRs.
@@ -117,7 +130,7 @@ registers can be accessed by moving their value into/out of GPRs.
 
 \section{Reading Memory}
 
-\subsubsection{Using System Bus Access} \label{deb:mrsysbus}
+\subsection{Using System Bus Access} \label{deb:mrsysbus}
 
 \noindent Read a word from memory using system bus access:
 
@@ -154,12 +167,12 @@ registers can be accessed by moving their value into/out of GPRs.
     \hline
     Write & \Rsbcs & 0 & Clear \Fsbautoread \\
     \hline
-    Read & \Rdatazero & - & Get last value read from memory. \\
+    Read & \Rsbdatazero & - & Get last value read from memory. \\
     \hline
 \end{tabulary}
 \medskip
 
-\subsubsection{Using Program Buffer} \label{deb:mrprogbuf}
+\subsection{Using Program Buffer} \label{deb:mrprogbuf}
 
 \noindent Read a word from memory using program buffer:
 
@@ -278,7 +291,7 @@ this method.
 
 \section{Writing Memory} \label{writemem}
 
-\subsubsection{Using System Bus Access} \label{deb:mrsysbus}
+\subsection{Using System Bus Access} \label{deb:mrsysbus}
 
 \noindent Write a word to memory using system bus access:
 
@@ -314,7 +327,7 @@ this method.
 \end{tabulary}
 \medskip
 
-\subsubsection{Using Program Buffer} \label{deb:mrprogbuf}
+\subsection{Using Program Buffer} \label{deb:mrprogbuf}
 
 \noindent Write a word to memory using program buffer:
 
@@ -322,7 +335,7 @@ this method.
     \hline
     Op & Address & Value & Comment \\
     \hline
-    Write & \Rprogbufzero & {\tt sw 0(s0), s1} & \\
+    Write & \Rprogbufzero & {\tt sw s1, 0(s0)} & \\
     \hline
     Write & {\tt progbuf1} & {\tt ebreak} & \\
     \hline
@@ -370,24 +383,6 @@ this method.
 \end{tabulary}
 \medskip
 
-\section{Running}
-
-First, the debugger should restore any registers that it has clobbered.  Once
-that's done, it can let the core run by setting \Fresumereq.
-
-\section{Single Step}
-
-A debugger can single step the core by setting a breakpoint on the next
-instruction and letting the core run, or by asking the hardware to perform a
-single step. The former requires the debugger to have much more knowledge of
-the hardware than the latter, so the latter is preferred.
-
-Using the hardware single step feature is almost the same as regular running.
-The debugger just sets \Fstep in \Rdcsr before letting the core run. The core
-behaves exactly as in the running case, except that interrupts are left off and
-it only fetches and executes a single instruction before re-entering Debug
-Mode.
-
 \section{Handling Exceptions}
 
 Generally the debugger can avoid exceptions by being careful with the programs
@@ -422,7 +417,7 @@ the pseudo-op {\tt transfer dest, src} to represent all these options.
     \hline
     Write & {\tt progbuf3} & {\tt transfer s1, arg1} & Read second argument (data) \\
     \hline
-    Write & {\tt progbuf4} & {\tt sw 0(s0), s1} & \\
+    Write & {\tt progbuf4} & {\tt sw s1, 0(s0)} & \\
     \hline
     Write & {\tt progbuf5} & {\tt transfer s1, arg0} & Restore \Sone \\
     \hline

@@ -13,9 +13,7 @@
         <field name="ebreakm" bits="15" access="R/W" reset="0">
             When 1, {\tt ebreak} instructions in Machine Mode enter Debug Mode.
         </field>
-        <field name="ebreakh" bits="14" access="R/W" reset="0">
-            When 1, {\tt ebreak} instructions in Hypervisor Mode enter Debug Mode.
-        </field>
+        <field name="0" bits="14" access="R" reset="0" />
         <field name="ebreaks" bits="13" access="R/W" reset="0">
             When 1, {\tt ebreak} instructions in Supervisor Mode enter Debug Mode.
         </field>
@@ -37,9 +35,10 @@
 
             0: Increment counters as usual.
 
-            1: Don't increment any counters while in Debug Mode.  This includes
-            the {\tt cycle} and {\tt instret} CSRs. This is preferred for most
-            debugging scenarios.
+            1: Don't increment any counters while in Debug Mode or on {\tt
+            ebreak} instructions that cause entry into Debug Mode.  These
+            counters include the {\tt cycle} and {\tt instret} CSRs. This is
+            preferred for most debugging scenarios.
 
             An implementation may choose not to support writing to this bit.
             The debugger must read back the value it writes to check whether
@@ -107,8 +106,10 @@
         \hline
         {\tt ebreak} &amp; Address of the {\tt ebreak} instruction \\
         \hline
-        single step &amp; Address of the instruction after the one
-        that was stepped over \\
+        single step &amp; Address of the instruction that would be executed
+        next if no debugging was going on. Ie. $\Rpc+4$ for 32-bit instructions
+        that don't change program flow, the destination PC on taken
+        jumps/branches, etc. \\
         \hline
         trigger module &amp; If \Ftiming is 0, the address of the
         instruction which caused the trigger to fire. If \Ftiming is 1, the

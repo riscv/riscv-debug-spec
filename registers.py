@@ -11,7 +11,7 @@ import collections
 
 class Registers( object ):
     def __init__( self, name, label, prefix, description, skip_index,
-            skip_access, skip_reset ):
+            skip_access, skip_reset, depth ):
         self.name = name
         self.label = label
         self.prefix = prefix or ""
@@ -19,6 +19,7 @@ class Registers( object ):
         self.skip_index = skip_index
         self.skip_access = skip_access
         self.skip_reset = skip_reset
+        self.depth = depth
         self.registers = []
 
     def add_register( self, register ):
@@ -123,7 +124,8 @@ def parse_xml( path ):
             e.get( 'prefix' ), description,
             int( e.get( 'skip_index', 0 ) ),
             int( e.get( 'skip_access', 0 ) ),
-            int( e.get( 'skip_reset', 0 ) ) )
+            int( e.get( 'skip_reset', 0 ) ),
+            int( e.get( 'depth', 1 )))
     for r in e.findall( 'register' ):
         name = r.get( 'name' )
         short = r.get( 'short' )
@@ -205,11 +207,11 @@ def write_cheader( fd, registers ):
             definitions.append((prefname, r.address))
         try:
             if r.width() <= 32:
-                suffix = ""
+                suffix = "U"
             else:
-                suffix = "LL"
+                suffix = "ULL"
         except TypeError:
-            suffix = "LL"
+            suffix = "ULL"
         for f in r.fields:
             if f.define:
                 if f.description:
@@ -346,25 +348,31 @@ def print_latex_index( registers ):
     print "\end{table}"
 
 def print_latex_custom( registers ):
+    sub = "sub" * registers.depth
     for r in registers.registers:
         if not r.fields and not r.description:
             continue
 
         if r.short:
             if r.address:
-                print "\\subsubsection{%s ({\\tt %s}, at %s)}" % ( r.name, r.short, r.address )
+                print "\\%ssection{%s ({\\tt %s}, at %s)}" % ( sub, r.name,
+                        r.short, r.address )
             else:
-                print "\\subsubsection{%s ({\\tt %s})}" % ( r.name, r.short )
+                print "\\%ssection{%s ({\\tt %s})}" % ( sub, r.name, r.short )
         else:
             if r.address:
-                print "\\subsubsection{%s (at %s)}" % ( r.name, r.address )
+                print "\\%ssection{%s (at %s)}" % ( sub, r.name, r.address )
             else:
-                print "\\subsubsection{%s}" % r.name
+                print "\\%ssection{%s}" % ( sub, r.name )
         if r.label and r.define:
             print "\\label{%s}" % r.label
         print r.description
+        print
 
         if r.fields:
+            if all(f.access in ('R', '0') for f in r.fields):
+                print "This entire register is read-only."
+
             print "\\begin{center}"
 
             totalWidth = sum( ( 3 + f.columnWidth() ) for f in r.fields )
@@ -446,14 +454,15 @@ def print_latex_custom( registers ):
 
 def print_latex_register( registers ):
     print "%\usepackage{register}"
+    sub = "sub" * registers.depth
     for r in registers.registers:
         if not r.fields and not r.description:
             continue
 
         if r.short:
-            print "\\subsubsection{%s (%s)}" % ( r.name, r.short )
+            print "\\%ssection{%s (%s)}" % ( sub, r.name, r.short )
         else:
-            print "\\subsubsection{%s}" % r.name
+            print "\\%ssection{%s}" % ( sub, r.name )
         print r.description
 
         if not r.fields:
