@@ -500,9 +500,8 @@
 
             4: 128-bit
 
-            If an unsupported system bus access size is written here,
-            the DM may not perform the access, or may perform the access
-            with any access size.
+            If an unsupported system bus access size is written here, the DM
+            does not perform the access and sberror is set to 3.
         </field>
         <field name="sbautoincrement" bits="16" access="R/W" reset="0">
             When 1, {\tt sbaddress} is incremented by the access size (in
