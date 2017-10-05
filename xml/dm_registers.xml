@@ -29,10 +29,12 @@
             7 (other): An access failed for another reason.
         </field>
 	<field name="allresumeack" bits="17" access="R" reset="-">
-          This field is 1 when all currently selected harts have acknowledged the previous \Fresumereq.
+            This field is 1 when all currently selected harts have acknowledged
+            the previous resume request.
         </field>
         <field name="anyresumeack" bits="16" access="R" reset="-">
-          This field is 1 when any currently selected hart has acknowledged the previous \Fresumereq.
+            This field is 1 when any currently selected hart has acknowledged
+            the previous resume request.
         </field>
         <field name="allnonexistent" bits="15" access="R" reset="-">
           This field is 1 when all currently selected harts do not exist in this system.
@@ -103,27 +105,30 @@
         as well as the currently selected harts, as defined in \Fhasel.
 
         <!-- Fields that apply to a specific hart. -->
-        <field name="haltreq" bits="31" access="R/W" reset="0">
-            Halt request signal for all currently selected harts. When set to
-            1, each selected hart will halt if it is not currently halted.
+        <field name="haltreq" bits="31" access="W" reset="-">
+            Writes the halt request bit for all currently selected harts.
+            When set to 1, each selected hart will halt if it is not currently
+            halted.
 
 	    Writing 1 or 0 has no effect on a hart which is already halted, but
 	    the bit should be cleared to 0 before the hart is resumed.
 
             Writes apply to the new value of \Fhartsel and \Fhasel.
         </field>
-        <field name="resumereq" bits="30" access="R/W" reset="0">
-            Resume request signal for all currently selected harts. When set to 1,
-            each selected hart will resume if it is currently halted.
+        <field name="resumereq" bits="30" access="W" reset="-">
+            Writes the resume request bit for all currently selected harts.
+            When set to 1, each selected hart will resume if it is currently
+            halted.
 
-            This bit is ignored while \Fhaltreq is set.
+            The resume request bit is ignored while the halt request bit is
+            set.
 
             Writes apply to the new value of \Fhartsel and \Fhasel.
         </field>
-        <field name="hartreset" bits="29" access="R/W" reset="0">
-            This optional bit controls reset to all the currently selected harts.
-            To perform a reset the debugger writes 1, and then writes 0 to
-            deassert the reset signal.
+        <field name="hartreset" bits="29" access="W" reset="-">
+            This optional field writes the reset bit for all the currently
+            selected harts.  To perform a reset the debugger writes 1, and then
+            writes 0 to deassert the reset signal.
 
             If this feature is not implemented, the bit always stays 0, so
             after writing 1 the debugger can read the register back to see if
