@@ -128,8 +128,9 @@ The debug interface described in this specification supports the following featu
 \begin{enumerate}
    \item RV32, RV64, and future RV128 are all supported.
    \item Any hart in the platform can be independently debugged.
-   \item A debugger can discover almost everything it needs to know itself,
-       without user configuration.
+   \item A debugger can discover almost\footnote{Notable exceptions include
+       information about the memory map and peripherals.} everything it needs
+       to know itself, without user configuration.
    \item Each hart can be debugged from the very first instruction executed.
    \item A RISC-V hart can be halted when a software breakpoint instruction is
        executed.
@@ -153,6 +154,10 @@ The debug interface described in this specification supports the following featu
    \item A RISC-V hart can be halted when a trigger matches the PC,
        read/write address/data, or an instruction opcode. (Optional)
 \end{enumerate}
+
+While both the mechanism to execute arbitrary instructions and the system bus
+master are optional, at least one of them must be implemented. Otherwise there
+is no mechanism to access memory.
 
 This document does not suggest a strategy or implementation for hardware test,
 debugging or error detection techniqes. Scan, BIST, etc. are out of scope of
