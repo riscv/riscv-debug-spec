@@ -158,11 +158,12 @@
         <field name="0" bits="15:2" access="R" reset="0" />
         <field name="ndmreset" bits="1" access="R/W" reset="0">
             This bit controls the reset signal from the DM to the rest of the
-            system. To perform a system reset the debugger writes 1,
+            system. The signal should reset every part of the system, including
+            every hart, except for the DM and any logic required to access the
+            DM.
+            To perform a system reset the debugger writes 1,
             and then writes 0
-            to deassert the reset. This bit must not reset the Debug Module
-            registers. What it does reset is platform-specific (it may
-            reset nothing).
+            to deassert the reset.
         </field>
         <field name="dmactive" bits="0" access="R/W" reset="0">
             This bit serves as a reset signal for the Debug Module itself.
@@ -505,9 +506,8 @@
 
             4: 128-bit
 
-            If an unsupported system bus access size is written here,
-            the DM may not perform the access, or may perform the access
-            with any access size.
+            If an unsupported system bus access size is written here, the DM
+            does not perform the access and sberror is set to 3.
         </field>
         <field name="sbautoincrement" bits="16" access="R/W" reset="0">
             When 1, {\tt sbaddress} is incremented by the access size (in
