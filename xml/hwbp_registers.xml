@@ -146,7 +146,7 @@
             0: Raise a breakpoint exception. (Used when software wants to use
             the trigger module without an external debugger attached.)
 
-            1: Enter Debug Mode. (Only supported when \Fhmode is 1.)
+            1: Enter Debug Mode. (Only supported from Debug Mode.)
 
 	    2: Start tracing.
 
@@ -269,7 +269,7 @@
             0: Raise a breakpoint exception. (Used when software wants to use the
             trigger module without an external debugger attached.)
 
-            1: Enter Debug Mode. (Only supported when \Fhmode is 1.)
+            1: Enter Debug Mode. (Only supported from Debug Mode.)
 
 	    2: Start tracing.
 
