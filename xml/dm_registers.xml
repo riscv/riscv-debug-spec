@@ -19,8 +19,10 @@
 
         <field name="0" bits="31:23" access="R" reset="0" />
         <field name="impebreak" bits="22" access="R" reset="Preset">
-            If 1, then there is an implicit {\tt ebreak} instruction that will
-            be executed if execution runs off the end of the Program Buffer.
+            If 1, then there is an implicit {\tt ebreak} instruction at the
+            non-existent word immediately after the Program Buffer. This saves
+            the debugger from having to write the {\tt ebreak} itself, and
+            allows the Program Buffer to be one word smaller.
 
             This must be 1 when \Fprogbufsize is 1.
         </field>
