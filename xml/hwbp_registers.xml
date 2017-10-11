@@ -37,7 +37,7 @@
 
             Other values are reserved for future use.
         </field>
-        <field name="hmode" bits="XLEN-5" access="R/W" reset="0">
+        <field name="dmode" bits="XLEN-5" access="R/W" reset="0">
             0: Both Debug and M Mode can write the {\tt tdata} registers at the
             selected \Rtselect.
 
