@@ -146,7 +146,7 @@
             0: Raise a breakpoint exception. (Used when software wants to use
             the trigger module without an external debugger attached.)
 
-            1: Enter Debug Mode. (Only supported when \Fdmode is 1)
+            1: Enter Debug Mode. (Only supported when \Fdmode is 1.)
 
 	    2: Start tracing.
 
