@@ -20,7 +20,7 @@
           <y:Geometry height="141.0" width="156.943359375" x="447.17990761408726" y="0.0"/>
           <y:Fill color="#99CC00" transparent="false"/>
           <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="74.6640625" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="145.7734375" x="5.5849609375" y="33.16796875">M/U/S/H Mode
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="74.6640625" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="145.7734375" x="5.5849609375" y="33.16796875">M/U/S Mode
 
 dmstatus.allrunning = 1
 abstractcs.busy = 0
@@ -508,7 +508,6 @@ breakpoint w/ action 1<y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnR
       </data>
     </edge>
     <edge id="e15" source="n1" target="n8">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
@@ -531,7 +530,6 @@ dataN =&gt; _ AND autoexecN = 1<y:LabelModel>
       </data>
     </edge>
     <edge id="e16" source="n0" target="n0">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
