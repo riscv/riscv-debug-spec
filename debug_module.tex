@@ -110,10 +110,11 @@ at once, Abstract Commands apply only to the hart selected by
 
 \section{Run Control} \label{runcontrol}
 
-For every hart, the Debug Module contains 3 bits: halt request, resume request,
-and hart reset. (The hart reset bit is optional.) These bits all reset to 0. A
-debugger can write them for the currently selected harts through \Fhaltreq,
-\Fresumereq, and \Fhartreset in \Rdmcontrol.
+For every hart, the Debug Module contains 3 bits of state: halt request, resume
+request, and hart reset. (The hart reset bit is optional.) These bits all reset
+to 0. A debugger can write them for the currently selected harts through
+\Fhaltreq, \Fresumereq, and \Fhartreset in \Rdmcontrol. In addition the DM
+receives halted, running, and resume ack signals from each hart.
 
 When a running hart sees a halt request, it responds by halting and asserting
 its halted signal. The halted signals of all selected harts are reflected in
