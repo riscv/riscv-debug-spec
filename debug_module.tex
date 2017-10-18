@@ -225,17 +225,23 @@ only may choose to omit the Program Buffer.
 
 A debugger can write a small program to the Program Buffer, and then
 execute it exactly once with the Access Register Abstract Command,
-
 setting the \Fpostexec bit in \Rcommand.
-If \Fprogbufsize is 1, the Program Buffer may only hold a single instruction.
-This can be a 32-bit
+The debugger can write whatever program it likes (including jumps out of the
+Program Buffer), but the program must end with
+{\tt ebreak} or {\tt ebreak.c}. To save hardware, an implementation may support
+an implied {\tt ebreak} that is executed when a hart runs off the end of the
+Program Buffer. This is indicated in \Fimpebreak. With this feature, a Program
+Buffer of just 2 32-bit words can offer efficient debugging.
+
+If \Fprogbufsize is 1, the Program Buffer may only hold a single instruction,
+and \Fimpebreak must be 1.
+This instruction can be a 32-bit
 instruction, or a compressed instruction in the lower 16 bits accompanied by a
-compressed {\tt nop} in the upper 16 bits.  If \Fprogbufsize is greater than 1,
-the debugger can write whatever program it likes, but the program must end with
-{\tt ebreak} or {\tt ebreak.c}. If the debugger executes a program that does not
+compressed {\tt nop} in the upper 16 bits.
+
+If the debugger executes a program that does not
 terminate with an {\tt ebreak} instruction, the hart will remain in Debug Mode
 until it is reset.
-
 
 While these programs are executed, the hart does not leave Debug Mode (see
 Section~\ref{debugmode}).  If an exception is encountered during execution of

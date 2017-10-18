@@ -37,7 +37,7 @@
 
             Other values are reserved for future use.
         </field>
-        <field name="hmode" bits="XLEN-5" access="R/W" reset="0">
+        <field name="dmode" bits="XLEN-5" access="R/W" reset="0">
             0: Both Debug and M Mode can write the {\tt tdata} registers at the
             selected \Rtselect.
 
@@ -146,7 +146,7 @@
             0: Raise a breakpoint exception. (Used when software wants to use
             the trigger module without an external debugger attached.)
 
-            1: Enter Debug Mode. (Only supported when \Fhmode is 1.)
+            1: Enter Debug Mode. (Only supported when \Fdmode is 1.)
 
 	    2: Start tracing.
 
@@ -269,7 +269,7 @@
             0: Raise a breakpoint exception. (Used when software wants to use the
             trigger module without an external debugger attached.)
 
-            1: Enter Debug Mode. (Only supported when \Fhmode is 1.)
+            1: Enter Debug Mode. (Only supported when \Fdmode is 1.)
 
 	    2: Start tracing.
 
