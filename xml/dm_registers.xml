@@ -37,10 +37,10 @@
             7 (other): An access failed for another reason.
         </field>
 	<field name="allhasreset" bits="19" access="R" reset="-">
-          This field is 1 when all currently selected harts have been reset since the last write to its \Fhasresetack.
+          This field is 1 when all currently selected harts have been reset but not acknowledged.
         </field>
         <field name="anyhasreset" bits="18" access="R" reset="-">
-          This field is 1 when any currently selected hart has been reset since the last write to its \Fhasresetack.
+          This field is 1 when any currently selected hart has been reset but not acknowledged.
         </field>
 	<field name="allresumeack" bits="17" access="R" reset="-">
           This field is 1 when all currently selected harts have acknowledged the previous \Fresumereq.
