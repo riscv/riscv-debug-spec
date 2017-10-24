@@ -1,7 +1,7 @@
 RISC-V Debug Specification
 ==========================
 
-A pre-built version of the spec is committed [in this repository]https://github.com/riscv/riscv-debug-spec/trunk/0.13/riscv-debug-spec.pdf
+A pre-built version of the spec is committed [in this repository](https://github.com/riscv/riscv-debug-spec/trunk/0.13/riscv-debug-spec.pdf)
 
 
 Build Instructions
