@@ -17,8 +17,8 @@
         time.  Eg. in a multi-hart system some might temporarily be powered
         down, or a system might support hot-swapping harts.
 
-        <field name="0" bits="31:23" access="R" reset="0" />
-        <field name="impebreak" bits="22" access="R" reset="Preset">
+        <field name="0" bits="31:24" access="R" reset="0" />
+        <field name="impebreak" bits="23" access="R" reset="Preset">
             If 1, then there is an implicit {\tt ebreak} instruction at the
             non-existent word immediately after the Program Buffer. This saves
             the debugger from having to write the {\tt ebreak} itself, and
@@ -26,8 +26,7 @@
 
             This must be 1 when \Fprogbufsize is 1.
         </field>
-        <field name="0" bits="21" access="R" reset="0" />
-        <field name="dmerr" bits="20:18" access="R/W1C" reset="0">
+        <field name="dmerr" bits="22:20" access="R/W1C" reset="0">
             Gets set if the Debug Module was accessed incorrectly.
 
             0 (none): No error.
@@ -36,6 +35,12 @@
             address.
 
             7 (other): An access failed for another reason.
+        </field>
+	<field name="allhasreset" bits="19" access="R" reset="-">
+          This field is 1 when all currently selected harts have been reset since the last write to its \Fhasresetack.
+        </field>
+        <field name="anyhasreset" bits="18" access="R" reset="-">
+          This field is 1 when any currently selected hart has been reset since the last write to its \Fhasresetack.
         </field>
 	<field name="allresumeack" bits="17" access="R" reset="-">
           This field is 1 when all currently selected harts have acknowledged the previous \Fresumereq.
@@ -140,8 +145,14 @@
 
             Writes apply to the new value of \Fhartsel and \Fhasel.
         </field>
-        <field name="0" bits="28:27" reset="0" access="R" />
-         <field name="hasel" bits="26" access="R/W" reset = "0">
+	<field name="hasresetack" bits="28" access="R/W" reset="0">
+	    Writing 1 to this bit clears the {\tt hasreset} bits for
+	    any selected harts.
+
+	    Writes apply to the new value of \Fhartsel and \Fhasel.
+        </field>
+        <field name="0" bits="27" reset="0" access="R" />
+        <field name="hasel" bits="26" access="R/W" reset = "0">
             Selects the  definition of currently selected harts.
 
             0: There is a single currently selected hart, that selected by \Fhartsel.
