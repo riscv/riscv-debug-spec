@@ -75,11 +75,11 @@ While \Fndmreset or any external reset is asserted, the only supported DM
 operation is accessing \Rdmcontrol. The behavior of other accesses is
 undefined.
 
-When harts are reset, they should set a sticky {\tt hasreset} state bit.
+When harts are reset, they must set a sticky {\tt hasreset} state bit.
 The {\tt hasreset} state bits can be read for selected harts in the \Fanyhasreset
-and \Fallhasreset in \Rdmstatus. This bit should be set whether the
-hart reset under the direction of the debugger or not. It can be cleared
-by writes to \Fhasresetack in \Rdmcontrol.
+and \Fallhasreset in \Rdmstatus. These bits should be set regardless of the cause of
+the reset. 
+They can be cleared writing 1 to \Fhasresetack in \Rdmcontrol.
 
 \section{Selecting Harts} \label{selectingharts}
 
