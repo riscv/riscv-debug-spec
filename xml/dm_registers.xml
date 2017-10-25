@@ -38,10 +38,10 @@
             This must be 1 when \Fprogbufsize is 1.
         </field>
 	<field name="0" bits="21:20" access="R" reset="0" />
-	<field name="allhasreset" bits="19" access="R" reset="-">
+	<field name="allhavereset" bits="19" access="R" reset="-">
           This field is 1 when all currently selected harts have been reset but the reset has not been acknowledged.
         </field>
-        <field name="anyhasreset" bits="18" access="R" reset="-">
+        <field name="anyhavereset" bits="18" access="R" reset="-">
           This field is 1 when any currently selected hart has been reset but the reset has not been acknowledged.
         </field>
 	<field name="allresumeack" bits="17" access="R" reset="-">
@@ -147,8 +147,8 @@
 
             Writes apply to the new value of \Fhartsel and \Fhasel.
         </field>
-	<field name="hasresetack" bits="28" access="R/W" reset="0">
-	    Writing 1 to this bit clears the {\tt hasreset} bits for
+	<field name="haveresetack" bits="28" access="R/W" reset="0">
+	    Writing 1 to this bit clears the {\tt havereset} bits for
 	    any selected harts.
 
 	    Writes apply to the new value of \Fhartsel and \Fhasel.
