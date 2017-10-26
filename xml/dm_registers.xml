@@ -152,7 +152,7 @@
 
             Writes apply to the new value of \Fhartsel and \Fhasel.
         </field>
-        <field name="haveresetack" bits="28" access="R/W" reset="0">
+        <field name="ackhavereset" bits="28" access="R/W" reset="0">
             Writing 1 to this bit clears the {\tt havereset} bits for
             any selected harts.
 
