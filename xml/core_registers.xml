@@ -29,7 +29,7 @@
             Implementations may hard wire this bit to 0.
             The debugger must read back the value it
             writes to check whether the feature is supported. If not
-	    supported, interrupt behavior can be emulated by the debugger.
+            supported, interrupt behavior can be emulated by the debugger.
         </field>
         <field name="stopcount" bits="10" access="R/W" reset="Preset">
 
@@ -88,7 +88,7 @@
             Not all privilege levels are supported on all harts. If the
             encoding written is not supported or the debugger is not allowed to
             change to it, the hart may change to any supported privilege level.
-	</field>
+        </field>
     </register>
 
     <register name="Debug PC" short="dpc" address="0x7b1">
