@@ -22,7 +22,7 @@ operations.
 This method uses the processor's existing pipeline
 and ability to execute from arbitrary memory locations to avoid
 modifications to a processor's datapath.
-When \Fhaltreq is set, the Debug Module raises a special interrupt
+When the halt request bit is set, the Debug Module raises a special interrupt
 to the selected hart(s). This interrupt causes each
 hart to enter Debug Mode and jump to a defined
 memory region that is serviced by the DM.
