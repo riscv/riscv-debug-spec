@@ -39,7 +39,8 @@ sc} pairs.
 
 \section{Reset}
 
-If the halt signal is asserted when a core comes out of reset, the core must
+If the halt signal (driven by the hart's halt request bit in the Debug Module)
+is asserted when a hart comes out of reset, the hart must
 enter Debug Mode before executing any instructions, but after performing any
 initialization that would usually happen before the first instruction is
 executed.
