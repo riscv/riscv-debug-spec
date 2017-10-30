@@ -29,11 +29,11 @@
         <field name="0" bits="31:18" access="R" reset="0" />
         <field name="dmihardreset" bits="17" access="W1" reset="0">
           Writing 1 to this bit does a hard reset of the DTM,
-	  causing the DTM to forget about any outstanding DMI transactions.
-	  In general this should only be used when the Debugger has
-	  reason to expect that the outstanding DMI transaction will never
-	  complete (e.g. a reset condition caused an inflight DMI transaction to
-	  be cancelled).
+          causing the DTM to forget about any outstanding DMI transactions.
+          In general this should only be used when the Debugger has
+          reason to expect that the outstanding DMI transaction will never
+          complete (e.g. a reset condition caused an inflight DMI transaction to
+          be cancelled).
         </field>
         <field name="dmireset" bits="16" access="W1" reset="0">
           Writing 1 to this bit clears the sticky error state
@@ -115,10 +115,10 @@
 
             0: Ignore \Fdata and \Faddress. (nop)
 
-	    Don't send anything over the DMI during Update-DR.
-	    This operation should never result in a busy or error response.
-	    The address and data reported in the following Capture-DR
-	    are undefined.
+            Don't send anything over the DMI during Update-DR.
+            This operation should never result in a busy or error response.
+            The address and data reported in the following Capture-DR
+            are undefined.
 
             1: Read from \Faddress. (read)
 
@@ -137,9 +137,9 @@
             cleared by writing \Fdmireset in \Rdtmcs.
 
             This indicates that the DM itself responded with an error.
-	    Note: there are no specified cases in which the DM would
-	    respond with an error, and DMI is not required to support
-	    returning errors.
+            Note: there are no specified cases in which the DM would
+            respond with an error, and DMI is not required to support
+            returning errors.
 
             3: An operation was attempted while a DMI request is still in
             progress. The data scanned into \Rdmi in this access will be

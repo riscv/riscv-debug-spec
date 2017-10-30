@@ -4,9 +4,9 @@
         \begin{steps}{This command gives the debugger access to CPU registers and program buffer. 
         It performs the following sequence of operations:}
         \item Copy data from the register specified by \Fregno into the
-	    {\tt arg0} region of {\tt data}, if \Fwrite is clear and \Ftransfer is set.
+            {\tt arg0} region of {\tt data}, if \Fwrite is clear and \Ftransfer is set.
         \item Copy data from the {\tt arg0} region of {\tt data} into the
-	    register specified by \Fregno, if \Fwrite is set and \Ftransfer is set.
+            register specified by \Fregno, if \Fwrite is set and \Ftransfer is set.
         \item Execute the Program Buffer, if \Fpostexec is set.
         \end{steps}
 
@@ -16,14 +16,14 @@
         that would cause failure.
 
         Debug Modules must implement this command
-	and must support read and write access to all GPRs when the selected hart is halted.
+        and must support read and write access to all GPRs when the selected hart is halted.
         Debug Modules may optionally support accessing other registers,
-	or accessing registers when the hart is running.
+        or accessing registers when the hart is running.
         If this command is 
-	supported for a register while the hart is running, it must also
-	be supported for a register while the hart is halted.
-	Each individual register (aside from GPRs) may be supported differently
-	across read, write, and halt status.
+        supported for a register while the hart is running, it must also
+        be supported for a register while the hart is halted.
+        Each individual register (aside from GPRs) may be supported differently
+        across read, write, and halt status.
 
         \begin{commentary}
             The encoding of \Fsize was chosen to match \Fsbaccess in \Rsbcs.
@@ -75,11 +75,11 @@
 
     <register name="Quick Access">
         \begin{steps}{Perform the following sequence of operations:}
-	\item If the hart is halted, the command  sets \Fcmderr to \texttt{halt/resume} and does not continue.
+        \item If the hart is halted, the command  sets \Fcmderr to \texttt{halt/resume} and does not continue.
         \item Halt the hart. If the hart halts for some other reason (e.g. breakpoint), the command
             sets \Fcmderr to \texttt{halt/resume} and does not continue.
         \item Execute the Program Buffer. If an exception occurs, \Fcmderr is set to \texttt{exception} 
-	    and the program buffer execution ends, but the quick access command continues.
+            and the program buffer execution ends, but the quick access command continues.
         \item Resume the hart.
         \end{steps}
 

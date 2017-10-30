@@ -17,17 +17,8 @@
         time.  Eg. in a multi-hart system some might temporarily be powered
         down, or a system might support hot-swapping harts.
 
-        <field name="0" bits="31:23" access="R" reset="0" />
-        <field name="impebreak" bits="22" access="R" reset="Preset">
-            If 1, then there is an implicit {\tt ebreak} instruction at the
-            non-existent word immediately after the Program Buffer. This saves
-            the debugger from having to write the {\tt ebreak} itself, and
-            allows the Program Buffer to be one word smaller.
-
-            This must be 1 when \Fprogbufsize is 1.
-        </field>
-        <field name="0" bits="21" access="R" reset="0" />
-        <field name="dmerr" bits="20:18" access="R/W1C" reset="0">
+        <field name="0" bits="31:27" access="R" reset="0" />
+        <field name="dmerr" bits="26:24" access="R/W1C" reset="0">
             Gets set if the Debug Module was accessed incorrectly.
 
             0 (none): No error.
@@ -37,7 +28,23 @@
 
             7 (other): An access failed for another reason.
         </field>
-	<field name="allresumeack" bits="17" access="R" reset="-">
+        <field name="0" bits="23" access="R" reset="0" />
+        <field name="impebreak" bits="22" access="R" reset="Preset">
+            If 1, then there is an implicit {\tt ebreak} instruction at the
+            non-existent word immediately after the Program Buffer. This saves
+            the debugger from having to write the {\tt ebreak} itself, and
+            allows the Program Buffer to be one word smaller.
+
+            This must be 1 when \Fprogbufsize is 1.
+        </field>
+        <field name="0" bits="21:20" access="R" reset="0" />
+        <field name="allhavereset" bits="19" access="R" reset="-">
+          This field is 1 when all currently selected harts have been reset but the reset has not been acknowledged.
+        </field>
+        <field name="anyhavereset" bits="18" access="R" reset="-">
+          This field is 1 when any currently selected hart has been reset but the reset has not been acknowledged.
+        </field>
+        <field name="allresumeack" bits="17" access="R" reset="-">
             This field is 1 when all currently selected harts have acknowledged
             the previous resume request.
         </field>
@@ -119,8 +126,8 @@
             When set to 1, each selected hart will halt if it is not currently
             halted.
 
-	    Writing 1 or 0 has no effect on a hart which is already halted, but
-	    the bit must be cleared to 0 before the hart is resumed.
+            Writing 1 or 0 has no effect on a hart which is already halted, but
+            the bit must be cleared to 0 before the hart is resumed.
 
             Writes apply to the new value of \Fhartsel and \Fhasel.
         </field>
@@ -145,8 +152,14 @@
 
             Writes apply to the new value of \Fhartsel and \Fhasel.
         </field>
-        <field name="0" bits="28:27" reset="0" access="R" />
-         <field name="hasel" bits="26" access="R/W" reset = "0">
+        <field name="ackhavereset" bits="28" access="R/W" reset="0">
+            Writing 1 to this bit clears the {\tt havereset} bits for
+            any selected harts.
+
+            Writes apply to the new value of \Fhartsel and \Fhasel.
+        </field>
+        <field name="0" bits="27" reset="0" access="R" />
+        <field name="hasel" bits="26" access="R/W" reset = "0">
             Selects the  definition of currently selected harts.
 
             0: There is a single currently selected hart, that selected by \Fhartsel.
@@ -330,7 +343,7 @@
             0 (none): No error.
 
             1 (busy): An abstract command was executing while \Rcommand,
-	    \Rabstractcs, \Rabstractauto was written, or when one
+            \Rabstractcs, \Rabstractauto was written, or when one
             of the {\tt data} or {\tt progbuf} registers was read or written.
 
             2 (not supported): The requested command is not supported. A
@@ -385,12 +398,12 @@
 
       <field name="autoexecprogbuf" bits="31:16" access="R/W" reset="0">
           When a bit in this field is 1, read or write accesses the corresponding {\tt progbuf} word
-	  cause the command in \Rcommand to be executed again.
+          cause the command in \Rcommand to be executed again.
       </field>
       <field name="0" bits ="15:12" access="R" reset = "0"/>
       <field name="autoexecdata" bits="11:0" access="R/W" reset="0">
           When a bit in this field is 1, read or write accesses the corresponding {\tt data} word
-	  cause the command in \Rcommand to be executed again.
+          cause the command in \Rcommand to be executed again.
       </field>
     </register>
 
@@ -423,7 +436,7 @@
         Accessing them while an abstract command is executing causes \Fcmderr
         to be set.
 
-	Attempts to write them while \Fbusy is set does not change their value.
+        Attempts to write them while \Fbusy is set does not change their value.
 
         The values in these registers may not be preserved after an abstract
         command is executed. The only guarantees on their contents are the ones
@@ -456,7 +469,7 @@
         Accessing them while an abstract command is executing causes \Fcmderr
         to be set.
 
-	Attempts to write them while \Fbusy is set does not change their value.
+        Attempts to write them while \Fbusy is set does not change their value.
 
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>

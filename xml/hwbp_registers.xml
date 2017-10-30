@@ -76,26 +76,26 @@
         The debugger may request specific timings as described in \Ftiming.
         Table~\ref{tab:hwbp_timing} suggests timings for the best user experience.
 
-	\begin{table}[H]
-	\centering
-	\caption{Suggested Breakpoint Timings}
-	\label{tab:hwbp_timing}
-	\begin{tabular}{|r|l|}
-	\hline
-	Match Type                  &amp; Suggested Trigger Timing \\
-	\hline
-	Execute Address             &amp; Before \\
-	Execute Instruction         &amp; Before \\
-	Execute Address+Instruction &amp; Before \\
-	Load Address                &amp; Before \\
-	Load Data                   &amp; After \\
-	Load Address+Data           &amp; After \\
-	Store Address               &amp; Before \\
-	Store Data                  &amp; Before \\
-	Store Address+Data          &amp; Before \\
-	\hline
-	\end{tabular}
-	\end{table}
+        \begin{table}[H]
+        \centering
+        \caption{Suggested Breakpoint Timings}
+        \label{tab:hwbp_timing}
+        \begin{tabular}{|r|l|}
+        \hline
+        Match Type                  &amp; Suggested Trigger Timing \\
+        \hline
+        Execute Address             &amp; Before \\
+        Execute Instruction         &amp; Before \\
+        Execute Address+Instruction &amp; Before \\
+        Load Address                &amp; Before \\
+        Load Data                   &amp; After \\
+        Load Address+Data           &amp; After \\
+        Store Address               &amp; Before \\
+        Store Data                  &amp; Before \\
+        Store Address+Data          &amp; Before \\
+        \hline
+        \end{tabular}
+        \end{table}
 
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="2" />
@@ -148,15 +148,15 @@
 
             1: Enter Debug Mode. (Only supported when \Fdmode is 1.)
 
-	    2: Start tracing.
+            2: Start tracing.
 
             3: Stop tracing.
 
-	    4: Emit trace data for this match. If it is a data access match,
+            4: Emit trace data for this match. If it is a data access match,
             emit appropriate Load/Store Address/Data. If it is an instruction
             execution, emit its PC.
 
-	    Other values are reserved for future use.
+            Other values are reserved for future use.
         </field>
         <field name="chain" bits="11" access="R/W" reset="0">
             0: When this trigger matches, the configured action is taken.
@@ -184,7 +184,7 @@
             of \Rtdatatwo after the upper half of the value is ANDed with the
             upper half of \Rtdatatwo.
 
-	    Other values are reserved for future use.
+            Other values are reserved for future use.
         </field>
         <field name="m" bits="6" access="R/W" reset="0">
             When set, enable this trigger in M mode.
@@ -271,15 +271,15 @@
 
             1: Enter Debug Mode. (Only supported when \Fdmode is 1.)
 
-	    2: Start tracing.
+            2: Start tracing.
 
             3: Stop tracing.
 
-	    4: Emit trace data for this match. If it is a data access match,
+            4: Emit trace data for this match. If it is a data access match,
             emit appropriate Load/Store Address/Data. If it is an instruction
             execution, emit its PC.
 
-	    Other values are reserved for future use.
+            Other values are reserved for future use.
         </field>
     </register>
 </registers>
