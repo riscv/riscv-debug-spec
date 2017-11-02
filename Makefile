@@ -30,7 +30,7 @@ FIGURES = fig/*
 all:	$(NAME).pdf debug_defines.h
 
 $(NAME).pdf: $(NAME).tex $(REGISTERS_TEX) $(FIGURES) $(INCLUDES_TEX) vc.tex changelog.tex
-	pdflatex -shell-escape $< && pdflatex -shell-escape $<
+	pdflatex -shell-escape $< && makeindex $(NAME) && pdflatex -shell-escape $<
 
 publish:	$(NAME).pdf
 	cp $< $(NAME)-`git rev-parse --abbrev-ref HEAD`.`git rev-parse --short HEAD`.pdf
