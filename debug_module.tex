@@ -299,6 +299,13 @@ access without
 involving a hart, regardless of whether Program Buffer is implemented.
 The System Bus Access block uses physical addresses.
 
+If a hart has a cache, the data in the cache may not be consistent with the
+memory as accessed directly through the system bus. It is up to the debugger to
+have each hart write back its caches before performing a system bus read, and
+to invalidate the caches after a system bus write. The simplest way to do this
+is by executing {\tt fence} instructions using the Program Buffer. If there is
+no Program Buffer, the system must handle cache coherency itself.
+
 \begin{commentary}
 Implementing a System Bus Access block has several benefits even
 when a Debug Module also implements a Program Buffer. 
