@@ -195,8 +195,8 @@ def write_definitions( fd, registers ):
                 macroName, r.label, r.short or r.label ) )
         for f in r.fields:
             if f.description and f.define:
-                fd.write( "\\deffieldname{\\F%s}{%s}\n" % (
-                        toLatexIdentifier( f.name ), f.name ) )
+                fd.write( "\\deffieldname{\\F%s}{\\hyperref[%s]{%s}}\n" % (
+                        toLatexIdentifier( f.name ), f.name, f.name ) )
 
 def write_cheader( fd, registers ):
     definitions = []
@@ -359,11 +359,13 @@ def print_latex_custom( registers ):
                         r.short, r.address )
             else:
                 print "\\%ssection{%s ({\\tt %s})}" % ( sub, r.name, r.short )
+            print "\index{%s}" % r.short
         else:
             if r.address:
                 print "\\%ssection{%s (at %s)}" % ( sub, r.name, r.address )
             else:
                 print "\\%ssection{%s}" % ( sub, r.name )
+            print "\index{%s}" % r.name
         if r.label and r.define:
             print "\\label{%s}" % r.label
         print r.description
@@ -443,6 +445,8 @@ def print_latex_custom( registers ):
             print "   \\hline"
             for f in r.fields:
                 if f.description:
+                    print "\\label{%s}" % f.name
+                    print "\\index{%s}" % f.name
                     print "   |%s| &" % str(getattr(f, columns[0][2])),
                     print "%s\\\\" % " & ".join(str(getattr(f, c[2])) for c in columns[1:])
                     print "   \\hline"

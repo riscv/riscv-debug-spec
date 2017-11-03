@@ -11,6 +11,9 @@
 % All registers are named here. That way when we rename one we'll get errors if
 % there are still references to the old name.
 
+\usepackage{makeidx}
+\makeindex
+
 \usepackage{xspace}
 \newcommand{\defregname}[2]{\providecommand{#1}{{\tt #2}\xspace}}
 \newcommand{\deffieldname}[2]{\providecommand{#1}{{$|#2|$}\xspace}}
@@ -91,6 +94,11 @@ Version \versionnum\\
 \include{implementations}
 \include{debugger_implementation}
 \include{future}
+
+\clearpage
+\addcontentsline{toc}{chapter}{Index}
+\label{index}
+\printindex
 
 \chapter{Change Log}
 
