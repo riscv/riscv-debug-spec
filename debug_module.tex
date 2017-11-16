@@ -78,8 +78,8 @@ undefined.
 There is no requirement on the duration of the assertion of \Fndmreset.
 The implementation must ensure that a write of \Fndmreset to 1 followed by
 a write to \Fndmreset to 0 triggers system reset. The system may take
-an arbitrarily long time to come out of reset, as reported by \Fallunavailable /\Fanyunavailable,
-or other implementation specific indicators.
+an arbitrarily long time to come out of reset, as reported by \Fallunavailable,
+\Fanyunavailable, or other implementation specific indicators.
 
 When harts have been reset, they must set a sticky {\tt havereset} state bit.
 The conceptual {\tt havereset} state bits can be read for selected harts in
