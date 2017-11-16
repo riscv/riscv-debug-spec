@@ -75,12 +75,19 @@ While \Fndmreset or any external reset is asserted, the only supported DM
 operation is accessing \Rdmcontrol. The behavior of other accesses is
 undefined.
 
+There is no requirement on the duration of the assertion of \Fndmreset.
+The implementation must ensure that a write of \Fndmreset to 1 followed by
+a write to \Fndmreset to 0 triggers system reset. The system may take
+an arbitrarily long time to deassert its reset, as reported by the
+available status of the harts or other implementation specific indicators.
+
 When harts have been reset, they must set a sticky {\tt havereset} state bit.
 The conceptual {\tt havereset} state bits can be read for selected harts in
 \Fanyhavereset and \Fallhavereset in \Rdmstatus.
 These bits must be set regardless of the cause of the reset.
 The {\tt havereset} bits for the selected harts
 can be cleared by writing 1 to \Fackhavereset in \Rdmcontrol.
+The {\tt havereset} bits are not affected by \Fdmactive.
 
 \section{Selecting Harts} \label{selectingharts}
 
