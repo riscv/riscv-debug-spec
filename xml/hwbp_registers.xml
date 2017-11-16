@@ -213,9 +213,6 @@
     <register name="Instruction Count" short="icount" address="0x7a1">
         This register is accessible as \Rtdataone when \Ftype is 3.
 
-        {\bf Warning! \Ricount is just a proposal. So far nobody has commented
-        on it, so it could very easily be removed or changed in the future.}
-
         Writing unsupported values to any field in this register results in the
         reset value being written instead. When a debugger wants to use a
         feature, it must write the appropriate value and then read back the
