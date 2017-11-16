@@ -299,6 +299,15 @@ access without
 involving a hart, regardless of whether Program Buffer is implemented.
 The System Bus Access block uses physical addresses.
 
+Depending on the microarchitecture, data accessed through System Bus Access may
+not always be coherent with that observed by each hart. (For instance, a hart
+may have caches that don't snoop or aren't write-through.) It is up to the
+debugger to enforce coherency if the implementation does not. This
+specification does not define a standard way to do this, as it is
+implementation/platform specific. Possibilities may include using the System
+Bus Interface and/or Program Buffer to write to special memory-mapped
+locations, or executing special instructions via the Program Buffer.
+
 \begin{commentary}
 Implementing a System Bus Access block has several benefits even
 when a Debug Module also implements a Program Buffer. 
