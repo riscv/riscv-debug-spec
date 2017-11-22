@@ -42,9 +42,13 @@ sc} pairs.
 A debugger can cause a halted hart to execute a single instruction and then
 re-enter Debug Mode by setting \Fstep before setting \Fresumereq.
 
-If the instruction that is executed causes an exception, Debug Mode is re-entered
-immediately after the PC is changed to the exception handler and and the
+If executing or fetching that instruction causes an exception, Debug Mode is
+re-entered immediately after the PC is changed to the exception handler and the
 appropriate {\tt badaddr} and {\tt cause} registers are updated also.
+
+If executing or fetching the instruction causes a trigger to fire, Debug Mode
+is re-entered immediately after that trigger has fired. Whether the instruction
+is executed or not depends on the specific configuration of the trigger.
 
 If the instruction that is executed causes the PC to change to an address where
 an instruction fetch causes an exception, that exception does not occurr until
