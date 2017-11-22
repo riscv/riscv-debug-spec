@@ -37,6 +37,20 @@ be lost when entering Debug Mode or while in Debug Mode.  This means that there
 may be no forward progress if Debug Mode is entered between {\tt lr} and {\tt
 sc} pairs.
 
+\section{Single Step}
+
+A debugger can cause a halted hart to execute a single instruction and then
+re-enter Debug Mode by setting \Fstep before setting \Fresumereq.
+
+If the instruction that is executed causes an exception, Debug Mode is re-entered
+immediately after the PC is changed to the exception handler and and the
+appropriate {\tt badaddr} and {\tt cause} registers are updated also.
+
+If the instruction that is executed causes the PC to change to an address where
+an instruction fetch causes an exception, that exception does not occurr until
+the next time the hart is resumed. Similarly, a trigger at the new address does
+not fire until the hart actually attempts to execute that instruction.
+
 \section{Reset}
 
 If the halt signal (driven by the hart's halt request bit in the Debug Module)
