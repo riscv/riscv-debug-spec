@@ -44,11 +44,12 @@ re-enter Debug Mode by setting \Fstep before setting \Fresumereq.
 
 If executing or fetching that instruction causes an exception, Debug Mode is
 re-entered immediately after the PC is changed to the exception handler and the
-appropriate {\tt badaddr} and {\tt cause} registers are updated also.
+appropriate {\tt badaddr} and {\tt cause} registers are updated.
 
 If executing or fetching the instruction causes a trigger to fire, Debug Mode
-is re-entered immediately after that trigger has fired. Whether the instruction
-is executed or not depends on the specific configuration of the trigger.
+is re-entered immediately after that trigger has fired. In that case \Fcause is
+set to 2 (trigger) instead of 4 (single step).  Whether the instruction is
+executed or not depends on the specific configuration of the trigger.
 
 If the instruction that is executed causes the PC to change to an address where
 an instruction fetch causes an exception, that exception does not occurr until
