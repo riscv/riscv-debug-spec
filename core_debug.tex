@@ -16,7 +16,7 @@ external debugging. How Debug Mode is implemented is not specified here.
     \Fmprv in \Rmstatus is ignored.
 \item All interrupts are masked.
 \item Exceptions don't update any registers.  That includes {\tt cause}, {\tt
-    epc}, {\tt badaddr}, {\tt dpc}, and \Rmstatus. They do end execution of the
+    epc}, {\tt tval}, {\tt dpc}, and \Rmstatus. They do end execution of the
     Program Buffer.
 \item No action is taken if a trigger matches.
 \item Trace is disabled.
@@ -36,6 +36,25 @@ The reservation registered by an {\tt lr} instruction on a memory address may
 be lost when entering Debug Mode or while in Debug Mode.  This means that there
 may be no forward progress if Debug Mode is entered between {\tt lr} and {\tt
 sc} pairs.
+
+\section{Single Step}
+
+A debugger can cause a halted hart to execute a single instruction and then
+re-enter Debug Mode by setting \Fstep before setting \Fresumereq.
+
+If executing or fetching that instruction causes an exception, Debug Mode is
+re-entered immediately after the PC is changed to the exception handler and the
+appropriate {\tt tval} and {\tt cause} registers are updated.
+
+If executing or fetching the instruction causes a trigger to fire, Debug Mode
+is re-entered immediately after that trigger has fired. In that case \Fcause is
+set to 2 (trigger) instead of 4 (single step).  Whether the instruction is
+executed or not depends on the specific configuration of the trigger.
+
+If the instruction that is executed causes the PC to change to an address where
+an instruction fetch causes an exception, that exception does not occurr until
+the next time the hart is resumed. Similarly, a trigger at the new address does
+not fire until the hart actually attempts to execute that instruction.
 
 \section{Reset}
 
