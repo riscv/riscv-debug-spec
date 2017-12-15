@@ -101,14 +101,14 @@
             1: \Rdevtreeaddrzero--\Rdevtreeaddrthree registers hold the address of the
             Device Tree.
         </field>
-        <field name="version" bits="3:0" reset="3" access="R">
+        <field name="version" bits="3:0" reset="2" access="R">
             0: There is no Debug Module present.
 
-            1: The DM implements version 0.11 of this spec.
+            1: There is a Debug Module and it conforms to version 0.11 of this
+            specification.
 
-            2: The DM implements version 0.13 of this spec.
-
-            3: The DM implements version 0.14 of this spec.
+            2: There is a Debug Module and it conforms to version 0.13 of this
+            specification.
 
             15: There is a Debug Module but it does not conform to any
             available version of this spec.
@@ -175,11 +175,6 @@
         <field name="hartsel" bits="25:16" access="R/W" reset="0">
             The DM-specific index of the hart to select. This hart is always part of the
             currently selected harts.
-
-            When the written value does not specify a hart that exists in the
-            system, this field may take on any value (valid or invalid). Unless
-            the debugger knows it wrote a valid value, it must read back to
-            confirm that it did.
         </field>
         <!-- Fields that apply to the entire DM. -->
         <field name="0" bits="15:2" access="R" reset="0" />
