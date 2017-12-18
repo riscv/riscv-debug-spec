@@ -177,9 +177,10 @@
             currently selected harts.
 
             When the written value does not specify a hart that exists in the
-            system, this field may take on any value (valid or invalid). Unless
-            the debugger knows it wrote a valid value, it must read back to
-            confirm that it did.
+            system, this field may take on any value (referring to an existing
+            hart or not). Unless the debugger knows it wrote a value that
+            refers to an existing hart, it must read back to confirm that it
+            did.
         </field>
         <!-- Fields that apply to the entire DM. -->
         <field name="0" bits="15:2" access="R" reset="0" />
