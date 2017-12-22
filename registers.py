@@ -223,9 +223,9 @@ def write_cheader( fd, registers ):
                 definitions.append(( length, f.length() ))
                 try:
                     definitions.append(( mask,
-                            "(0x%x%s << %s)" % ( ((1<<int(f.length()))-1), suffix, offset )))
+                            "0x%x%s << %s" % ( ((1<<int(f.length()))-1), suffix, offset )))
                 except TypeError:
-                    definitions.append(( mask, "(((1L<<%s)-1) << %s)" % (f.length(), offset) ))
+                    definitions.append(( mask, "((1L<<%s)-1) << %s" % (f.length(), offset) ))
 
     counted = collections.Counter(name for name, value in definitions)
     for name, value in definitions:
@@ -236,6 +236,8 @@ def write_cheader( fd, registers ):
             fd.write( " */\n" )
             continue
         if counted[name] == 1:
+            if re.search(r"[\-\+<>]", str(value)):
+                value = "(%s)" % value
             fd.write( "#define %-35s %s\n" % ( name, value ) )
 
 def write_chisel( fd, registers ):
