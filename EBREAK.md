@@ -33,3 +33,10 @@ Because the RISC-V ISA reserves the all-zero instruction as an illegal instructi
 | -------------  |------------------|
 | 0x5            | Arguments and command type are passed as for Linux System Calls|
 | 0x7            | Arguments and command types are passed as for the ARM Semihosting Protocol|
+
+### Inserted into code as unreachable instruction (?)
+**NOTE: This section needs work, and is included here to distinguish it from the other cases**
+
+See https://cx.rv8.io/g/xXgFX3 for discussion of this topic.
+
+Compiler currently to inserts `ebreak` instructions for the `_builtin_trap()` macro for "should not reach" code. It is under discussion whether this is an appropriate mapping.
