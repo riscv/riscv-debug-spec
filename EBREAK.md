@@ -1,10 +1,14 @@
+
+
 ## SW Proposal for using `ebreak`
 
-The RISC-V ISA defines a single instruction, `ebreak` (or its compressed version `c.ebreak`) which can be configured by an external debugger to drop the core into Debug Mode. It does not define how SW and/or external debuggers should use this instruction. This document is a proposal for how to use this instruction.
+The RISC-V ISA defines a single instruction, `ebreak` (or its compressed version `c.ebreak`) which can be configured by an external debugger to drop the core into Debug Mode. If no external debugger is attached, or if debugger has not configured the core to halt when `ebreak` is encountered, a hart which executes an `ebreak` raises a `breakpoint` exception. Note that the debugger can make this selection per execution mode (M, S, U). 
+
+Neither the RISC-V ISA Specification nor the RISC-V Debug Specification defines how SW and/or external debuggers should use this instruction. This document is a proposal for how to use this instruction in various scenarios.
 
 ### Breakpoint
 
-This is fairly obvious/intuitive: HW and/or SW debuggers can introduce `ebreak` instructions in order to create exception conditions which return to a more priviledged mode and/or external debugger. This usage is not described more here.
+HW and/or SW debuggers can introduce `ebreak` instructions in order to create exception conditions which return to a more priviledged mode and/or external debugger. This usage is not described more here.
 
 ### SW Call to External Debugger
 
@@ -34,9 +38,8 @@ Because the RISC-V ISA reserves the all-zero instruction as an illegal instructi
 | 0x5            | Arguments and command type are passed as for Linux System Calls|
 | 0x7            | Arguments and command types are passed as for the ARM Semihosting Protocol|
 
-### Inserted into code as unreachable instruction (?)
-**NOTE: This section needs work, and is included here to distinguish it from the other cases**
+### "Unreachable" Instruction
 
-See https://cx.rv8.io/g/xXgFX3 for discussion of this topic.
+The compiler currently inserts `ebreak` instructions for the `_builtin_trap()` macro used for "should not reach" code. It is under discussion whether this is an appropriate mapping, or whether an illegal instruction may be more appropriate.
 
-Compiler currently to inserts `ebreak` instructions for the `_builtin_trap()` macro for "should not reach" code. It is under discussion whether this is an appropriate mapping.
+See an example at https://cx.rv8.io/g/xXgFX3.
