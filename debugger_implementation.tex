@@ -46,10 +46,10 @@ waits for \Fallhalted to indicate the harts are halted before clearing
 
 \section{Running}
 
-First, the debugger should restore any registers that it has clobbered.  Once
-that's done, it can let the selected harts run by setting \Fresumereq. Once
+First, the debugger should restore any registers that it has overwritten.
+Then it can let the selected harts run by setting \Fresumereq. Once
 \Fallresumeack is set, the debugger knows the hart has resumed, and it can
-clear \Fresumereq. Note that harts might halt very quickly after resuming (eg.
+clear \Fresumereq. Note that harts might halt very quickly after resuming (e.g.
 by hitting a software breakpoint) so the debugger cannot use
 \Fallhalted/\Fanyhalted to check whether the hart resumed.
 
