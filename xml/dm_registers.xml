@@ -243,6 +243,9 @@
 
             If \Fdataaccess is 1: Number of 32-bit words in the memory map
             dedicated to shadowing the {\tt data} registers.
+
+            Since there are at most 12 {\tt data} registers, the value in this
+            register must be 12 or smaller.
         </field>
         <field name="dataaddr" bits="11:0" access="R" reset="Preset">
             If \Fdataaccess is 0: The number of the first CSR dedicated to
