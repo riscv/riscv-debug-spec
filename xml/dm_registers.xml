@@ -440,6 +440,7 @@
 
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
+    <!--
     <register name="Abstract Data 1" short="data1" address="0x05" />
     <register name="Abstract Data 2" short="data2" address="0x06" />
     <register name="Abstract Data 3" short="data3" address="0x07" />
@@ -450,6 +451,7 @@
     <register name="Abstract Data 8" short="data8" address="0x0c" />
     <register name="Abstract Data 9" short="data9" address="0x0d" />
     <register name="Abstract Data 10" short="data10" address="0x0e" />
+    -->
     <register name="Abstract Data 11" short="data11" address="0x0f" />
 
     <!-- =============== Program Buffer =============== -->
@@ -466,7 +468,7 @@
 
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
-    
+    <!--
     <register name="Program Buffer 1" short="progbuf1" address="0x21" />
     <register name="Program Buffer 2" short="progbuf2" address="0x22" />
     <register name="Program Buffer 3" short="progbuf3" address="0x23" />
@@ -481,6 +483,7 @@
     <register name="Program Buffer 12" short="progbuf12" address="0x2c" />
     <register name="Program Buffer 13" short="progbuf13" address="0x2d" />
     <register name="Program Buffer 14" short="progbuf14" address="0x2e" />
+    -->
     <register name="Program Buffer 15" short="progbuf15" address="0x2f" />
  
     <!-- =============== authentication =============== -->
