@@ -361,8 +361,8 @@
 
             7 (other): The command failed for another reason.
         </field>
-        <field name="0" bits="7:5" access="R" reset="0"/>
-        <field name="datacount" bits="4:0" access="R" reset="Preset">
+        <field name="0" bits="7:4" access="R" reset="0"/>
+        <field name="datacount" bits="3:0" access="R" reset="Preset">
             Number of {\tt data} registers that are implemented as part of the
             abstract command interface. Valid sizes are 0 - 12.
         </field>
@@ -433,11 +433,14 @@
     <register name="Device Tree Addr 3" short="devtreeaddr3" address="0x1c"/>
 
     <register name="Abstract Data 0" short="data0" address="0x04">
-        Basic read/write registers that may be read or changed by abstract
-        commands.
+        \Rdatazero through \Rdataeleven are basic read/write registers that may
+        be read or changed by abstract commands. \Fdatacount indicates how many
+        of them are implemented, starting at \Rsbdatazero, counting up.
+        Table~\ref{tab:datareg} shows how abstract commands use these
+        registers.
 
-        Accessing them while an abstract command is executing causes \Fcmderr
-        to be set.
+        Accessing these registers while an abstract command is executing causes
+        \Fcmderr to be set.
 
         Attempts to write them while \Fbusy is set does not change their value.
 
@@ -448,7 +451,6 @@
 
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
-<!-- Do I really need to list all these out
     <register name="Abstract Data 1" short="data1" address="0x05" />
     <register name="Abstract Data 2" short="data2" address="0x06" />
     <register name="Abstract Data 3" short="data3" address="0x07" />
@@ -459,25 +461,23 @@
     <register name="Abstract Data 8" short="data8" address="0x0c" />
     <register name="Abstract Data 9" short="data9" address="0x0d" />
     <register name="Abstract Data 10" short="data10" address="0x0e" />
--->
     <register name="Abstract Data 11" short="data11" address="0x0f" />
-
 
     <!-- =============== Program Buffer =============== -->
 
     <register name="Program Buffer 0" short="progbuf0" address="0x20">
-        The {\tt progbuf} registers provide read/write access to the optional
-        program buffer.
+        \Rprogbufzero through \Rprogbuffifteen provide read/write access to the
+        optional program buffer. \Fprogbufsize indicates how many of them are
+        implemented starting at \Rprogbufzero, counting up.
 
-        Accessing them while an abstract command is executing causes \Fcmderr
-        to be set.
+        Accessing these registers while an abstract command is executing causes
+        \Fcmderr to be set.
 
         Attempts to write them while \Fbusy is set does not change their value.
 
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
     
-<!-- Do I really need to list all this out?
     <register name="Program Buffer 1" short="progbuf1" address="0x21" />
     <register name="Program Buffer 2" short="progbuf2" address="0x22" />
     <register name="Program Buffer 3" short="progbuf3" address="0x23" />
@@ -492,8 +492,6 @@
     <register name="Program Buffer 12" short="progbuf12" address="0x2c" />
     <register name="Program Buffer 13" short="progbuf13" address="0x2d" />
     <register name="Program Buffer 14" short="progbuf14" address="0x2e" />
--->
-
     <register name="Program Buffer 15" short="progbuf15" address="0x2f" />
  
     <!-- =============== authentication =============== -->
