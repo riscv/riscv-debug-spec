@@ -72,6 +72,8 @@ executing {\tt dret} in Debug Mode changes \Rpc to the value
 stored in \Rdpc. The current privilege level is changed to that specified by
 \Fprv in \Rdcsr. The hart is no longer in debug mode.
 
+Executing {\tt dret} outside of Debug Mode causes an illegal instruction exception.
+
 It is not necessary for the debugger to know whether an implementation supports
 {\tt dret}, as the Debug Module will ensure that it is executed if necessary.
 It is defined in this specification only to reserve the opcode and
