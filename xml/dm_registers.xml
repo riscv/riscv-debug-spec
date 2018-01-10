@@ -361,8 +361,8 @@
 
             7 (other): The command failed for another reason.
         </field>
-        <field name="0" bits="7:5" access="R" reset="0"/>
-        <field name="datacount" bits="4:0" access="R" reset="Preset">
+        <field name="0" bits="7:4" access="R" reset="0"/>
+        <field name="datacount" bits="3:0" access="R" reset="Preset">
             Number of {\tt data} registers that are implemented as part of the
             abstract command interface. Valid sizes are 0 - 12.
         </field>
@@ -433,11 +433,14 @@
     <register name="Device Tree Addr 3" short="devtreeaddr3" address="0x1c"/>
 
     <register name="Abstract Data 0" short="data0" address="0x04">
-        Basic read/write registers that may be read or changed by abstract
-        commands.
+        \Rdatazero through \Rdataeleven are basic read/write registers that may
+        be read or changed by abstract commands. \Fdatacount indicates how many
+        of them are implemented, starting at \Rsbdatazero, counting up.
+        Table~\ref{tab:datareg} shows how abstract commands use these
+        registers.
 
-        Accessing them while an abstract command is executing causes \Fcmderr
-        to be set.
+        Accessing these registers while an abstract command is executing causes
+        \Fcmderr to be set.
 
         Attempts to write them while \Fbusy is set does not change their value.
 
@@ -463,11 +466,12 @@
     <!-- =============== Program Buffer =============== -->
 
     <register name="Program Buffer 0" short="progbuf0" address="0x20">
-        The {\tt progbuf} registers provide read/write access to the optional
-        program buffer.
+        \Rprogbufzero through \Rprogbuffifteen provide read/write access to the
+        optional program buffer. \Fprogbufsize indicates how many of them are
+        implemented starting at \Rprogbufzero, counting up.
 
-        Accessing them while an abstract command is executing causes \Fcmderr
-        to be set.
+        Accessing these registers while an abstract command is executing causes
+        \Fcmderr to be set.
 
         Attempts to write them while \Fbusy is set does not change their value.
 
