@@ -509,7 +509,15 @@
     <!-- =============== system bus mastering =============== -->
 
     <register name="System Bus Access Control and Status" short="sbcs" address="0x38">
-        <field name="0" bits="31:21" access="R" reset="0" />
+        <field name="version" bits="31:29" access="R" reset="1">
+            0: The System Bus interface conforms to mainline drafts of this
+            spec older than 1 January, 2018.
+
+            1: The System Bus interface conforms to this version of the spec.
+
+            Other values are reserved for future versions.
+        </field>
+        <field name="0" bits="28:21" access="R" reset="0" />
         <field name="sbreadonaddr" bits="20" access="W1" reset="0">
             When a 1, every write to \Rsbaddresszero automatically triggers a
             system bus read at the new address.
