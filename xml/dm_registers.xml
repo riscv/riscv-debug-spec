@@ -527,7 +527,7 @@
             Other values are reserved for future versions.
         </field>
         <field name="0" bits="28:21" access="R" reset="0" />
-        <field name="sbreadonaddr" bits="20" access="W1" reset="0">
+        <field name="sbreadonaddr" bits="20" access="R/W" reset="0">
             When a 1, every write to \Rsbaddresszero automatically triggers a
             system bus read at the new address.
         </field>
