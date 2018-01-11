@@ -508,6 +508,15 @@
 
     <!-- =============== system bus mastering =============== -->
 
+    <register name="System Bus Address 127:96" short="sbaddress3" address="0x37">
+        If \Fsbasize is less than 65, then this register is not present.
+
+        <field name="address" bits="31:0" access="R/W" reset="0">
+            Accesses bits 127:96 of the physical address in {\tt sbaddress} (if
+            the system address bus is that wide).
+        </field>
+    </register>
+
     <register name="System Bus Access Control and Status" short="sbcs" address="0x38">
         <field name="version" bits="31:29" access="R" reset="1">
             0: The System Bus interface conforms to mainline drafts of this
