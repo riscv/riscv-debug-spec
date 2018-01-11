@@ -509,7 +509,7 @@
     <!-- =============== system bus mastering =============== -->
 
     <register name="System Bus Address 127:96" short="sbaddress3" address="0x37">
-        If \Fsbasize is less than 65, then this register is not present.
+        If \Fsbasize is less than 97, then this register is not present.
 
         <field name="address" bits="31:0" access="R/W" reset="0">
             Accesses bits 127:96 of the physical address in {\tt sbaddress} (if
