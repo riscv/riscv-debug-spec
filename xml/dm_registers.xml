@@ -17,18 +17,7 @@
         time.  Eg. in a multi-hart system some might temporarily be powered
         down, or a system might support hot-swapping harts.
 
-        <field name="0" bits="31:27" access="R" reset="0" />
-        <field name="dmerr" bits="26:24" access="R/W1C" reset="0">
-            Gets set if the Debug Module was accessed incorrectly.
-
-            0 (none): No error.
-
-            1 (badaddr): There was an access to an unimplemented Debug Module
-            address.
-
-            7 (other): An access failed for another reason.
-        </field>
-        <field name="0" bits="23" access="R" reset="0" />
+        <field name="0" bits="31:23" access="R" reset="0" />
         <field name="impebreak" bits="22" access="R" reset="Preset">
             If 1, then there is an implicit {\tt ebreak} instruction at the
             non-existent word immediately after the Program Buffer. This saves
