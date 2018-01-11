@@ -603,7 +603,7 @@
         When the system bus master is busy,
         writes to this register will set \Fsberror.
 
-        If \Fsberror is 0 and \Fsbreadondata is set then the system bus
+        If \Fsberror is 0 and \Fsbreadonaddr is set then the system bus
         master will start
         to read after updating the address from \Faddress. The access size is
         controlled by \Fsbaccess in \Rsbcs.
