@@ -511,6 +511,9 @@
     <register name="System Bus Address 127:96" short="sbaddress3" address="0x37">
         If \Fsbasize is less than 97, then this register is not present.
 
+        When the system bus master is busy,
+        writes to this register will set \Fsberror.
+
         <field name="address" bits="31:0" access="R/W" reset="0">
             Accesses bits 127:96 of the physical address in {\tt sbaddress} (if
             the system address bus is that wide).
@@ -606,12 +609,17 @@
     <register name="System Bus Address 31:0" short="sbaddress0" address="0x39">
         If \Fsbasize is 0, then this register is not present.
 
-        When the system bus master is busy,
-        writes to this register will set \Fsberror.
+        When the system bus master is busy, accesses to this register will set
+        \Fsberror and don't do anything else.
 
-        If \Fsberror is 0 and \Fsbreadonaddr is set then a write to this register
-        will cause the system bus master to start
-        a read after updating the address from \Faddress.
+        \begin{steps}{If \Fsberror is 0 and \Fsbreadonaddr is set then writes
+        to this register start the following:}
+            \item Set \Fsbbusy.
+            \item Perform a bus read from the new value of {\tt sbaddress}.
+            \item If the read succeeded and \Fsbautoincrement is set, increment
+            {\tt sbaddress}.
+            \item Clear \Fsbbusy.
+        \end{steps}
 
         <field name="address" bits="31:0" access="R/W" reset="0">
             Accesses bits 31:0 of the physical address in {\tt sbaddress}.
@@ -621,6 +629,9 @@
     <register name="System Bus Address 63:32" short="sbaddress1" address="0x3a">
         If \Fsbasize is less than 33, then this register is not present.
 
+        When the system bus master is busy,
+        writes to this register will set \Fsberror.
+
         <field name="address" bits="31:0" access="R/W" reset="0">
             Accesses bits 63:32 of the physical address in {\tt sbaddress} (if
             the system address bus is that wide).
@@ -629,6 +640,9 @@
 
     <register name="System Bus Address 95:64" short="sbaddress2" address="0x3b">
         If \Fsbasize is less than 65, then this register is not present.
+
+        When the system bus master is busy,
+        writes to this register will set \Fsberror.
 
         <field name="address" bits="31:0" access="R/W" reset="0">
             Accesses bits 95:64 of the physical address in {\tt sbaddress} (if
@@ -650,7 +664,8 @@
         \begin{steps}{Writes to this register start the following:}
             \item Set \Fsbbusy.
             \item Perform a bus write of the new value of {\tt sbdata} to {\tt sbaddress}.
-            \item If \Fsbautoincrement is set, increment {\tt sbaddress}.
+            \item If the write succeeded and \Fsbautoincrement is set,
+            increment {\tt sbaddress}.
             \item Clear \Fsbbusy.
         \end{steps}
 
@@ -676,6 +691,9 @@
         If \Fsbaccesssixtyfour and \Fsbaccessonetwentyeight are 0, then this
         register is not present.
 
+        If the bus master is busy then accesses set \Fsberror, and don't do
+        anything else.
+
         <field name="data" bits="31:0" access="R/W" reset="0">
             Accesses bits 63:32 of {\tt sbdata} (if the system bus is that
             wide).
@@ -685,6 +703,9 @@
     <register name="System Bus Data 95:64" short="sbdata2" address="0x3e">
         This register only exists if \Fsbaccessonetwentyeight is 1.
 
+        If the bus master is busy then accesses set \Fsberror, and don't do
+        anything else.
+
         <field name="data" bits="31:0" access="R/W" reset="0">
             Accesses bits 95:64 of {\tt sbdata} (if the system bus is that
             wide).
@@ -693,6 +714,9 @@
 
     <register name="System Bus Data 127:96" short="sbdata3" address="0x3f">
         This register only exists if \Fsbaccessonetwentyeight is 1.
+
+        If the bus master is busy then accesses set \Fsberror, and don't do
+        anything else.
 
         <field name="data" bits="31:0" access="R/W" reset="0">
             Accesses bits 127:96 of {\tt sbdata} (if the system bus is that
