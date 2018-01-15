@@ -553,8 +553,8 @@
 
             4: 128-bit
 
-            If an unsupported system bus access size is written here, the DM
-            does not perform the access and sberror is set to 3.
+            If \Fsbaccess has an unsupported value when the DM starts a bus
+            access, the access is not performed and \Fsberror is set to 3.
         </field>
         <field name="sbautoincrement" bits="16" access="R/W" reset="0">
             When 1, {\tt sbaddress} is incremented by the access size (in
