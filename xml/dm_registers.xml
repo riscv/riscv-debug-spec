@@ -518,7 +518,7 @@
     </register>
 
     <register name="System Bus Access Control and Status" short="sbcs" address="0x38">
-        <field name="version" bits="31:29" access="R" reset="1">
+        <field name="sbversion" bits="31:29" access="R" reset="1">
             0: The System Bus interface conforms to mainline drafts of this
             spec older than 1 January, 2018.
 
@@ -528,20 +528,20 @@
         </field>
         <field name="0" bits="28:22" access="R" reset="0" />
         <field name="sbbusy" bits="21" access="R" reset="0">
-            When 1, indicates the system bus master is busy. This bit goes high
-            immediately when a read or write is requested for any reason, and
-            does not go low until the access is fully completed.
+            When 1, indicates the system bus master is busy. (Whether the
+            system bus itself is busy is related, but not the same thing.) This
+            bit goes high immediately when a read or write is requested for any
+            reason, and does not go low until the access is fully completed.
 
             To avoid race conditions, debuggers must not try to clear \Fsberror
             until they read \Fsbbusy as 0.
         </field>
         <field name="sbreadonaddr" bits="20" access="R/W" reset="0">
-            When a 1, every write to \Rsbaddresszero automatically triggers a
+            When 1, every write to \Rsbaddresszero automatically triggers a
             system bus read at the new address.
         </field>
         <field name="sbaccess" bits="19:17" access="R/W" reset="2">
-            Select the access size to use for system bus accesses triggered by
-            writes to \Rsbaddresszero or \Rsbdatazero.
+            Select the access size to use for system bus accesses.
 
             0: 8-bit
 
@@ -580,9 +580,7 @@
             3: There was some other error (eg. alignment).
 
             4: The system bus master was busy when one of the
-            {\tt sbaddress} or {\tt sbdata} registers was written,
-            or \Rsbdatazero was read when it had stale data.
-
+            {\tt sbaddress} or {\tt sbdata} registers was written.
         </field>
         <field name="sbasize" bits="11:5" access="R" reset="Preset">
             Width of system bus addresses in bits. (0 indicates there is no bus
@@ -611,10 +609,9 @@
         When the system bus master is busy,
         writes to this register will set \Fsberror.
 
-        If \Fsberror is 0 and \Fsbreadonaddr is set then the system bus
-        master will start
-        to read after updating the address from \Faddress. The access size is
-        controlled by \Fsbaccess in \Rsbcs.
+        If \Fsberror is 0 and \Fsbreadonaddr is set then a write to this register
+        will cause the system bus master to start
+        a read after updating the address from \Faddress.
 
         <field name="address" bits="31:0" access="R/W" reset="0">
             Accesses bits 31:0 of the physical address in {\tt sbaddress}.
@@ -643,25 +640,26 @@
         If all of the {\tt sbaccess} bits in \Rsbcs are 0, then this register
         is not present.
 
-        Any successful system bus read updates the data in this register, and
-        marks it no longer stale.
+        Any successful system bus read updates the data in this register.
 
         If \Fsberror isn't 0 then accesses do nothing.
-        
-        \begin{steps}{Writes to this register:}
-            \item If the bus master is busy then accesses set \Fsberror, and
-            don't do anything else.
-            \item Start a bus write of the new value of {\tt sbdata} to {\tt sbaddress}.
+
+        If the bus master is busy then accesses set \Fsberror, and don't do
+        anything else.
+
+        \begin{steps}{Writes to this register start the following:}
+            \item Set \Fsbbusy.
+            \item Perform a bus write of the new value of {\tt sbdata} to {\tt sbaddress}.
             \item If \Fsbautoincrement is set, increment {\tt sbaddress}.
+            \item Clear \Fsbbusy.
         \end{steps}
 
-        \begin{steps}{Reads from this register:}
-            \item If the register is marked stale, then set \Fsberror and don't
-            do anything else.
+        \begin{steps}{Reads from this register start the following:}
             \item ``Return'' the data.
-            \item Mark the register stale.
+            \item Set \Fsbbusy.
             \item If \Fsbautoincrement is set, increment {\tt sbaddress}.
-            \item If \Fsbreadondata is set, start another system bus read.
+            \item If \Fsbreadondata is set, perform another system bus read.
+            \item Clear \Fsbbusy.
         \end{steps}
 
         Only \Rsbdatazero has this behavior. The other {\tt sbdata} registers
