@@ -221,8 +221,10 @@
         <field name="dataaccess" bits="16" access="R" reset="Preset">
             0: The {\tt data} registers are shadowed in the hart by CSR
             registers. Each CSR register is XLEN bits in size, and corresponds
-            to a single argument, per Table~\ref{tab:datareg}.
-
+            to a single argument, per Table~\ref{tab:datareg}. These
+	    implementation-specific CSRs should be located in the ``Non-standard''
+	    CSR regions.
+	    
             1: The {\tt data} registers are shadowed in the hart's memory map.
             Each register takes up 4 bytes in the memory map.
         </field>
