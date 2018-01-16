@@ -512,7 +512,7 @@
         If \Fsbasize is less than 97, then this register is not present.
 
         When the system bus master is busy,
-        writes to this register will set \Fsberror.
+        writes to this register will set \Fsberror and don't do anything else.
 
         <field name="address" bits="31:0" access="R/W" reset="0">
             Accesses bits 127:96 of the physical address in {\tt sbaddress} (if
@@ -582,8 +582,8 @@
 
             3: There was some other error (eg. alignment).
 
-            4: The system bus master was busy when one of the
-            {\tt sbaddress} or {\tt sbdata} registers was written.
+            4: The system bus master was busy when one of the {\tt sbaddress}
+            was written, or one of the {\tt sbdata} registers was accessed.
         </field>
         <field name="sbasize" bits="11:5" access="R" reset="Preset">
             Width of system bus addresses in bits. (0 indicates there is no bus
@@ -630,7 +630,7 @@
         If \Fsbasize is less than 33, then this register is not present.
 
         When the system bus master is busy,
-        writes to this register will set \Fsberror.
+        writes to this register will set \Fsberror and don't do anything else.
 
         <field name="address" bits="31:0" access="R/W" reset="0">
             Accesses bits 63:32 of the physical address in {\tt sbaddress} (if
@@ -642,7 +642,7 @@
         If \Fsbasize is less than 65, then this register is not present.
 
         When the system bus master is busy,
-        writes to this register will set \Fsberror.
+        writes to this register will set \Fsberror and don't do anything else.
 
         <field name="address" bits="31:0" access="R/W" reset="0">
             Accesses bits 95:64 of the physical address in {\tt sbaddress} (if
