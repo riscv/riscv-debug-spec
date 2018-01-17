@@ -14,22 +14,12 @@ HW and/or SW debuggers can introduce `ebreak` instructions in order to create ex
 
 In some cases, the application code itself may intentionally want to halt and wait for the debugger. In this case, the application code itself can add `ebreak` to the code, where if an external debugger is connected and has set `dcsr` appropriately, the core will enter debug mode and halt. In order to distinguish this type of `ebreak` from the previous type, the following SW convention is proposed:
 
-#### Option 1: Using `ebreak`
 ```
-label   0x0 : ebreak
-label + 0x4 : 0x0000
-label + 0x6 : c.nop <protocol>
-label + 0x8 : ...
-```
-
-#### Option 2: Using `c.ebreak`
-```
-label   0x0 : c.ebreak
-label + 0x2 : 0x0000
-label + 0x4 : c.nop <protocol>
-label + 0x6 : ...
-```
-
+ .option norvc
+ slli x0, x0, 0x1f
+ ebreak
+ srai x0, x0, <protocol>
+ ```
 
 Because the RISC-V ISA reserves the all-zero instruction as an illegal instruction, this instruction sequence will not generally occur in application code. `<protocol>` gives further information about the type of request and where additional arguments can be found.
 
