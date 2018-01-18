@@ -333,8 +333,7 @@ for each access size.
 \end{table}
 
 Depending on the microarchitecture, data accessed through System Bus Access may
-not always be coherent with that observed by each hart. (For instance, a hart
-may have caches that don't snoop or aren't write-through.) It is up to the
+not always be coherent with that observed by each hart. It is up to the
 debugger to enforce coherency if the implementation does not. This
 specification does not define a standard way to do this, as it is
 implementation/platform specific. Possibilities may include using the System
