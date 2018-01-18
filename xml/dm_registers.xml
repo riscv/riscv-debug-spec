@@ -599,7 +599,7 @@
     <register name="System Bus Address 31:0" short="sbaddress0" address="0x39">
         If \Fsbasize is 0, then this register is not present.
 
-        When the system bus master is busy, accesses to this register will set
+        When the system bus master is busy, writes to this register will set
         \Fsberror and don't do anything else.
 
         \begin{steps}{If \Fsberror is 0 and \Fsbreadonaddr is set then writes
