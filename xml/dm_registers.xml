@@ -528,6 +528,9 @@
             progress, or when the debugger initiates a new access while one is
             already in progress (while \Fsbbusy is set). It remains set until
             it's explicitly cleared by the debugger.
+
+            While this field is non-zero, no more system bus accesses can be
+            initiated by the debug module.
         </field>
         <field name="sbbusy" bits="21" access="R" reset="0">
             When 1, indicates the system bus master is busy. (Whether the
@@ -608,8 +611,8 @@
         When the system bus master is busy, writes to this register will set
         \Fsbbusyerror and don't do anything else.
 
-        \begin{steps}{If \Fsberror is 0 and \Fsbreadonaddr is set then writes
-        to this register start the following:}
+        \begin{steps}{If \Fsberror is 0, \Fsbbusyerror is 0, and \Fsbreadonaddr
+        is set then writes to this register start the following:}
             \item Set \Fsbbusy.
             \item Perform a bus read from the new value of {\tt sbaddress}.
             \item If the read succeeded and \Fsbautoincrement is set, increment
@@ -652,7 +655,7 @@
 
         Any successful system bus read updates the data in this register.
 
-        If \Fsberror isn't 0 then accesses do nothing.
+        If \Fsberror or \Fsbbusyerror both aren't 0 then accesses do nothing.
 
         If the bus master is busy then accesses set \Fsbbusyerror, and don't do
         anything else.
