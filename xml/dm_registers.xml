@@ -120,6 +120,13 @@
         This register controls the overall debug module
         as well as the currently selected harts, as defined in \Fhasel.
 
+        {\tt HARTSELBITS} (the size of \Fhartsel) is chosen by an
+        implementation depending on its needs.  It must be at least 0 and at
+        most 10. The maximum number of harts a DM can support is $2^{\tt
+        HARTSELBITS}$. A debugger can discover {\tt HARTSELBITS} by writing all
+        ones to \Fhartsel (assuming the maximum size) and reading back the
+        value to see which bits were actually set.
+
         <!-- Fields that apply to a specific hart. -->
         <field name="haltreq" bits="31" access="W" reset="-">
             Writes the halt request bit for all currently selected harts.
@@ -172,15 +179,10 @@
             mask register feature should set this bit and read back to see if the functionality
             is supported.
         </field>
-        <field name="hartsel" bits="25:16" access="R/W" reset="0">
+        <field name="0" bits="25:16+HARTSELBITS" access="R" reset="0" />
+        <field name="hartsel" bits="16+HARTSELBITS-1:16" access="R/W" reset="0">
             The DM-specific index of the hart to select. This hart is always part of the
             currently selected harts.
-
-            When the written value does not specify a hart that exists in the
-            system, this field may take on any value (referring to an existing
-            hart or not). Unless the debugger knows it wrote a value that
-            refers to an existing hart, it must read back to confirm that it
-            did.
         </field>
         <!-- Fields that apply to the entire DM. -->
         <field name="0" bits="15:2" access="R" reset="0" />
