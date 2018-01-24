@@ -98,7 +98,8 @@ commands are specific to that hart.
 
 A debugger can enumerate all the harts
 attached to the DM by selecting each hart starting from 0
-until \Fanynonexistent in \Rdmstatus is 1.
+until either \Fanynonexistent in \Rdmstatus is 1, or until the value it reads
+back from \Fhartsel does not match what it wrote there.
 
 The debugger can discover the mapping between hart indices and
 \Rmhartid by using the interface to read \Rmhartid, or by
