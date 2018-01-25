@@ -96,11 +96,11 @@ Up to 1024 harts can be connected to a single DM. The debugger
 selects a hart, and then subsequent halt, resume, reset, and debugging
 commands are specific to that hart.
 
-To enumerate all the harts, a debugger must first determine {\tt HARTSELBITS}
+To enumerate all the harts, a debugger must first determine {\tt HARTSELLEN}
 by writing  all ones to \Fhartsel (assuming the maximum size) and reading back
 the value to see which bits were actually set.  Then it selects each hart
 starting from 0 until either \Fanynonexistent in \Rdmstatus is 1, or the
-highest index (depending on {\tt HARTSELBITS}) is reached.
+highest index (depending on {\tt HARTSELLEN}) is reached.
 
 The debugger can discover the mapping between hart indices and
 \Rmhartid by using the interface to read \Rmhartid, or by
