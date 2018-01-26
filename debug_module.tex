@@ -365,4 +365,8 @@ not interact with the rest of the platform in any way.
 When read, unimplemented Debug Module DMI Registers return 0. Writing them has
 no effect.
 
+For each register it is possible to determine that it is implemented by reading
+it and getting a non-zero value (eg. \Rsbcs), or by checking bits in another
+register (eg. \Fprogbufsize).
+
 \input{dm_registers.tex}
