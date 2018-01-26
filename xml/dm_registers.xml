@@ -448,6 +448,7 @@
 
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
+    <!--
     <register name="Abstract Data 1" short="data1" address="0x05" />
     <register name="Abstract Data 2" short="data2" address="0x06" />
     <register name="Abstract Data 3" short="data3" address="0x07" />
@@ -458,6 +459,7 @@
     <register name="Abstract Data 8" short="data8" address="0x0c" />
     <register name="Abstract Data 9" short="data9" address="0x0d" />
     <register name="Abstract Data 10" short="data10" address="0x0e" />
+    -->
     <register name="Abstract Data 11" short="data11" address="0x0f" />
 
     <!-- =============== Program Buffer =============== -->
@@ -474,7 +476,7 @@
 
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
-    
+    <!--
     <register name="Program Buffer 1" short="progbuf1" address="0x21" />
     <register name="Program Buffer 2" short="progbuf2" address="0x22" />
     <register name="Program Buffer 3" short="progbuf3" address="0x23" />
@@ -489,6 +491,7 @@
     <register name="Program Buffer 12" short="progbuf12" address="0x2c" />
     <register name="Program Buffer 13" short="progbuf13" address="0x2d" />
     <register name="Program Buffer 14" short="progbuf14" address="0x2e" />
+    -->
     <register name="Program Buffer 15" short="progbuf15" address="0x2f" />
  
     <!-- =============== authentication =============== -->
@@ -506,15 +509,52 @@
 
     <!-- =============== system bus mastering =============== -->
 
+    <register name="System Bus Address 127:96" short="sbaddress3" address="0x37">
+        If \Fsbasize is less than 97, then this register is not present.
+
+        When the system bus master is busy, writes to this register will set
+        \Fsbbusyerror and don't do anything else.
+
+        <field name="address" bits="31:0" access="R/W" reset="0">
+            Accesses bits 127:96 of the physical address in {\tt sbaddress} (if
+            the system address bus is that wide).
+        </field>
+    </register>
+
     <register name="System Bus Access Control and Status" short="sbcs" address="0x38">
-        <field name="0" bits="31:21" access="R" reset="0" />
-        <field name="sbsingleread" bits="20" access="W1" reset="0">
-            When a 1 is written here, triggers a read at the address in {\tt
-            sbaddress} using the access size set by \Fsbaccess.
+        <field name="sbversion" bits="31:29" access="R" reset="1">
+            0: The System Bus interface conforms to mainline drafts of this
+            spec older than 1 January, 2018.
+
+            1: The System Bus interface conforms to this version of the spec.
+
+            Other values are reserved for future versions.
+        </field>
+        <field name="0" bits="28:23" access="R" reset="0" />
+        <field name="sbbusyerror" bits="22" access="R/W1C" reset="0">
+            Set when the debugger attempts to read data while a read is in
+            progress, or when the debugger initiates a new access while one is
+            already in progress (while \Fsbbusy is set). It remains set until
+            it's explicitly cleared by the debugger.
+
+            While this field is non-zero, no more system bus accesses can be
+            initiated by the debug module.
+        </field>
+        <field name="sbbusy" bits="21" access="R" reset="0">
+            When 1, indicates the system bus master is busy. (Whether the
+            system bus itself is busy is related, but not the same thing.) This
+            bit goes high immediately when a read or write is requested for any
+            reason, and does not go low until the access is fully completed.
+
+            To avoid race conditions, debuggers must not try to clear \Fsberror
+            until they read \Fsbbusy as 0.
+        </field>
+        <field name="sbreadonaddr" bits="20" access="R/W" reset="0">
+            When 1, every write to \Rsbaddresszero automatically triggers a
+            system bus read at the new address.
         </field>
         <field name="sbaccess" bits="19:17" access="R/W" reset="2">
-            Select the access size to use for system bus accesses triggered by
-            writes to the {\tt sbaddress} registers or \Rsbdatazero.
+            Select the access size to use for system bus accesses.
 
             0: 8-bit
 
@@ -526,14 +566,14 @@
 
             4: 128-bit
 
-            If an unsupported system bus access size is written here, the DM
-            does not perform the access and sberror is set to 3.
+            If \Fsbaccess has an unsupported value when the DM starts a bus
+            access, the access is not performed and \Fsberror is set to 3.
         </field>
         <field name="sbautoincrement" bits="16" access="R/W" reset="0">
             When 1, {\tt sbaddress} is incremented by the access size (in
             bytes) selected in \Fsbaccess after every system bus access.
         </field>
-        <field name="sbautoread" bits="15" access="R/W" reset="0">
+        <field name="sbreadondata" bits="15" access="R/W" reset="0">
             When 1, every read from \Rsbdatazero automatically triggers a
             system bus read at the (possibly auto-incremented) address.
         </field>
@@ -551,11 +591,6 @@
             2: A bad address was accessed.
 
             3: There was some other error (eg. alignment).
-
-            4: The system bus master was busy when one of the
-            {\tt sbaddress} or {\tt sbdata} registers was written,
-            or \Rsbdatazero was read when it had stale data.
-
         </field>
         <field name="sbasize" bits="11:5" access="R" reset="Preset">
             Width of system bus addresses in bits. (0 indicates there is no bus
@@ -581,15 +616,17 @@
     <register name="System Bus Address 31:0" short="sbaddress0" address="0x39">
         If \Fsbasize is 0, then this register is not present.
 
-        When the system bus master is busy,
-        writes to this register will set \Fsberror.
+        When the system bus master is busy, writes to this register will set
+        \Fsbbusyerror and don't do anything else.
 
-        If \Fsberror is 0 and \Fsbautoread is set then the system bus
-        master will start
-        to read after updating the address from \Faddress. The access size is
-        controlled by \Fsbaccess in \Rsbcs.
-
-        If \Fsbsingleread is set, the bit is cleared.
+        \begin{steps}{If \Fsberror is 0, \Fsbbusyerror is 0, and \Fsbreadonaddr
+        is set then writes to this register start the following:}
+            \item Set \Fsbbusy.
+            \item Perform a bus read from the new value of {\tt sbaddress}.
+            \item If the read succeeded and \Fsbautoincrement is set, increment
+            {\tt sbaddress}.
+            \item Clear \Fsbbusy.
+        \end{steps}
 
         <field name="address" bits="31:0" access="R/W" reset="0">
             Accesses bits 31:0 of the physical address in {\tt sbaddress}.
@@ -597,6 +634,11 @@
     </register>
 
     <register name="System Bus Address 63:32" short="sbaddress1" address="0x3a">
+        If \Fsbasize is less than 33, then this register is not present.
+
+        When the system bus master is busy, writes to this register will set
+        \Fsbbusyerror and don't do anything else.
+
         <field name="address" bits="31:0" access="R/W" reset="0">
             Accesses bits 63:32 of the physical address in {\tt sbaddress} (if
             the system address bus is that wide).
@@ -605,6 +647,9 @@
 
     <register name="System Bus Address 95:64" short="sbaddress2" address="0x3b">
         If \Fsbasize is less than 65, then this register is not present.
+
+        When the system bus master is busy, writes to this register will set
+        \Fsbbusyerror and don't do anything else.
 
         <field name="address" bits="31:0" access="R/W" reset="0">
             Accesses bits 95:64 of the physical address in {\tt sbaddress} (if
@@ -616,25 +661,27 @@
         If all of the {\tt sbaccess} bits in \Rsbcs are 0, then this register
         is not present.
 
-        Any successful system bus read updates the data in this register, and
-        marks it no longer stale.
+        Any successful system bus read updates the data in this register.
 
-        If \Fsberror isn't 0 then accesses do nothing.
-        
-        \begin{steps}{Writes to this register:}
-            \item If the bus master is busy then accesses set \Fsberror, and
-            don't do anything else.
-            \item Start a bus write of {\tt sbdata} to {\tt sbaddress}.
-            \item If \Fsbautoincrement is set, increment {\tt sbaddress}.
+        If \Fsberror or \Fsbbusyerror both aren't 0 then accesses do nothing.
+
+        If the bus master is busy then accesses set \Fsbbusyerror, and don't do
+        anything else.
+
+        \begin{steps}{Writes to this register start the following:}
+            \item Set \Fsbbusy.
+            \item Perform a bus write of the new value of {\tt sbdata} to {\tt sbaddress}.
+            \item If the write succeeded and \Fsbautoincrement is set,
+            increment {\tt sbaddress}.
+            \item Clear \Fsbbusy.
         \end{steps}
 
-        \begin{steps}{Reads from this register:}
-            \item If the register is marked stale, then set \Fsberror and don't
-            do anything else.
+        \begin{steps}{Reads from this register start the following:}
             \item ``Return'' the data.
-            \item Mark the register stale.
+            \item Set \Fsbbusy.
             \item If \Fsbautoincrement is set, increment {\tt sbaddress}.
-            \item If \Fsbautoread is set, start another system bus read.
+            \item If \Fsbreadondata is set, perform another system bus read.
+            \item Clear \Fsbbusy.
         \end{steps}
 
         Only \Rsbdatazero has this behavior. The other {\tt sbdata} registers
@@ -651,6 +698,9 @@
         If \Fsbaccesssixtyfour and \Fsbaccessonetwentyeight are 0, then this
         register is not present.
 
+        If the bus master is busy then accesses set \Fsbbusyerror, and don't do
+        anything else.
+
         <field name="data" bits="31:0" access="R/W" reset="0">
             Accesses bits 63:32 of {\tt sbdata} (if the system bus is that
             wide).
@@ -660,6 +710,9 @@
     <register name="System Bus Data 95:64" short="sbdata2" address="0x3e">
         This register only exists if \Fsbaccessonetwentyeight is 1.
 
+        If the bus master is busy then accesses set \Fsbbusyerror, and don't do
+        anything else.
+
         <field name="data" bits="31:0" access="R/W" reset="0">
             Accesses bits 95:64 of {\tt sbdata} (if the system bus is that
             wide).
@@ -668,6 +721,9 @@
 
     <register name="System Bus Data 127:96" short="sbdata3" address="0x3f">
         This register only exists if \Fsbaccessonetwentyeight is 1.
+
+        If the bus master is busy then accesses set \Fsbbusyerror, and don't do
+        anything else.
 
         <field name="data" bits="31:0" access="R/W" reset="0">
             Accesses bits 127:96 of {\tt sbdata} (if the system bus is that

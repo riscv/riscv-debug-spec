@@ -143,9 +143,9 @@ registers can be accessed by moving their value into/out of GPRs.
     \hline
     Op & Address & Value & Comment \\
     \hline
-    Write & \Rsbaddresszero & address & \\
+    Write & \Rsbcs & \Fsbaccess$=2$, \Fsbreadonaddr & Setup \\
     \hline
-    Write & \Rsbcs & \Fsbaccess$=2$, \Fsbsingleread & Perform a read \\
+    Write & \Rsbaddresszero & address & \\
     \hline
     Read & \Rsbdatazero & - & Value read from memory \\
     \hline
@@ -154,15 +154,14 @@ registers can be accessed by moving their value into/out of GPRs.
 
 \noindent Read block of memory using system bus access:
 
-\begin{tabulary}{\textwidth}{|r|r|R|L|}
+\begin{tabular}{|r|r|p{13em}|l|}
     \hline
     Op & Address & Value & Comment \\
     \hline
-    Write & \Rsbaddresszero & address & \\
+    Write & \Rsbcs & \Fsbaccess$=2$, \Fsbreadonaddr, \Fsbreadondata, \Fsbautoincrement &
+            Turn on autoread and autoincrement \\
     \hline
-    Write & \Rsbcs & \Fsbaccess$=2$, \Fsbsingleread, \Fsbautoread,
-        \Fsbautoincrement & Turn on autoread and autoincrement, and perform a
-        read \\
+    Write & \Rsbaddresszero & address & Writing address triggers read and increment \\
     \hline
     Read & \Rsbdatazero & - & Value read from memory \\
     \hline
@@ -170,11 +169,11 @@ registers can be accessed by moving their value into/out of GPRs.
     \hline
     ... & ... & ... & ... \\
     \hline
-    Write & \Rsbcs & 0 & Clear \Fsbautoread \\
+    Write & \Rsbcs & 0 & Disable autoread \\
     \hline
     Read & \Rsbdatazero & - & Get last value read from memory. \\
     \hline
-\end{tabulary}
+\end{tabular}
 \medskip
 
 \subsection{Using Program Buffer} \label{deb:mrprogbuf}
@@ -313,13 +312,13 @@ this method.
 
 \noindent Write block of memory using system bus access:
 
-\begin{tabulary}{\textwidth}{|r|r|R|L|}
+\begin{tabular}{|r|r|p{13em}|l|}
     \hline
     Op & Address & Value & Comment \\
     \hline
-    Write & \Rsbaddresszero & address & \\
-    \hline
     Write & \Rsbcs & \Fsbaccess$=2$, \Fsbautoincrement & Turn on autoincrement \\
+    \hline
+    Write & \Rsbaddresszero & address & \\
     \hline
     Write & \Rsbdatazero & value0 & \\
     \hline
@@ -329,7 +328,7 @@ this method.
     \hline
     Write & \Rsbdatazero & valueN & \\
     \hline
-\end{tabulary}
+\end{tabular}
 \medskip
 
 \subsection{Using Program Buffer} \label{deb:mrprogbuf}

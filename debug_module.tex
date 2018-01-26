@@ -309,9 +309,33 @@ access without
 involving a hart, regardless of whether Program Buffer is implemented.
 The System Bus Access block uses physical addresses.
 
+The System Bus Access block may support 8-, 16-, 32-, 64-, and 128-bit
+accesses. Table~\ref{tab:sbdatabits} shows which bits in {\tt sbdata} are used
+for each access size.
+
+\begin{table}[htp]
+    \centering
+    \caption{System Bus Data Bits}
+    \label{tab:sbdatabits}
+    \begin{tabulary}{\textwidth}{|r|l|}
+        \hline
+        Access Size & Data Bits \\
+        \hline
+        8 & \Rsbdatazero bits 7:0 \\
+        \hline
+        16 & \Rsbdatazero bits 15:0 \\
+        \hline
+        32 & \Rsbdatazero \\
+        \hline
+        64 & \Rsbdataone, \Rsbdatazero \\
+        \hline
+        128 & \Rsbdatathree, \Rsbdatatwo, \Rsbdataone, \Rsbdatazero \\
+        \hline
+    \end{tabulary}
+\end{table}
+
 Depending on the microarchitecture, data accessed through System Bus Access may
-not always be coherent with that observed by each hart. (For instance, a hart
-may have caches that don't snoop or aren't write-through.) It is up to the
+not always be coherent with that observed by each hart. It is up to the
 debugger to enforce coherency if the implementation does not. This
 specification does not define a standard way to do this, as it is
 implementation/platform specific. Possibilities may include using the System
