@@ -169,7 +169,9 @@ command returns results, the Debug Module must ensure they are placed
 in the {\tt data} registers before \Fbusy is cleared.
 Which {\tt data} registers are used for the arguments is
 described in Table~\ref{tab:datareg}.  In all cases the least-significant word
-is placed in the lowest-numbered {\tt data} register.
+is placed in the lowest-numbered {\tt data} register. The argument width
+depends on the command being executed, and is XLEN where not explicitly
+specified.
 
 \begin{table}[htp]
     \centering
@@ -177,13 +179,13 @@ is placed in the lowest-numbered {\tt data} register.
     \label{tab:datareg}
     \begin{tabulary}{\textwidth}{|r|l|l|l|}
         \hline
-        XLEN & arg0/return value & arg1 & arg2 \\
+        Argument Width & arg0/return value & arg1 & arg2 \\
         \hline
         32 & \Rdatazero & {\tt data1} & {\tt data2} \\
         \hline
-        64 & \Rdatazero, {\tt data1}  & {\tt data2} , {\tt data3} & {\tt data4}, {\tt data5} \\
+        64 & \Rdatazero, {\tt data1} & {\tt data2}, {\tt data3} & {\tt data4}, {\tt data5} \\
         \hline
-        128 & \Rdatazero-- {\tt data3} & {\tt data4} -- {\tt data7} & {\tt data8} -- {\tt data11} \\
+        128 & \Rdatazero--{\tt data3} & {\tt data4}--{\tt data7} & {\tt data8}--{\tt data11} \\
         \hline
     \end{tabulary}
 \end{table}
