@@ -35,8 +35,13 @@ inefficiency in typical JTAG use.
 
 \section{Main Loop}
 
-A debugger continuously monitors \Rhaltsum to see if any harts have spontaneously
-halted.
+A debugger continuously monitors all harts to see if any of them have
+spontaneously halted. To do this efficiently when there are many harts, it uses
+the {\tt haltsum} registers. Assuming the maximum number of harts exist, first
+it checks \Rhaltsumthree. For each bit set there, it writes \Fhartsel, and
+checks \Rhaltsumtwo. This process repeats through \Rhaltsumone and
+\Rhaltsumzero. Depending on how many harts exist, the process can start at one
+of the lower {\tt hartsum} registers.
 
 \section{Halting} \label{deb:halt}
 

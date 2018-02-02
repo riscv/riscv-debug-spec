@@ -1,4 +1,3 @@
-
 \chapter{Debug Module (DM)} \label{dm}
 
 \begin{steps}{The Debug Module implements a translation interface between abstract debug
@@ -29,29 +28,12 @@ The Debug Module Interface can be a trivial bus with one master and one slave,
 or use a more full-featured bus like TileLink or the AMBA Advanced Peripheral
 Bus. The details are left to the system designer.
 
-The DMI uses between 7 and 32 address bits.  It supports read and write
-operations.  The bottom of the address space is
+The DMI uses between 6 and 32 address bits.  It supports read and write
+operations.  The low addresses of the address space are
 used for the DM. Extra space can be used for custom debug devices, other cores,
 additional DMs, etc.
 
 The Debug Module is controlled via register accesses to its DMI address space.
-
-\begin{table}[htp]
-    \centering
-    \caption{Debug Module Interface Address Space}
-    \label{tab:header}
-    \begin{tabulary}{\textwidth}{|r|L|}
-        \hline
-        0x00 -- 0x3f & Registers described in Section~\ref{dmdebbus}. \\
-        \hline
-        0x40 -- 0x5f & This is called the `halt region`.  These 32 addresses
-        for 32-bit words provide access to the halt bit for up to 1024 harts.
-        If the hart is halted, the bit is 1.  Otherwise
-        the bit is 0. The bit for hart 0 is the LSB in the 32-bit word at 0x40.
-        The bit for hart 1023 is the MSB in the 32-bit word at 0x5f. \\
-        \hline
-    \end{tabulary}
-\end{table}
 
 \section{Reset Control} \label{reset}
 
