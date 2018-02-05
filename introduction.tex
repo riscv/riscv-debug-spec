@@ -48,14 +48,20 @@ not part of the actual specification.
 
 \subsection{Register Definition Format}
 
-All register definitions in this document follow the format shown below.
-A simple graphic shows which fields are in the register. The
-upper and lower bit indices are shown to the top left and top right of each
-field. The total number of bits in the field are shown below it.
+All register definitions in this document follow the format shown below.  A
+simple graphic shows which fields are in the register. The upper and lower bit
+indices are shown to the top left and top right of each field. The total number
+of bits in the field are shown below it.
 
 After the graphic follows a table which for each field lists its name,
 description, allowed accesses, and reset value. The allowed accesses are listed
 in Table~\ref{tab:access}.
+
+Names of registers and their bits are hyperlinks to their definition. If you're
+reading this on paper, there's an index with all their names on page
+\pageref{index}.
+
+\input{sample_registers.tex}
 
 \begin{table}[htp]
     \centering
@@ -79,12 +85,6 @@ in Table~\ref{tab:access}.
         \hline
     \end{tabulary}
 \end{table}
-
-Names of registers and their bits are hyperlinks to their definition. If you're
-reading this on paper, there's an index with all their names on page
-\pageref{index}.
-
-\input{sample_registers.tex}
 
 %\input{reading_order.tex}
 
