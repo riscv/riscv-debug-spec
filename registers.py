@@ -442,10 +442,18 @@ def print_latex_custom( registers ):
             print "\\tabletail{\\hline \\multicolumn{%d}{|r|}" % len(columns)
             print "   {{Continued on next page}} \\\\ \\hline}"
             print "\\begin{center}"
-            print "   \\begin{xtabular}{|%s|}" % "|".join(c[0] for c in columns)
+            print "   \\begin{longtable}{|%s|}" % "|".join(c[0] for c in columns)
+
             print "   \\hline"
             print "   %s\\\\" % " & ".join(c[1] for c in columns)
             print "   \\hline"
+            print "   \\endhead"
+
+            print "   \\multicolumn{%d}{r}{\\textit{Continued on next page}} \\\\" % \
+                    len(columns)
+            print "   \\endfoot"
+            print "   \\endlastfoot"
+
             for f in r.fields:
                 if f.description:
                     print "\\label{%s}" % f.name
@@ -455,7 +463,7 @@ def print_latex_custom( registers ):
                     print "   \\hline"
 
             #print "   \\end{tabulary}"
-            print "   \\end{xtabular}"
+            print "   \\end{longtable}"
             print "\\end{center}"
         print
 
