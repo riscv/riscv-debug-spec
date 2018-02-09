@@ -74,37 +74,30 @@ when \Fdmactive is low.
 
 \section{Selecting Harts} \label{selectingharts}
 
-Up to 1024 harts can be connected to a single DM. The debugger
-selects a hart, and then subsequent halt, resume, reset, and debugging
-commands are specific to that hart.
+Up to $2^{20}$ harts can be connected to a single DM.
 
-To enumerate all the harts, a debugger must first determine {\tt HARTSELLEN}
-by writing  all ones to \Fhartsel (assuming the maximum size) and reading back
+The DM keeps track of which harts are selected. The debugger can add or remove
+harts to or from the set of selected harts by writing to \Faggregate and then
+\Rhartaggzero through \Rhartaggthree. A debugger will spend much of its time
+interacting with one hart, but selecting multiple harts is also supported.
+
+When multiple harts are selected, \Fhaltreq, \Fresumereq, and \Fhartreset apply
+to all of them. If the DM supports it, abstract commands can also apply to
+multiple harts. Operations that apply to multiple harts should apply
+simultaneously if practical, but that is not required.
+
+Hart indexes start at 0 and are contiguous until the final index.
+
+To enumerate all the harts, a debugger must first determine {\tt AGGREGATELEN}
+by writing all ones to \Faggregate (assuming the maximum size) and reading back
 the value to see which bits were actually set.  Then it selects each hart
 starting from 0 until either \Fanynonexistent in \Rdmstatus is 1, or the
-highest index (depending on {\tt HARTSELLEN}) is reached.
+highest index (depending on {\tt AGGREGATELEN}) is reached. Alternatively it
+can perform a binary search to find the lowest index that is non-existent.
 
 The debugger can discover the mapping between hart indices and
 \Rmhartid by using the interface to read \Rmhartid, or by
 reading the system's Device Tree.
-
-\subsection {Selecting a Single Hart}
-
-All debug modules must support selecting a single hart.
-The debugger can select a hart by writing its index to \Fhartsel.
-Hart indexes start at 0 and are contiguous until the final index.
-
-\subsection {Selecting Multiple Harts}
-
-Debug Modules may optionally implement a Hart Array Mask register to allow
-selecting multiple harts at once. The debugger can set bits in the hart array mask register
-using \Rhawindowsel and \Rhawindow, then apply actions to all selected harts
-by setting \Fhasel. If this feature is supported, multiple harts can be
-halted, resumed, and reset simultaneously.
-
-Only the actions initiated by \Rdmcontrol can apply to multiple harts
-at once, Abstract Commands apply only to the hart selected by
-\Fhartsel.
 
 \section{Run Control} \label{runcontrol}
 

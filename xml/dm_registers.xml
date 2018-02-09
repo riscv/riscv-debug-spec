@@ -7,7 +7,7 @@
         contains \Fversion.  It has changed from version 0.11 of this spec.
 
         This register reports status for the overall debug module
-        as well as the currently selected harts, as defined in \Fhasel.
+        as well as the currently selected harts.
 
         Harts are nonexistent if they will never be part of this system, no
         matter how long a user waits. Eg. in a simple single-hart system only
@@ -113,18 +113,7 @@
 
     <register name="Debug Module Control" short="dmcontrol" address="0x10">
         This register controls the overall debug module
-        as well as the currently selected harts, as defined in \Fhasel.
-
-\label{hartsel}
-\index{hartsel}
-        Throughout this document we refer to \Fhartsel, which is \Fhartselhi
-        combined with \Fhartsello. The awkward ordering is to preserve
-        backwards compatibility. While the spec allows for 20 \Fhartsel bits,
-        an implementation may choose to implement fewer than that. The actual
-        width of \Fhartsel is called {\tt HARTSELLEN}. It must be at least 0
-        and at most 20. A debugger should discover {\tt HARTSELLEN} by writing
-        all ones to \Fhartsel (assuming the maximum size) and reading back the
-        value to see which bits were actually set.
+        as well as the currently selected harts.
 
         <!-- Fields that apply to a specific hart. -->
         <field name="haltreq" bits="31" access="W" reset="-">
@@ -134,8 +123,6 @@
 
             Writing 1 or 0 has no effect on a hart which is already halted, but
             the bit must be cleared to 0 before the hart is resumed.
-
-            Writes apply to the new value of \Fhartsel and \Fhasel.
         </field>
         <field name="resumereq" bits="30" access="W" reset="-">
             Writes the resume request bit for all currently selected harts.
@@ -144,8 +131,6 @@
 
             The resume request bit is ignored while the halt request bit is
             set.
-
-            Writes apply to the new value of \Fhartsel and \Fhasel.
         </field>
         <field name="hartreset" bits="29" access="R/W" reset="0">
             This optional field writes the reset bit for all the currently
@@ -155,39 +140,24 @@
             If this feature is not implemented, the bit always stays 0, so
             after writing 1 the debugger can read the register back to see if
             the feature is supported.
-
-            Writes apply to the new value of \Fhartsel and \Fhasel.
         </field>
         <field name="ackhavereset" bits="28" access="W" reset="-">
             Writing 1 to this bit clears the {\tt havereset} bits for
             any selected harts.
-
-            Writes apply to the new value of \Fhartsel and \Fhasel.
         </field>
-        <field name="0" bits="27" reset="0" access="R" />
-        <field name="hasel" bits="26" access="R/W" reset = "0">
-            Selects the  definition of currently selected harts.
+        <field name="0" bits="27:19" reset="0" access="R" />
+        <field name="aggregate" bits="18:4" access="R/W" reset="0">
+            This field controls which harts are accessed through \Rhartaggzero
+            through \Rhartaggthree.
 
-            0: There is a single currently selected hart, that selected by \Fhartsel.
-
-            1: There may be multiple currently selected harts -- that selected by \Fhartsel,
-               plus those selected by the hart array mask register.
-
-            An implementation which does not implement the hart array mask register
-            should tie this field to 0. A debugger which wishes to use the hart array
-            mask register feature should set this bit and read back to see if the functionality
-            is supported.
-        </field>
-        <field name="hartsello" bits="25:16" access="R/W" reset="0">
-            The low 10 bits of \Fhartsel: the DM-specific index of the hart to
-            select. This hart is always part of the currently selected harts.
-        </field>
-        <field name="hartselhi" bits="15:6" access="R/W" reset="0">
-            The high 10 bits of \Fhartsel: the DM-specific index of the hart to
-            select. This hart is always part of the currently selected harts.
+            An implementation may choose to only have as many of the lowest
+            {\tt AGGREGATELEN} bits writable as are required to access the
+            harts that actually exist in the system. A debugger must discover
+            {\tt AGGREGATELEN} when first connecting, by writing all ones to
+            this field and reading back which bits are now 1.
         </field>
         <!-- Fields that apply to the entire DM. -->
-        <field name="0" bits="5:2" access="R" reset="0" />
+        <field name="0" bits="3:2" access="R" reset="0" />
         <field name="ndmreset" bits="1" access="R/W" reset="0">
             This bit controls the reset signal from the DM to the rest of the
             system. The signal should reset every part of the system, including
@@ -220,16 +190,16 @@
     </register>
 
     <register name="Hart Info" short="hartinfo" address="0x12">
-      This register gives information about the hart currently
-      selected by \Fhartsel.
+        This register gives information about the hart currently selected, but
+        only if exactly one hart is currently selected. Otherwise the contents of
+        this register are unreliable.
 
-      This register is optional. If it is not present it should
-      read all-zero.
+        This register is optional. If it is not present it must read
+        all-zero.
 
-      If this register is included, the debugger can do more with
-      the Program Buffer by writing programs which
-      explicitly access the {\tt data} and/or {\tt dscratch}
-      registers.
+        If this register is included, the debugger can do more with the Program
+        Buffer by writing programs which explicitly access the {\tt data}
+        and/or {\tt dscratch} registers.
 
         <field name="0" bits="31:24" access="R" reset="0" />
         <field name="nscratch" bits="23:20" access="R" reset="Preset">
@@ -266,31 +236,6 @@
         </field>
     </register>
 
-    <!-- =============== Hart Array Registers =============== -->
-
-    <register name="Hart Array Window Select" short="hawindowsel" address="0x14">
-
-      This register selects which of the 32-bit portion of the hart array mask register
-      is accessible in \Rhawindow.
-
-      The hart array mask register provides a mask of all harts controlled by
-      the debug module. A hart is part of the currently selected harts if
-      the corresponding bit is set in the hart array mask register and
-      \Fhasel in \Rdmcontrol is 1, or if the hart is selected by \Fhartsel.
-
-      <field name="0" bits="31:15" access="R/W" reset="0" />
-      <field name="hawindowsel" bits="14:0" access="R/W" reset="0" />
-    </register>
-
-    <register name="Hart Array Window " short="hawindow" address="0x15">
-      This register provides R/W access to a 32-bit portion of the
-      hart array mask register.
-      The position of the window is determined by \Rhawindowsel. I.e. bit 0
-      refers to hart $\Rhawindowsel * 32$, while bit 31 refers to hart
-      $\Rhawindowsel * 32 + 31$.
-      <field name="maskdata" bits="31:0" access="R/W" reset="0" />
-    </register>
-
     <!-- =============== abstract commands =============== -->
 
     <register name="Abstract Control and Status" short="abstractcs" address="0x16">
@@ -308,8 +253,15 @@
         <field name="0" bits="11" access="R" reset="0" />
         <field name="cmderr" bits="10:8" access="R/W1C" reset="0">
             Gets set if an abstract command fails. The bits in this field remain set until
-            they are cleared by writing 1 to them. No abstract command is
+            they are cleared by writing 1 to them. No new abstract command is
             started until the value is reset to 0.
+
+            If an abstract command is executed on multiple harts, any one of
+            them failing will set this field. If there are different failures
+            on different harts, this field may take on any value that is not 0.
+            Unless there was exactly one hart selected, there is no way for the
+            debugger to know which hart encountered a failure, on which harts
+            the command was attempted, and what the error was.
 
             0 (none): No error.
 
@@ -326,6 +278,9 @@
 
             4 (halt/resume): An abstract command couldn't execute because the
             hart wasn't in the expected state (running/halted).
+
+            5 (hartsel): An abstract command couldn't execute because an
+            incorrect number of harts is selected.
 
             7 (other): The command failed for another reason.
         </field>
@@ -478,48 +433,64 @@
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
 
-    <register name="Halt Summary 0" short="haltsum0" address="0x32">
-        Each bit in this read-only register indicates whether one specific hart
-        is halted or not.
+    <register name="Hart Aggregate 0" short="hartagg0" address="0x32">
+        Each bit in this register applies to exactly one hart. A 1 bit
+        indicates that the hart exists, is available, and is halted. Otherwise
+        the bit is 0.
 
-        The LSB reflects the halt status of hart \{hartsel[19:5],5'h0\}, and the
-        MSB reflects halt status of hart \{hartsel[19:5],5'h1f\}.
+        Writing 1 to a bit adds that hart to the set of selected harts. Writing
+        0 removes that hart from the set of selected harts.
 
-        <field name="haltsum0" bits="31:0" access="R" reset="0" />
+        The LSB applies to hart \{\Faggregate,5'h0\}, and the MSB applies to
+        hart \{\Faggregate,5'h1f\}.
+
+        <field name="hartagg0" bits="31:0" access="R" reset="0" />
     </register>
 
-    <register name="Halt Summary 1" short="haltsum1" address="0x33">
-        Each bit in this read-only register indicates whether any of a group of
-        harts is halted or not.
+    <register name="Hart Aggregate 1" short="hartagg1" address="0x33">
+        Each bit in this register applies to 32 harts (if they exist). A 1 bit
+        indicates that at least one of the 32 harts exists, is available, and
+        is halted. Otherwise the bit is 0.
 
-        The LSB reflects the halt status of harts \{hartsel[19:10],10'h0\}
-        through \{hartsel[19:10],10'h1f\}.
-        The MSB reflects the halt status of harts \{hartsel[19:10],10'h3e0\}
-        through \{hartsel[19:10],10'h3ff\}.
+        Writing 1 to a bit adds all 32 harts to the set of selected harts.
+        Writing 0 removes all 32 harts from the set of selected harts.
 
-        <field name="haltsum1" bits="31:0" access="R" reset="0" />
+        The LSB applies to harts \{\Faggregate[14:5],10'h0\}
+        through \{\Faggregate[14:5],10'h1f\}.
+        The MSB reflects the halt status of harts \{\Faggregate[14:5],10'h3e0\}
+        through \{\Faggregate[14:5],10'h3ff\}.
+
+        <field name="hartagg1" bits="31:0" access="R" reset="0" />
     </register>
 
-    <register name="Halt Summary 2" short="haltsum2" address="0x34">
-        Each bit in this read-only register indicates whether any of a group of
-        harts is halted or not.
+    <register name="Hart Aggregate 2" short="hartagg2" address="0x34">
+        Each bit in this register applies to 1024 harts (if they exist). A 1
+        bit indicates that at least one of the 1024 harts exists, is available,
+        and is halted. Otherwise the bit is 0.
 
-        The LSB reflects the halt status of harts \{hartsel[19:15],15'h0\}
-        through \{hartsel[19:15],15'h3ff\}.
-        The MSB reflects the halt status of harts \{hartsel[19:15],15'h7c00\}
-        through \{hartsel[19:15],15'h7fff\}.
+        Writing 1 to a bit adds all 1024 harts to the set of selected harts.
+        Writing 0 removes all 1024 harts from the set of selected harts.
 
-        <field name="haltsum2" bits="31:0" access="R" reset="0" />
+        The LSB applies to harts \{\Faggregate[14:10],15'h0\}
+        through \{\Faggregate[14:10],15'h3ff\}.
+        The MSB reflects the halt status of harts \{\Faggregate[14:10],15'h7fe0\}
+        through \{\Faggregate[14:10],15'h7fff\}.
+
+        <field name="hartagg2" bits="31:0" access="R" reset="0" />
     </register>
 
-    <register name="Halt Summary 3" short="haltsum3" address="0x35">
-        Each bit in this read-only register indicates whether any of a group of
-        harts is halted or not.
+    <register name="Hart Aggregate 3" short="hartagg3" address="0x35">
+        Each bit in this register applies to 32768 harts (if they exist). A 1
+        bit indicates that at least one of the 32768 harts exists, is available,
+        and is halted. Otherwise the bit is 0.
 
-        The LSB reflects the halt status of harts 20'h0 through 20'h7fff.
-        The MSB reflects the halt status of harts 20'hf8000 through 20'hfffff.
+        Writing 1 to a bit adds all 32768 harts to the set of selected harts.
+        Writing 0 removes all 32768 harts from the set of selected harts.
 
-        <field name="haltsum3" bits="31:0" access="R" reset="0" />
+        The LSB applies to harts 20'h0 through 20'h7fff.
+        The MSB applies to harts 20'hf8000 through 20'hfffff.
+
+        <field name="hartagg3" bits="31:0" access="R" reset="0" />
     </register>
 
     <!-- =============== system bus mastering =============== -->
