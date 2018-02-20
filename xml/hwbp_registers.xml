@@ -191,9 +191,9 @@
         </field>
         <field name="hit" bits="5" access="R/W" reset="0">
             When this trigger matches, this optional bit becomes set. The
-            debugger can use it to see which trigger(s) matched, and is
-            responsible for clearing it. If the bit is not implemented, it
-            may still be writable, but won't become set by a match.
+            trigger's user can use it to see which trigger(s) matched, and is
+            responsible for clearing it. If the bit is not implemented, it is
+            always 0 and writing it has no effect.
         </field>
         <field name="s" bits="4" access="R/W" reset="0">
             When set, enable this trigger in S mode.
@@ -252,9 +252,9 @@
         </field>
         <field name="hit" bits="8" access="R/W" reset="0">
             When this trigger matches, this optional bit becomes set. The
-            debugger can use it to see which trigger(s) matched, and is
-            responsible for clearing it. If the bit is not implemented, it
-            may still be writable, but won't become set by a match.
+            trigger's user can use it to see which trigger(s) matched, and is
+            responsible for clearing it. If the bit is not implemented, it is
+            always 0 and writing it has no effect.
         </field>
         <field name="s" bits="7" access="R/W" reset="0">
             When set, every instruction completed or exception taken in S mode decrements \Fcount
