@@ -444,7 +444,7 @@
         The LSB applies to hart \{\Faggregate,5'h0\}, and the MSB applies to
         hart \{\Faggregate,5'h1f\}.
 
-        <field name="hartagg0" bits="31:0" access="R" reset="0" />
+        <field name="hartagg0" bits="31:0" access="R/W" reset="0" />
     </register>
 
     <register name="Hart Aggregate 1" short="hartagg1" address="0x33">
@@ -460,7 +460,7 @@
         The MSB reflects the halt status of harts \{\Faggregate[14:5],10'h3e0\}
         through \{\Faggregate[14:5],10'h3ff\}.
 
-        <field name="hartagg1" bits="31:0" access="R" reset="0" />
+        <field name="hartagg1" bits="31:0" access="R/W" reset="0" />
     </register>
 
     <register name="Hart Aggregate 2" short="hartagg2" address="0x34">
@@ -476,7 +476,7 @@
         The MSB reflects the halt status of harts \{\Faggregate[14:10],15'h7fe0\}
         through \{\Faggregate[14:10],15'h7fff\}.
 
-        <field name="hartagg2" bits="31:0" access="R" reset="0" />
+        <field name="hartagg2" bits="31:0" access="R/W" reset="0" />
     </register>
 
     <register name="Hart Aggregate 3" short="hartagg3" address="0x35">
@@ -490,7 +490,7 @@
         The LSB applies to harts 20'h0 through 20'h7fff.
         The MSB applies to harts 20'hf8000 through 20'hfffff.
 
-        <field name="hartagg3" bits="31:0" access="R" reset="0" />
+        <field name="hartagg3" bits="31:0" access="R/W" reset="0" />
     </register>
 
     <!-- =============== system bus mastering =============== -->
