@@ -15,10 +15,12 @@
         failure early, and fail the overall command before it reaches the step
         that would cause failure.
 
-        Debug Modules must implement this command
-        and must support read and write access to all GPRs when the selected hart is halted.
-        Debug Modules may optionally support accessing other registers,
-        or accessing registers when the hart is running.
+        DMs must implement this command
+        and must support read and write access to all GPRs when exactly one
+        hart is selected and that hart is halted.
+        DMs may optionally support any combination of accessing other
+        registers, accessing registers when the hart is running, or writing on
+        multiple selected harts.
         If this command is 
         supported for a register while the hart is running, it must also
         be supported for a register while the hart is halted.
@@ -27,6 +29,10 @@
 
         \begin{commentary}
             The encoding of \Fsize was chosen to match \Fsbaccess in \Rsbcs.
+
+            Using Access Register to write the same register to the same value
+            on multiple harts can be useful to efficiently initialize all harts
+            to a known state.
         \end{commentary}
 
         <field name="cmdtype" bits="31:24">
@@ -77,8 +83,8 @@
     </register>
 
     <register name="Quick Access">
-        \begin{steps}{Perform the following sequence of operations:}
-        \item If the hart is halted, the command  sets \Fcmderr to \texttt{halt/resume} and does not continue.
+        \begin{steps}{Perform the following sequence of operations on each selected hart:}
+        \item If the hart is halted, the command sets \Fcmderr to \texttt{halt/resume} and does not continue.
         \item Halt the hart. If the hart halts for some other reason (e.g. breakpoint), the command
             sets \Fcmderr to \texttt{halt/resume} and does not continue.
         \item Execute the Program Buffer. If an exception occurs, \Fcmderr is set to \texttt{exception} 
@@ -86,7 +92,13 @@
         \item Resume the hart.
         \end{steps}
 
-        Implementing this command is optional.
+        Implementing this command is optional, and it may only support acting
+        on a single hart at a time.
+
+        \begin{commentary}
+            Quick Access on multiple harts can be useful to eg. execute a fence
+            instruction on each hart after performing a system bus write.
+        \end{commentary}
 
         <field name="cmdtype" bits="31:24">
             This is 1 to indicate Quick Access command.

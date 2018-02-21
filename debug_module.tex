@@ -1,4 +1,3 @@
-
 \chapter{Debug Module (DM)} \label{dm}
 
 \begin{steps}{The Debug Module implements a translation interface between abstract debug
@@ -19,7 +18,7 @@
 In order to implement memory access, a target must implement either the Program
 Buffer or System Bus Access.
 
-A single DM can debug up to 1024 harts.
+A single DM can debug up to $2^{20}$ harts.
 
 \section{Debug Module Interface (DMI)} \label{dmi}
 
@@ -29,29 +28,12 @@ The Debug Module Interface can be a trivial bus with one master and one slave,
 or use a more full-featured bus like TileLink or the AMBA Advanced Peripheral
 Bus. The details are left to the system designer.
 
-The DMI uses between 7 and 32 address bits.  It supports read and write
-operations.  The bottom of the address space is
+The DMI uses between 6 and 32 address bits.  It supports read and write
+operations.  The low addresses of the address space are
 used for the DM. Extra space can be used for custom debug devices, other cores,
 additional DMs, etc.
 
 The Debug Module is controlled via register accesses to its DMI address space.
-
-\begin{table}[htp]
-    \centering
-    \caption{Debug Module Interface Address Space}
-    \label{tab:header}
-    \begin{tabulary}{\textwidth}{|r|L|}
-        \hline
-        0x00 -- 0x3f & Registers described in Section~\ref{dmdebbus}. \\
-        \hline
-        0x40 -- 0x5f & This is called the `halt region`.  These 32 addresses
-        for 32-bit words provide access to the halt bit for up to 1024 harts.
-        If the hart is halted, the bit is 1.  Otherwise
-        the bit is 0. The bit for hart 0 is the LSB in the 32-bit word at 0x40.
-        The bit for hart 1023 is the MSB in the 32-bit word at 0x5f. \\
-        \hline
-    \end{tabulary}
-\end{table}
 
 \section{Reset Control} \label{reset}
 
@@ -92,37 +74,30 @@ when \Fdmactive is low.
 
 \section{Selecting Harts} \label{selectingharts}
 
-Up to 1024 harts can be connected to a single DM. The debugger
-selects a hart, and then subsequent halt, resume, reset, and debugging
-commands are specific to that hart.
+Up to $2^{20}$ harts can be connected to a single DM.
 
-To enumerate all the harts, a debugger must first determine {\tt HARTSELLEN}
-by writing  all ones to \Fhartsel (assuming the maximum size) and reading back
+The DM keeps track of which harts are selected. The debugger can add or remove
+harts to or from the set of selected harts by writing to \Faggregate and then
+\Rhartaggzero through \Rhartaggthree. A debugger will spend much of its time
+interacting with one hart, but selecting multiple harts is also supported.
+
+When multiple harts are selected, \Fhaltreq, \Fresumereq, and \Fhartreset apply
+to all of them. If the DM supports it, abstract commands can also apply to
+multiple harts. Operations that apply to multiple harts should apply
+simultaneously if practical, but that is not required.
+
+Hart indexes start at 0 and are contiguous until the final index.
+
+To enumerate all the harts, a debugger must first determine {\tt AGGREGATELEN}
+by writing all ones to \Faggregate (assuming the maximum size) and reading back
 the value to see which bits were actually set.  Then it selects each hart
 starting from 0 until either \Fanynonexistent in \Rdmstatus is 1, or the
-highest index (depending on {\tt HARTSELLEN}) is reached.
+highest index (depending on {\tt AGGREGATELEN}) is reached. Alternatively it
+can perform a binary search to find the lowest index that is non-existent.
 
 The debugger can discover the mapping between hart indices and
 \Rmhartid by using the interface to read \Rmhartid, or by
 reading the system's Device Tree.
-
-\subsection {Selecting a Single Hart}
-
-All debug modules must support selecting a single hart.
-The debugger can select a hart by writing its index to \Fhartsel.
-Hart indexes start at 0 and are contiguous until the final index.
-
-\subsection {Selecting Multiple Harts}
-
-Debug Modules may optionally implement a Hart Array Mask register to allow
-selecting multiple harts at once. The debugger can set bits in the hart array mask register
-using \Rhawindowsel and \Rhawindow, then apply actions to all selected harts
-by setting \Fhasel. If this feature is supported, multiple harts can be
-halted, resumed, and reset simultaneously.
-
-Only the actions initiated by \Rdmcontrol can apply to multiple harts
-at once, Abstract Commands apply only to the hart selected by
-\Fhartsel.
 
 \section{Run Control} \label{runcontrol}
 

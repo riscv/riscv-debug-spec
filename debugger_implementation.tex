@@ -35,8 +35,14 @@ inefficiency in typical JTAG use.
 
 \section{Main Loop}
 
-A debugger continuously monitors \Rhaltsum to see if any harts have spontaneously
-halted.
+A debugger continuously monitors all harts to see if any of them have
+spontaneously halted. To do this efficiently when there are many harts, it uses
+the {\tt hartagg} registers. Assuming the maximum number of harts exist, first
+it checks \Rhartaggthree. For each bit set there, it writes \Faggregate, and
+checks \Rhartaggtwo. This process repeats through \Rhartaggone and
+\Rhartaggzero. Depending on how many harts exist, the process can start at one
+of the lower {\tt hartagg} registers. If there are 32 harts or less, the
+debugger only needs to check \Rhartaggzero.
 
 \section{Halting} \label{deb:halt}
 
