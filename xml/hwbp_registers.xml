@@ -108,7 +108,13 @@
             corresponds to the maximum NAPOT range, which is $2^{63}$ bytes in
             size.
         </field>
-        <field name="0" bits="XLEN-12:20" access="R" reset="0" />
+        <field name="0" bits="XLEN-12:21" access="R" reset="0" />
+        <field name="hit" bits="20" access="R/W" reset="0">
+            When this trigger matches, this optional bit becomes set. The
+            trigger's user can use it to see which trigger(s) matched, and is
+            responsible for clearing it. If the bit is not implemented, it is
+            always 0 and writing it has no effect.
+        </field>
         <field name="select" bits="19" access="R/W" reset="0">
             0: Perform a match on the virtual address.
 
@@ -189,12 +195,7 @@
         <field name="m" bits="6" access="R/W" reset="0">
             When set, enable this trigger in M mode.
         </field>
-        <field name="hit" bits="5" access="R/W" reset="0">
-            When this trigger matches, this optional bit becomes set. The
-            trigger's user can use it to see which trigger(s) matched, and is
-            responsible for clearing it. If the bit is not implemented, it is
-            always 0 and writing it has no effect.
-        </field>
+        <field name="0" bits="5" access="R" reset="0" />
         <field name="s" bits="4" access="R/W" reset="0">
             When set, enable this trigger in S mode.
         </field>
@@ -237,8 +238,14 @@
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="3" />
         <field name="dmode" bits="XLEN-5" access="R/W" reset="0" />
-        <field name="0" bits="XLEN-6:24" access="R" reset="0" />
+        <field name="0" bits="XLEN-6:25" access="R" reset="0" />
 
+        <field name="hit" bits="24" access="R/W" reset="0">
+            When this trigger matches, this optional bit becomes set. The
+            trigger's user can use it to see which trigger(s) matched, and is
+            responsible for clearing it. If the bit is not implemented, it is
+            always 0 and writing it has no effect.
+        </field>
         <field name="count" bits="23:10" access="R/W" reset="1">
             When count is decremented to 0, the trigger fires. Instead of
             changing \Fcount from 1 to 0, it is also acceptable for hardware to
@@ -250,12 +257,7 @@
             When set, every instruction completed or exception taken in M mode decrements \Fcount
             by 1.
         </field>
-        <field name="hit" bits="8" access="R/W" reset="0">
-            When this trigger matches, this optional bit becomes set. The
-            trigger's user can use it to see which trigger(s) matched, and is
-            responsible for clearing it. If the bit is not implemented, it is
-            always 0 and writing it has no effect.
-        </field>
+        <field name="0" bits="8" access="R" reset="0" />
         <field name="s" bits="7" access="R/W" reset="0">
             When set, every instruction completed or exception taken in S mode decrements \Fcount
             by 1.
