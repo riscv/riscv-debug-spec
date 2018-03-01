@@ -382,9 +382,18 @@ Module that can be used to be permanently disable it. Since this is technology
 specific, it is not further addressed in this spec.
 
 Another option is to allow the DM to be unlocked only by users who have an
-access key. A few bits in \Rdmstatus and \Rauthdata can support an arbitrarily
-complex authentication mechanism.  When \Fauthenticated is clear, the DM must
-not interact with the rest of the platform in any way.
+access key. Between \Fauthenticated, \Fauthbusy, and \Rauthdata arbitrarily
+complex authentication mechanism can be supported.  When \Fauthenticated is
+clear, the DM must not interact with the rest of the platform, nor expose
+details about the harts connected to the DM. All DM registers should read 0,
+while writes should be ignored, with the following mandatory exceptions:
+\begin{steps}{}
+    \item \Fauthenticated in \Rdmstatus is readable.
+    \item \Fauthbusy in \Rdmstatus is readable.
+    \item \Fversion in \Rdmstatus is readable.
+    \item \Fdmactive in \Rdmcontrol is readable and writable.
+    \item \Rauthdata is readable and writable.
+\end{steps}
 
 \section{Debug Module DMI Registers} \label{dmdebbus}
 
