@@ -110,10 +110,11 @@
         </field>
         <field name="0" bits="XLEN-12:21" access="R" reset="0" />
         <field name="hit" bits="20" access="R/W" reset="0">
-            When this trigger matches, this optional bit becomes set. The
-            trigger's user can use it to see which trigger(s) matched, and is
-            responsible for clearing it. If the bit is not implemented, it is
-            always 0 and writing it has no effect.
+            If this optional bit is implemented, the hardware sets it when this
+            trigger matches. The trigger's user can set or clear it at any
+            time. The trigger's user can use this bit to determine which
+            trigger(s) matched.  If the bit is not implemented, it is always 0
+            and writing it has no effect.
         </field>
         <field name="select" bits="19" access="R/W" reset="0">
             0: Perform a match on the virtual address.
@@ -241,10 +242,11 @@
         <field name="0" bits="XLEN-6:25" access="R" reset="0" />
 
         <field name="hit" bits="24" access="R/W" reset="0">
-            When this trigger matches, this optional bit becomes set. The
-            trigger's user can use it to see which trigger(s) matched, and is
-            responsible for clearing it. If the bit is not implemented, it is
-            always 0 and writing it has no effect.
+            If this optional bit is implemented, the hardware sets it when this
+            trigger matches. The trigger's user can set or clear it at any
+            time. The trigger's user can use this bit to determine which
+            trigger(s) matched.  If the bit is not implemented, it is always 0
+            and writing it has no effect.
         </field>
         <field name="count" bits="23:10" access="R/W" reset="1">
             When count is decremented to 0, the trigger fires. Instead of
