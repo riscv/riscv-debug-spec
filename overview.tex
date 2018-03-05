@@ -15,10 +15,15 @@ debugger (eg. gdb).  The debugger communicates with a Debug Translator (eg.
 OpenOCD, which may include a hardware driver) to communicate with Debug
 Transport Hardware (eg.  Olimex USB-JTAG adapter).
 The Debug Transport Hardware connects the Debug Host to the Platform's Debug
-Transport Module (DTM).  The DTM provides access to the Debug Module (DM) using
-the Debug Module Interface (DMI).
+Transport Module (DTM).  The DTM provides access to one or more Debug Modules
+(DMs) using the Debug Module Interface (DMI).
 
-The DM allows the debugger to halt any hart in the platform. Abstract commands
+Each hart in the system is controlled by exactly one DM. Harts may be
+heterogeneous. There is no further limit on the hart-DM mapping, but usually
+all harts in a single core are controlled by the same DM. In most systems there
+will only be one DM that controls all the harts in the system.
+
+DMs provide run control to their harts in the platform. Abstract commands
 provide access to GPRs. Additional registers are accessible through abstract
 commands or by writing programs to the optional Program Buffer.
 
