@@ -33,7 +33,8 @@ The DMI uses between 7 and 32 address bits.  It supports read and write
 operations.  The bottom of the address space is
 used for the first (and usually only) DM. Extra space can be used for custom
 debug devices, other cores, additional DMs, etc. If there are additional DMs
-on this DMI, the DMI address of the next DM is given in \Rnextdm.
+on this DMI, the base address of the next DM in the DMI address space is given
+in \Rnextdm.
 
 The Debug Module is controlled via register accesses to its DMI address space.
 
@@ -397,6 +398,9 @@ while writes should be ignored, with the following mandatory exceptions:
 \end{steps}
 
 \section{Debug Module DMI Registers} \label{dmdebbus}
+
+Each DM has a base address (which is 0 for the first DM). The register
+addresses described in this section are offsets from this base address.
 
 When read, unimplemented Debug Module DMI Registers return 0. Writing them has
 no effect.
