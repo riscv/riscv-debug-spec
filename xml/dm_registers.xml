@@ -399,6 +399,14 @@
     <register name="Device Tree Addr 2" short="devtreeaddr2" address="0x1b"/>
     <register name="Device Tree Addr 3" short="devtreeaddr3" address="0x1c"/>
 
+    <register name="Next Debug Module" short="nextdm" address="0x1d">
+        If there is more than one DM accessible on this DMI, this register
+        contains the base address of the next one in the chain, or 0 if this is
+        the last one in the chain.
+
+        <field name="addr" bits="31:0" access="R" reset="Preset"/>
+    </register>
+
     <register name="Abstract Data 0" short="data0" address="0x04">
         \Rdatazero through \Rdataeleven are basic read/write registers that may
         be read or changed by abstract commands. \Fdatacount indicates how many
