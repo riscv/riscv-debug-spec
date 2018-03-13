@@ -1,4 +1,3 @@
-
 \chapter{Debug Module (DM)} \label{dm}
 
 \begin{steps}{The Debug Module implements a translation interface between abstract debug
@@ -19,7 +18,7 @@
 In order to implement memory access, a target must implement either the Program
 Buffer or System Bus Access.
 
-A single DM can debug up to 1024 harts.
+A single DM can debug up to $2^{20}$ harts.
 
 \section{Debug Module Interface (DMI)} \label{dmi}
 
@@ -36,24 +35,8 @@ debug devices, other cores, additional DMs, etc. If there are additional DMs
 on this DMI, the base address of the next DM in the DMI address space is given
 in \Rnextdm.
 
-The Debug Module is controlled via register accesses to its DMI address space.
 
-\begin{table}[htp]
-    \centering
-    \caption{Debug Module Interface Address Space}
-    \label{tab:header}
-    \begin{tabulary}{\textwidth}{|r|L|}
-        \hline
-        0x00 -- 0x3f & Registers described in Section~\ref{dmdebbus}. \\
-        \hline
-        0x40 -- 0x5f & This is called the `halt region`.  These 32 addresses
-        for 32-bit words provide access to the halt bit for up to 1024 harts.
-        If the hart is halted, the bit is 1.  Otherwise
-        the bit is 0. The bit for hart 0 is the LSB in the 32-bit word at 0x40.
-        The bit for hart 1023 is the MSB in the 32-bit word at 0x5f. \\
-        \hline
-    \end{tabulary}
-\end{table}
+The Debug Module is controlled via register accesses to its DMI address space.
 
 \section{Reset Control} \label{reset}
 
