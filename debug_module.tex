@@ -23,7 +23,7 @@ A single DM can debug up to 1024 harts.
 
 \section{Debug Module Interface (DMI)} \label{dmi}
 
-The Debug Module is a slave to a bus called the Debug Module Interface (DMI). The
+Debug Modules are slaves to a bus called the Debug Module Interface (DMI). The
 master of the bus is the Debug Transport Module(s).
 The Debug Module Interface can be a trivial bus with one master and one slave,
 or use a more full-featured bus like TileLink or the AMBA Advanced Peripheral
@@ -31,8 +31,10 @@ Bus. The details are left to the system designer.
 
 The DMI uses between 7 and 32 address bits.  It supports read and write
 operations.  The bottom of the address space is
-used for the DM. Extra space can be used for custom debug devices, other cores,
-additional DMs, etc.
+used for the first (and usually only) DM. Extra space can be used for custom
+debug devices, other cores, additional DMs, etc. If there are additional DMs
+on this DMI, the base address of the next DM in the DMI address space is given
+in \Rnextdm.
 
 The Debug Module is controlled via register accesses to its DMI address space.
 
@@ -396,6 +398,9 @@ while writes should be ignored, with the following mandatory exceptions:
 \end{steps}
 
 \section{Debug Module DMI Registers} \label{dmdebbus}
+
+Each DM has a base address (which is 0 for the first DM). The register
+addresses described in this section are offsets from this base address.
 
 When read, unimplemented Debug Module DMI Registers return 0. Writing them has
 no effect.
