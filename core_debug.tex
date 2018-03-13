@@ -40,11 +40,11 @@ sc} pairs.
 \begin{commentary}
     This is a behavior that debug users must be aware of. If they have a
     breakpoint set between a {\tt lr} and {\tt sc} pair, or are stepping
-    through such code, they may never leave it.  Fortunately in general use
+    through such code, the {\tt sc} may never succeed.  Fortunately in general use
     there will be very few instructions in such a sequence, and anybody
     debugging it will quickly notice that the reservation is not occurring.
     The solution in that case is to set a breakpoint on the first instruction
-    after {\tt sc} and run to it.
+    after the {\tt sc} and run to it.
 \end{commentary}
 
 \section{Single Step}
