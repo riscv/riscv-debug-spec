@@ -1,6 +1,7 @@
 CC=$(RISCV)/bin/riscv64-unknown-elf-gcc
 
-NAME=riscv-debug-spec
+SPEC=riscv-debug-spec
+NOTES=riscv-debug-workgroup-notes
 
 REGISTERS_TEX = jtag_registers.tex
 REGISTERS_TEX += core_registers.tex
@@ -9,7 +10,6 @@ REGISTERS_TEX += dm_registers.tex
 REGISTERS_TEX += sample_registers.tex
 REGISTERS_TEX += abstract_commands.tex
 REGISTERS_TEX += sw_registers.tex
-REGISTERS_TEX += serial.tex
 
 REGISTERS_CHISEL += dm_registers.scala
 REGISTERS_CHISEL += abstract_commands.scala
@@ -23,17 +23,19 @@ INCLUDES_TEX += dtm.tex
 INCLUDES_TEX += jtagdtm.tex
 INCLUDES_TEX += implementations.tex
 INCLUDES_TEX += debugger_implementation.tex
-INCLUDES_TEX += future.tex
 
 FIGURES = fig/*
 
-all:	$(NAME).pdf debug_defines.h
+all:	$(SPEC).pdf $(NOTES).pdf debug_defines.h
 
-$(NAME).pdf: $(NAME).tex $(REGISTERS_TEX) $(FIGURES) $(INCLUDES_TEX) vc.tex changelog.tex
-	pdflatex -shell-escape $< && makeindex $(NAME) && pdflatex -shell-escape $<
+$(SPEC).pdf: $(SPEC).tex $(REGISTERS_TEX) $(FIGURES) $(INCLUDES_TEX) vc.tex changelog.tex
+	pdflatex -shell-escape $< && makeindex $(SPEC) && pdflatex -shell-escape $<
 
-publish:	$(NAME).pdf
-	cp $< $(NAME)-`git rev-parse --abbrev-ref HEAD`.`git rev-parse --short HEAD`.pdf
+$(NOTES).pdf: $(NOTES).tex future.tex vc.tex serial.tex
+	pdflatex -shell-escape $< && makeindex $(NOTES) && pdflatex -shell-escape $<
+
+publish:	$(SPEC).pdf
+	cp $< $(SPEC)-`git rev-parse --abbrev-ref HEAD`.`git rev-parse --short HEAD`.pdf
 
 vc.tex: .git/logs/HEAD
 	# https://thorehusfeldt.net/2011/05/13/including-git-revision-identifiers-in-latex/
@@ -70,6 +72,7 @@ debug_defines.h:	$(REGISTERS_TEX:.tex=.h)
 chisel: $(REGISTERS_CHISEL)
 
 clean:
-	rm -f $(NAME).pdf *.aux $(NAME).toc $(NAME).log $(REGISTERS_TEX) \
-	    $(REGISTERS_TEX:=.inc) *.o *_no128.S *.h $(NAME).lof $(NAME).lot $(NAME).out \
-	    $(NAME).hst $(NAME).pyg debug_defines.h *.scala
+	rm -f $(SPEC).pdf *.aux $(SPEC).toc $(SPEC).log $(REGISTERS_TEX) \
+	    $(REGISTERS_TEX:=.inc) *.o *_no128.S *.h $(SPEC).lof $(SPEC).lot $(SPEC).out \
+	    $(SPEC).hst $(SPEC).pyg debug_defines.h *.scala \
+	    $(NOTES).pdf $(NOTES).toc $(NOTES).log $(NOTES).hst $(NOTES).pyg
