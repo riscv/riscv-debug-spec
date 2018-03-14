@@ -323,7 +323,7 @@
             (eg. while executing the Program Buffer).
 
             4 (halt/resume): The abstract command couldn't execute because the
-            hart wasn't in the expected state (running/halted).
+            hart wasn't in the required state (running/halted).
 
             7 (other): The command failed for another reason.
         </field>
