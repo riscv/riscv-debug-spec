@@ -53,7 +53,7 @@ write to an address in the Debug Module which indicates exception.
 Then the hart jumps back to the park loop.
 The DM infers from the write that there was an exception, and sets \Fcmderr appropriately.
 
-To resume execution, the debug module sets a flag which causes the core to execute a {\tt dret}.
+To resume execution, the debug module sets a flag which causes the hart to execute a {\tt dret}.
 When {\tt dret} is executed, \Rpc is restored from \Rdpc and normal execution resumes at the
 privilege set by \Fprv.
 
