@@ -268,15 +268,8 @@
     <!-- =============== Hart Array Registers =============== -->
 
     <register name="Hart Array Window Select" short="hawindowsel" address="0x14">
-
-      This register selects which of the 32-bit portion of the hart array mask register
-      is accessible in \Rhawindow.
-
-      The hart array mask register provides a mask of all harts controlled by
-      the debug module. It contains one bit for every hart this DM may address.
-      A hart is part of the currently selected harts if
-      the corresponding bit is set in the hart array mask register and
-      \Fhasel in \Rdmcontrol is 1, or if the hart is selected by \Fhartsel.
+      This register selects which of the 32-bit portion of the hart array mask
+      register (see Section~\ref{hartarraymask}) is accessible in \Rhawindow.
 
       <field name="0" bits="31:15" access="R/W" reset="0" />
       <field name="hawindowsel" bits="14:0" access="R/W" reset="0">
@@ -288,7 +281,7 @@
 
     <register name="Hart Array Window " short="hawindow" address="0x15">
       This register provides R/W access to a 32-bit portion of the
-      hart array mask register.
+      hart array mask register (see Section~\ref{hartarraymask}).
       The position of the window is determined by \Rhawindowsel. I.e. bit 0
       refers to hart $\Rhawindowsel * 32$, while bit 31 refers to hart
       $\Rhawindowsel * 32 + 31$.
