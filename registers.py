@@ -242,10 +242,10 @@ def write_cheader( fd, registers ):
             fd.write( "#define %-35s %s\n" % ( name, value ) )
 
 def write_chisel( fd, registers ):
-    fd.write("package uncore.devices\n\n")
+    fd.write("package freechips.rocketchip.devices.debug\n\n")
     fd.write("import Chisel._\n\n")
 
-    fd.write("// This file was auto-generated from the repository at https://github.com/sifive/riscv-debug-spec.git,\n")
+    fd.write("// This file was auto-generated from the repository at https://github.com/riscv/riscv-debug-spec.git,\n")
     fd.write("// 'make chisel'\n\n")
 
     fd.write("object " + registers.prefix + "RegAddrs {\n")
