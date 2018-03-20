@@ -494,7 +494,7 @@
         <field name="haltsum0" bits="31:0" access="R" reset="0" />
     </register>
 
-    <register name="Halt Summary 1" short="haltsum1" address="0x18">
+    <register name="Halt Summary 1" short="haltsum1" address="0x13">
         Each bit in this read-only register indicates whether any of a group of
         harts is halted or not.
 
