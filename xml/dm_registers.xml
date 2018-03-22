@@ -316,15 +316,14 @@
             \Rabstractcs, \Rabstractauto was written, or when one
             of the {\tt data} or {\tt progbuf} registers was read or written.
 
-            2 (not supported): The requested command is not supported. A
-            command that is not supported while the hart is running may be
-            supported when it is halted.
+            2 (not supported): The requested command is not supported,
+            regardless of whether the hart is running or not.
 
             3 (exception): An exception occurred while executing the command
             (eg. while executing the Program Buffer).
 
-            4 (halt/resume): An abstract command couldn't execute because the
-            hart wasn't in the expected state (running/halted).
+            4 (halt/resume): The abstract command couldn't execute because the
+            hart wasn't in the required state (running/halted).
 
             7 (other): The command failed for another reason.
         </field>
@@ -496,7 +495,7 @@
         <field name="haltsum0" bits="31:0" access="R" reset="0" />
     </register>
 
-    <register name="Halt Summary 1" short="haltsum1" address="0x18">
+    <register name="Halt Summary 1" short="haltsum1" address="0x13">
         Each bit in this read-only register indicates whether any of a group of
         harts is halted or not. Unavailable/nonexistent harts are not considered to
         be halted.
