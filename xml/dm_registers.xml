@@ -486,7 +486,8 @@
 
     <register name="Halt Summary 0" short="haltsum0" address="0x40">
         Each bit in this read-only register indicates whether one specific hart
-        is halted or not.
+        is halted or not. Unavailable/nonexistent harts are not considered to
+        be halted.
 
         The LSB reflects the halt status of hart \{hartsel[19:5],5'h0\}, and the
         MSB reflects halt status of hart \{hartsel[19:5],5'h1f\}.
@@ -496,7 +497,8 @@
 
     <register name="Halt Summary 1" short="haltsum1" address="0x13">
         Each bit in this read-only register indicates whether any of a group of
-        harts is halted or not.
+        harts is halted or not. Unavailable/nonexistent harts are not considered to
+        be halted.
 
         This register may not be present in systems with fewer than
         33 harts.
@@ -511,7 +513,8 @@
 
     <register name="Halt Summary 2" short="haltsum2" address="0x34">
         Each bit in this read-only register indicates whether any of a group of
-        harts is halted or not.
+        harts is halted or not. Unavailable/nonexistent harts are not considered to
+        be halted.
 
         This register may not be present in systems with fewer than
         1025 harts.
@@ -526,7 +529,8 @@
 
     <register name="Halt Summary 3" short="haltsum3" address="0x35">
         Each bit in this read-only register indicates whether any of a group of
-        harts is halted or not.
+        harts is halted or not. Unavailable/nonexistent harts are not considered to
+        be halted.
 
         This register may not be present in systems with fewer than
         32769 harts.
