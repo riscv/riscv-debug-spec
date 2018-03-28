@@ -238,9 +238,9 @@ an implied {\tt ebreak} that is executed when a hart runs off the end of the
 Program Buffer. This is indicated in \Fimpebreak. With this feature, a Program
 Buffer of just 2 32-bit words can offer efficient debugging.
 
-If \Fprogbufsize is 1, the Program Buffer may only hold a single instruction,
-and \Fimpebreak must be 1. The debugger must only write a single instruction in
-this case.
+If \Fprogbufsize is 1, \Fimpebreak must be 1. It is possible that the Program
+Buffer can hold only one 32- or 16-bit instruction, so the debugger must only
+write a single instruction in this case, regardless of its size.
 This instruction can be a 32-bit
 instruction, or a compressed instruction in the lower 16 bits accompanied by a
 compressed {\tt nop} in the upper 16 bits.
