@@ -626,7 +626,8 @@
 
             2: A bad address was accessed.
 
-            3: There was some other error (eg. alignment).
+            3: There was some other error (eg. alignment, unsupported access
+            size).
         </field>
         <field name="sbasize" bits="11:5" access="R" reset="Preset">
             Width of system bus addresses in bits. (0 indicates there is no bus
