@@ -697,7 +697,9 @@
         If all of the {\tt sbaccess} bits in \Rsbcs are 0, then this register
         is not present.
 
-        Any successful system bus read updates the data in this register.
+        Any successful system bus read updates {\tt sbdata}. If the width of
+        the read access is less than the width of {\tt sbdata}, the contents of
+        the remaining high bits may take on any value.
 
         If \Fsberror or \Fsbbusyerror both aren't 0 then accesses do nothing.
 
