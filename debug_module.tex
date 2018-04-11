@@ -9,6 +9,8 @@
 \item Provide read and write access to a halted hart's GPRs. (Required)
 \item Provide access to a reset signal that allows debugging from the very
     first instruction after reset. (Required)
+\item Provide a mechanism to allow debugging harts immediately out of reset
+      (regardless of the reset cause). (Optional)
 \item Provide access to other hart registers. (Optional)
 \item Provide a Program Buffer to force the hart to execute arbitrary instructions. (Optional)
 \item Allow multiple harts to be halted, resumed, and/or reset at the same time. (Optional)
@@ -116,11 +118,12 @@ at once, Abstract Commands apply only to the hart selected by
 
 \section{Run Control} \label{runcontrol}
 
-For every hart, the Debug Module contains 3 conceptual bits of state: halt
-request, resume request, and hart reset. (The hart reset bit is optional.)
+For every hart, the Debug Module contains 4 conceptual bits of state: halt
+request, resume request, halt-on-reset request,  and hart reset.
+(The hart reset and halt-on-reset request bits are optional.)
 These bits all reset to 0. A debugger can write them for the currently selected
-harts through \Fhaltreq, \Fresumereq, and \Fhartreset in \Rdmcontrol. In
-addition the DM receives halted, running, and resume ack signals from each
+harts through \Fhaltreq, \Fresumereq, \Fsetresethaltreq/\Fclrresethaltreq and \Fhartreset in \Rdmcontrol.
+In addition the DM receives halted, running, and resume ack signals from each
 hart.
 
 When a running hart receives a halt request, it responds by halting and
@@ -139,6 +142,19 @@ When halt or resume is requested, a hart must respond in
 less than one second, unless it is unavailable.
 (How this is implemented is not further specified. A few
 clock cycles will be a more typical latency).
+
+The DM can implement optional halt-on-reset bits for each hart,
+which it indicates by setting \Fhasresethaltreq to 1.
+This means the DM implements the \Fsetresethaltreq and \Fclrresethaltreq bits.
+Writing 1 to \Fsetresethaltreq sets the halt-on-reset request bit for each
+selected hart.
+When a hart's halt-on-reset request bit is set, the hart will immediately enter
+debug mode on the next deassertion of its reset. This is true regardless of
+whether or not the hart's reset is caused by the DM's
+\Fndmreset/\Fhartreset signals.
+The hart's halt-on-reset request bit remains set
+until cleared by the debugger writing 1 to \Fclrresethaltreq
+while the hart is selected, or by debug module reset.
 
 \section{Abstract Commands} \label{abstractcommands}
 

@@ -89,7 +89,11 @@
             \Fauthbusy only becomes set in immediate response to an access to
             \Rauthdata.
         </field>
-        <field name="0" bits="5" reset="0" access="R" />
+        <field name="hasresethaltreq" bits="5" reset="Preset" access="R">
+            1 if this debug module supports halt-on-reset functionality
+            controllable by the \Fsetresethaltreq and \Fclrresethaltreq bits.
+            0 otherwise.
+        </field>
         <field name="devtreevalid" bits="4" reset="Preset" access="R">
             0: \Rdevtreeaddrzero--\Rdevtreeaddrthree hold information which
             is not relevant to the Device Tree.
@@ -125,7 +129,7 @@
         all ones to \Fhartsel (assuming the maximum size) and reading back the
         value to see which bits were actually set.
 
-        <!-- Fields that apply to a specific hart. -->
+        <!-- Fields that apply to all selected hart(s) -->
         <field name="haltreq" bits="31" access="W" reset="-">
             Writes the halt request bit for all currently selected harts.
             When set to 1, each selected hart will halt if it is not currently
@@ -163,8 +167,8 @@
 
             Writes apply to the new value of \Fhartsel and \Fhasel.
         </field>
-        <field name="0" bits="27" reset="0" access="R" />
-        <field name="hasel" bits="26" access="R/W" reset = "0">
+        <field name="0" bits="27" access="R" reset="0" />
+        <field name="hasel" bits="26" access="R/W" reset="0">
             Selects the  definition of currently selected harts.
 
             0: There is a single currently selected hart, that selected by \Fhartsel.
@@ -185,8 +189,25 @@
             The high 10 bits of \Fhartsel: the DM-specific index of the hart to
             select. This hart is always part of the currently selected harts.
         </field>
+        <field name="0" bits="5:4" access="R" reset="0" />
+        <field name="setresethaltreq" bits="3" access="W" reset="0">
+            This optional field writes the halt-on-reset request bit for all
+            currently selected harts.
+            When set to 1, each selected hart will halt upon the next deassertion
+            of its reset. The halt-on-reset request bit is not automatically
+            cleared. The debugger must write to \Fclrresethaltreq to clear it.
+
+            Writes apply to the new value of \Fhartsel and \Fhasel.
+
+            If \Fhasresethaltreq is 0, this field is not implemented.
+        </field>
+        <field name="clrresethaltreq" bits="2" access="W" reset="0">
+            This optional field clears the halt-on-reset request bit for all
+            currently selected harts.
+
+            Writes apply to the new value of \Fhartsel and \Fhasel.
+        </field>
         <!-- Fields that apply to the entire DM. -->
-        <field name="0" bits="5:2" access="R" reset="0" />
         <field name="ndmreset" bits="1" access="R/W" reset="0">
             This bit controls the reset signal from the DM to the rest of the
             system. The signal should reset every part of the system, including
