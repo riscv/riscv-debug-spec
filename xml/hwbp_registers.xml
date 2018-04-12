@@ -102,7 +102,8 @@
         <field name="dmode" bits="XLEN-5" access="R/W" reset="0" />
         <field name="maskmax" bits="XLEN-6:XLEN-11" access="R" reset="Preset">
             Specifies the largest naturally aligned powers-of-two (NAPOT) range
-            supported by the hardware. The value is the logarithm base 2 of the
+            supported by the hardware when \Fmatch is 1. The value is the
+            logarithm base 2 of the
             number of bytes in that range.  A value of 0 indicates that only
             exact value matches are supported (one byte range). A value of 63
             corresponds to the maximum NAPOT range, which is $2^{63}$ bytes in
