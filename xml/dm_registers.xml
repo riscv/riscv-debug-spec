@@ -620,14 +620,19 @@
             While this field is non-zero, no more system bus accesses can be
             initiated by the debug module.
 
+            An implementation may report "Other" (7) for any error condition.
+
             0: There was no bus error.
 
             1: There was a timeout.
 
             2: A bad address was accessed.
 
-            3: There was some other error (eg. alignment, unsupported access
-            size).
+            3: There was an alignment error.
+
+            4: An access of unsupported size was requested.
+
+            7: Other.
         </field>
         <field name="sbasize" bits="11:5" access="R" reset="Preset">
             Width of system bus addresses in bits. (0 indicates there is no bus
