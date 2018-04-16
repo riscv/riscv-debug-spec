@@ -392,6 +392,54 @@ this method.
 \end{tabulary}
 \medskip
 
+\section{Triggers}
+
+A debugger would use hardware triggers to halt a hart when a certain event
+occurs. Below are some examples. There's no requirement on the number and
+features of the triggers implemented in a hart, so these examples may not be
+applicable to all implementations. When a debugger wants to set a trigger, it
+writes the desired configuration, and then reads back to see if it's supported.
+
+\noindent Enter Debug Mode just before the instruction at 0x80001234 is
+executed, to be used as a regular breakpoint in ROM:
+
+\begin{tabulary}{\textwidth}{|r|r|L|}
+    \hline
+    \Rtdataone & 0x105c & action=1, match=0, m=1, s=1, u=1, execute=1 \\
+    \hline
+    \Rtdatatwo & 0x80001234 & address \\
+    \hline
+\end{tabulary}
+\medskip
+
+\noindent Enter Debug Mode right after the value at 0x80007f80 is read:
+
+\begin{tabulary}{\textwidth}{|r|r|L|}
+    \hline
+    \Rtdataone & 0x4159 & timing=1, action=1, match=0, m=1, s=1, u=1, load=1 \\
+    \hline
+    \Rtdatatwo & 0x80007f80 & address \\
+    \hline
+\end{tabulary}
+\medskip
+
+\noindent Enter Debug Mode right before a write to an address between
+0x80007c80 and 0x80007cef (inclusive):
+
+\begin{tabulary}{\textwidth}{|r|r|L|}
+    \hline
+    \Rtdataone 0 & 0x195a & action=1, chain=1, match=2, m=1, s=1, u=1, store=1 \\
+    \hline
+    \Rtdatatwo 0 & 0x80007c80 & start address (inclusive) \\
+    \hline
+    \Rtdataone 1 & 0x115a & action=1, match=2, m=1, s=1, u=1, store=1 \\
+    \hline
+    \Rtdatatwo 1 & 0x80007cf0 & end address (exclusive) \\
+    \hline
+\end{tabulary}
+\medskip
+
+
 \section{Handling Exceptions}
 
 Generally the debugger can avoid exceptions by being careful with the programs
