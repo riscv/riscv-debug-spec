@@ -35,8 +35,13 @@ inefficiency in typical JTAG use.
 
 \section{Main Loop}
 
-A debugger continuously monitors \Rhaltsum to see if any harts have spontaneously
-halted.
+A debugger continuously monitors all harts to see if any of them have
+spontaneously halted. To do this efficiently when there are many harts, it uses
+the {\tt haltsum} registers. Assuming the maximum number of harts exist, first
+it checks \Rhaltsumthree. For each bit set there, it writes \Fhartsel, and
+checks \Rhaltsumtwo. This process repeats through \Rhaltsumone and
+\Rhaltsumzero. Depending on how many harts exist, the process should
+start at one of the lower {\tt haltsum} registers.
 
 \section{Halting} \label{deb:halt}
 
@@ -56,7 +61,7 @@ by hitting a software breakpoint) so the debugger cannot use
 \section{Single Step}
 
 Using the hardware single step feature is almost the same as regular running.
-The debugger just sets \Fstep in \Rdcsr before letting the core run. The core
+The debugger just sets \Fstep in \Rdcsr before letting the hart run. The hart
 behaves exactly as in the running case, except that interrupts may be disabled
 (depending on \Fstepie) and it only fetches and executes a single instruction
 before re-entering Debug Mode.

@@ -1,4 +1,3 @@
-
 \chapter{Debug Module (DM)} \label{dm}
 
 \begin{steps}{The Debug Module implements a translation interface between abstract debug
@@ -19,11 +18,11 @@
 In order to implement memory access, a target must implement either the Program
 Buffer or System Bus Access.
 
-A single DM can debug up to 1024 harts.
+A single DM can debug up to $2^{20}$ harts.
 
 \section{Debug Module Interface (DMI)} \label{dmi}
 
-The Debug Module is a slave to a bus called the Debug Module Interface (DMI). The
+Debug Modules are slaves to a bus called the Debug Module Interface (DMI). The
 master of the bus is the Debug Transport Module(s).
 The Debug Module Interface can be a trivial bus with one master and one slave,
 or use a more full-featured bus like TileLink or the AMBA Advanced Peripheral
@@ -31,27 +30,13 @@ Bus. The details are left to the system designer.
 
 The DMI uses between 7 and 32 address bits.  It supports read and write
 operations.  The bottom of the address space is
-used for the DM. Extra space can be used for custom debug devices, other cores,
-additional DMs, etc.
+used for the first (and usually only) DM. Extra space can be used for custom
+debug devices, other cores, additional DMs, etc. If there are additional DMs
+on this DMI, the base address of the next DM in the DMI address space is given
+in \Rnextdm.
+
 
 The Debug Module is controlled via register accesses to its DMI address space.
-
-\begin{table}[htp]
-    \centering
-    \caption{Debug Module Interface Address Space}
-    \label{tab:header}
-    \begin{tabulary}{\textwidth}{|r|L|}
-        \hline
-        0x00 -- 0x3f & Registers described in Section~\ref{dmdebbus}. \\
-        \hline
-        0x40 -- 0x5f & This is called the `halt region`.  These 32 addresses
-        for 32-bit words provide access to the halt bit for up to 1024 harts.
-        If the hart is halted, the bit is 1.  Otherwise
-        the bit is 0. The bit for hart 0 is the LSB in the 32-bit word at 0x40.
-        The bit for hart 1023 is the MSB in the 32-bit word at 0x5f. \\
-        \hline
-    \end{tabulary}
-\end{table}
 
 \section{Reset Control} \label{reset}
 
@@ -92,7 +77,7 @@ when \Fdmactive is low.
 
 \section{Selecting Harts} \label{selectingharts}
 
-Up to 1024 harts can be connected to a single DM. The debugger
+Up to $2^{20}$ harts can be connected to a single DM. The debugger
 selects a hart, and then subsequent halt, resume, reset, and debugging
 commands are specific to that hart.
 
@@ -112,13 +97,18 @@ All debug modules must support selecting a single hart.
 The debugger can select a hart by writing its index to \Fhartsel.
 Hart indexes start at 0 and are contiguous until the final index.
 
-\subsection {Selecting Multiple Harts}
+\subsection {Selecting Multiple Harts} \label{hartarraymask}
 
-Debug Modules may optionally implement a Hart Array Mask register to allow
-selecting multiple harts at once. The debugger can set bits in the hart array mask register
-using \Rhawindowsel and \Rhawindow, then apply actions to all selected harts
-by setting \Fhasel. If this feature is supported, multiple harts can be
-halted, resumed, and reset simultaneously.
+Debug Modules may implement a Hart Array Mask register to allow selecting
+multiple harts at once. The Nth bit in the Hart Array Mask register is used to
+select the hart with index N. Usually a DM will have a Hart Array Mask register
+exactly wide enough to select all the harts it supports, but it's allowed to
+tie any of these bits to 0.
+
+The debugger can set bits in the hart array mask register using \Rhawindowsel
+and \Rhawindow, then apply actions to all selected harts by setting \Fhasel. If
+this feature is supported, multiple harts can be halted, resumed, and reset
+simultaneously.
 
 Only the actions initiated by \Rdmcontrol can apply to multiple harts
 at once, Abstract Commands apply only to the hart selected by
@@ -253,11 +243,19 @@ an implied {\tt ebreak} that is executed when a hart runs off the end of the
 Program Buffer. This is indicated in \Fimpebreak. With this feature, a Program
 Buffer of just 2 32-bit words can offer efficient debugging.
 
-If \Fprogbufsize is 1, the Program Buffer may only hold a single instruction,
-and \Fimpebreak must be 1.
+If \Fprogbufsize is 1, \Fimpebreak must be 1. It is possible that the Program
+Buffer can hold only one 32- or 16-bit instruction, so the debugger must only
+write a single instruction in this case, regardless of its size.
 This instruction can be a 32-bit
 instruction, or a compressed instruction in the lower 16 bits accompanied by a
 compressed {\tt nop} in the upper 16 bits.
+
+\begin{commentary}
+    The slightly inconsistent behavior with a Program Buffer of size 1 is to
+    accommodate hardware designs that prefer to stuff instructions directly
+    into the pipeline when halted, instead of having the Program Buffer exist
+    in the address space somewhere.
+\end{commentary}
 
 If the debugger executes a program that does not
 terminate with an {\tt ebreak} instruction, the hart will remain in Debug Mode
@@ -281,7 +279,7 @@ executing a Program Buffer, and then restore \Rdpc before leaving Debug Mode.
 \end{commentary}
 
 The Program Buffer may be implemented as RAM which is accessible to the
-hart as RAM memory. A debugger can determine if this is the case by executing small
+hart. A debugger can determine if this is the case by executing small
 programs that attempt to write and read back relative to \Rpc while executing
 from the Program Buffer.
 If so, the debugger has more flexibility in what it can do with the program buffer.
@@ -396,6 +394,9 @@ while writes should be ignored, with the following mandatory exceptions:
 \end{steps}
 
 \section{Debug Module DMI Registers} \label{dmdebbus}
+
+Each DM has a base address (which is 0 for the first DM). The register
+addresses described in this section are offsets from this base address.
 
 When read, unimplemented Debug Module DMI Registers return 0. Writing them has
 no effect.

@@ -79,7 +79,7 @@
             the hart will immediately enter Debug Mode before executing
             the trap handler, with appropriate exception registers set.
         </field>
-        <field name="prv" bits="1:0" access="R/W" reset="0">
+        <field name="prv" bits="1:0" access="R/W" reset="3">
             Contains the privilege level the hart was operating in when Debug
             Mode was entered. The encoding is described in Table
             \ref{tab:privlevel}.  A debugger can change this value to change

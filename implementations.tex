@@ -6,7 +6,7 @@ match, or come up with their own design.
 
 \section{Abstract Command Based}
 
-Halting happens by stalling the processor execution pipeline.
+Halting happens by stalling the hart execution pipeline.
 
 Muxes on the register file(s) allow for accessing GPRs and CSRs
 using the Access Register abstract command.
@@ -19,9 +19,9 @@ This implementation only implements the Access Register abstract command
 for GPRs on a halted hart, and relies on the Program Buffer for all other
 operations.
 
-This method uses the processor's existing pipeline
+This method uses the hart's existing pipeline
 and ability to execute from arbitrary memory locations to avoid
-modifications to a processor's datapath.
+modifications to a hart's datapath.
 When the halt request bit is set, the Debug Module raises a special interrupt
 to the selected hart(s). This interrupt causes each
 hart to enter Debug Mode and jump to a defined
@@ -53,7 +53,7 @@ write to an address in the Debug Module which indicates exception.
 Then the hart jumps back to the park loop.
 The DM infers from the write that there was an exception, and sets \Fcmderr appropriately.
 
-To resume execution, the debug module sets a flag which causes the core to execute a {\tt dret}.
+To resume execution, the debug module sets a flag which causes the hart to execute a {\tt dret}.
 When {\tt dret} is executed, \Rpc is restored from \Rdpc and normal execution resumes at the
 privilege set by \Fprv.
 

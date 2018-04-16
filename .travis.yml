@@ -20,3 +20,5 @@ addons:
 # default python path.
 script:
   - PYTHONPATH=$PYTHONPATH:/usr/lib/python2.7/dist-packages make
+  - PYTHONPATH=$PYTHONPATH:/usr/lib/python2.7/dist-packages make chisel
+  

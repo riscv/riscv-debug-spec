@@ -139,7 +139,7 @@
             which case the debugger has a little more control.
 
             Data load triggers with \Ftiming of 0 will result in the same load
-            happening again when the debugger lets the core run. For data load
+            happening again when the debugger lets the hart run. For data load
             triggers, debuggers must first attempt to set the breakpoint with
             \Ftiming of 1.
 
