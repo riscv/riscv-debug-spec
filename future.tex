@@ -15,7 +15,6 @@ Some future version of this spec may implement some of the following features.
       be halted/run/stepped simultaneously. When a hart hits a breakpoint, all
       the other harts in the same group also halt within a few clock cycles.
    \item DTMs are specified for protocols like USB, I2C, SPI, and SWD.
-   \item Hart registers can be read without halting the processor.
    \item The debugger can communicate with the power manager to power cores up
       or down, and to query their status.
    \item Serial ports can raise an interrupt when a send/receive queue becomes full/empty.
@@ -24,8 +23,6 @@ Some future version of this spec may implement some of the following features.
       happens anyway. This mechanism can be used to eg. read/write memory with
       minimal interruption, making sure never to interrupt during a critical
       piece of code.
-   \item The debugger can non-intrusively sample a recent PC value from any
-      running hart.
    \item The Debug Module can include a serial interface for re-using
       the DTM interface as a generic communication interface.
 \end{enumerate}
