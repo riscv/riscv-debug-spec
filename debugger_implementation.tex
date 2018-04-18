@@ -439,6 +439,33 @@ executed, to be used as a regular breakpoint in ROM:
 \end{tabulary}
 \medskip
 
+\noindent Enter Debug Mode right before a write to an address between
+0x81230000 and 0x8123ffff (inclusive):
+
+\begin{tabulary}{\textwidth}{|r|r|L|}
+    \hline
+    \Rtdataone & 0x10da & action=1, match=1, m=1, s=1, u=1, store=1 \\
+    \hline
+    \Rtdatatwo & 0x81237fff & 16 bits to match exactly, then 0, then all ones. \\
+    \hline
+\end{tabulary}
+\medskip
+
+\noindent Enter Debug Mode right after a read from an address between
+0x86753090 and 0x8675309f or between 0x96753090 and 0x9675309f (inclusive):
+
+\begin{tabulary}{\textwidth}{|r|r|L|}
+    \hline
+    \Rtdataone 0 & 0x41a59 & timing=1, action=1, chain=1, match=4, m=1, s=1, u=1, load=1 \\
+    \hline
+    \Rtdatatwo 0 & 0xfff03090 & Mask for low half, then match for low half \\
+    \hline
+    \Rtdataone 1 & 0x412d9 & timing=1, action=1, match=5, m=1, s=1, u=1, load=1 \\
+    \hline
+    \Rtdatatwo 1 & 0x7fff8675 & Mask for high half, then match for high half \\
+    \hline
+\end{tabulary}
+\medskip
 
 \section{Handling Exceptions}
 
