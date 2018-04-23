@@ -394,14 +394,15 @@ this method.
 
 \section{Triggers}
 
-A debugger would use hardware triggers to halt a hart when a certain event
-occurs. Below are some examples. There's no requirement on the number and
-features of the triggers implemented in a hart, so these examples may not be
-applicable to all implementations. When a debugger wants to set a trigger, it
-writes the desired configuration, and then reads back to see if it's supported.
+A debugger can use hardware triggers to halt a hart when a certain event
+occurs.  Below are some examples, but as there is no requirement on the number
+of features of the triggers implemented by a hart, these examples may not be
+applicable to all implementations.  When a debugger wants to set a trigger, it
+writes the desired configuration, and then reads back to see if that
+configuration supported.
 
 \noindent Enter Debug Mode just before the instruction at 0x80001234 is
-executed, to be used as a regular breakpoint in ROM:
+executed, to be used as an instruction breakpoint in ROM:
 
 \begin{tabulary}{\textwidth}{|r|r|L|}
     \hline
