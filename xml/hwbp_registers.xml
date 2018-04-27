@@ -32,6 +32,9 @@
             3: The trigger is an instruction count trigger. The remaining bits
             in this register act as described in \Ricount.
 
+            4: The trigger is an exception trigger. The remaining bits
+            in this register act as described in \Ricount.
+
             15: This trigger exists (so enumeration shouldn't terminate), but
             is not currently available.
 
@@ -271,6 +274,87 @@
         </field>
 
         <field name="action" bits="5:0" access="R/W" reset="0">
+            Determines what happens when this trigger matches.
+
+            0: Raise a breakpoint exception. (Used when software wants to use the
+            trigger module without an external debugger attached.)
+
+            1: Enter Debug Mode. (Only supported when \Fdmode is 1.)
+
+            2: Start tracing.
+
+            3: Stop tracing.
+
+            4: Emit trace data for this match. If it is a data access match,
+            emit appropriate Load/Store Address/Data. If it is an instruction
+            execution, emit its PC.
+
+            Other values are reserved for future use.
+        </field>
+    </register>
+
+    <register name="Exception Trigger" short="etrigger" address="0x7a1">
+        This register is accessible as \Rtdataone when \Ftype is 4.
+
+        If implemented, it allows triggering on a variety of interrupt and
+        exception sources. If such a trigger is taken, all the usual CSRs as
+        well as \Rpc are updated, and the requested action is taken just before
+        the first instruction of the interrupt/exception handler is executed.
+
+        <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="2" />
+        <field name="dmode" bits="XLEN-5" access="R/W" reset="0" />
+        <field name="0" bits="XLEN-6:24" access="R" reset="0" />
+        <field name="source" bits="23:10" access="R/W" reset="0">
+            For each bit that is set, the corresponding interrupt/exception
+            will cause this trigger to fire if bit corresponding to the current
+            mode is also set.
+
+            0: Software interrupt
+
+            1: Timer interrupt
+
+            2: External interrupt
+
+            3: Instruction address misaligned
+
+            4: Instruction access fault
+
+            5: Illegal instruction
+
+            6: Load address misaligned
+
+            7: Load access fault
+
+            8: Store/AMO address misaligned
+
+            9: Store/AMO access fault
+
+            10: Environment call
+
+            11: Instruction page fault
+
+            12: Load page fault
+
+            13: Store/AMO page fault
+        </field>
+        <field name="m" bits="9" access="R/W" reset="0">
+            This trigger only fires in M mode if this bit is 1.
+        </field>
+        <field name="0" bits="8" access="R" reset="0" />
+        <field name="s" bits="7" access="R/W" reset="0">
+            This trigger only fires in S mode if this bit is 1.
+        </field>
+        <field name="u" bits="6" access="R/W" reset="0">
+            This trigger only fires in U mode if this bit is 1.
+        </field>
+        <field name="hit" bits="5" access="R/W" reset="0">
+            If this optional bit is implemented, the hardware sets it when this
+            trigger matches. The trigger's user can set or clear it at any
+            time. The trigger's user can use this bit to determine which
+            trigger(s) matched.  If the bit is not implemented, it is always 0
+            and writing it has no effect.
+        </field>
+        <field name="action" bits="4:0" access="R/W" reset="0">
             Determines what happens when this trigger matches.
 
             0: Raise a breakpoint exception. (Used when software wants to use the
