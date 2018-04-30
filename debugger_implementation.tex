@@ -483,12 +483,12 @@ must have caused it.
 
 \section{Quick Access} \label{quickaccess}
 
-Halt the hart for a minimum amount of time to perform a single memory write.
-
 There are a variety of instructions to transfer data between GPRs and the {\tt
 data} registers. They are either loads/stores or CSR reads/writes. The specific
-addresses also vary. This is all specified in \Rhartinfo. The example here uses
+addresses also vary. This is all specified in \Rhartinfo. The examples here uses
 the pseudo-op {\tt transfer dest, src} to represent all these options.
+
+Halt the hart for a minimum amount of time to perform a single memory write:
 
 \begin{tabulary}{\textwidth}{|r|r|l|L|}
     \hline
@@ -517,4 +517,30 @@ the pseudo-op {\tt transfer dest, src} to represent all these options.
     Write & \Rcommand & 0x10000000 & Perform quick access \\
     \hline
 \end{tabulary}
+
+This shows an example of setting the \Fm bit in \Rmcontrol to
+enable a hardware breakpoint in M mode.
+Similar quick access instructions could have been used previously
+to configure the trigger that is being enabled here:
+
+\begin{tabulary}{\textwidth}{|r|r|l|L|}
+    \hline
+    Op & Address & Value & Comment \\
+    \hline
+    Write & \Rprogbufzero & {\tt transfer arg2, s0} & Save \Szero \\
+    \hline
+    Write & {\tt progbuf1} & {\tt li s0, (1 << 6)} & Form the mask for \Fm bit \\
+    \hline
+    Write & {\tt progbuf2} & {\tt csrrs x0, \Rtdataone, s0} & Apply the mask to \Rmcontrol \\
+    \hline
+    Write & {\tt progbuf3} & {\tt transfer s0, arg2} & Restore \Szero \\
+    \hline
+    Write & {\tt progbuf4} & {\tt ebreak} & \\
+   \hline
+    Write & \Rcommand & 0x10000000 & Perform quick access \\
+   \hline
+\end{tabulary}
+
+
+
 \medskip
