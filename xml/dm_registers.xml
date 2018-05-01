@@ -240,7 +240,7 @@
         <field name="0" bits="19:17" access="R" reset="0" />
         <field name="dataaccess" bits="16" access="R" reset="Preset">
             0: The {\tt data} registers are shadowed in the hart by CSR
-            registers. Each CSR register is XLEN bits in size, and corresponds
+            registers. Each CSR register is MXLEN bits in size, and corresponds
             to a single argument, per Table~\ref{tab:datareg}.
 
             1: The {\tt data} registers are shadowed in the hart's memory map.
