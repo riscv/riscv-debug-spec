@@ -3,10 +3,6 @@
     prevent untrusted user code from causing entry into Debug Mode without the
     OS's permission.
 
-    \Rtdataone always contains a \Faction field, but the position varies
-    between trigger types. The encoding is, however, always the same and shown
-    in Table~\ref{tab:action}.
-
     \begin{table}[H]
     \centering
     \caption{\Faction encoding}
@@ -18,7 +14,8 @@
     0 &amp; Raise a breakpoint exception. (Used when software wants to use the
     trigger module without an external debugger attached.) \\
     \hline
-    1 &amp; Enter Debug Mode. (Only supported when \Fdmode is 1.) \\
+    1 &amp; Enter Debug Mode. (Only supported when the trigger's \Fdmode is 1.)
+    \\
     \hline
     2 &amp; Start tracing. \\
     \hline
@@ -180,7 +177,10 @@
             will never fire (unless consecutive instructions match the
             appropriate triggers).
         </field>
-        <field name="action" bits="17:12" access="R/W" reset="0" />
+        <field name="action" bits="17:12" access="R/W" reset="0">
+            The action to take when the trigger fires. The values are explained
+            in Table~\ref{tab:action}.
+        </field>
         <field name="chain" bits="11" access="R/W" reset="0">
             0: When this trigger matches, the configured action is taken.
 
@@ -285,65 +285,38 @@
             by 1.
         </field>
 
-        <field name="action" bits="5:0" access="R/W" reset="0" />
+        <field name="action" bits="5:0" access="R/W" reset="0">
+            The action to take when the trigger fires. The values are explained
+            in Table~\ref{tab:action}.
+        </field>
     </register>
 
     <register name="Exception Trigger" short="etrigger" address="0x7a1">
         This register is accessible as \Rtdataone when \Ftype is 4.
 
-        If implemented, it allows triggering on a variety of interrupt and
-        exception sources. If such a trigger is taken, all the usual CSRs as
-        well as \Rpc are updated, and the requested action is taken just before
-        the first instruction of the interrupt/exception handler is executed.
+        This trigger may fire on any of the interrupts configurable in \Rmie
+        (described in the Privileged Spec). The interrupts to fire on are
+        configured by setting the same bit in \Rtdatatwo as would be set in
+        \Rmie to enable the interrupt.
 
-        The exceptions to trigger on are specified in \Rtdatatwo. Each of the
-        low 16 bits corresponds to the exceptions listed in the description of
-        \Rmcause in the Privileged Spec when the Exception bit is 0, while the
-        next 16 bits correspond to the exceptions listed there when the
-        Exception bit is 1. The full list is duplicated here in
-        Table~\ref{tab:etrigger}. An implementation may decide per bit whether
-        to implement it as R/W, or to tie it to 0.
+        This trigger may also fire on up to XLEN of the Exception Codes defined
+        in \Rmcause (described in the Privileged Spec, with Interrupt=0). Those
+        causes are configured by writing the corresponding bit in \Rtdatathree.
+        (Eg. to trap on an illegal instruction, the debugger sets bit 2 in
+        \Rtdatathree.)
 
-        \begin{table}[H]
-        \centering
-        \caption{\Retrigger exceptions in \Rtdatatwo}
-        \label{tab:etrigger}
-        \begin{tabular}{|r|l|}
-        \hline
-        Bit &amp; Description \\
-        \hline
-        0 &amp; Instruction address misaligned \\
-        1 &amp; Instruction access fault \\
-        2 &amp; Illegal instruction \\
-        3 &amp; Breakpoint \\
-        4 &amp; Load address misaligned \\
-        5 &amp; Load access fault \\
-        6 &amp; Store/AMO address misaligned \\
-        7 &amp; Store/AMO access fault \\
-        8 &amp; Environment call from U-mode \\
-        9 &amp; Environment call from S-mode \\
-        10 &amp; Reserved \\
-        11 &amp; Environment call from M-mode \\
-        12 &amp; Instruction page fault \\
-        13 &amp; Load page fault \\
-        14 &amp; Reserved \\
-        15 &amp; Store/AMO page fault \\
-        16 &amp; User software interrupt \\
-        17 &amp; Supervisor software interrupt \\
-        18 &amp; Reserved \\
-        19 &amp; Machine software interrupt \\
-        20 &amp; User timer interrupt \\
-        21 &amp; Supervisor timer interrupt \\
-        22 &amp; Reserved \\
-        23 &amp; Machine timer interrupt \\
-        24 &amp; User external interrupt \\
-        25 &amp; Supervisor external interrupt \\
-        26 &amp; Reserved \\
-        27 &amp; Machine external interrupt \\
-        $\geq28$ &amp; Reserved \\
-        \hline
-        \end{tabular}
-        \end{table}
+        As with all other trigger functionality, hardware may only implement a
+        subset of these options. A debugger must read back \Rtdatatwo and
+        \Rtdatathree after writing them to confirm the requested functionality
+        is actually supported.
+
+        The trigger only fires if the hart takes an exception because of the
+        cause. (Eg. it does not fire when a timer interrupt occurs but that
+        interrupt is not enabled in \Rmie.)
+
+        When the trigger fires, all CSRs are updated as defined by the
+        Privileged Spec, and the requested action is taken just before the
+        first instruction of the interrupt/exception handler is executed.
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="2" />
         <field name="dmode" bits="XLEN-5" access="R/W" reset="0" />
@@ -365,6 +338,9 @@
         <field name="u" bits="6" access="R/W" reset="0">
             When set, enable this trigger in U mode.
         </field>
-        <field name="action" bits="5:0" access="R/W" reset="0" />
+        <field name="action" bits="5:0" access="R/W" reset="0">
+            The action to take when the trigger fires. The values are explained
+            in Table~\ref{tab:action}.
+        </field>
     </register>
 </registers>
