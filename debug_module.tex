@@ -100,7 +100,7 @@ Hart indexes start at 0 and are contiguous until the final index.
 \subsection {Selecting Multiple Harts} \label{hartarraymask}
 
 Debug Modules may implement a Hart Array Mask register to allow selecting
-multiple harts at once. The Nth bit in the Hart Array Mask register aplies to
+multiple harts at once. The Nth bit in the Hart Array Mask register applies to
 the hart with index N. If the bit is 1 then the hart is selected.  Usually a DM
 will have a Hart Array Mask register exactly wide enough to select all the
 harts it supports, but it's allowed to tie any of these bits to 0.
