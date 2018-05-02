@@ -305,20 +305,20 @@
         (Eg. to trap on an illegal instruction, the debugger sets bit 2 in
         \Rtdatathree.)
 
-        As with all other trigger functionality, hardware may only implement a
+        As with all other trigger functionality, hardware may implement only a
         subset of these options. A debugger must read back \Rtdatatwo and
         \Rtdatathree after writing them to confirm the requested functionality
         is actually supported.
 
-        The trigger only fires if the hart takes an exception because of the
-        cause. (Eg. it does not fire when a timer interrupt occurs but that
-        interrupt is not enabled in \Rmie.)
+        The trigger only fires if the hart takes a trap because of the cause.
+        (Eg. it does not fire when a timer interrupt occurs but that interrupt
+        is not enabled in \Rmie.)
 
         When the trigger fires, all CSRs are updated as defined by the
         Privileged Spec, and the requested action is taken just before the
         first instruction of the interrupt/exception handler is executed.
 
-        <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="2" />
+        <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="4" />
         <field name="dmode" bits="XLEN-5" access="R/W" reset="0" />
         <field name="hit" bits="XLEN-6" access="R/W" reset="0">
             If this optional bit is implemented, the hardware sets it when this
