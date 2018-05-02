@@ -583,7 +583,7 @@
             reason, and does not go low until the access is fully completed.
 
             Writes to \Rsbcs while \Fsbbusy is high result in undefined
-            behavior.  A debugger must not write to \Rsbcs until they read
+            behavior.  A debugger must not write to \Rsbcs until it reads
             \Fsbbusy as 0.
         </field>
         <field name="sbreadonaddr" bits="20" access="R/W" reset="0">
