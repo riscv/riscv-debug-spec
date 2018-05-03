@@ -582,8 +582,9 @@
             bit goes high immediately when a read or write is requested for any
             reason, and does not go low until the access is fully completed.
 
-            To avoid race conditions, debuggers must not try to clear \Fsberror
-            until they read \Fsbbusy as 0.
+            Writes to \Rsbcs while \Fsbbusy is high result in undefined
+            behavior.  A debugger must not write to \Rsbcs until it reads
+            \Fsbbusy as 0.
         </field>
         <field name="sbreadonaddr" bits="20" access="R/W" reset="0">
             When 1, every write to \Rsbaddresszero automatically triggers a
