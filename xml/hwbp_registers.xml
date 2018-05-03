@@ -329,14 +329,14 @@
         </field>
         <field name="0" bits="XLEN-7:10" access="R" reset="0" />
         <field name="m" bits="9" access="R/W" reset="0">
-            When set, enable this trigger in M mode.
+            When set, enable this trigger for traps that are taken from M mode.
         </field>
         <field name="0" bits="8" access="R" reset="0" />
         <field name="s" bits="7" access="R/W" reset="0">
-            When set, enable this trigger in S mode.
+            When set, enable this trigger for traps that are taken from S mode.
         </field>
         <field name="u" bits="6" access="R/W" reset="0">
-            When set, enable this trigger in U mode.
+            When set, enable this trigger for traps that are taken from U mode.
         </field>
         <field name="action" bits="5:0" access="R/W" reset="0">
             The action to take when the trigger fires. The values are explained
