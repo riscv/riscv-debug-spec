@@ -38,12 +38,12 @@ to determine whether the debugger wants it to
 execute the Program Buffer or perform a resume.
 
 To execute an abstract command, the DM first populates some internal words of
-program buffer according to \Rcommand. When \Ftransfer is set, the debugger
+program buffer according to \Rcommand. When \Ftransfer is set, the DM
 populates these words with {\tt lw <gpr>, 0x400(zero)} or {\tt sw 0x400(zero), <gpr>}.
 64- and 128-bit accesses use {\tt ld}/{\tt sd} and {\tt lq}/{\tt sq}
-respectively. If \Ftransfer is not set, these instructions are populated as {\tt nop}s.
+respectively. If \Ftransfer is not set, the DM populates these instructions as {\tt nop}s.
 If \Fexecute is set, execution continues to the debugger-controlled Program Buffer,
-otherwise the debug module causes a {\tt ebreak} to execute immediately.
+otherwise the DM causes a {\tt ebreak} to execute immediately.
 
 When {\tt ebreak} is executed (indicating the end of the
 Program Buffer code) the hart returns to its park loop. If an exception is
