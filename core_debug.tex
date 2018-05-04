@@ -13,7 +13,12 @@ external debugging. How Debug Mode is implemented is not specified here.
 \begin{steps}{When executing code from the Program Buffer, the hart stays
     in Debug Mode and the following apply:}
 \item All operations are executed at machine mode privilege level, except that
-    \Fmprv in \Rmstatus is ignored.
+    \Fmprv in \Rmstatus may be ignored according to \Fmprven.
+    \begin{commentary}
+      In general, the debugger is expected to be able to simulate all the effects of \Fmprv.
+      The exception is the case of Sv32 systems, which need \Fmprv functionality in order to access
+      34-bit physical addresses. Other systems are likely to tie \Fmprven to 0.
+    \end{commentary}
 \item All interrupts (including NMI) are masked.
 \item Exceptions don't update any registers.  That includes {\tt cause}, {\tt
     epc}, {\tt tval}, {\tt dpc}, and \Rmstatus. They do end execution of the
