@@ -97,6 +97,10 @@
         \end{tabular}
         \end{table}
 
+        This trigger type may be limited to address comparisons (\Fselect is
+        always 0) only. If that is the case, then \Rtdatatwo must be able to
+        hold all valid virtual addresses but it need not be capable of holding
+        other values.
 
         <field name="type" bits="MXLEN-1:MXLEN-4" access="R" reset="2" />
         <field name="dmode" bits="MXLEN-5" access="R/W" reset="0" />
