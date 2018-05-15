@@ -1,6 +1,12 @@
 <registers name="Core Debug Registers" prefix="CSR_">
     These registers are only accessible from Debug Mode.
+
     <register name="Debug Control and Status" short="dcsr" address="0x7b0">
+        \begin{commentary}
+            \Fcause priorities are assigned such that the least predictable
+            events have the highest priority.
+        \end{commentary}
+
         <field name="xdebugver" bits="31:28" access="R" reset="Preset">
           0: There is no external debug support.
 
