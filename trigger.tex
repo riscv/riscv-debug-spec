@@ -13,9 +13,11 @@ separately.
     build a list of all triggers and their features as follows:}
 \item Write 0 to \Rtselect.
 \item Read back \Rtselect to confirm this trigger exists. If not, exit.
-\item Read \Rtdataone, and possible \Rtdatatwo and \Rtdatathree depending on the
-    trigger type.
-\item If \Ftype is 0, this trigger doesn't exist. Exit the loop.
+\item Read \Rtinfo.
+\item If \Finfo is 1, this trigger doesn't exist. Exit the loop.
+\item If \Finfo is 0, the debugger must read \Rtdataone to discover the type.
+    (If the type is 0, this trigger doesn't exist. Exit the loop.)
+\item Otherwise, the selected trigger supports the types discovered in \Finfo.
 \item Repeat, incrementing the value in \Rtselect.
 \end{steps}
 
