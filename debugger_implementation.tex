@@ -33,15 +33,15 @@ a read, except that a write is performed instead of the read.
 It should almost never be necessary to scan IR, avoiding a big part of the
 inefficiency in typical JTAG use.
 
-\section{Main Loop}
+\section{Checking for Halted Harts}
 
-A debugger continuously monitors all harts to see if any of them have
-spontaneously halted. To do this efficiently when there are many harts, it uses
-the {\tt haltsum} registers. Assuming the maximum number of harts exist, first
-it checks \Rhaltsumthree. For each bit set there, it writes \Fhartsel, and
-checks \Rhaltsumtwo. This process repeats through \Rhaltsumone and
-\Rhaltsumzero. Depending on how many harts exist, the process should
-start at one of the lower {\tt haltsum} registers.
+A user will want to know as quickly as possible when a hart is halted (eg. due
+to a breakpoint).  To efficiently determine which harts are halted when there
+are many harts, the debugger uses the {\tt haltsum} registers. Assuming the
+maximum number of harts exist, first it checks \Rhaltsumthree. For each bit set
+there, it writes \Fhartsel, and checks \Rhaltsumtwo. This process repeats
+through \Rhaltsumone and \Rhaltsumzero. Depending on how many harts exist, the
+process should start at one of the lower {\tt haltsum} registers.
 
 \section{Halting} \label{deb:halt}
 
