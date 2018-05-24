@@ -409,10 +409,11 @@ while writes should be ignored, with the following mandatory exceptions:
     \item \Rauthdata is readable and writable.
 \end{steps}
 
-\section{Debug Module DMI Registers} \label{dmdebbus}
+\section{Debug Module Registers} \label{dmdebbus}
 
-Each DM has a base address (which is 0 for the first DM). The register
-addresses described in this section are offsets from this base address.
+The registers described in this section are accessed over the DMI bus.  Each DM
+has a base address (which is 0 for the first DM). The register addresses below
+are offsets from this base address.
 
 When read, unimplemented Debug Module DMI Registers return 0. Writing them has
 no effect.
