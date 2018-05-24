@@ -10,8 +10,8 @@
 
         Writes of values greater than or equal to the number of supported
         triggers may result in a different value in this register than what was
-        written.  Debuggers should read back the value to confirm that what
-        they wrote was a valid index.
+        written. To verify that what they wrote is a valid index, debuggers can
+        read back the value and check that \Rtselect holds what they wrote.
 
         Since triggers can be used both by Debug Mode and M Mode, the debugger
         must restore this register if it modifies it.
