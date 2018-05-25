@@ -177,9 +177,10 @@
             the next index from matching.
 
             Because \Fchain affects the next trigger, hardware must zero it in
-            M mode writes to \Rmcontrol if the next trigger has \Fdmode of 1.
-            In addition hardware should ignore writes to \Rmcontrol with
-            \Fdmode of 1 if the previous trigger has both \Fdmode of 0 and
+            writes to \Rmcontrol that set \Fdmode to 0 if the next trigger has
+            \Fdmode of 1.
+            In addition hardware should ignore writes to \Rmcontrol that set
+            \Fdmode to 1 if the previous trigger has both \Fdmode of 0 and
             \Fchain of 1. Debuggers must avoid the latter case by checking
             \Fchain on the previous trigger if they're writing \Rmcontrol.
 
