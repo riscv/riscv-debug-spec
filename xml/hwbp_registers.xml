@@ -175,6 +175,18 @@
 
             1: While this trigger does not match, it prevents the trigger with
             the next index from matching.
+
+            Because \Fchain affects the next trigger, hardware must zero it in
+            writes to \Rmcontrol that set \Fdmode to 0 if the next trigger has
+            \Fdmode of 1.
+            In addition hardware should ignore writes to \Rmcontrol that set
+            \Fdmode to 1 if the previous trigger has both \Fdmode of 0 and
+            \Fchain of 1. Debuggers must avoid the latter case by checking
+            \Fchain on the previous trigger if they're writing \Rmcontrol.
+
+            Implementations that wish to limit the maximum length of a trigger
+            chain (eg. to meet timing requirements) may do so by zeroing
+            \Fchain in writes to \Rmcontrol that would make the chain too long.
         </field>
         <field name="match" bits="10:7" access="R/W" reset="0">
             0: Matches when the value equals \Rtdatatwo.
