@@ -75,8 +75,9 @@
             If the currently selected trigger doesn't exist, this field
             contains 1.
 
-            For backwards compatibility, if this field is 0 then the trigger
-            only supports a single type, which the debugger can read from
+            If \Ftype is not writable, this register may be unimplemented, in
+            which case reading it causes an illegal instruction exception. In
+            this case the debugger can read the only supported type from
             \Rtdataone.
         </field>
     </register>
