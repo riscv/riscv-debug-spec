@@ -65,7 +65,8 @@
             Explains why Debug Mode was entered.
 
             When there are multiple reasons to enter Debug Mode in a single
-            cycle, the cause with the highest priority is the one written.
+            cycle, hardware should set \Fcause to the cause with the highest
+            priority.
 
             1: An {\tt ebreak} instruction was executed. (priority 3)
 
