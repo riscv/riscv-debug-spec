@@ -15,9 +15,10 @@ separately.
 \item Read back \Rtselect and check that it contains the written value. If not,
     exit the loop.
 \item Read \Rtinfo.
+\item If that caused an exception, the debugger must read \Rtdataone to
+    discover the type. (If \Ftype is 0, this trigger doesn't exist. Exit the
+    loop.)
 \item If \Finfo is 1, this trigger doesn't exist. Exit the loop.
-\item If \Finfo is 0, the debugger must read \Rtdataone to discover the type.
-    (If the type is 0, this trigger doesn't exist. Exit the loop.)
 \item Otherwise, the selected trigger supports the types discovered in \Finfo.
 \item Repeat, incrementing the value in \Rtselect.
 \end{steps}
