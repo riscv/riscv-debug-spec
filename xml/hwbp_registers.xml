@@ -37,8 +37,8 @@
 
         Writes of values greater than or equal to the number of supported
         triggers may result in a different value in this register than what was
-        written.  Debuggers should read back the value to confirm that what
-        they wrote was a valid index.
+        written. To verify that what they wrote is a valid index, debuggers can
+        read back the value and check that \Rtselect holds what they wrote.
 
         Since triggers can be used both by Debug Mode and M Mode, the debugger
         must restore this register if it modifies it.
@@ -130,6 +130,11 @@
         \end{tabular}
         \end{table}
 
+        This trigger type may be limited to address comparisons (\Fselect is
+        always 0) only. If that is the case, then \Rtdatatwo must be able to
+        hold all valid virtual addresses but it need not be capable of holding
+        other values.
+
         <field name="type" bits="MXLEN-1:MXLEN-4" access="R" reset="2" />
         <field name="dmode" bits="MXLEN-5" access="R/W" reset="0" />
         <field name="maskmax" bits="MXLEN-6:MXLEN-11" access="R" reset="Preset">
@@ -189,6 +194,18 @@
 
             1: While this trigger does not match, it prevents the trigger with
             the next index from matching.
+
+            Because \Fchain affects the next trigger, hardware must zero it in
+            writes to \Rmcontrol that set \Fdmode to 0 if the next trigger has
+            \Fdmode of 1.
+            In addition hardware should ignore writes to \Rmcontrol that set
+            \Fdmode to 1 if the previous trigger has both \Fdmode of 0 and
+            \Fchain of 1. Debuggers must avoid the latter case by checking
+            \Fchain on the previous trigger if they're writing \Rmcontrol.
+
+            Implementations that wish to limit the maximum length of a trigger
+            chain (eg. to meet timing requirements) may do so by zeroing
+            \Fchain in writes to \Rmcontrol that would make the chain too long.
         </field>
         <field name="match" bits="10:7" access="R/W" reset="0">
             0: Matches when the value equals \Rtdatatwo.

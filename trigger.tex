@@ -12,7 +12,8 @@ separately.
 \begin{steps}{Each trigger may support a variety of features. A debugger can
     build a list of all triggers and their features as follows:}
 \item Write 0 to \Rtselect.
-\item Read back \Rtselect to confirm this trigger exists. If not, exit.
+\item Read back \Rtselect and check that it contains the written value. If not,
+    exit.
 \item Read \Rtdataone, and possible \Rtdatatwo and \Rtdatathree depending on the
     trigger type.
 \item If \Ftype is 0, this trigger doesn't exist. Exit the loop.
