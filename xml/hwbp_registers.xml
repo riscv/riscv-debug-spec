@@ -59,7 +59,10 @@
             3: The trigger is an instruction count trigger. The remaining bits
             in this register act as described in \Ricount.
 
-            4: The trigger is an exception trigger. The remaining bits
+            4: The trigger is an interrupt trigger. The remaining bits
+            in this register act as described in \Ritrigger.
+
+            5: The trigger is an exception trigger. The remaining bits
             in this register act as described in \Retrigger.
 
             15: This trigger exists (so enumeration shouldn't terminate), but
@@ -291,7 +294,7 @@
         </field>
     </register>
 
-    <register name="Exception Trigger" short="etrigger" address="0x7a1">
+    <register name="Interrupt Trigger" short="itrigger" address="0x7a1">
         This register is accessible as \Rtdataone when \Ftype is 4.
 
         This trigger may fire on any of the interrupts configurable in \Rmie
@@ -299,20 +302,13 @@
         configured by setting the same bit in \Rtdatatwo as would be set in
         \Rmie to enable the interrupt.
 
-        This trigger may also fire on up to XLEN of the Exception Codes defined
-        in \Rmcause (described in the Privileged Spec, with Interrupt=0). Those
-        causes are configured by writing the corresponding bit in \Rtdatathree.
-        (Eg. to trap on an illegal instruction, the debugger sets bit 2 in
-        \Rtdatathree.)
+        Hardware may only support a subset of interrupts for this trigger.  A
+        debugger must read back \Rtdatatwo after writing it to confirm the
+        requested functionality is actually supported.
 
-        As with all other trigger functionality, hardware may implement only a
-        subset of these options. A debugger must read back \Rtdatatwo and
-        \Rtdatathree after writing them to confirm the requested functionality
-        is actually supported.
-
-        The trigger only fires if the hart takes a trap because of the cause.
-        (Eg. it does not fire when a timer interrupt occurs but that interrupt
-        is not enabled in \Rmie.)
+        The trigger only fires if the hart takes a trap because of the
+        interrupt. (Eg. it does not fire when a timer interrupt occurs but that
+        interrupt is not enabled in \Rmie.)
 
         When the trigger fires, all CSRs are updated as defined by the
         Privileged Spec, and the requested action is taken just before the
@@ -329,14 +325,63 @@
         </field>
         <field name="0" bits="MXLEN-7:10" access="R" reset="0" />
         <field name="m" bits="9" access="R/W" reset="0">
-            When set, enable this trigger for traps that are taken from M mode.
+            When set, enable this trigger for interrupts that are taken from M
+            mode.
         </field>
         <field name="0" bits="8" access="R" reset="0" />
         <field name="s" bits="7" access="R/W" reset="0">
-            When set, enable this trigger for traps that are taken from S mode.
+            When set, enable this trigger for interrupts that are taken from S
+            mode.
         </field>
         <field name="u" bits="6" access="R/W" reset="0">
-            When set, enable this trigger for traps that are taken from U mode.
+            When set, enable this trigger for interrupts that are taken from U
+            mode.
+        </field>
+        <field name="action" bits="5:0" access="R/W" reset="0">
+            The action to take when the trigger fires. The values are explained
+            in Table~\ref{tab:action}.
+        </field>
+    </register>
+
+    <register name="Exception Trigger" short="etrigger" address="0x7a1">
+        This register is accessible as \Rtdataone when \Ftype is 5.
+
+        This trigger may fire on up to MXLEN of the Exception Codes defined in
+        \Rmcause (described in the Privileged Spec, with Interrupt=0). Those
+        causes are configured by writing the corresponding bit in \Rtdatatwo.
+        (Eg. to trap on an illegal instruction, the debugger sets bit 2 in
+        \Rtdatatwo.)
+
+        Hardware may support only a subset of exceptions. A debugger must read
+        back \Rtdatatwo after writing it to confirm the requested functionality
+        is actually supported.
+
+        When the trigger fires, all CSRs are updated as defined by the
+        Privileged Spec, and the requested action is taken just before the
+        first instruction of the interrupt/exception handler is executed.
+
+        <field name="type" bits="MXLEN-1:MXLEN-4" access="R" reset="4" />
+        <field name="dmode" bits="MXLEN-5" access="R/W" reset="0" />
+        <field name="hit" bits="MXLEN-6" access="R/W" reset="0">
+            If this optional bit is implemented, the hardware sets it when this
+            trigger matches. The trigger's user can set or clear it at any
+            time. The trigger's user can use this bit to determine which
+            trigger(s) matched.  If the bit is not implemented, it is always 0
+            and writing it has no effect.
+        </field>
+        <field name="0" bits="MXLEN-7:10" access="R" reset="0" />
+        <field name="m" bits="9" access="R/W" reset="0">
+            When set, enable this trigger for exceptions that are taken from M
+            mode.
+        </field>
+        <field name="0" bits="8" access="R" reset="0" />
+        <field name="s" bits="7" access="R/W" reset="0">
+            When set, enable this trigger for exceptions that are taken from S
+            mode.
+        </field>
+        <field name="u" bits="6" access="R/W" reset="0">
+            When set, enable this trigger for exceptions that are taken from U
+            mode.
         </field>
         <field name="action" bits="5:0" access="R/W" reset="0">
             The action to take when the trigger fires. The values are explained
