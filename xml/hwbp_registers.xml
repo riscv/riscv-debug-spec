@@ -47,7 +47,7 @@
     </register>
 
     <register name="Trigger Data 1" short="tdata1" address="0x7a1">
-        <field name="type" bits="MXLEN-1:MXLEN-4" access="R" reset="Preset">
+        <field name="type" bits="MXLEN-1:MXLEN-4" access="R/W" reset="Preset">
             0: There is no trigger at this \Rtselect.
 
             1: The trigger is a legacy SiFive address match trigger. These
@@ -69,6 +69,10 @@
             is not currently available.
 
             Other values are reserved for future use.
+
+            When this field is written to an unsupported value, it takes on its
+            reset value instead. The reset value is any one of the types
+            supported by the trigger selected by \Rtselect.
         </field>
         <field name="dmode" bits="MXLEN-5" access="R/W" reset="0">
             0: Both Debug and M Mode can write the {\tt tdata} registers at the
@@ -92,6 +96,23 @@
     <register name="Trigger Data 3" short="tdata3" address="0x7a3">
         Trigger-specific data.
         <field name="data" bits="MXLEN-1:0" access="R/W" reset="Preset" />
+    </register>
+
+    <register name="Trigger Info" short="tinfo" address="0x7a4">
+        <field name="0" bits="XLEN-1:16" access="R" reset="0" />
+        <field name="info" bits="15:0" access="R" reset="Preset">
+            One bit for each possible \Ftype enumerated in \Rtdataone. Bit N
+            corresponds to type N. If the bit is set, then that type is
+            supported by the currently selected trigger.
+
+            If the currently selected trigger doesn't exist, this field
+            contains 1.
+
+            If \Ftype is not writable, this register may be unimplemented, in
+            which case reading it causes an illegal instruction exception. In
+            this case the debugger can read the only supported type from
+            \Rtdataone.
+        </field>
     </register>
 
     <register name="Match Control" short="mcontrol" address="0x7a1">
