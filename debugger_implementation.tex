@@ -298,6 +298,46 @@ this method.
     \end{tabulary}
 \end{table}
 
+\subsection{Using Abstract Memory Access} \label{deb:mrabstract}
+
+\noindent Read a word from memory using abstract memory access:
+
+\begin{tabulary}{\textwidth}{|r|r|r|L|}
+    \hline
+    Op & Address & Value & Comment \\
+    \hline
+    Write & \Rdataone & address & \\
+    \hline
+    Write & \Rcommand & cmdtype=2, size=2, transfer=1 & \\
+    \hline
+    Read & \Rdatazero & - & Value read from memory \\
+    \hline
+\end{tabulary}
+\medskip
+
+\noindent Read block of memory using abstract memory access:
+
+\begin{tabular}{|r|r|p{13em}|l|}
+    \hline
+    Op & Address & Value & Comment \\
+    \hline
+    Write & \Rabstractauto & 1 & Re-execute the command when \Rdatazero is accessed \\
+    \hline
+    Write & \Rdataone & address & \\
+    \hline
+    Write & \Rcommand & cmdtype=2, size=2, transfer=1 & \\
+    \hline
+    Read & \Rdatazero & - & Read value, and trigger reading of next address \\
+    \hline
+    ... & ... & ... & ... \\
+    \hline
+    Write & \Rabstractauto & 0 & Disable auto-exec \\
+    \hline
+    Read & \Rdatazero & - & Get last value read from memory. \\
+    \hline
+\end{tabular}
+\medskip
+
 \section{Writing Memory} \label{writemem}
 
 \subsection{Using System Bus Access} \label{deb:mrsysbus}
@@ -390,6 +430,50 @@ this method.
     Write & \Rabstractauto & 0 & Clear \Fautoexecdata[0] \\
     \hline
 \end{tabulary}
+\medskip
+
+\subsection{Using Abstract Memory Access} \label{deb:mwabstract}
+
+\noindent Write a word to memory using abstract memory access:
+
+\begin{tabulary}{\textwidth}{|r|r|r|L|}
+    \hline
+    Op & Address & Value & Comment \\
+    \hline
+    Write & \Rdataone & address & \\
+    \hline
+    Write & \Rdatazero & value & \\
+    \hline
+    Write & \Rcommand & cmdtype=2, size=2, transfer=1, write=1 & \\
+    \hline
+\end{tabulary}
+\medskip
+
+\noindent Write block of memory using abstract memory access:
+
+\begin{tabular}{|r|r|p{13em}|l|}
+    \hline
+    Op & Address & Value & Comment \\
+    \hline
+    Write & \Rdataone & address & \\
+    \hline
+    Write & \Rdatazero & value0 & \\
+    \hline
+    Write & \Rcommand & cmdtype=2, size=2, transfer=1, write=1, postincrement=1 & \\
+    \hline
+    Write & \Rabstractauto & 1 & Re-execute the command when \Rdatazero is accessed \\
+    \hline
+    Write & \Rdatazero & value1 & \\
+    \hline
+    Write & \Rdatazero & value2 & \\
+    \hline
+    ... & ... & ... & ... \\
+    \hline
+    Write & \Rsbdatazero & valueN & \\
+    \hline
+    Write & \Rabstractauto & 0 & Disable auto-exec \\
+    \hline
+\end{tabular}
 \medskip
 
 \section{Triggers}
