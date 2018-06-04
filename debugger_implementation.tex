@@ -76,7 +76,7 @@ before re-entering Debug Mode.
     \hline
     Op & Address & Value & Comment \\
     \hline
-    Write & \Rcommand & \Fsize$=2$, \Ftransfer, 0x1008 & Read \Szero \\
+    Write & \Rcommand & \Faarsize$=2$, \Ftransfer, 0x1008 & Read \Szero \\
     \hline
     Read & \Rdatazero & - & Returns value that was in \Szero \\
     \hline
@@ -91,7 +91,7 @@ before re-entering Debug Mode.
     \hline
     Write & \Rdatazero & new value & \\
     \hline
-    Write & \Rcommand & \Fsize$=2$, \Ftransfer, \Fwrite, 0x300 & Write \Rmstatus \\
+    Write & \Rcommand & \Faarsize$=2$, \Ftransfer, \Fwrite, 0x300 & Write \Rmstatus \\
     \hline
 \end{tabulary}
 \medskip
@@ -113,7 +113,7 @@ registers can be accessed by moving their value into/out of GPRs.
     \hline
     Write & \Rdatazero & new value & \\
     \hline
-    Write & \Rcommand & \Fsize$=2$, \Fpostexec, \Ftransfer, \Fwrite, 0x1008 &
+    Write & \Rcommand & \Faarsize$=2$, \Fpostexec, \Ftransfer, \Fwrite, 0x1008 &
         Write \Szero, then execute program buffer \\
     \hline
 \end{tabulary}
@@ -141,6 +141,8 @@ registers can be accessed by moving their value into/out of GPRs.
 \section{Reading Memory}
 
 \subsection{Using System Bus Access} \label{deb:mrsysbus}
+
+With system bus access, addresses are physical system bus addresses.
 
 \noindent Read a word from memory using system bus access:
 
@@ -182,6 +184,10 @@ registers can be accessed by moving their value into/out of GPRs.
 \medskip
 
 \subsection{Using Program Buffer} \label{deb:mrprogbuf}
+
+Through the Program Buffer, the hart performs the memory accesses. Addresses
+are physical or virtual (depending on \Fmprven and other system
+configuration).
 
 \noindent Read a word from memory using program buffer:
 
@@ -300,6 +306,9 @@ this method.
 
 \subsection{Using Abstract Memory Access} \label{deb:mrabstract}
 
+Abstract memory accesses act as if they are performed by the hart, although the
+actual implementation may differ.
+
 \noindent Read a word from memory using abstract memory access:
 
 \begin{tabulary}{\textwidth}{|r|r|r|L|}
@@ -308,7 +317,7 @@ this method.
     \hline
     Write & \Rdataone & address & \\
     \hline
-    Write & \Rcommand & cmdtype=2, size=2, transfer=1 & \\
+    Write & \Rcommand & cmdtype=2, \Faamsize=2 & \\
     \hline
     Read & \Rdatazero & - & Value read from memory \\
     \hline
@@ -325,7 +334,7 @@ this method.
     \hline
     Write & \Rdataone & address & \\
     \hline
-    Write & \Rcommand & cmdtype=2, size=2, transfer=1 & \\
+    Write & \Rcommand & cmdtype=2, \Faamsize=2 & \\
     \hline
     Read & \Rdatazero & - & Read value, and trigger reading of next address \\
     \hline
@@ -341,6 +350,8 @@ this method.
 \section{Writing Memory} \label{writemem}
 
 \subsection{Using System Bus Access} \label{deb:mrsysbus}
+
+With system bus access, addresses are physical system bus addresses.
 
 \noindent Write a word to memory using system bus access:
 
@@ -377,6 +388,10 @@ this method.
 \medskip
 
 \subsection{Using Program Buffer} \label{deb:mrprogbuf}
+
+Through the Program Buffer, the hart performs the memory accesses. Addresses
+are physical or virtual (depending on \Fmprven and other system
+configuration).
 
 \noindent Write a word to memory using program buffer:
 
@@ -434,6 +449,9 @@ this method.
 
 \subsection{Using Abstract Memory Access} \label{deb:mwabstract}
 
+Abstract memory accesses act as if they are performed by the hart, although the
+actual implementation may differ.
+
 \noindent Write a word to memory using abstract memory access:
 
 \begin{tabulary}{\textwidth}{|r|r|r|L|}
@@ -444,7 +462,7 @@ this method.
     \hline
     Write & \Rdatazero & value & \\
     \hline
-    Write & \Rcommand & cmdtype=2, size=2, transfer=1, write=1 & \\
+    Write & \Rcommand & cmdtype=2, \Faamsize=2, write=1 & \\
     \hline
 \end{tabulary}
 \medskip
@@ -459,7 +477,7 @@ this method.
     \hline
     Write & \Rdatazero & value0 & \\
     \hline
-    Write & \Rcommand & cmdtype=2, size=2, transfer=1, write=1, postincrement=1 & \\
+    Write & \Rcommand & cmdtype=2, \Faamsize=2, write=1, postincrement=1 & \\
     \hline
     Write & \Rabstractauto & 1 & Re-execute the command when \Rdatazero is accessed \\
     \hline

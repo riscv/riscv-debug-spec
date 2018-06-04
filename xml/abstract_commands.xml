@@ -26,22 +26,22 @@
         across read, write, and halt status.
 
         \begin{commentary}
-            The encoding of \Fsize was chosen to match \Fsbaccess in \Rsbcs.
+            The encoding of \Faarsize was chosen to match \Fsbaccess in \Rsbcs.
         \end{commentary}
 
         <field name="cmdtype" bits="31:24">
             This is 0 to indicate Access Register Command.
         </field>
         <field name="0" bits="23" />
-        <field name="size" bits="22:20">
+        <field name="aarsize" bits="22:20">
             2: Access the lowest 32 bits of the register.
 
             3: Access the lowest 64 bits of the register.
 
             4: Access the lowest 128 bits of the register.
 
-            If \Fsize specifies a size larger than the register's actual size,
-            then the access must fail. If a register is accessible, then reads of \Fsize
+            If \Faarsize specifies a size larger than the register's actual size,
+            then the access must fail. If a register is accessible, then reads of \Faarsize
             less than or equal to the register's actual size must be supported.
 
             This field controls the Argument Width as referenced in
@@ -58,7 +58,7 @@
             1: Do the operation specified by \Fwrite.
 
             This bit can be used to just execute the Program Buffer without
-            having to worry about placing valid values into \Fsize or \Fregno.
+            having to worry about placing valid values into \Faarsize or \Fregno.
         </field>
         <field name="write" bits="16">
             When \Ftransfer is set:
@@ -95,19 +95,23 @@
     </register>
 
     <register name="Access Memory">
-        \begin{steps}{This command gives the debugger access to memory
-            locations, including memory-mapped registers. It performs the
-            following sequence of operations:}
+        \begin{steps}{This command lets the debugger perform memory accesses,
+            with the exact same memory view and permissions as the selected
+            hart has. This includes access to hart-local memory-mapped
+            registers, etc. The command performs the following sequence of
+            operations:}
         \item Copy data from the memory location specified in {\tt arg1} into the
-            {\tt arg0} portion of {\tt data}, if \Fwrite is clear and \Ftransfer is set.
+            {\tt arg0} portion of {\tt data}, if \Fwrite is clear.
         \item Copy data from the {\tt arg0} portion of {\tt data} into the
-            memory location specified in {\tt arg1}, if \Fwrite is set and \Ftransfer is set.
-        \item Increment {\tt arg1}, if \Fpostincrement is set.
-        \item Execute the Program Buffer, if \Fpostexec is set.
+            memory location specified in {\tt arg1}, if \Fwrite is set.
+        \item Increment {\tt arg1}, if \Faampostincrement is set.
         \end{steps}
 
         If any of these operations fail, \Fcmderr is set and none of the
-        remaining steps are executed. An implementation may detect an upcoming
+        remaining steps are executed. An access may only fail if the hart,
+        running M mode code, might encounter that same failure when it attempts
+        the same access.
+        An implementation may detect an upcoming
         failure early, and fail the overall command before it reaches the step
         that would cause failure.
 
@@ -118,14 +122,23 @@
         support memory accesses while the hart is halted.
 
         \begin{commentary}
-            The encoding of \Fsize was chosen to match \Fsbaccess in \Rsbcs.
+            The encoding of \Faamsize was chosen to match \Fsbaccess in \Rsbcs.
         \end{commentary}
 
         <field name="cmdtype" bits="31:24">
             This is 2 to indicate Access Memory Command.
         </field>
-        <field name="0" bits="23" />
-        <field name="size" bits="22:20">
+        <field name="aamvirtual" bits="23">
+            An implementation does not have to implement both virtual and
+            physical accesses, but it must fail accesses that it doesn't
+            support.
+
+            0: Addresses are physical (to the hart they are performed on).
+
+            1: Addresses are virtual, and translated the way the would be from
+            M mode, with \Fmprv set.
+        </field>
+        <field name="aamsize" bits="22:20">
             0: Access the lowest 8 bits of the memory location.
 
             1: Access the lowest 16 bits of the memory location.
@@ -136,33 +149,16 @@
 
             4: Access the lowest 128 bits of the memory location.
 
-            If \Fsize specifies a size larger than the memory location's actual size,
-            then the access must fail. If a memory location is accessible, then reads of \Fsize
-            less than or equal to the memory location's actual size must be supported.
-
             This field controls the Argument Width as referenced in
             Table~\ref{tab:datareg}.
         </field>
-        <field name="postincrement" bits="19">
+        <field name="aampostincrement" bits="19">
             After a memory access has completed, if this bit is 1, increment
             {\tt arg1} (which contains the address used) by the number of bytes
-            encoded in \Fsize.
+            encoded in \Faamsize.
         </field>
-        <field name="postexec" bits="18">
-            When 1, execute the program in the Program Buffer exactly once
-            after performing the transfer, if any.
-        </field>
-        <field name="transfer" bits = "17">
-            0: Don't do the operation specified by \Fwrite.
-
-            1: Do the operation specified by \Fwrite.
-
-            This bit can be used to just execute the Program Buffer without
-            having to worry about placing valid values into \Fsize.
-        </field>
+        <field name="0" bits="18:17" />
         <field name="write" bits="16">
-            When \Ftransfer is set:
-
             0: Copy data from the memory location specified in {\tt arg1} into {\tt arg0} portion
                of {\tt data}.
 
