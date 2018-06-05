@@ -138,6 +138,9 @@ and efficient communication channels between the component and the debugger.
 The debug interface described in this specification supports the following features:
 
 \begin{enumerate}
+   \item All hart registers (including CSRs) can be read/written.
+   \item Memory can be accessed either from the hart's point of view, through
+       the system bus directly, or both.
    \item RV32, RV64, and future RV128 are all supported.
    \item Any hart in the platform can be independently debugged.
    \item A debugger can discover almost\footnote{Notable exceptions include
@@ -167,14 +170,10 @@ The debug interface described in this specification supports the following featu
        read/write address/data, or an instruction opcode. (Optional)
 \end{enumerate}
 
-While both the mechanism to execute arbitrary instructions and the system bus
-master are optional, at least one of them must be implemented. Otherwise there
-is no mechanism to access memory.
-
 This document does not suggest a strategy or implementation for hardware test,
 debugging or error detection techniqes. Scan, BIST, etc. are out of scope of
 this specification, but this specification does not intend to limit their use
 in RISC-V systems.
 
-The debug interface deals with physical addresses only. Address translation is
-outside the scope of this specification, as are software threads.
+It is possible to debug code that uses software threads, but there is no
+special debug support for it.
