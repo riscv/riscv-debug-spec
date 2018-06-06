@@ -353,7 +353,7 @@
         <field name="0" bits="7:4" access="R" reset="0"/>
         <field name="datacount" bits="3:0" access="R" reset="Preset">
             Number of {\tt data} registers that are implemented as part of the
-            abstract command interface. Valid sizes are 0 - 12.
+            abstract command interface. Valid sizes are 1 -- 12.
         </field>
     </register>
 
