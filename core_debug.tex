@@ -97,7 +97,8 @@ allow for reusable Debug Module implementations.
 \section{Core Debug Registers} \label{debreg}
 
 The supported Core Debug Registers must be implemented for each hart that can
-be debugged.
+be debugged. They are CSRs, accessible using the RISC-V {\tt csr} opcodes and
+optionally also using abstract debug commands.
 
 \input{core_registers.tex}
 
