@@ -14,11 +14,13 @@
 \item Provide access to other hart registers. (Optional)
 \item Provide a Program Buffer to force the hart to execute arbitrary instructions. (Optional)
 \item Allow multiple harts to be halted, resumed, and/or reset at the same time. (Optional)
+\item Allow memory access from a hart's point of view. (Optional)
 \item Allow direct System Bus Access. (Optional)
 \end{steps}
 
-In order to implement memory access, a target must implement either the Program
-Buffer or System Bus Access.
+In order to implement memory access, a target must implement at least one of
+Program Buffer, System Bus Access, or Abstract Access Memory command
+mechanisms.
 
 A single DM can debug up to $2^{20}$ harts.
 
@@ -217,6 +219,8 @@ determines the kind of command. Table~\ref{tab:cmdtype} lists all commands.
         \hline
         1 & Quick Access & \pageref{quick access} \\
         \hline
+        2 & Access Memory Command & \pageref{access memory} \\
+        \hline
     \end{tabulary}
 \end{table}
 
@@ -318,8 +322,8 @@ by the different fields of \Rdmcontrol, \Rabstractcs, \Rabstractauto, and
 
 \section{System Bus Access} \label{systembusaccess}
 
-When a Program Buffer is present, a debugger can access the system bus by having a
-RISC-V hart perform the accesses it requires.
+A debugger can access memory from a hart's point of view using a Program Buffer or
+the Abstract Access Memory command. (Both these features are optional.)
 A Debug Module may also include a System Bus Access block to provide memory
 access without
 involving a hart, regardless of whether Program Buffer is implemented.
@@ -354,8 +358,8 @@ Depending on the microarchitecture, data accessed through System Bus Access may
 not always be coherent with that observed by each hart. It is up to the
 debugger to enforce coherency if the implementation does not. This
 specification does not define a standard way to do this, as it is
-implementation/platform specific. Possibilities may include using the System
-Bus Interface and/or Program Buffer to write to special memory-mapped
+implementation/platform specific. Possibilities may include
+writing to special memory-mapped
 locations, or executing special instructions via the Program Buffer.
 
 \begin{commentary}

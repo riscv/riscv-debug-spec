@@ -348,6 +348,9 @@
             4 (halt/resume): The abstract command couldn't execute because the
             hart wasn't in the required state (running/halted).
 
+            5 (bus): The abstract command failed due to a bus error (eg.
+            alignment, access size, timeout).
+
             7 (other): The command failed for another reason.
         </field>
         <field name="0" bits="7:4" access="R" reset="0"/>
