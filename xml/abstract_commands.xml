@@ -168,4 +168,32 @@
         <field name="0" bits="15:0" />
     </register>
 
+    <register name="Memory Visibility">
+        This command allows a debugger to ensure that memory accesses it
+        performs through a hart (using the Access Memory Command or the Program
+        Buffer) are consistent with the rest of the system.
+
+        If the operation fails or is not supported, \Fcmderr is set.
+
+        Implementing this command is optional, but strongly suggested if a
+        system has caches and no Program Buffer.
+
+        <field name="cmdtype" bits="31:24">
+            This is 3 to indicate Memory Visibility Command.
+        </field>
+        <field name="0" bits="23:2" />
+        <field name="op" bits="1:0">
+            0: Ensure that the instruction stream executed from this point
+            forward reflects the contents of memory as the hart sees it right
+            now or later. (This is equivalent to the {\tt fence.i}
+            instruction.)
+
+            1: Ensure that the data the hart sees reflects the contents of
+            memory outside the hart right now or later.
+
+            2: Ensure that all memory writes the hart has performed so far are
+            visible to the memory system outside the hart.
+        </field>
+    </register>
+
 </registers>
