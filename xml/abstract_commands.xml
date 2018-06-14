@@ -167,7 +167,7 @@
         </field>
         <field name="uncached" bits="15">
             0: Memory accesses go through the hart's local caches just like any
-            other memory access that hart performs would.
+            normal hart memory access.
 
             1: Memory accesses bypass the hart's local caches.
 
