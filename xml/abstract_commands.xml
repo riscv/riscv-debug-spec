@@ -170,6 +170,9 @@
             other memory access that hart performs would.
 
             1: Memory accesses bypass the hart's local caches.
+
+            Implementations may decide for themselves which \Funcached values
+            they support.
         </field>
         <field name="0" bits="14:0" />
     </register>
