@@ -334,7 +334,7 @@ actual implementation may differ.
     \hline
     Write & \Rdataone & address & \\
     \hline
-    Write & \Rcommand & cmdtype=2, \Faamsize=2 & \\
+    Write & \Rcommand & cmdtype=2, \Faamsize=2, \Faampostincrement=1 & \\
     \hline
     Read & \Rdatazero & - & Read value, and trigger reading of next address \\
     \hline
@@ -477,7 +477,7 @@ actual implementation may differ.
     \hline
     Write & \Rdatazero & value0 & \\
     \hline
-    Write & \Rcommand & cmdtype=2, \Faamsize=2, write=1, postincrement=1 & \\
+    Write & \Rcommand & cmdtype=2, \Faamsize=2, write=1, \Faampostincrement=1 & \\
     \hline
     Write & \Rabstractauto & 1 & Re-execute the command when \Rdatazero is accessed \\
     \hline
@@ -487,7 +487,7 @@ actual implementation may differ.
     \hline
     ... & ... & ... & ... \\
     \hline
-    Write & \Rsbdatazero & valueN & \\
+    Write & \Rdatazero & valueN & \\
     \hline
     Write & \Rabstractauto & 0 & Disable auto-exec \\
     \hline
