@@ -316,8 +316,8 @@
     <!-- =============== abstract commands =============== -->
 
     <register name="Abstract Control and Status" short="abstractcs" address="0x16">
-        Writing while an abstract command is executing causes \Fcmderr to be
-        set to 1 (busy) if it is 0.
+        Writing this register while an abstract command is executing causes
+        \Fcmderr to be set to 1 (busy) if it is 0.
 
         <field name="0" bits="31:29" access="R" reset="0" />
         <field name="progbufsize" bits="28:24" access="R" reset="Preset">
@@ -368,8 +368,8 @@
         Writes to this register cause the corresponding abstract command to be
         executed.
 
-        Writing while an abstract command is executing causes \Fcmderr to be
-        set to 1 (busy) if it is 0.
+        Writing this register while an abstract command is executing causes
+        \Fcmderr to be set to 1 (busy) if it is 0.
 
         If \Fcmderr is non-zero, writes to this register are ignored.
 
@@ -397,8 +397,8 @@
         accesses.  A debugger can detect whether it is support by setting bits
         and reading them back.
 
-        Writing while an abstract command is executing causes \Fcmderr to be
-        set to 1 (busy) if it is 0.
+        Writing this register while an abstract command is executing causes
+        \Fcmderr to be set to 1 (busy) if it is 0.
 
         <field name="autoexecprogbuf" bits="31:16" access="R/W" reset="0">
             When a bit in this field is 1, read or write accesses to the
