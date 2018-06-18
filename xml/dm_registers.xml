@@ -336,6 +336,8 @@
             they are cleared by writing 1 to them. No abstract command is
             started until the value is reset to 0.
 
+            This field only contains a valid value if \Fbusy is 0.
+
             0 (none): No error.
 
             1 (busy): An abstract command was executing while \Rcommand,
