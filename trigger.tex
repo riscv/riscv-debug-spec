@@ -23,6 +23,11 @@ separately.
 \item Repeat, incrementing the value in \Rtselect.
 \end{steps}
 
+When a trigger with the "enter Debug Mode" action and another trigger with the
+"raise a breakpoint exception" action fire at the same time, both actions are
+taken. It is implementation-dependent which of the two happens first. What
+happens with trace actions in such a case is left to the trace spec.
+
 \begin{commentary}
     There are two ways to check whether a given trigger is the last one to
     support these implementations:
