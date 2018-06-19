@@ -316,6 +316,9 @@
     <!-- =============== abstract commands =============== -->
 
     <register name="Abstract Control and Status" short="abstractcs" address="0x16">
+        Writing this register while an abstract command is executing causes
+        \Fcmderr to be set to 1 (busy) if it is 0.
+
         <field name="0" bits="31:29" access="R" reset="0" />
         <field name="progbufsize" bits="28:24" access="R" reset="Preset">
             Size of the Program Buffer, in 32-bit words. Valid sizes are 0 - 16.
@@ -333,11 +336,14 @@
             they are cleared by writing 1 to them. No abstract command is
             started until the value is reset to 0.
 
+            This field only contains a valid value if \Fbusy is 0.
+
             0 (none): No error.
 
             1 (busy): An abstract command was executing while \Rcommand,
             \Rabstractcs, \Rabstractauto was written, or when one
             of the {\tt data} or {\tt progbuf} registers was read or written.
+            This status is only written if \Fcmderr contains 0.
 
             2 (not supported): The requested command is not supported,
             regardless of whether the hart is running or not.
@@ -364,7 +370,8 @@
         Writes to this register cause the corresponding abstract command to be
         executed.
 
-        Writing while an abstract command is executing causes \Fcmderr to be set.
+        Writing this register while an abstract command is executing causes
+        \Fcmderr to be set to 1 (busy) if it is 0.
 
         If \Fcmderr is non-zero, writes to this register are ignored.
 
@@ -388,18 +395,24 @@
     </register>
 
     <register name ="Abstract Command Autoexec" short="abstractauto" address="0x18">
-      This register is optional. Including it allows more efficient burst accesses.
-      Debugger can attempt to set bits and read them back to determine if the functionality is supported.
+        This register is optional. Including it allows more efficient burst
+        accesses.  A debugger can detect whether it is support by setting bits
+        and reading them back.
 
-      <field name="autoexecprogbuf" bits="31:16" access="R/W" reset="0">
-          When a bit in this field is 1, read or write accesses to the corresponding {\tt progbuf} word
-          cause the command in \Rcommand to be executed again.
-      </field>
-      <field name="0" bits ="15:12" access="R" reset = "0"/>
-      <field name="autoexecdata" bits="11:0" access="R/W" reset="0">
-          When a bit in this field is 1, read or write accesses to the corresponding {\tt data} word
-          cause the command in \Rcommand to be executed again.
-      </field>
+        Writing this register while an abstract command is executing causes
+        \Fcmderr to be set to 1 (busy) if it is 0.
+
+        <field name="autoexecprogbuf" bits="31:16" access="R/W" reset="0">
+            When a bit in this field is 1, read or write accesses to the
+            corresponding {\tt progbuf} word cause the command in \Rcommand to
+            be executed again.
+        </field>
+        <field name="0" bits ="15:12" access="R" reset = "0"/>
+        <field name="autoexecdata" bits="11:0" access="R/W" reset="0">
+            When a bit in this field is 1, read or write accesses to the
+            corresponding {\tt data} word cause the command in \Rcommand to be
+            executed again.
+        </field>
     </register>
 
     <register name="Device Tree Addr 0" short="devtreeaddr0" address="0x19">
@@ -440,7 +453,7 @@
         registers.
 
         Accessing these registers while an abstract command is executing causes
-        \Fcmderr to be set.
+        \Fcmderr to be set to 1 (busy) if it is 0.
 
         Attempts to write them while \Fbusy is set does not change their value.
 
@@ -473,7 +486,7 @@
         implemented starting at \Rprogbufzero, counting up.
 
         Accessing these registers while an abstract command is executing causes
-        \Fcmderr to be set.
+        \Fcmderr to be set to 1 (busy) if it is 0.
 
         Attempts to write them while \Fbusy is set does not change their value.
 
