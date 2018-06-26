@@ -172,9 +172,9 @@ set. If a command has unsupported options set, the DM must set \Fcmderr to 2
 (not supported).
 
 \begin{commentary}
-    Example: A system with no Program Buffer must support the Access Register
-    command, but will still return "not supported" when the Access Register
-    command has \Fpostexec set.
+    Example: Every system must support the Access Register command, but may not
+    support accessing CSRs. If the debugger requests to read a CSR in that
+    case, the command will return "not supported."
 \end{commentary}
 
 Debuggers execute abstract commands by writing them to \Rcommand.
