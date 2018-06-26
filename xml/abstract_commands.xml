@@ -165,16 +165,10 @@
             1: Copy data from {\tt arg0} portion of {\tt data} into the
                memory location specified in {\tt arg1}.
         </field>
-        <field name="uncached" bits="15">
-            0: Memory accesses go through the hart's local caches just like any
-            normal hart memory access.
-
-            1: Memory accesses bypass the hart's local caches.
-
-            Implementations may decide for themselves which \Funcached values
-            they support.
+        <field name="target-specific" bits="15:14">
+            These bits are reserved for target-specific uses.
         </field>
-        <field name="0" bits="14:0" />
+        <field name="0" bits="13:0" />
     </register>
 
 </registers>
