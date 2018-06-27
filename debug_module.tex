@@ -167,6 +167,15 @@ some abstract commands even when the selected hart is not halted.
 Debuggers can only determine which abstract commands
 are supported by a given hart in a given state by attempting them
 and then looking at \Fcmderr in \Rabstractcs to see if they were successful.
+Commands may be supported with some options set, but not with other options
+set. If a command has unsupported options set, the DM must set \Fcmderr to 2
+(not supported).
+
+\begin{commentary}
+    Example: Every system must support the Access Register command, but may not
+    support accessing CSRs. If the debugger requests to read a CSR in that
+    case, the command will return "not supported."
+\end{commentary}
 
 Debuggers execute abstract commands by writing them to \Rcommand.
 Debuggers can determine whether an abstract command is complete by
