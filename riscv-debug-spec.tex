@@ -19,6 +19,8 @@
 \newcommand{\deffieldname}[2]{\providecommand{#1}{{$|#2|$}\xspace}}
 \deffieldname{\Fmprv}{mprv}
 \defregname{\Rmstatus}{mstatus}
+\defregname{\Rmcause}{mcause}
+\defregname{\Rmie}{mie}
 
 \defregname{\Azero}{a0}
 \defregname{\Aone}{a1}
@@ -40,6 +42,7 @@
 \defregname{\Rpc}{pc}
 \defregname{\Rmhartid}{mhartid}
 \defregname{\Rmepc}{mepc}
+\defregname{\Rdataone}{data1}
 
 \input{hwbp_registers.tex.inc}
 \input{core_registers.tex.inc}
@@ -50,6 +53,7 @@
 \input{sw_registers.tex.inc}
 
 \deffieldname{\Fhartsel}{\hyperref[hartsel]{hartsel}}
+\deffieldname{\Faction}{action}
 
 \input{vc.tex}
 

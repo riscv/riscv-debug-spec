@@ -3,6 +3,33 @@
     prevent untrusted user code from causing entry into Debug Mode without the
     OS's permission.
 
+    \begin{table}[H]
+    \centering
+    \caption{\Faction encoding}
+    \label{tab:action}
+    \begin{tabular}{|r|L|}
+    \hline
+    Value &amp; Description \\
+    \hline
+    0 &amp; Raise a breakpoint exception. (Used when software wants to use the
+    trigger module without an external debugger attached.) \\
+    \hline
+    1 &amp; Enter Debug Mode. (Only supported when the trigger's \Fdmode is 1.)
+    \\
+    \hline
+    2 &amp; Start tracing. \\
+    \hline
+    3 &amp; Stop tracing. \\
+    \hline
+    4 &amp; Emit trace data for this match. If it is a data access match, emit
+    appropriate Load/Store Address/Data. If it is an instruction execution,
+    emit its PC. \\
+    \hline
+    other &amp; Reserved for future use. \\
+    \hline
+    \end{tabular}
+    \end{table}
+
     <register name="Trigger Select" short="tselect" address="0x7a0">
         This register determines which trigger is accessible through the other
         trigger registers. The set of accessible triggers must start at 0, and
@@ -31,6 +58,12 @@
 
             3: The trigger is an instruction count trigger. The remaining bits
             in this register act as described in \Ricount.
+
+            4: The trigger is an interrupt trigger. The remaining bits
+            in this register act as described in \Ritrigger.
+
+            5: The trigger is an exception trigger. The remaining bits
+            in this register act as described in \Retrigger.
 
             15: This trigger exists (so enumeration shouldn't terminate), but
             is not currently available.
@@ -174,22 +207,8 @@
             appropriate triggers).
         </field>
         <field name="action" bits="17:12" access="R/W" reset="0">
-            Determines what happens when this trigger matches.
-
-            0: Raise a breakpoint exception. (Used when software wants to use
-            the trigger module without an external debugger attached.)
-
-            1: Enter Debug Mode. (Only supported when \Fdmode is 1.)
-
-            2: Start tracing.
-
-            3: Stop tracing.
-
-            4: Emit trace data for this match. If it is a data access match,
-            emit appropriate Load/Store Address/Data. If it is an instruction
-            execution, emit its PC.
-
-            Other values are reserved for future use.
+            The action to take when the trigger fires. The values are explained
+            in Table~\ref{tab:action}.
         </field>
         <field name="chain" bits="11" access="R/W" reset="0">
             0: When this trigger matches, the configured action is taken.
@@ -308,22 +327,103 @@
         </field>
 
         <field name="action" bits="5:0" access="R/W" reset="0">
-            Determines what happens when this trigger matches.
+            The action to take when the trigger fires. The values are explained
+            in Table~\ref{tab:action}.
+        </field>
+    </register>
 
-            0: Raise a breakpoint exception. (Used when software wants to use the
-            trigger module without an external debugger attached.)
+    <register name="Interrupt Trigger" short="itrigger" address="0x7a1">
+        This register is accessible as \Rtdataone when \Ftype is 4.
 
-            1: Enter Debug Mode. (Only supported when \Fdmode is 1.)
+        This trigger may fire on any of the interrupts configurable in \Rmie
+        (described in the Privileged Spec). The interrupts to fire on are
+        configured by setting the same bit in \Rtdatatwo as would be set in
+        \Rmie to enable the interrupt.
 
-            2: Start tracing.
+        Hardware may only support a subset of interrupts for this trigger.  A
+        debugger must read back \Rtdatatwo after writing it to confirm the
+        requested functionality is actually supported.
 
-            3: Stop tracing.
+        The trigger only fires if the hart takes a trap because of the
+        interrupt. (Eg. it does not fire when a timer interrupt occurs but that
+        interrupt is not enabled in \Rmie.)
 
-            4: Emit trace data for this match. If it is a data access match,
-            emit appropriate Load/Store Address/Data. If it is an instruction
-            execution, emit its PC.
+        When the trigger fires, all CSRs are updated as defined by the
+        Privileged Spec, and the requested action is taken just before the
+        first instruction of the interrupt/exception handler is executed.
 
-            Other values are reserved for future use.
+        <field name="type" bits="MXLEN-1:MXLEN-4" access="R" reset="4" />
+        <field name="dmode" bits="MXLEN-5" access="R/W" reset="0" />
+        <field name="hit" bits="MXLEN-6" access="R/W" reset="0">
+            If this optional bit is implemented, the hardware sets it when this
+            trigger matches. The trigger's user can set or clear it at any
+            time. The trigger's user can use this bit to determine which
+            trigger(s) matched.  If the bit is not implemented, it is always 0
+            and writing it has no effect.
+        </field>
+        <field name="0" bits="MXLEN-7:10" access="R" reset="0" />
+        <field name="m" bits="9" access="R/W" reset="0">
+            When set, enable this trigger for interrupts that are taken from M
+            mode.
+        </field>
+        <field name="0" bits="8" access="R" reset="0" />
+        <field name="s" bits="7" access="R/W" reset="0">
+            When set, enable this trigger for interrupts that are taken from S
+            mode.
+        </field>
+        <field name="u" bits="6" access="R/W" reset="0">
+            When set, enable this trigger for interrupts that are taken from U
+            mode.
+        </field>
+        <field name="action" bits="5:0" access="R/W" reset="0">
+            The action to take when the trigger fires. The values are explained
+            in Table~\ref{tab:action}.
+        </field>
+    </register>
+
+    <register name="Exception Trigger" short="etrigger" address="0x7a1">
+        This register is accessible as \Rtdataone when \Ftype is 5.
+
+        This trigger may fire on up to MXLEN of the Exception Codes defined in
+        \Rmcause (described in the Privileged Spec, with Interrupt=0). Those
+        causes are configured by writing the corresponding bit in \Rtdatatwo.
+        (Eg. to trap on an illegal instruction, the debugger sets bit 2 in
+        \Rtdatatwo.)
+
+        Hardware may support only a subset of exceptions. A debugger must read
+        back \Rtdatatwo after writing it to confirm the requested functionality
+        is actually supported.
+
+        When the trigger fires, all CSRs are updated as defined by the
+        Privileged Spec, and the requested action is taken just before the
+        first instruction of the interrupt/exception handler is executed.
+
+        <field name="type" bits="MXLEN-1:MXLEN-4" access="R" reset="4" />
+        <field name="dmode" bits="MXLEN-5" access="R/W" reset="0" />
+        <field name="hit" bits="MXLEN-6" access="R/W" reset="0">
+            If this optional bit is implemented, the hardware sets it when this
+            trigger matches. The trigger's user can set or clear it at any
+            time. The trigger's user can use this bit to determine which
+            trigger(s) matched.  If the bit is not implemented, it is always 0
+            and writing it has no effect.
+        </field>
+        <field name="0" bits="MXLEN-7:10" access="R" reset="0" />
+        <field name="m" bits="9" access="R/W" reset="0">
+            When set, enable this trigger for exceptions that are taken from M
+            mode.
+        </field>
+        <field name="0" bits="8" access="R" reset="0" />
+        <field name="s" bits="7" access="R/W" reset="0">
+            When set, enable this trigger for exceptions that are taken from S
+            mode.
+        </field>
+        <field name="u" bits="6" access="R/W" reset="0">
+            When set, enable this trigger for exceptions that are taken from U
+            mode.
+        </field>
+        <field name="action" bits="5:0" access="R/W" reset="0">
+            The action to take when the trigger fires. The values are explained
+            in Table~\ref{tab:action}.
         </field>
     </register>
 </registers>
