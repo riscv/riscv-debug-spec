@@ -323,7 +323,9 @@ def compare_address(a, b):
 
 def print_latex_index( registers ):
     print registers.description
-    print "\\begin{table}[htp]"
+    # Force this table HERE so that it doesn't get moved into the next section,
+    # which will be the description of a register.
+    print "\\begin{table}[H]"
     print "   \\begin{center}"
     print "      \\caption{%s}" % registers.name
     print "      \\label{%s}" % registers.label
