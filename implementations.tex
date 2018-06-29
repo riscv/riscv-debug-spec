@@ -51,6 +51,8 @@ Program Buffer code) the hart returns to its park loop. If an exception is
 encountered, the hart jumps to a defined debug exception address within
 the Debug Module. The code at that address causes the hart to
 write to an address in the Debug Module which indicates exception.
+This address is considered I/O for {\tt fence} instructions (see \#\ref{fence}
+on page \pageref{fence}).
 Then the hart jumps back to the park loop.
 The DM infers from the write that there was an exception, and sets \Fcmderr appropriately.
 
