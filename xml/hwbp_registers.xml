@@ -69,10 +69,6 @@
             is not currently available.
 
             Other values are reserved for future use.
-
-            When this field is written to an unsupported value, it takes on its
-            reset value instead. The reset value is any one of the types
-            supported by the trigger selected by \Rtselect.
         </field>
         <field name="dmode" bits="MXLEN-5" access="R/W" reset="0">
             0: Both Debug and M Mode can write the {\tt tdata} registers at the
@@ -117,11 +113,6 @@
 
     <register name="Match Control" short="mcontrol" address="0x7a1">
         This register is accessible as \Rtdataone when \Ftype is 2.
-
-        Writing unsupported values to any field in this register results in the
-        reset value being written instead. When a debugger wants to use a
-        feature, it must write the appropriate value and then read back the
-        register to determine whether it is supported.
 
         Address and data trigger implementation are heavily dependent on how
         the processor core is implemented. To accommodate various
@@ -274,11 +265,6 @@
 
     <register name="Instruction Count" short="icount" address="0x7a1">
         This register is accessible as \Rtdataone when \Ftype is 3.
-
-        Writing unsupported values to any field in this register results in the
-        reset value being written instead. When a debugger wants to use a
-        feature, it must write the appropriate value and then read back the
-        register to determine whether it is supported.
 
         \begin{commentary} This trigger type is intended to be used as a single
         step that's useful both for external debuggers and for software monitor
