@@ -205,6 +205,10 @@
             A chain of triggers that don't all have the same \Ftiming value
             will never fire (unless consecutive instructions match the
             appropriate triggers).
+
+            If a trigger with \Ftiming of 0 matches, it is
+            implementation-dependent whether that prevents a trigger with
+            \Ftiming of 1 matching as well.
         </field>
         <field name="action" bits="17:12" access="R/W" reset="0">
             The action to take when the trigger fires. The values are explained
