@@ -16,6 +16,7 @@
 \usepackage{algorithmicx}
 \usepackage{program}
 \usepackage[nochapter]{vhistory}
+\usepackage{float}
 % If LaTeX just doesn't do what I want, buy http://www.amazon.com/gp/product/0201362996
 
 % Used for tables that can span pages:
@@ -29,9 +30,8 @@
 \newenvironment{steps}[1]
   {
      \vspace{1ex}
-     \noindent
-     #1
-     \begin{enumerate}
+     \noindent #1
+     \begin{enumerate}[nolistsep]
   }
   {
      \end{enumerate}
