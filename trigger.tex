@@ -45,7 +45,8 @@ Most trigger functionality is optional. All {\tt tdata} registers follow
 write-any-read-legal semantics. If a debugger writes an unsupported
 configuration, the register will read back a value that is supported (which may
 simply be a disabled trigger).  This means that a debugger must always read
-back values it writes to {\tt tdata} registers, unless it knows already what is
+back values it writes to {\tt tdata} registers, unless it already knows already
+what is
 supported.  Writes to one {\tt tdata} register may not modify the contents of
 other {\tt tdata} registers, nor the configuration of any trigger besides the
 one that is currently selected.
