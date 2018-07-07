@@ -16,6 +16,7 @@ REGISTERS_CHISEL += abstract_commands.scala
 
 INCLUDES_TEX = introduction.tex
 INCLUDES_TEX += preface.tex
+INCLUDES_TEX += preamble.tex
 INCLUDES_TEX += overview.tex
 INCLUDES_TEX += debug_module.tex
 INCLUDES_TEX += core_debug.tex
