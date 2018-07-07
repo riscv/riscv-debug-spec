@@ -69,10 +69,6 @@
             is not currently available.
 
             Other values are reserved for future use.
-
-            When this field is written to an unsupported value, it takes on its
-            reset value instead. The reset value is any one of the types
-            supported by the trigger selected by \Rtselect.
         </field>
         <field name="dmode" bits="MXLEN-5" access="R/W" reset="0">
             0: Both Debug and M Mode can write the {\tt tdata} registers at the
@@ -117,11 +113,6 @@
 
     <register name="Match Control" short="mcontrol" address="0x7a1">
         This register is accessible as \Rtdataone when \Ftype is 2.
-
-        Writing unsupported values to any field in this register results in the
-        reset value being written instead. When a debugger wants to use a
-        feature, it must write the appropriate value and then read back the
-        register to determine whether it is supported.
 
         Address and data trigger implementation are heavily dependent on how
         the processor core is implemented. To accommodate various
@@ -216,6 +207,13 @@
             1: While this trigger does not match, it prevents the trigger with
             the next index from matching.
 
+            A trigger chain starts on the first trigger with $|chain|=1$ after
+            a trigger with $|chain|=0$, or simply on the first trigger if that
+            has $|chain|=1$. It ends on the first trigger after that that has
+            $|chain|=0$. This final trigger is part of the chain. The action on
+            that final trigger will be taken if and only if all the triggers in
+            the chain match at the same time.
+
             Because \Fchain affects the next trigger, hardware must zero it in
             writes to \Rmcontrol that set \Fdmode to 0 if the next trigger has
             \Fdmode of 1.
@@ -274,11 +272,6 @@
 
     <register name="Instruction Count" short="icount" address="0x7a1">
         This register is accessible as \Rtdataone when \Ftype is 3.
-
-        Writing unsupported values to any field in this register results in the
-        reset value being written instead. When a debugger wants to use a
-        feature, it must write the appropriate value and then read back the
-        register to determine whether it is supported.
 
         \begin{commentary} This trigger type is intended to be used as a single
         step that's useful both for external debuggers and for software monitor
