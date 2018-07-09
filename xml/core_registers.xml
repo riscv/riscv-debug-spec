@@ -70,11 +70,11 @@
 
             1: An {\tt ebreak} instruction was executed. (priority 3)
 
-            2: The Trigger Module caused a breakpoint exception. (priority 4)
+            2: The Trigger Module caused a breakpoint exception. (priority 4, highest)
 
             3: The debugger requested entry to Debug Mode. (priority 2)
 
-            4: The hart single stepped because \Fstep was set. (priority 1)
+            4: The hart single stepped because \Fstep was set. (priority 1, lowest)
 
             Other values are reserved for future use.
         </field>

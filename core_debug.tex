@@ -33,6 +33,8 @@ external debugging. How Debug Mode is implemented is not specified here.
     and {\tt uret}.  (To change the privilege level, the debugger can write
     \Fprv in \Rdcsr). The only exception is {\tt ebreak}. When that is executed
     in Debug Mode, it halts the hart again but without updating \Rdpc or \Rdcsr.
+\item \label{fence} Completing Program Buffer execution is considered output for the purpose
+    of {\tt fence} instructions.
 \end{steps}
 
 \section{Load-Reserved/Store-Conditional Instructions}
@@ -49,7 +51,8 @@ sc} pairs.
     there will be very few instructions in such a sequence, and anybody
     debugging it will quickly notice that the reservation is not occurring.
     The solution in that case is to set a breakpoint on the first instruction
-    after the {\tt sc} and run to it.
+    after the {\tt sc} and run to it. A higher level debugger may choose to
+    automate this.
 \end{commentary}
 
 \section{Single Step}
