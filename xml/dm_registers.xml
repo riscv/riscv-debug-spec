@@ -319,7 +319,12 @@
         Writing this register while an abstract command is executing causes
         \Fcmderr to be set to 1 (busy) if it is 0.
 
-        <field name="0" bits="31:29" access="R" reset="0" />
+        \begin{commentary}
+            \Fdatacount must be at least 1 to support RV32 harts, 2 to support
+            RV64 harts, or 4 to support RV128 harts.
+        \end{commentary}
+
+                <field name="0" bits="31:29" access="R" reset="0" />
         <field name="progbufsize" bits="28:24" access="R" reset="Preset">
             Size of the Program Buffer, in 32-bit words. Valid sizes are 0 - 16.
         </field>
@@ -362,7 +367,7 @@
         <field name="0" bits="7:4" access="R" reset="0"/>
         <field name="datacount" bits="3:0" access="R" reset="Preset">
             Number of {\tt data} registers that are implemented as part of the
-            abstract command interface. Valid sizes are 0 - 12.
+            abstract command interface. Valid sizes are 1 -- 12.
         </field>
     </register>
 
