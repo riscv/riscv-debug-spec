@@ -3,6 +3,10 @@
     prevent untrusted user code from causing entry into Debug Mode without the
     OS's permission.
 
+    In this section XLEN means MXLEN when in M Mode, DXLEN when in Debug Mode.
+    Note that this makes several of the fields in \Rtdataone move around based
+    on the current execution mode and value of MXLEN.
+
     \begin{table}[H]
     \centering
     \caption{\Faction encoding}
@@ -43,11 +47,11 @@
         Since triggers can be used both by Debug Mode and M Mode, the debugger
         must restore this register if it modifies it.
 
-        <field name="index" bits="MXLEN-1:0" access="R/W" reset="0" />
+        <field name="index" bits="XLEN-1:0" access="R/W" reset="0" />
     </register>
 
     <register name="Trigger Data 1" short="tdata1" address="0x7a1">
-        <field name="type" bits="MXLEN-1:MXLEN-4" access="R/W" reset="Preset">
+        <field name="type" bits="XLEN-1:XLEN-4" access="R/W" reset="Preset">
             0: There is no trigger at this \Rtselect.
 
             1: The trigger is a legacy SiFive address match trigger. These
@@ -70,7 +74,7 @@
 
             Other values are reserved for future use.
         </field>
-        <field name="dmode" bits="MXLEN-5" access="R/W" reset="0">
+        <field name="dmode" bits="XLEN-5" access="R/W" reset="0">
             0: Both Debug and M Mode can write the {\tt tdata} registers at the
             selected \Rtselect.
 
@@ -79,19 +83,23 @@
 
             This bit is only writable from Debug Mode.
         </field>
-        <field name="data" bits="MXLEN-6:0" access="R/W" reset="Preset">
+        <field name="data" bits="XLEN-6:0" access="R/W" reset="Preset">
             Trigger-specific data.
         </field>
     </register>
 
     <register name="Trigger Data 2" short="tdata2" address="0x7a2">
         Trigger-specific data.
-        <field name="data" bits="MXLEN-1:0" access="R/W" reset="Preset" />
+
+        If XLEN is less than DXLEN, writes to this register are sign-extended.
+        <field name="data" bits="XLEN-1:0" access="R/W" reset="Preset" />
     </register>
 
     <register name="Trigger Data 3" short="tdata3" address="0x7a3">
         Trigger-specific data.
-        <field name="data" bits="MXLEN-1:0" access="R/W" reset="Preset" />
+
+        If XLEN is less than DXLEN, writes to this register are sign-extended.
+        <field name="data" bits="XLEN-1:0" access="R/W" reset="Preset" />
     </register>
 
     <register name="Trigger Info" short="tinfo" address="0x7a4">
@@ -147,9 +155,9 @@
         hold all valid virtual addresses but it need not be capable of holding
         other values.
 
-        <field name="type" bits="MXLEN-1:MXLEN-4" access="R" reset="2" />
-        <field name="dmode" bits="MXLEN-5" access="R/W" reset="0" />
-        <field name="maskmax" bits="MXLEN-6:MXLEN-11" access="R" reset="Preset">
+        <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="2" />
+        <field name="dmode" bits="XLEN-5" access="R/W" reset="0" />
+        <field name="maskmax" bits="XLEN-6:XLEN-11" access="R" reset="Preset">
             Specifies the largest naturally aligned powers-of-two (NAPOT) range
             supported by the hardware when \Fmatch is 1. The value is the
             logarithm base 2 of the
@@ -158,7 +166,7 @@
             corresponds to the maximum NAPOT range, which is $2^{63}$ bytes in
             size.
         </field>
-        <field name="0" bits="MXLEN-12:21" access="R" reset="0" />
+        <field name="0" bits="XLEN-12:21" access="R" reset="0" />
         <field name="hit" bits="20" access="R/W" reset="0">
             If this optional bit is implemented, the hardware sets it when this
             trigger matches. The trigger's user can set or clear it at any
@@ -230,7 +238,7 @@
             0: Matches when the value equals \Rtdatatwo.
 
             1: Matches when the top M bits of the value match the top M bits of
-            \Rtdatatwo. M is MXLEN-1 minus the index of the least-significant
+            \Rtdatatwo. M is XLEN-1 minus the index of the least-significant
             bit containing 0 in \Rtdatatwo.
 
             2: Matches when the value is greater than (unsigned) or equal to
@@ -287,9 +295,9 @@
         supported, a single bit is enough.
         \end{commentary}
 
-        <field name="type" bits="MXLEN-1:MXLEN-4" access="R" reset="3" />
-        <field name="dmode" bits="MXLEN-5" access="R/W" reset="0" />
-        <field name="0" bits="MXLEN-6:25" access="R" reset="0" />
+        <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="3" />
+        <field name="dmode" bits="XLEN-5" access="R/W" reset="0" />
+        <field name="0" bits="XLEN-6:25" access="R" reset="0" />
 
         <field name="hit" bits="24" access="R/W" reset="0">
             If this optional bit is implemented, the hardware sets it when this
@@ -345,16 +353,16 @@
         Privileged Spec, and the requested action is taken just before the
         first instruction of the interrupt/exception handler is executed.
 
-        <field name="type" bits="MXLEN-1:MXLEN-4" access="R" reset="4" />
-        <field name="dmode" bits="MXLEN-5" access="R/W" reset="0" />
-        <field name="hit" bits="MXLEN-6" access="R/W" reset="0">
+        <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="4" />
+        <field name="dmode" bits="XLEN-5" access="R/W" reset="0" />
+        <field name="hit" bits="XLEN-6" access="R/W" reset="0">
             If this optional bit is implemented, the hardware sets it when this
             trigger matches. The trigger's user can set or clear it at any
             time. The trigger's user can use this bit to determine which
             trigger(s) matched.  If the bit is not implemented, it is always 0
             and writing it has no effect.
         </field>
-        <field name="0" bits="MXLEN-7:10" access="R" reset="0" />
+        <field name="0" bits="XLEN-7:10" access="R" reset="0" />
         <field name="m" bits="9" access="R/W" reset="0">
             When set, enable this trigger for interrupts that are taken from M
             mode.
@@ -377,7 +385,7 @@
     <register name="Exception Trigger" short="etrigger" address="0x7a1">
         This register is accessible as \Rtdataone when \Ftype is 5.
 
-        This trigger may fire on up to MXLEN of the Exception Codes defined in
+        This trigger may fire on up to XLEN of the Exception Codes defined in
         \Rmcause (described in the Privileged Spec, with Interrupt=0). Those
         causes are configured by writing the corresponding bit in \Rtdatatwo.
         (Eg. to trap on an illegal instruction, the debugger sets bit 2 in
@@ -391,16 +399,16 @@
         Privileged Spec, and the requested action is taken just before the
         first instruction of the interrupt/exception handler is executed.
 
-        <field name="type" bits="MXLEN-1:MXLEN-4" access="R" reset="4" />
-        <field name="dmode" bits="MXLEN-5" access="R/W" reset="0" />
-        <field name="hit" bits="MXLEN-6" access="R/W" reset="0">
+        <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="4" />
+        <field name="dmode" bits="XLEN-5" access="R/W" reset="0" />
+        <field name="hit" bits="XLEN-6" access="R/W" reset="0">
             If this optional bit is implemented, the hardware sets it when this
             trigger matches. The trigger's user can set or clear it at any
             time. The trigger's user can use this bit to determine which
             trigger(s) matched.  If the bit is not implemented, it is always 0
             and writing it has no effect.
         </field>
-        <field name="0" bits="MXLEN-7:10" access="R" reset="0" />
+        <field name="0" bits="XLEN-7:10" access="R" reset="0" />
         <field name="m" bits="9" access="R/W" reset="0">
             When set, enable this trigger for exceptions that are taken from M
             mode.
