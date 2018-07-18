@@ -158,7 +158,12 @@
             corresponds to the maximum NAPOT range, which is $2^{63}$ bytes in
             size.
         </field>
-        <field name="0" bits="MXLEN-12:21" access="R" reset="0" />
+        <field name="0" bits="MXLEN-12:23" access="R" reset="0" />
+        <field name="sizehi" bits="22:21" access="R/W" reset="0">
+            This field only exists if MXLEN is greater than 32. In that case it
+            extends \Fsize. If it does not exist then hardware operates as if
+            the field contains 0.
+        </field>
         <field name="hit" bits="20" access="R/W" reset="0">
             If this optional bit is implemented, the hardware sets it when this
             trigger matches. The trigger's user can set or clear it at any
@@ -197,7 +202,37 @@
             will never fire (unless consecutive instructions match the
             appropriate triggers).
         </field>
-        <field name="action" bits="17:12" access="R/W" reset="0">
+        <field name="sizelo" bits="17:16" access="R/W" reset="0">
+            This field contains the 2 low bits of \Fsize. The high bits come
+            from \Fsizehi. The combined value is interpreted as follows:
+
+            0: The trigger will attempt to match against an access of any size.
+            The behavior is only well-defined if the select=0, or if the access
+            size is MXLEN.
+
+            1: The trigger will only match against 8-bit memory accesses.
+
+            2: The trigger will only match against 16-bit memory accesses or
+            execution of 16-bit instructions.
+
+            3: The trigger will only match against 32-bit memory accesses or
+            execution of 32-bit instructions.
+
+            4: The trigger will only match against execution of 48-bit instructions.
+
+            5: The trigger will only match against 64-bit memory accesses or
+            execution of 64-bit instructions.
+
+            6: The trigger will only match against execution of 80-bit instructions.
+
+            7: The trigger will only match against execution of 96-bit instructions.
+
+            8: The trigger will only match against execution of 112-bit instructions.
+
+            9: The trigger will only match against 128-bit memory accesses or
+            execution of 128-bit instructions.
+        </field>
+        <field name="action" bits="15:12" access="R/W" reset="0">
             The action to take when the trigger fires. The values are explained
             in Table~\ref{tab:action}.
         </field>
