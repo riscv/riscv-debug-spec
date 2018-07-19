@@ -3,11 +3,10 @@
     <!-- =============== halt/reset/select hart  =============== -->
 
     <register name="Debug Module Status" short="dmstatus" address="0x11">
-        The address of this register will not change in the future, because it
-        contains \Fversion.  It has changed from version 0.11 of this spec.
-
-        This register reports status for the overall Debug Module
-        as well as the currently selected harts, as defined in \Fhasel.
+        This register reports status for the overall Debug Module as well as
+        the currently selected harts, as defined in \Fhasel.  Its address will
+        not change in the future, because it contains \Fversion.  It has
+        changed from version 0.11 of this spec.
 
         Harts are nonexistent if they will never be part of this system, no
         matter how long a user waits. Eg. in a simple single-hart system only
