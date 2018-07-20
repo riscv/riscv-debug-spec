@@ -452,7 +452,7 @@
     <register name="Abstract Data 0" short="data0" address="0x04">
         \Rdatazero through \Rdataeleven are basic read/write registers that may
         be read or changed by abstract commands. \Fdatacount indicates how many
-        of them are implemented, starting at \Rsbdatazero, counting up.
+        of them are implemented, starting at \Rdatazero, counting up.
         Table~\ref{tab:datareg} shows how abstract commands use these
         registers.
 
