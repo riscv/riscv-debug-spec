@@ -126,7 +126,9 @@
         width of \Fhartsel is called {\tt HARTSELLEN}. It must be at least 0
         and at most 20. A debugger should discover {\tt HARTSELLEN} by writing
         all ones to \Fhartsel (assuming the maximum size) and reading back the
-        value to see which bits were actually set.
+        value to see which bits were actually set. \Fhartsel may not be changed
+        while it is in use by eg. an abstract command being executed, or
+        pending halt or resume requests.
 
         <!-- Fields that apply to all selected hart(s) -->
         <field name="haltreq" bits="31" access="W" reset="-">
@@ -309,6 +311,9 @@
       Since some bits in the hart array mask register may be constant 0, some
       bits in this register may be constant 0, depending on the current value
       of \Fhawindowsel.
+
+      \Rhawindow may not be written while it is in use by eg. an abstract
+      command being executed, or pending halt or resume requests.
       <field name="maskdata" bits="31:0" access="R/W" reset="0" />
     </register>
 
