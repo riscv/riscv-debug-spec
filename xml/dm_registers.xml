@@ -140,12 +140,13 @@
             Writes apply to the new value of \Fhartsel and \Fhasel.
         </field>
         <field name="resumereq" bits="30" access="W" reset="-">
-            Writes the resume request bit for all currently selected harts.
-            When set to 1, each selected hart will resume if it is currently
-            halted.
+            0: May cancel a resume request for any of the currently selected
+            harts, if those harts haven't resumed yet.
 
-            The resume request bit is ignored while the halt request bit is
-            set.
+            1: Causes the currently selected harts to resume once, if they are
+            currently halted.
+
+            Resume requests are ignored while the halt request bit is set.
 
             Writes apply to the new value of \Fhartsel and \Fhasel.
         </field>
