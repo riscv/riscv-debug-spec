@@ -15,7 +15,17 @@
           15: There is external debug support, but it does not conform to any
           available version of this spec.
         </field>
-        <field name="0" bits="27:16" access="R" reset="0" />
+        <field name="0" bits="27:18" access="R" reset="0" />
+        <field name="progbufjump" bits="17:16" access="R" reset="Preset">
+            0: All jumps/branches are supported in the Program Buffer.
+
+            1: Jumps/branches in the Program Buffer are supported as long as
+            their destination is also in the Program Buffer. Other
+            jumps/branches act as illegal instructions.
+
+            3: No jumps/branches are supported in the Program Buffer. Instead
+            they act as illegal instructions.
+        </field>
         <field name="ebreakm" bits="15" access="R/W" reset="0">
             When 1, {\tt ebreak} instructions in Machine Mode enter Debug Mode.
         </field>
