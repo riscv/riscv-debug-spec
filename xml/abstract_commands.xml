@@ -13,7 +13,8 @@
         If any of these operations fail, \Fcmderr is set and none of the
         remaining steps are executed. An implementation may detect an upcoming
         failure early, and fail the overall command before it reaches the step
-        that would cause failure.
+        that would cause failure. If the failure is that the requested register
+        does not exist in the hart, \Fcmderr must be set to 3 (exception).
 
         Debug Modules must implement this command
         and must support read and write access to all GPRs when the selected hart is halted.
