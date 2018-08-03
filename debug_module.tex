@@ -73,6 +73,11 @@ a write of \Fndmreset to 0 triggers system reset. The system may take
 an arbitrarily long time to come out of reset, as reported by \Fallunavail,
 \Fanyunavail, or other implementation specific indicators.
 
+Individual harts (or several at once) can be reset by selecting them, setting
+and then clearing \Fhartreset. In this case an implementation may reset more
+harts than just the ones that are selected. Whether these extra harts halt or
+run out of reset is determined by the current value of \Fhaltreq.
+
 When harts have been reset, they must set a sticky {\tt havereset} state bit.
 The conceptual {\tt havereset} state bits can be read for selected harts in
 \Fanyhavereset and \Fallhavereset in \Rdmstatus.
