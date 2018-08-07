@@ -15,8 +15,7 @@
           15: There is external debug support, but it does not conform to any
           available version of this spec.
         </field>
-        <field name="0" bits="27:18" access="R" reset="0" />
-        <field name="progbufjump" bits="17:16" access="R" reset="Preset">
+        <field name="progbufjump" bits="27:26" access="R" reset="Preset">
             0: All control transfer instructions are supported in the Program
             Buffer.
 
@@ -28,6 +27,7 @@
             3: No control transfer instructions are supported in the Program
             Buffer. Instead they act as illegal instructions.
         </field>
+        <field name="0" bits="25:16" access="R" reset="0" />
         <field name="ebreakm" bits="15" access="R/W" reset="0">
             When 1, {\tt ebreak} instructions in Machine Mode enter Debug Mode.
         </field>
