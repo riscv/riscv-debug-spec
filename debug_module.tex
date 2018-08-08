@@ -75,8 +75,7 @@ an arbitrarily long time to come out of reset, as reported by \Fallunavail,
 
 Individual harts (or several at once) can be reset by selecting them, setting
 and then clearing \Fhartreset. In this case an implementation may reset more
-harts than just the ones that are selected. Whether these extra harts halt or
-run out of reset is determined by the current value of \Fhaltreq.
+harts than just the ones that are selected.
 
 When harts have been reset, they must set a sticky {\tt havereset} state bit.
 The conceptual {\tt havereset} state bits can be read for selected harts in
