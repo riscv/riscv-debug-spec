@@ -128,6 +128,13 @@
         all ones to \Fhartsel (assuming the maximum size) and reading back the
         value to see which bits were actually set.
 
+        \begin{commentary}
+        There are separate \Fsetresethaltreq and \Fclrresethaltreq bits so that
+        it is possible to write \Rdmcontrol without changing the halt-on-reset
+        request bit for each selected hart, when not all selected harts have
+        the same configuration.
+        \end{commentary}
+
         <!-- Fields that apply to all selected hart(s) -->
         <field name="haltreq" bits="31" access="W" reset="-">
             Writes the halt request bit for all currently selected harts.
@@ -189,9 +196,10 @@
             select. This hart is always part of the currently selected harts.
         </field>
         <field name="0" bits="5:4" access="R" reset="0" />
-        <field name="setresethaltreq" bits="3" access="W" reset="0">
+        <field name="setresethaltreq" bits="3" access="W1" reset="0">
             This optional field writes the halt-on-reset request bit for all
-            currently selected harts.
+            currently selected harts, unless \Fclrresethaltreq is
+            simultaneously set to 1.
             When set to 1, each selected hart will halt upon the next deassertion
             of its reset. The halt-on-reset request bit is not automatically
             cleared. The debugger must write to \Fclrresethaltreq to clear it.
@@ -200,7 +208,7 @@
 
             If \Fhasresethaltreq is 0, this field is not implemented.
         </field>
-        <field name="clrresethaltreq" bits="2" access="W" reset="0">
+        <field name="clrresethaltreq" bits="2" access="W1" reset="0">
             This optional field clears the halt-on-reset request bit for all
             currently selected harts.
 
