@@ -3,10 +3,14 @@
     <register name="Access Register">
         \begin{steps}{This command gives the debugger access to CPU registers and program buffer.
         It performs the following sequence of operations:}
-        \item Copy data from the register specified by \Fregno into the
-            {\tt arg0} region of {\tt data}, if \Fwrite is clear and \Ftransfer is set.
-        \item Copy data from the {\tt arg0} region of {\tt data} into the
-            register specified by \Fregno, if \Fwrite is set and \Ftransfer is set.
+        \item If \Fwrite is clear and \Ftransfer is set, then copy data from
+            the register specified by \Fregno into the {\tt arg0} region of
+            {\tt data}, and perform any side effects that occur when this
+            register is read from M mode.
+        \item If \Fwrite is set and \Ftransfer is set, then copy data from the
+            {\tt arg0} region of {\tt data} into the register specified by
+            \Fregno, and perform any side effects that occur when this register
+            is written from M mode.
         \item Execute the Program Buffer, if \Fpostexec is set.
         \end{steps}
 
