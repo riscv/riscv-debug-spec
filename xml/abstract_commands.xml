@@ -48,7 +48,12 @@
             This field controls the Argument Width as referenced in
             Table~\ref{tab:datareg}.
         </field>
-        <field name="0" bits = "19" />
+        <field name="aarpostincrement" bits="19">
+            0: No effect. This variant must be supported.
+
+            1: After a successful register access, \Fregno is incremented
+            (wrapping around to 0). Supporting this variant is optional.
+        </field>
         <field name="postexec" bits="18">
             When 1, execute the program in the Program Buffer exactly once
             after performing the transfer, if any.
