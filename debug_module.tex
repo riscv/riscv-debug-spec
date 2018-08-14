@@ -119,7 +119,8 @@ harts it supports, but it's allowed to tie any of these bits to 0.
 The debugger can set bits in the hart array mask register using \Rhawindowsel
 and \Rhawindow, then apply actions to all selected harts by setting \Fhasel. If
 this feature is supported, multiple harts can be halted, resumed, and reset
-simultaneously.
+simultaneously. The state of the hart array mask register is not affected by
+setting or clearing \Fhasel.
 
 Only the actions initiated by \Rdmcontrol can apply to multiple harts
 at once, Abstract Commands apply only to the hart selected by
