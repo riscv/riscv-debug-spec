@@ -72,8 +72,10 @@
           Number of the register to access, as described in
           Table~\ref{tab:regno}.
 
-          While a hart is running \Rdpc may be used as an alias for PC, and
-          \Rdcsr is not writable.
+          \begin{steps}{While a hart is running:}
+          \item \Rdpc may be used as an alias for PC.
+          \item Writes to \Rdcsr don't succeed and set \Fcmderr to 4.
+          \end{steps}
         </field>
     </register>
 
