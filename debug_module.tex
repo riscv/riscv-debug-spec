@@ -136,10 +136,10 @@ harts through \Fhaltreq, \Fresumereq, \Fsetresethaltreq/\Fclrresethaltreq and \F
 In addition the DM receives halted, running, and resume ack signals from each
 hart.
 
-When a running hart receives a halt request, it responds by halting and
-asserting its halted signal. The halted signals of all selected harts are
-reflected in the \Fallhalted and \Fanyhalted bits. \Fhaltreq is ignored by
-halted harts.
+When a running hart receives a halt request, it responds by halting,
+deasserting its running signal, and asserting its halted signal. The halted
+signals of all selected harts are reflected in the \Fallhalted and \Fanyhalted
+bits. \Fhaltreq is ignored by halted harts.
 
 When a halted hart receives a resume request, it responds by resuming, clearing
 its halted signal, and asserting its running signal and resume ack signals. The
