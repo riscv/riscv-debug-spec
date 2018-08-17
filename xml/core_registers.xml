@@ -87,11 +87,12 @@
             Other values are reserved for future use.
         </field>
         <field name="0" bits="5" access="R" reset="0" />
-        <field name="mprven" bits="4" access="R/W" reset="0" >
-            When 1, \Fmprv in \Rmstatus takes effect during debug mode.
-            When 0, it is ignored during debug mode.
-            Implementing this bit is optional.
-            If not implemented it should be tied to 0.
+        <field name="mprven" bits="4" access="R/W" reset="Preset">
+            0: \Fmprv in \Rmstatus is ignored in Debug Mode.
+
+            1: \Fmprv in \Rmstatus takes effect in Debug Mode.
+
+            Implementing this bit is optional. It may be tied to either 0 or 1.
 	</field>
         <field name="nmip" bits="3" access="R" reset="0">
             When set, there is a Non-Maskable-Interrupt (NMI) pending for the hart.
