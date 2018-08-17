@@ -137,22 +137,22 @@
 
         <!-- Fields that apply to all selected hart(s) -->
         <field name="haltreq" bits="31" access="W" reset="-">
-            Writes the halt request bit for all currently selected harts.
-            When set to 1, each selected hart will halt if it is not currently
-            halted.
+            0: May cancel a halt request for any of the currently selected
+            harts, if those harts haven't halted yet.
 
-            Writing 1 or 0 has no effect on a hart which is already halted, but
-            the bit must be cleared to 0 before the hart is resumed.
+            1: Causes the currently selected harts to halt, if they are
+            currently running.
 
             Writes apply to the new value of \Fhartsel and \Fhasel.
         </field>
         <field name="resumereq" bits="30" access="W" reset="-">
-            Writes the resume request bit for all currently selected harts.
-            When set to 1, each selected hart will resume if it is currently
-            halted.
+            0: May cancel a resume request for any of the currently selected
+            harts, if those harts haven't resumed yet.
 
-            The resume request bit is ignored while the halt request bit is
-            set.
+            1: Causes the currently selected harts to resume once, if they are
+            currently halted.
+
+            \Fresumereq is ignored if \Fhaltreq is set.
 
             Writes apply to the new value of \Fhartsel and \Fhasel.
         </field>
@@ -168,8 +168,9 @@
             Writes apply to the new value of \Fhartsel and \Fhasel.
         </field>
         <field name="ackhavereset" bits="28" access="W" reset="-">
-            Writing 1 to this bit clears the {\tt havereset} bits for
-            any selected harts.
+            0: No effect.
+
+            1: Clears {\tt havereset} for any selected harts.
 
             Writes apply to the new value of \Fhartsel and \Fhasel.
         </field>
