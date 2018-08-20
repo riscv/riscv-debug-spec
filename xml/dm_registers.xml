@@ -126,9 +126,10 @@
         width of \Fhartsel is called {\tt HARTSELLEN}. It must be at least 0
         and at most 20. A debugger should discover {\tt HARTSELLEN} by writing
         all ones to \Fhartsel (assuming the maximum size) and reading back the
-        value to see which bits were actually set. Changing \Fhartsel while an
-        abstract command is executing causes \Fcmderr to be set to 1 (busy) if
-        it is 0.
+        value to see which bits were actually set. Debuggers must not change
+        \Fhartsel while an abstract command is executing. (If an abstract
+        command appears to be hung, the debugger can reset the selected hart by
+        clearing \Fhasel if necessary, and using \Fhartreset.)
 
         <!-- Fields that apply to all selected hart(s) -->
         <field name="haltreq" bits="31" access="W" reset="-">
@@ -357,7 +358,7 @@
             3 (exception): An exception occurred while executing the command
             (eg. while executing the Program Buffer).
 
-            4 (halt/resume): The abstract command couldn't execute because the
+            4 (wrong state): The abstract command couldn't execute because the
             hart wasn't in the required state (running/halted).
 
             5 (bus): The abstract command failed due to a bus error (eg.
