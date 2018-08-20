@@ -83,6 +83,10 @@ indexed on page \pageref{index}.
         \hline
         W1 & Write-only. Only writing 1 has an effect. \\
         \hline
+        WARL & Write any, read legal. A debugger may write any value. If a
+        value is unsupported, the implementation converts the value to one that
+        is supported. \\
+        \hline
     \end{tabulary}
 \end{table}
 
