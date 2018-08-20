@@ -193,9 +193,6 @@ is placed in the lowest-numbered {\tt data} register. The argument width
 depends on the command being executed, and is MXLEN where not explicitly
 specified.
 
-While an abstract command is executing (\Fbusy in \Rabstractcs is high), a
-debugger must not attempt to halt or resume any harts.
-
 \begin{commentary}
     The Abstract Command interface is designed to allow a debugger to write
     commands as fast as possible, and then later check whether they completed
@@ -224,6 +221,13 @@ debugger must not attempt to halt or resume any harts.
         \hline
     \end{tabulary}
 \end{table}
+
+Before starting an abstract command, a debugger must ensure that \Fhaltreq,
+\Fresumereq, and \Fackhavereset are all 0.
+
+While an abstract command is executing (\Fbusy in \Rabstractcs is high), a
+debugger must not change \Fhartsel, and must not write 1 to \Fhaltreq,
+\Fresumereq, \Fackhavereset, \Fsetresethaltreq, or \Fclrresethaltreq.
 
 \subsection{Abstract Command Listing}
 
