@@ -3,17 +3,22 @@
     <register name="Access Register">
         \begin{steps}{This command gives the debugger access to CPU registers and program buffer.
         It performs the following sequence of operations:}
-        \item Copy data from the register specified by \Fregno into the
-            {\tt arg0} region of {\tt data}, if \Fwrite is clear and \Ftransfer is set.
-        \item Copy data from the {\tt arg0} region of {\tt data} into the
-            register specified by \Fregno, if \Fwrite is set and \Ftransfer is set.
+        \item If \Fwrite is clear and \Ftransfer is set, then copy data from
+            the register specified by \Fregno into the {\tt arg0} region of
+            {\tt data}, and perform any side effects that occur when this
+            register is read from M mode.
+        \item If \Fwrite is set and \Ftransfer is set, then copy data from the
+            {\tt arg0} region of {\tt data} into the register specified by
+            \Fregno, and perform any side effects that occur when this register
+            is written from M mode.
         \item Execute the Program Buffer, if \Fpostexec is set.
         \end{steps}
 
         If any of these operations fail, \Fcmderr is set and none of the
         remaining steps are executed. An implementation may detect an upcoming
         failure early, and fail the overall command before it reaches the step
-        that would cause failure.
+        that would cause failure. If the failure is that the requested register
+        does not exist in the hart, \Fcmderr must be set to 3 (exception).
 
         Debug Modules must implement this command
         and must support read and write access to all GPRs when the selected hart is halted.
@@ -47,7 +52,12 @@
             This field controls the Argument Width as referenced in
             Table~\ref{tab:datareg}.
         </field>
-        <field name="0" bits = "19" />
+        <field name="aarpostincrement" bits="19">
+            0: No effect. This variant must be supported.
+
+            1: After a successful register access, \Fregno is incremented
+            (wrapping around to 0). Supporting this variant is optional.
+        </field>
         <field name="postexec" bits="18">
             When 1, execute the program in the Program Buffer exactly once
             after performing the transfer, if any.

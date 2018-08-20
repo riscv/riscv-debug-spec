@@ -35,6 +35,16 @@ external debugging. How Debug Mode is implemented is not specified here.
     in Debug Mode, it halts the hart again but without updating \Rdpc or \Rdcsr.
 \item \label{fence} Completing Program Buffer execution is considered output for the purpose
     of {\tt fence} instructions.
+\item All control transfer instructions may act as illegal instructions if
+    their destination is in the Program Buffer. If one such instruction acts as
+    an illegal instruction, all such instructions must act as an illegal
+    instruction.
+\item All control transfer instructions may act as illegal instructions if
+    their destination is outside the Program Buffer. If one such instruction
+    acts as an illegal instruction, all such instructions must act as an
+    illegal instruction.
+\item Instructions that depend on the value of the PC (eg. {\tt auipc}) may act
+    as illegal instructions.
 \end{steps}
 
 \section{Load-Reserved/Store-Conditional Instructions}
