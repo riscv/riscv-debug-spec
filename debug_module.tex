@@ -205,7 +205,7 @@ specified.
     the target and commands succeed, which allows for maximum throughput. If
     there is a failure, the interface ensures that no commands execute after
     the failing one.  To discover which command failed, the debugger has to
-    look at the state of the DM (eg. contents of \Rdatazero) or hart (eg.
+    look at the state of the DM (e.g.\ contents of \Rdatazero) or hart (e.g.\ 
     contents of a register modified by a Program Buffer program) to determine
     which one failed.
 \end{commentary}
@@ -452,7 +452,7 @@ When read, unimplemented Debug Module DMI Registers return 0. Writing them has
 no effect.
 
 For each register it is possible to determine that it is implemented by reading
-it and getting a non-zero value (eg. \Rsbcs), or by checking bits in another
-register (eg. \Fprogbufsize).
+it and getting a non-zero value (e.g.\ \Rsbcs), or by checking bits in another
+register (e.g.\ \Fprogbufsize).
 
 \input{dm_registers.tex}

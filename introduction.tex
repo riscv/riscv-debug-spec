@@ -8,7 +8,7 @@ it is critical to have good debugging support built into the hardware.
 When a robust OS is running on a core, software can handle many
 debugging tasks. However, in many scenarios, hardware support is essential.
 
-This document outlines a standard architecture for external debug support 
+This document outlines a standard architecture for external debug support
 on RISC-V platforms. This architecture allows a variety of implementations and
 tradeoffs, which is complementary to the wide range of RISC-V implementations.
 At the same time, this specification defines common interfaces to
@@ -127,7 +127,7 @@ The debugger can read and/or modify state, then direct the hardware
 to execute a single instruction, or continue to run freely.
 
 The second is \emph{run mode} debugging. In this mode a software
-debug agent runs on a component (eg.  triggered by a timer interrupt or breakpoint
+debug agent runs on a component (e.g.\ triggered by a timer interrupt or breakpoint
 on a RISC-V core) which transfers data to or from the debugger
 without halting the component, only briefly interrupting its program flow.
 This functionality is essential if the component is controlling some real-time system (like a

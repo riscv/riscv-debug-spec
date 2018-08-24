@@ -9,13 +9,13 @@
         changed from version 0.11 of this spec.
 
         Harts are nonexistent if they will never be part of this system, no
-        matter how long a user waits. Eg. in a simple single-hart system only
+        matter how long a user waits. E.g.\ in a simple single-hart system only
         one hart exists, and all others are nonexistent. Debuggers may assume
         that a system has no harts with indexes higher than the first
         nonexistent one.
 
         Harts are unavailable if they might exist/become available at a later
-        time, or if there are other harts with higher indexes than this one. Eg.
+        time, or if there are other harts with higher indexes than this one. E.g.\
         in a multi-hart system some might temporarily be powered down, or a
         system might support hot-swapping harts. Systems with very large number
         of harts may permanently disable some during manufacturing, leaving
@@ -303,7 +303,7 @@
       <field name="0" bits="31:15" access="R/W" reset="0" />
       <field name="hawindowsel" bits="14:0" access="R/W" reset="0">
           The high bits of this field may be tied to 0, depending on how large
-          the array mask register is.  Eg. on a system with 48 harts only bit 0
+          the array mask register is.  E.g.\ on a system with 48 harts only bit 0
           of this field may actually be writable.
       </field>
     </register>
@@ -362,12 +362,12 @@
             regardless of whether the hart is running or not.
 
             3 (exception): An exception occurred while executing the command
-            (eg. while executing the Program Buffer).
+            (e.g.\ while executing the Program Buffer).
 
             4 (halt/resume): The abstract command couldn't execute because the
             hart wasn't in the required state (running/halted).
 
-            5 (bus): The abstract command failed due to a bus error (eg.
+            5 (bus): The abstract command failed due to a bus error (e.g.\ 
             alignment, access size, timeout).
 
             7 (other): The command failed for another reason.
