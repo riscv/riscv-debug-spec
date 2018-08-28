@@ -81,8 +81,11 @@
         <field name="regno" bits="15:0">
           Number of the register to access, as described in
           Table~\ref{tab:regno}.
-          \Rdpc may be used as an alias for PC if this command is
-          supported on a non-halted hart.
+
+          \begin{steps}{While a hart is running:}
+          \item \Rdpc may be used as an alias for PC.
+          \item Writes to \Rdcsr don't succeed and set \Fcmderr to 4.
+          \end{steps}
         </field>
     </register>
 
