@@ -30,6 +30,25 @@
         Each individual register (aside from GPRs) may be supported differently
         across read, write, and halt status.
 
+        \begin{table}[htp]
+            \centering
+            \caption{Abstract Register Numbers}
+            \label{tab:regno}
+            \begin{tabulary}{\textwidth}{|r|l|}
+                \hline
+                0x0000 -- 0x0fff &amp; CSRs. The ``PC'' can be accessed here through \Rdpc.
+                \\
+                \hline
+                0x1000 -- 0x101f &amp; GPRs \\
+                \hline
+                0x1020 -- 0x103f &amp; Floating point registers \\
+                \hline
+                0xc000 -- 0xffff &amp; Reserved for non-standard extensions and internal
+                use. \\
+                \hline
+            \end{tabulary}
+        \end{table}
+
         \begin{commentary}
             The encoding of \Faarsize was chosen to match \Fsbaccess in \Rsbcs.
         \end{commentary}
