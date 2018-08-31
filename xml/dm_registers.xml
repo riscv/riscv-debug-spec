@@ -526,7 +526,7 @@
     <!-- =============== authentication =============== -->
 
     <register name="Authentication Data" short="authdata" address="0x30">
-        This register serves as a 32-bit serial port to the authentication
+        This register serves as a 32-bit serial port to/from the authentication
         module.
 
         When \Fauthbusy is clear, the debugger can communicate with the
