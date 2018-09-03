@@ -161,6 +161,9 @@
             selected harts.  To perform a reset the debugger writes 1, and then
             writes 0 to deassert the reset signal.
 
+            While this bit is 1, the debugger must not change which harts are
+            selected.
+
             If this feature is not implemented, the bit always stays 0, so
             after writing 1 the debugger can read the register back to see if
             the feature is supported.
