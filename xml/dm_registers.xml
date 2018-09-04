@@ -135,6 +135,10 @@
         the same configuration.
         \end{commentary}
 
+        On any given write, a debugger may only write 1 to at most one of the
+        following bits: \Fhaltreq, \Fresumereq, \Fhartreset, \Fackhavereset,
+        \Fsetresethaltreq, and \Fclrresethaltreq. The others must be written 0.
+
         <!-- Fields that apply to all selected hart(s) -->
         <field name="haltreq" bits="31" access="W" reset="-">
             0: May cancel a halt request for any of the currently selected
