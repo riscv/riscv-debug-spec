@@ -45,6 +45,7 @@ external debugging. How Debug Mode is implemented is not specified here.
     illegal instruction.
 \item Instructions that depend on the value of the PC (e.g.\ {\tt auipc}) may act
     as illegal instructions.
+\item Effective XLEN is DXLEN.
 \end{steps}
 
 \section{Load-Reserved/Store-Conditional Instructions}
@@ -106,6 +107,12 @@ It is not necessary for the debugger to know whether an implementation supports
 {\tt dret}, as the Debug Module will ensure that it is executed if necessary.
 It is defined in this specification only to reserve the opcode and
 allow for reusable Debug Module implementations.
+
+\section{XLEN}
+
+While in Debug Mode, XLEN is DXLEN. It is up to the debugger to determine the
+XLEN during normal program execution (by looking at \Rmisa) and to clearly
+communicate this to the user.
 
 \section{Core Debug Registers} \label{debreg}
 

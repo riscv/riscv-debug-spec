@@ -159,7 +159,7 @@
 
         When resuming, the hart's PC is updated to the virtual address stored in
         \Rdpc. A debugger may write \Rdpc to change where the hart resumes.
-        <field name="dpc" bits="MXLEN-1:0" access="R/W" reset="0" />
+        <field name="dpc" bits="DXLEN-1:0" access="R/W" reset="0" />
     </register>
 
     <register name="Debug Scratch Register 0" short="dscratch0" address="0x7b2">
