@@ -26,7 +26,8 @@ function. Typically they will all be connected to a single system bus.
 A single RISC-V core contains one or more hardware threads, called
 \emph{harts}.
 
-\emph{DXLEN} of a hart is the effective XLEN in M-mode, at reset.
+\emph{DXLEN} of a hart is its widest supported XLEN, ignoring the current value
+of \Fmxl in \Rmisa.
 
 \subsection{Context}
 
