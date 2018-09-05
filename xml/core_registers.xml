@@ -17,15 +17,23 @@
         </field>
         <field name="0" bits="27:16" access="R" reset="0" />
         <field name="ebreakm" bits="15" access="R/W" reset="0">
-            When 1, {\tt ebreak} instructions in Machine Mode enter Debug Mode.
+            0: {\tt ebreak} instructions in M mode behave as described in the
+            Privileged Spec.
+
+            1: {\tt ebreak} instructions in M Mode enter Debug Mode.
         </field>
         <field name="0" bits="14" access="R" reset="0" />
         <field name="ebreaks" bits="13" access="R/W" reset="0">
-            When 1, {\tt ebreak} instructions in Supervisor Mode enter Debug Mode.
+            0: {\tt ebreak} instructions in S mode behave as described in the
+            Privileged Spec.
+
+            1: {\tt ebreak} instructions in S Mode enter Debug Mode.
         </field>
         <field name="ebreaku" bits="12" access="R/W" reset="0">
-            When 1, {\tt ebreak} instructions in User/Application Mode enter
-            Debug Mode.
+            0: {\tt ebreak} instructions in U mode behave as described in the
+            Privileged Spec.
+
+            1: {\tt ebreak} instructions in U Mode enter Debug Mode.
         </field>
         <field name="stepie" bits="11" access="R/W" reset="0">
             0: Interrupts are disabled during single stepping.
@@ -36,6 +44,9 @@
             The debugger must read back the value it
             writes to check whether the feature is supported. If not
             supported, interrupt behavior can be emulated by the debugger.
+
+            The debugger must not change the value of this bit while the hart
+            is running.
         </field>
         <field name="stopcount" bits="10" access="R/W" reset="Preset">
 
@@ -79,15 +90,16 @@
             Other values are reserved for future use.
         </field>
         <field name="0" bits="5" access="R" reset="0" />
-        <field name="mprven" bits="4" access="R/W" reset="0" >
-            When 1, \Fmprv in \Rmstatus takes effect during debug mode.
-            When 0, it is ignored during debug mode.
-            Implementing this bit is optional.
-            If not implemented it should be tied to 0.
+        <field name="mprven" bits="4" access="WARL" reset="Preset">
+            0: \Fmprv in \Rmstatus is ignored in Debug Mode.
+
+            1: \Fmprv in \Rmstatus takes effect in Debug Mode.
+
+            Implementing this bit is optional. It may be tied to either 0 or 1.
 	</field>
         <field name="nmip" bits="3" access="R" reset="0">
             When set, there is a Non-Maskable-Interrupt (NMI) pending for the hart.
-            
+
             Since an NMI can indicate a hardware error condition,
             reliable debugging may no longer be possible once this bit becomes set.
             This is implementation-dependent.
@@ -98,6 +110,9 @@
             If the instruction does not complete due to an exception,
             the hart will immediately enter Debug Mode before executing
             the trap handler, with appropriate exception registers set.
+
+            The debugger must not change the value of this bit while the hart
+            is running.
         </field>
         <field name="prv" bits="1:0" access="R/W" reset="3">
             Contains the privilege level the hart was operating in when Debug

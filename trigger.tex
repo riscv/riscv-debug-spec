@@ -9,6 +9,8 @@ features that can be useful without having the Debug Module present, so the
 Trigger Module is broken out as a separate piece that can be implemented
 separately.
 
+Triggers do not fire while in Debug Mode.
+
 \begin{steps}{Each trigger may support a variety of features. A debugger can
     build a list of all triggers and their features as follows:}
 \item Write 0 to \Rtselect.
@@ -35,6 +37,34 @@ separately.
             back as 0 which terminates the enumeration.
     \end{enumerate}
 \end{commentary}
+
+\section{Native M-Mode Triggers}
+\label{sec:mmtrigger}
+
+Triggers can be used for native debugging. On a fully featured system triggers
+will be set using \Fu or \Fs, and when firing they can cause a breakpoint exception
+to trap to a more privileged mode. It is possible to set triggers natively to
+fire in M mode as well. In that case there is no higher privilege mode to trap
+to. When such a trigger causes a breakpoint exception while already in a trap
+handler, this will leave the system unable to resume normal execution.
+
+On full-featured systems this is a remote corner case that can probably be
+ignored. On systems that only implement M mode, however, it is recommended to
+implement one of two solutions to this problem. This way triggers can be useful
+for native debugging of even M mode code.
+
+The simple solution is to have the hardware prevent triggers with action=0 from
+firing while in M mode and while \Fmie in \Rmstatus is 0. Its limitation is
+that interrupts might be disabled at other times when a user might want
+triggers to fire.
+
+A more complex solution is to implement \Fmte and \Fmpte in \Rtcontrol. This
+solution has the benefit that it only disables triggers during the trap
+handler.
+
+A user setting M mode triggers that cause breakpoint exceptions will have to be
+aware of any problems that might come up with the particular system they are
+working on.
 
 \section{Trigger Registers}
 
