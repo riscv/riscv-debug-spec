@@ -83,7 +83,7 @@ The conceptual {\tt havereset} state bits can be read for selected harts in
 These bits must be set regardless of the cause of the reset.
 The {\tt havereset} bits for the selected harts
 can be cleared by writing 1 to \Fackhavereset in \Rdmcontrol.
-The {\tt havereset} bits may or may not be cleared 
+The {\tt havereset} bits may or may not be cleared
 when \Fdmactive is low.
 
 \section{Selecting Harts} \label{selectingharts}
@@ -205,7 +205,7 @@ specified.
     the target and commands succeed, which allows for maximum throughput. If
     there is a failure, the interface ensures that no commands execute after
     the failing one.  To discover which command failed, the debugger has to
-    look at the state of the DM (e.g.\ contents of \Rdatazero) or hart (e.g.\ 
+    look at the state of the DM (e.g.\ contents of \Rdatazero) or hart (e.g.\
     contents of a register modified by a Program Buffer program) to determine
     which one failed.
 \end{commentary}
@@ -261,25 +261,6 @@ determines the kind of command. Table~\ref{tab:cmdtype} lists all commands.
 \end{table}
 
 \input{abstract_commands.tex}
-
-\begin{table}[htp]
-    \centering
-    \caption{Abstract Register Numbers}
-    \label{tab:regno}
-    \begin{tabulary}{\textwidth}{|r|l|}
-        \hline
-        0x0000 -- 0x0fff & CSRs. The ``PC'' can be accessed here through \Rdpc.
-        \\
-        \hline
-        0x1000 -- 0x101f & GPRs \\
-        \hline
-        0x1020 -- 0x103f & Floating point registers \\
-        \hline
-        0xc000 -- 0xffff & Reserved for non-standard extensions and internal
-        use. \\
-        \hline
-    \end{tabulary}
-\end{table}
 
 \section{Program Buffer} \label{programbuffer}
 
@@ -400,7 +381,7 @@ locations, or executing special instructions via the Program Buffer.
 
 \begin{commentary}
 Implementing a System Bus Access block has several benefits even
-when a Debug Module also implements a Program Buffer. 
+when a Debug Module also implements a Program Buffer.
 First, it is possible to
 access memory in a running system with minimal impact.  Second, it may improve
 performance when accessing memory.
