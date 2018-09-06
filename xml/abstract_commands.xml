@@ -88,9 +88,9 @@
 
     <register name="Quick Access">
         \begin{steps}{Perform the following sequence of operations:}
-        \item If the hart is halted, the command  sets \Fcmderr to \texttt{wrong state} and does not continue.
+        \item If the hart is halted, the command  sets \Fcmderr to \texttt{halt/resume} and does not continue.
         \item Halt the hart. If the hart halts for some other reason (e.g. breakpoint), the command
-            sets \Fcmderr to \texttt{wrong state} and does not continue.
+            sets \Fcmderr to \texttt{halt/resume} and does not continue.
         \item Execute the Program Buffer. If an exception occurs, \Fcmderr is set to \texttt{exception}
             and the program buffer execution ends, but the quick access command continues.
         \item Resume the hart.

@@ -367,11 +367,15 @@
             3 (exception): An exception occurred while executing the command
             (eg. while executing the Program Buffer).
 
-            4 (wrong state): The abstract command couldn't execute because the
+            4 (halt/resume): The abstract command couldn't execute because the
             hart wasn't in the required state (running/halted).
 
             5 (bus): The abstract command failed due to a bus error (eg.
             alignment, access size, timeout).
+
+            6 (interrupted): The abstract command didn't complete executing
+            because it was interrupted. It may have executed partially,
+            completely, or not at all.
 
             7 (other): The command failed for another reason.
         </field>

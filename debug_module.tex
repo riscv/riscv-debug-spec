@@ -227,8 +227,12 @@ specified.
     which one failed.
 \end{commentary}
 
-If a hart is reset while executing an abstract command, then the abstract
-command is terminated, \Fbusy goes low, and \Fcmderr is set to 4 (wrong state).
+If a hart is reset while executing an abstract command then the abstract
+command is terminated, \Fbusy must go low, and \Fcmderr should be set to 6
+(interrupted).
+
+If an abstract command appears to be hung, a debugger can only regain control
+by resetting the hart.
 
 \subsection{Abstract Command Listing}
 
