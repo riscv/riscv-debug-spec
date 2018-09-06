@@ -235,6 +235,10 @@
             A chain of triggers that don't all have the same \Ftiming value
             will never fire (unless consecutive instructions match the
             appropriate triggers).
+
+            If a trigger with \Ftiming of 0 matches, it is
+            implementation-dependent whether that prevents a trigger with
+            \Ftiming of 1 matching as well.
         </field>
         <field name="sizelo" bits="17:16" access="R/W" reset="0">
             This field contains the 2 low bits of \Fsize. The high bits come

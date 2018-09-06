@@ -25,6 +25,18 @@ Triggers do not fire while in Debug Mode.
 \item Repeat, incrementing the value in \Rtselect.
 \end{steps}
 
+It is possible for a trigger with the "enter Debug Mode" action (1) and another
+trigger with the "raise a breakpoint exception" action (0) to fire at the same
+time. The preferred behavior is to have both actions take place.  It is
+implementation-dependent which of the two happens first.  This ensures both
+that the presence of an external debugger doesn't affect execution and that a
+trigger set by user code doesn't affect the external debugger. If this is not
+implemented, then the hart must enter Debug Mode and ignore the breakpoint
+exception. In the latter case \Fhit of the trigger whose action is 0 must still
+be set, giving a debugger an opportunity to handle this case. What happens with
+trace actions when triggers with different actions are also firing is left to
+the trace spec.
+
 \begin{commentary}
     There are two ways to check whether a given trigger is the last one to
     support these implementations:
