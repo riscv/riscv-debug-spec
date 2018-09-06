@@ -25,6 +25,18 @@ Triggers do not fire while in Debug Mode.
 \item Repeat, incrementing the value in \Rtselect.
 \end{steps}
 
+It is possible for a trigger with the "enter Debug Mode" action (1) and another
+trigger with the "raise a breakpoint exception" action (0) to fire at the same
+time. The preferred behavior is to have both actions take place.  It is
+implementation-dependent which of the two happens first.  This ensures both
+that the presence of an external debugger doesn't affect execution and that a
+trigger set by user code doesn't affect the external debugger. If this is not
+implemented, then the hart must enter Debug Mode and ignore the breakpoint
+exception. In the latter case \Fhit of the trigger whose action is 0 must still
+be set, giving a debugger an opportunity to handle this case. What happens with
+trace actions when triggers with different actions are also firing is left to
+the trace spec.
+
 \begin{commentary}
     There are two ways to check whether a given trigger is the last one to
     support these implementations:
@@ -37,6 +49,34 @@ Triggers do not fire while in Debug Mode.
             back as 0 which terminates the enumeration.
     \end{enumerate}
 \end{commentary}
+
+\section{Native M-Mode Triggers}
+\label{sec:mmtrigger}
+
+Triggers can be used for native debugging. On a fully featured system triggers
+will be set using \Fu or \Fs, and when firing they can cause a breakpoint exception
+to trap to a more privileged mode. It is possible to set triggers natively to
+fire in M mode as well. In that case there is no higher privilege mode to trap
+to. When such a trigger causes a breakpoint exception while already in a trap
+handler, this will leave the system unable to resume normal execution.
+
+On full-featured systems this is a remote corner case that can probably be
+ignored. On systems that only implement M mode, however, it is recommended to
+implement one of two solutions to this problem. This way triggers can be useful
+for native debugging of even M mode code.
+
+The simple solution is to have the hardware prevent triggers with action=0 from
+firing while in M mode and while \Fmie in \Rmstatus is 0. Its limitation is
+that interrupts might be disabled at other times when a user might want
+triggers to fire.
+
+A more complex solution is to implement \Fmte and \Fmpte in \Rtcontrol. This
+solution has the benefit that it only disables triggers during the trap
+handler.
+
+A user setting M mode triggers that cause breakpoint exceptions will have to be
+aware of any problems that might come up with the particular system they are
+working on.
 
 \section{Trigger Registers}
 

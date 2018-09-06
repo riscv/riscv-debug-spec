@@ -9,13 +9,13 @@
         changed from version 0.11 of this spec.
 
         Harts are nonexistent if they will never be part of this system, no
-        matter how long a user waits. Eg. in a simple single-hart system only
+        matter how long a user waits. E.g.\ in a simple single-hart system only
         one hart exists, and all others are nonexistent. Debuggers may assume
         that a system has no harts with indexes higher than the first
         nonexistent one.
 
         Harts are unavailable if they might exist/become available at a later
-        time, or if there are other harts with higher indexes than this one. Eg.
+        time, or if there are other harts with higher indexes than this one. E.g.\
         in a multi-hart system some might temporarily be powered down, or a
         system might support hot-swapping harts. Systems with very large number
         of harts may permanently disable some during manufacturing, leaving
@@ -138,6 +138,10 @@
         the same configuration.
         \end{commentary}
 
+        On any given write, a debugger may only write 1 to at most one of the
+        following bits: \Fhaltreq, \Fresumereq, \Fhartreset, \Fackhavereset,
+        \Fsetresethaltreq, and \Fclrresethaltreq. The others must be written 0.
+
         <!-- Fields that apply to all selected hart(s) -->
         <field name="haltreq" bits="31" access="W" reset="-">
             0: May cancel a halt request for any of the currently selected
@@ -163,6 +167,9 @@
             This optional field writes the reset bit for all the currently
             selected harts.  To perform a reset the debugger writes 1, and then
             writes 0 to deassert the reset signal.
+
+            While this bit is 1, the debugger must not change which harts are
+            selected.
 
             If this feature is not implemented, the bit always stays 0, so
             after writing 1 the debugger can read the register back to see if
@@ -272,7 +279,7 @@
         <field name="0" bits="19:17" access="R" reset="0" />
         <field name="dataaccess" bits="16" access="R" reset="Preset">
             0: The {\tt data} registers are shadowed in the hart by CSR
-            registers. Each CSR register is MXLEN bits in size, and corresponds
+            registers. Each CSR register is DXLEN bits in size, and corresponds
             to a single argument, per Table~\ref{tab:datareg}.
 
             1: The {\tt data} registers are shadowed in the hart's memory map.
@@ -306,7 +313,7 @@
       <field name="0" bits="31:15" access="R/W" reset="0" />
       <field name="hawindowsel" bits="14:0" access="R/W" reset="0">
           The high bits of this field may be tied to 0, depending on how large
-          the array mask register is.  Eg. on a system with 48 harts only bit 0
+          the array mask register is.  E.g.\ on a system with 48 harts only bit 0
           of this field may actually be writable.
       </field>
     </register>
@@ -365,12 +372,12 @@
             regardless of whether the hart is running or not.
 
             3 (exception): An exception occurred while executing the command
-            (eg. while executing the Program Buffer).
+            (e.g.\ while executing the Program Buffer).
 
             4 (halt/resume): The abstract command couldn't execute because the
             hart wasn't in the required state (running/halted).
 
-            5 (bus): The abstract command failed due to a bus error (eg.
+            5 (bus): The abstract command failed due to a bus error (e.g.\ 
             alignment, access size, timeout).
 
             6 (interrupted): The abstract command didn't complete executing
@@ -533,7 +540,7 @@
     <!-- =============== authentication =============== -->
 
     <register name="Authentication Data" short="authdata" address="0x30">
-        This register serves as a 32-bit serial port to the authentication
+        This register serves as a 32-bit serial port to/from the authentication
         module.
 
         When \Fauthbusy is clear, the debugger can communicate with the
