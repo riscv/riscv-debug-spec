@@ -147,12 +147,12 @@ continuous hart index space. In order to let the debugger discover all harts,
 they must show up as unavailable even if there is no chance of them ever
 becoming available.
 
-Harts are running when they're executing normally, as if there was no debugger
-attached. This includes being in a low power mode or waiting for an interupt,
+Harts are running when they are executing normally, as if was no debugger was
+attached. This includes being in a low power mode or waiting for an interrupt,
 as long as a halt request will result in the hart being halted.
 
-Harts are halted when they're in Debug Mode, only performing tasks on behalf of
-the debugger.
+Harts are halted when they are in Debug Mode, only performing tasks on behalf
+of the debugger.
 
 \section{Run Control} \label{runcontrol}
 
