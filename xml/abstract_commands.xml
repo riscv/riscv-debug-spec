@@ -59,8 +59,12 @@
             (wrapping around to 0). Supporting this variant is optional.
         </field>
         <field name="postexec" bits="18">
-            When 1, execute the program in the Program Buffer exactly once
-            after performing the transfer, if any.
+            0: No effect. This variant must be supported, and is the only
+            supported one if \Fprogbufsize is 0.
+
+            1: Execute the program in the Program Buffer exactly once after
+            performing the transfer, if any. Supporting this variant is
+            optional.
         </field>
         <field name="transfer" bits = "17">
             0: Don't do the operation specified by \Fwrite.
