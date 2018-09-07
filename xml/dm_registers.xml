@@ -8,21 +8,6 @@
         not change in the future, because it contains \Fversion.  It has
         changed from version 0.11 of this spec.
 
-        Harts are nonexistent if they will never be part of this system, no
-        matter how long a user waits. E.g.\ in a simple single-hart system only
-        one hart exists, and all others are nonexistent. Debuggers may assume
-        that a system has no harts with indexes higher than the first
-        nonexistent one.
-
-        Harts are unavailable if they might exist/become available at a later
-        time, or if there are other harts with higher indexes than this one. E.g.\
-        in a multi-hart system some might temporarily be powered down, or a
-        system might support hot-swapping harts. Systems with very large number
-        of harts may permanently disable some during manufacturing, leaving
-        holes in the otherwise continuous hart index space. In order to let the
-        debugger discover all harts, they must show up as unavailable even if
-        there is no chance of them ever becoming available.
-
         <field name="0" bits="31:23" access="R" reset="0" />
         <field name="impebreak" bits="22" access="R" reset="Preset">
             If 1, then there is an implicit {\tt ebreak} instruction at the
