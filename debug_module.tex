@@ -71,7 +71,7 @@ There is no requirement on the duration of the assertion of \Fndmreset.
 The implementation must ensure that a write of \Fndmreset to 1 followed by
 a write of \Fndmreset to 0 triggers system reset. The system may take
 an arbitrarily long time to come out of reset, as reported by \Fallunavail,
-\Fanyunavail, or other implementation specific indicators.
+\Fanyunavail.
 
 Individual harts (or several at once) can be reset by selecting them, setting
 and then clearing \Fhartreset. In this case an implementation may reset more
