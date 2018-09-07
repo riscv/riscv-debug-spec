@@ -30,6 +30,25 @@
         Each individual register (aside from GPRs) may be supported differently
         across read, write, and halt status.
 
+        \begin{table}[htp]
+            \centering
+            \caption{Abstract Register Numbers}
+            \label{tab:regno}
+            \begin{tabulary}{\textwidth}{|r|l|}
+                \hline
+                0x0000 -- 0x0fff &amp; CSRs. The ``PC'' can be accessed here through \Rdpc.
+                \\
+                \hline
+                0x1000 -- 0x101f &amp; GPRs \\
+                \hline
+                0x1020 -- 0x103f &amp; Floating point registers \\
+                \hline
+                0xc000 -- 0xffff &amp; Reserved for non-standard extensions and internal
+                use. \\
+                \hline
+            \end{tabulary}
+        \end{table}
+
         \begin{commentary}
             The encoding of \Faarsize was chosen to match \Fsbaccess in \Rsbcs.
         \end{commentary}
@@ -59,8 +78,12 @@
             (wrapping around to 0). Supporting this variant is optional.
         </field>
         <field name="postexec" bits="18">
-            When 1, execute the program in the Program Buffer exactly once
-            after performing the transfer, if any.
+            0: No effect. This variant must be supported, and is the only
+            supported one if \Fprogbufsize is 0.
+
+            1: Execute the program in the Program Buffer exactly once after
+            performing the transfer, if any. Supporting this variant is
+            optional.
         </field>
         <field name="transfer" bits = "17">
             0: Don't do the operation specified by \Fwrite.

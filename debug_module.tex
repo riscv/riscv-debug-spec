@@ -75,7 +75,9 @@ an arbitrarily long time to come out of reset, as reported by \Fallunavail,
 
 Individual harts (or several at once) can be reset by selecting them, setting
 and then clearing \Fhartreset. In this case an implementation may reset more
-harts than just the ones that are selected.
+harts than just the ones that are selected. Note that when unselected harts are
+reset as the result of a reset request, there will be no indication in
+\Fanyhavereset or \Fallhavereset until one of those harts becomes selected.
 
 When harts have been reset, they must set a sticky {\tt havereset} state bit.
 The conceptual {\tt havereset} state bits can be read for selected harts in
@@ -83,7 +85,7 @@ The conceptual {\tt havereset} state bits can be read for selected harts in
 These bits must be set regardless of the cause of the reset.
 The {\tt havereset} bits for the selected harts
 can be cleared by writing 1 to \Fackhavereset in \Rdmcontrol.
-The {\tt havereset} bits may or may not be cleared 
+The {\tt havereset} bits may or may not be cleared
 when \Fdmactive is low.
 
 \section{Selecting Harts} \label{selectingharts}
@@ -269,25 +271,6 @@ determines the kind of command. Table~\ref{tab:cmdtype} lists all commands.
 
 \input{abstract_commands.tex}
 
-\begin{table}[htp]
-    \centering
-    \caption{Abstract Register Numbers}
-    \label{tab:regno}
-    \begin{tabulary}{\textwidth}{|r|l|}
-        \hline
-        0x0000 -- 0x0fff & CSRs. The ``PC'' can be accessed here through \Rdpc.
-        \\
-        \hline
-        0x1000 -- 0x101f & GPRs \\
-        \hline
-        0x1020 -- 0x103f & Floating point registers \\
-        \hline
-        0xc000 -- 0xffff & Reserved for non-standard extensions and internal
-        use. \\
-        \hline
-    \end{tabulary}
-\end{table}
-
 \section{Program Buffer} \label{programbuffer}
 
 To support executing arbitrary instructions on a halted hart,
@@ -407,7 +390,7 @@ locations, or executing special instructions via the Program Buffer.
 
 \begin{commentary}
 Implementing a System Bus Access block has several benefits even
-when a Debug Module also implements a Program Buffer. 
+when a Debug Module also implements a Program Buffer.
 First, it is possible to
 access memory in a running system with minimal impact.  Second, it may improve
 performance when accessing memory.
