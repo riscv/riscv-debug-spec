@@ -139,17 +139,17 @@ and all others are nonexistent. Debuggers may assume that a system has no harts
 with indexes higher than the first nonexistent one.
 
 Harts are unavailable if they might exist/become available at a later time, or
-if there are other harts with higher indexes than this one. The most common
-example of this state is when a hart is held in reset. Other examples are a
-hart that is temporarily powered down, or one that might be hot-swapped in
-later.
+if there are other harts with higher indexes than this one. Harts may be
+unavailable for a variety of reasons including being reset, temporarily powered
+down, and not being plugged into the system.  No abstract commands can be
+executed while an unavailable hart is selected.
 Systems with very large number of harts may
 permanently disable some during manufacturing, leaving holes in the otherwise
 continuous hart index space. In order to let the debugger discover all harts,
 they must show up as unavailable even if there is no chance of them ever
 becoming available.
 
-Harts are running when they are executing normally, as if was no debugger was
+Harts are running when they are executing normally, as if no debugger was
 attached. This includes being in a low power mode or waiting for an interrupt,
 as long as a halt request will result in the hart being halted.
 
@@ -217,9 +217,12 @@ set. If a command has unsupported options set, the DM must set \Fcmderr to 2
     case, the command will return "not supported."
 \end{commentary}
 
-Debuggers execute abstract commands by writing them to \Rcommand.
-Debuggers can determine whether an abstract command is complete by
-reading \Fbusy in \Rabstractcs.
+Debuggers execute abstract commands by writing them to \Rcommand.  Debuggers
+can determine whether an abstract command is complete by reading \Fbusy in
+\Rabstractcs. After completion, \Fcmderr indicates whether the command was
+successful or not. Commands may fail because a hart is not halted, not running,
+unavailable, or because they encounter an error during execution.
+
 If the command takes arguments, the debugger
 must write them to the {\tt data} registers before writing to \Rcommand. If a
 command returns results, the Debug Module must ensure they are placed

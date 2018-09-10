@@ -357,7 +357,7 @@
             (e.g.\ while executing the Program Buffer).
 
             4 (halt/resume): The abstract command couldn't execute because the
-            hart wasn't in the required state (running/halted).
+            hart wasn't in the required state (running/halted), or unavailable.
 
             5 (bus): The abstract command failed due to a bus error (e.g.\ 
             alignment, access size, timeout).
