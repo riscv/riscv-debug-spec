@@ -236,12 +236,12 @@ While an abstract command is executing (\Fbusy in \Rabstractcs is high), a
 debugger must not change \Fhartsel, and must not write 1 to \Fhaltreq,
 \Fresumereq, \Fackhavereset, \Fsetresethaltreq, or \Fclrresethaltreq.
 
-If a hart is reset while executing an abstract command then the abstract
-command is terminated, \Fbusy must go low, and \Fcmderr should be set to 6
-(interrupted).
+To abort an abstract command, the debugger first resets the hart (using
+\Fhartreset or \Fndmreset), and then the Debug Module (using \Fdmactive).
 
-If an abstract command appears to be hung, a debugger can only regain control
-by resetting the hart.
+If a hart becomes unavailable while executing an abstract command then the
+abstract command may be terminated, with \Fbusy going low, and \Fcmderr being
+set to 4 (halt/resume). Alternatively, the command could just appear to be hung.
 
 \subsection{Abstract Command Listing}
 

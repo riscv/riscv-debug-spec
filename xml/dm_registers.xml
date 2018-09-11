@@ -127,9 +127,7 @@
         and at most 20. A debugger should discover {\tt HARTSELLEN} by writing
         all ones to \Fhartsel (assuming the maximum size) and reading back the
         value to see which bits were actually set. Debuggers must not change
-        \Fhartsel while an abstract command is executing. (If an abstract
-        command appears to be hung, the debugger can reset the selected hart by
-        clearing \Fhasel if necessary, and using \Fhartreset.)
+        \Fhartsel while an abstract command is executing.
 
         \begin{commentary}
         There are separate \Fsetresethaltreq and \Fclrresethaltreq bits so that
@@ -379,10 +377,6 @@
 
             5 (bus): The abstract command failed due to a bus error (e.g.\ 
             alignment, access size, timeout).
-
-            6 (interrupted): The abstract command didn't complete executing
-            because it was interrupted. It may have executed partially,
-            completely, or not at all.
 
             7 (other): The command failed for another reason.
         </field>
