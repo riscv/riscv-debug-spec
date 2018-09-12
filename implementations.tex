@@ -14,6 +14,10 @@ using the Access Register abstract command.
 Memory is accessed using the Abstract Access Memory command or through System
 Bus Access.
 
+Since this implementation doesn't rely on the hart executing any instructions,
+it could allow a debugger to collect information from the hart even if it is
+otherwise completely hung.
+
 \section{Execution Based}
 
 This implementation only implements the Access Register abstract command
