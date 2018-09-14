@@ -126,7 +126,8 @@
         width of \Fhartsel is called {\tt HARTSELLEN}. It must be at least 0
         and at most 20. A debugger should discover {\tt HARTSELLEN} by writing
         all ones to \Fhartsel (assuming the maximum size) and reading back the
-        value to see which bits were actually set.
+        value to see which bits were actually set. Debuggers must not change
+        \Fhartsel while an abstract command is executing.
 
         \begin{commentary}
         There are separate \Fsetresethaltreq and \Fclrresethaltreq bits so that
