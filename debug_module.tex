@@ -141,8 +141,7 @@ with indexes higher than the first nonexistent one.
 Harts are unavailable if they might exist/become available at a later time, or
 if there are other harts with higher indexes than this one. Harts may be
 unavailable for a variety of reasons including being reset, temporarily powered
-down, and not being plugged into the system.  No abstract commands can be
-executed while an unavailable hart is selected.
+down, and not being plugged into the system.
 Systems with very large number of harts may
 permanently disable some during manufacturing, leaving holes in the otherwise
 continuous hart index space. In order to let the debugger discover all harts,
@@ -155,6 +154,12 @@ as long as a halt request will result in the hart being halted.
 
 Harts are halted when they are in Debug Mode, only performing tasks on behalf
 of the debugger.
+
+Which states a hart that is reset goes through is implementation dependent.
+Harts may be unavailable while reset is asserted, and some time after reset is
+deasserted. They might transition to running for some time after reset is
+deasserted. Finally they end up either running or halted, depending on
+\Fhaltreq and \Fresethaltreq.
 
 \section{Run Control} \label{runcontrol}
 
@@ -204,6 +209,8 @@ The DM supports a set of abstract commands, most of which
 are optional. Depending on the implementation, the debugger may
 be able to perform
 some abstract commands even when the selected hart is not halted.
+No abstract commands can be
+executed while an unavailable hart is selected.
 Debuggers can only determine which abstract commands
 are supported by a given hart in a given state by attempting them
 and then looking at \Fcmderr in \Rabstractcs to see if they were successful.
@@ -217,7 +224,7 @@ set. If a command has unsupported options set, the DM must set \Fcmderr to 2
     case, the command will return "not supported."
 \end{commentary}
 
-Debuggers execute abstract commands by writing them to \Rcommand.  Debuggers
+Debuggers execute abstract commands by writing them to \Rcommand.  They
 can determine whether an abstract command is complete by reading \Fbusy in
 \Rabstractcs. After completion, \Fcmderr indicates whether the command was
 successful or not. Commands may fail because a hart is not halted, not running,
