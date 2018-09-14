@@ -241,10 +241,10 @@ hung, the following procedure can be attempted to abort the command. First the
 debugger resets the hart (using \Fhartreset or \Fndmreset), and then it resets
 the Debug Module (using \Fdmactive).
 
-If a hart becomes unavailable while executing an abstract command then the the
+If a hart becomes unavailable while executing an abstract command then the
 Debug Module may terminate the abstract command, setting \Fbusy low, and
 \Fcmderr to 4 (halt/resume). Alternatively, the command could just appear to be
-hung.
+hung (\Fbusy does not go low).
 
 \subsection{Abstract Command Listing}
 
