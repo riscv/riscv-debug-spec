@@ -175,7 +175,7 @@
 
             Writes apply to the new value of \Fhartsel and \Fhasel.
         </field>
-        <field name="ackhavereset" bits="28" access="W" reset="-">
+        <field name="ackhavereset" bits="28" access="W1" reset="-">
             0: No effect.
 
             1: Clears {\tt havereset} for any selected harts.
