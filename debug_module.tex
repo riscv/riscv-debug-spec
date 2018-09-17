@@ -211,8 +211,6 @@ The DM supports a set of abstract commands, most of which
 are optional. Depending on the implementation, the debugger may
 be able to perform
 some abstract commands even when the selected hart is not halted.
-No abstract commands can be
-executed while an unavailable hart is selected.
 Debuggers can only determine which abstract commands
 are supported by a given hart in a given state by attempting them
 and then looking at \Fcmderr in \Rabstractcs to see if they were successful.
@@ -283,7 +281,8 @@ hung, the following procedure can be attempted to abort the command. First the
 debugger resets the hart (using \Fhartreset or \Fndmreset), and then it resets
 the Debug Module (using \Fdmactive).
 
-If a hart becomes unavailable while executing an abstract command then the
+If an abstract command is started while the selected hart is unavailable or if
+a hart becomes unavailable while executing an abstract command, then the
 Debug Module may terminate the abstract command, setting \Fbusy low, and
 \Fcmderr to 4 (halt/resume). Alternatively, the command could just appear to be
 hung (\Fbusy does not go low).
