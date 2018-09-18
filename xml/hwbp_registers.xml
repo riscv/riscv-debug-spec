@@ -96,21 +96,23 @@
     </register>
 
     <register name="Trigger Extra" short="textra" address="0x7a3">
+        Any bit in this register may be hardwired to 0 if its functionality is
+        not implemented. The checks specified in this register apply regardless
+        of \Ftype in \Rtdataone.
+
         \begin{commentary}
-            ASIDLEN is limited in size when XLEN is less than DXLEN to preserve
-            the maximum number of bits for future use.
+            TASIDLEN is limited in size when XLEN is less than DXLEN to
+            preserve the maximum number of bits for future use.
         \end{commentary}
-        <field name="0" bits="XLEN-1:2+ASIDLEN" access="R" reset="0" />
-        <field name="tasid" bits="1+ASIDLEN:1" access="R/W" reset="0">
-            If XLEN is 32 then ASIDLEN is 9. Otherwise ASIDLEN is 16.
+        <field name="0" bits="XLEN-1:1+TASIDLEN" access="R" reset="0" />
+        <field name="tasid" bits="TASIDLEN:1" access="R/W" reset="0">
+            If XLEN is 32 then TASIDLEN is 9. Otherwise TASIDLEN is 16.
         </field>
         <field name="tasiden" bits="0" access="R/W" reset="0">
             0: \Ftasid is ignored.
 
             1: This trigger will only match if \Fasid in \Rsatp equals the
-            lower bits of \Ftasid. The number of bits to compare depends on the
-            current value of SXLEN. If it is 32, then 9 bits are compared,
-            otherwise 16 bits are compared.
+            lower ASIDMAX (defined in the Privileged Spec) bits of \Ftasid.
         </field>
     </register>
 
