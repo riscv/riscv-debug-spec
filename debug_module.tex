@@ -71,7 +71,7 @@ There is no requirement on the duration of the assertion of \Fndmreset.
 The implementation must ensure that a write of \Fndmreset to 1 followed by
 a write of \Fndmreset to 0 triggers system reset. The system may take
 an arbitrarily long time to come out of reset, as reported by \Fallunavail,
-\Fanyunavail, or other implementation specific indicators.
+\Fanyunavail.
 
 Individual harts (or several at once) can be reset by selecting them, setting
 and then clearing \Fhartreset. In this case an implementation may reset more
@@ -128,13 +128,50 @@ Only the actions initiated by \Rdmcontrol can apply to multiple harts
 at once, Abstract Commands apply only to the hart selected by
 \Fhartsel.
 
+\section{Hart States}
+
+Every hart that can be selected is in exactly one of four states. Which state
+the selected harts are in is reflected by \Fallnonexistent, \Fanynonexistent,
+\Fallunavail, \Fanyunavail, \Fallrunning, \Fanyrunning, \Fallhalted, and
+\Fanyhalted.
+
+Harts are nonexistent if they will never be part of this system, no matter how
+long a user waits. E.g.\ in a simple single-hart system only one hart exists,
+and all others are nonexistent. Debuggers may assume that a system has no harts
+with indexes higher than the first nonexistent one.
+
+Harts are unavailable if they might exist/become available at a later time, or
+if there are other harts with higher indexes than this one. Harts may be
+unavailable for a variety of reasons including being reset, temporarily powered
+down, and not being plugged into the system.
+Systems with very large number of harts may
+permanently disable some during manufacturing, leaving holes in the otherwise
+continuous hart index space. In order to let the debugger discover all harts,
+they must show up as unavailable even if there is no chance of them ever
+becoming available.
+
+Harts are running when they are executing normally, as if no debugger was
+attached. This includes being in a low power mode or waiting for an interrupt,
+as long as a halt request will result in the hart being halted.
+
+Harts are halted when they are in Debug Mode, only performing tasks on behalf
+of the debugger.
+
+Which states a hart that is reset goes through is implementation dependent.
+Harts may be unavailable while reset is asserted, and some time after reset is
+deasserted. They might transition to running for some time after reset is
+deasserted. Finally they end up either running or halted, depending on
+\Fhaltreq and \Fresethaltreq.
+
 \section{Run Control} \label{runcontrol}
 
 For every hart, the Debug Module contains 4 conceptual bits of state: halt
 request, resume request, halt-on-reset request,  and hart reset.
 (The hart reset and halt-on-reset request bits are optional.)
-These bits all reset to 0. A debugger can write them for the currently selected
-harts through \Fhaltreq, \Fresumereq, \Fsetresethaltreq/\Fclrresethaltreq and \Fhartreset in \Rdmcontrol.
+These bits all reset to 0. A debugger can write one of them at a time for the
+currently selected
+harts through \Fhaltreq, \Fresumereq, \Fsetresethaltreq/\Fclrresethaltreq and
+\Fhartreset in \Rdmcontrol.
 In addition the DM receives halted, running, and resume ack signals from each
 hart.
 
@@ -187,9 +224,12 @@ set. If a command has unsupported options set, the DM must set \Fcmderr to 2
     case, the command will return "not supported."
 \end{commentary}
 
-Debuggers execute abstract commands by writing them to \Rcommand.
-Debuggers can determine whether an abstract command is complete by
-reading \Fbusy in \Rabstractcs.
+Debuggers execute abstract commands by writing them to \Rcommand.  They
+can determine whether an abstract command is complete by reading \Fbusy in
+\Rabstractcs. After completion, \Fcmderr indicates whether the command was
+successful or not. Commands may fail because a hart is not halted, not running,
+unavailable, or because they encounter an error during execution.
+
 If the command takes arguments, the debugger
 must write them to the {\tt data} registers before writing to \Rcommand. If a
 command returns results, the Debug Module must ensure they are placed
@@ -241,7 +281,8 @@ hung, the following procedure can be attempted to abort the command. First the
 debugger resets the hart (using \Fhartreset or \Fndmreset), and then it resets
 the Debug Module (using \Fdmactive).
 
-If a hart becomes unavailable while executing an abstract command then the
+If an abstract command is started while the selected hart is unavailable or if
+a hart becomes unavailable while executing an abstract command, then the
 Debug Module may terminate the abstract command, setting \Fbusy low, and
 \Fcmderr to 4 (halt/resume). Alternatively, the command could just appear to be
 hung (\Fbusy does not go low).
