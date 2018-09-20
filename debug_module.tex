@@ -11,7 +11,7 @@
     first instruction after reset. (Required)
 \item Provide a mechanism to allow debugging harts immediately out of reset
       (regardless of the reset cause). (Optional)
-\item Provide abstract access to other hart registers. (Optional)
+\item Provide abstract access to non-GPR hart registers. (Optional)
 \item Provide a Program Buffer to force the hart to execute arbitrary instructions. (Optional)
 \item Allow multiple harts to be halted, resumed, and/or reset at the same time. (Optional)
 \item Allow memory access from a hart's point of view. (Optional)
@@ -22,7 +22,7 @@ In order to implement memory access, a target must implement at least one of
 Program Buffer, System Bus Access, or Abstract Access Memory command
 mechanisms.
 
-Targets that wish to implement access to all registers must implement either
+In order to implement access to all registers, targets should implement either
 the Program Buffer or abstract access to all registers.
 
 A single DM can debug up to $2^{20}$ harts.
@@ -75,9 +75,9 @@ an arbitrarily long time to come out of reset, as reported by \Fallunavail,
 
 Individual harts (or several at once) can be reset by selecting them, setting
 and then clearing \Fhartreset. In this case an implementation may reset more
-harts than just the ones that are selected. Note that when unselected harts are
-reset as the result of a reset request, there will be no indication in
-\Fanyhavereset or \Fallhavereset until one of those harts becomes selected.
+harts than just the ones that are selected. The debugger can discover which
+other harts are reset (if any) by selecting them and checking \Fanyhavereset
+and \Fallhavereset.
 
 When harts have been reset, they must set a sticky {\tt havereset} state bit.
 The conceptual {\tt havereset} state bits can be read for selected harts in
@@ -113,8 +113,8 @@ Hart indexes start at 0 and are contiguous until the final index.
 \subsection {Selecting Multiple Harts} \label{hartarraymask}
 
 Debug Modules may implement a Hart Array Mask register to allow selecting
-multiple harts at once. The Nth bit in the Hart Array Mask register applies to
-the hart with index N. If the bit is 1 then the hart is selected.  Usually a DM
+multiple harts at once. The $n$th bit in the Hart Array Mask register applies to
+the hart with index $n$. If the bit is 1 then the hart is selected.  Usually a DM
 will have a Hart Array Mask register exactly wide enough to select all the
 harts it supports, but it's allowed to tie any of these bits to 0.
 
@@ -168,10 +168,9 @@ deasserted. Finally they end up either running or halted, depending on
 For every hart, the Debug Module contains 4 conceptual bits of state: halt
 request, resume request, halt-on-reset request,  and hart reset.
 (The hart reset and halt-on-reset request bits are optional.)
-These bits all reset to 0. A debugger can write one of them at a time for the
-currently selected
+These bits all reset to 0. A debugger can write them for the currently selected
 harts through \Fhaltreq, \Fresumereq, \Fsetresethaltreq/\Fclrresethaltreq and
-\Fhartreset in \Rdmcontrol.
+\Fhartreset in \Rdmcontrol, only one of which may be high in any single write.
 In addition the DM receives halted, running, and resume ack signals from each
 hart.
 
@@ -199,11 +198,10 @@ Writing 1 to \Fsetresethaltreq sets the halt-on-reset request bit for each
 selected hart.
 When a hart's halt-on-reset request bit is set, the hart will immediately enter
 debug mode on the next deassertion of its reset. This is true regardless of
-whether or not the hart's reset is caused by the DM's
-\Fndmreset/\Fhartreset signals.
+the reset's cause.
 The hart's halt-on-reset request bit remains set
 until cleared by the debugger writing 1 to \Fclrresethaltreq
-while the hart is selected, or by debug module reset.
+while the hart is selected, or by DM reset.
 
 \section{Abstract Commands} \label{abstractcommands}
 
@@ -221,7 +219,7 @@ set. If a command has unsupported options set, the DM must set \Fcmderr to 2
 \begin{commentary}
     Example: Every system must support the Access Register command, but may not
     support accessing CSRs. If the debugger requests to read a CSR in that
-    case, the command will return "not supported."
+    case, the command will return ``not supported.''
 \end{commentary}
 
 Debuggers execute abstract commands by writing them to \Rcommand.  They
@@ -277,7 +275,7 @@ debugger must not change \Fhartsel, and must not write 1 to \Fhaltreq,
 \Fresumereq, \Fackhavereset, \Fsetresethaltreq, or \Fclrresethaltreq.
 
 If an abstract command does not complete in the expected time and appears to be
-hung, the following procedure can be attempted to abort the command. First the
+hung, the following procedure can be attempted to abort the command: First the
 debugger resets the hart (using \Fhartreset or \Fndmreset), and then it resets
 the Debug Module (using \Fdmactive).
 
@@ -285,7 +283,7 @@ If an abstract command is started while the selected hart is unavailable or if
 a hart becomes unavailable while executing an abstract command, then the
 Debug Module may terminate the abstract command, setting \Fbusy low, and
 \Fcmderr to 4 (halt/resume). Alternatively, the command could just appear to be
-hung (\Fbusy does not go low).
+hung (\Fbusy never goes low).
 
 \subsection{Abstract Command Listing}
 
@@ -328,9 +326,9 @@ execute it exactly once with the Access Register Abstract Command,
 setting the \Fpostexec bit in \Rcommand.
 The debugger can write whatever program it likes (including jumps out of the
 Program Buffer), but the program must end with
-{\tt ebreak} or {\tt c.ebreak}. To save hardware, an implementation may support
+{\tt ebreak} or {\tt c.ebreak}. An implementation may support
 an implied {\tt ebreak} that is executed when a hart runs off the end of the
-Program Buffer. This is indicated in \Fimpebreak. With this feature, a Program
+Program Buffer. This is indicated by \Fimpebreak. With this feature, a Program
 Buffer of just 2 32-bit words can offer efficient debugging.
 
 If \Fprogbufsize is 1, \Fimpebreak must be 1. It is possible that the Program
@@ -347,15 +345,12 @@ compressed {\tt nop} in the upper 16 bits.
     in the address space somewhere.
 \end{commentary}
 
-If the debugger executes a program that does not
-terminate with an {\tt ebreak} instruction, the hart will remain in Debug Mode
-until it is reset.
-
 While these programs are executed, the hart does not leave Debug Mode (see
 Section~\ref{debugmode}).  If an exception is encountered during execution of
 the Program Buffer, no more instructions are executed, the hart remains in Debug
 Mode, and \Fcmderr is set to 3 ({\tt exception error}).  If the debugger
-executes a program that doesn't terminate, then it loses control of the hart.
+executes a program that doesn't terminate with an {\tt ebreak} instruction, the
+hart will remain in Debug Mode and the debugger will lose control of the hart.
 
 Executing the Program Buffer may clobber \Rdpc. If that is the case, it must be
 possible to read/write \Rdpc using an abstract command with \Fpostexec not set.
@@ -427,8 +422,8 @@ for each access size.
 Depending on the microarchitecture, data accessed through System Bus Access may
 not always be coherent with that observed by each hart. It is up to the
 debugger to enforce coherency if the implementation does not. This
-specification does not define a standard way to do this, as it is
-implementation/platform specific. Possibilities may include
+specification does not define a standard way to do this.
+Possibilities may include
 writing to special memory-mapped
 locations, or executing special instructions via the Program Buffer.
 
@@ -442,7 +437,7 @@ Third, it may provide
 access to devices that a hart does not have access to.
 \end{commentary}
 
-\section{Quick Access}
+\section{Minimally Intrusive Debugging}
 
 Depending on the task it is performing, some harts can only be halted very briefly.
 There are several mechanisms that allow accessing resources in such a running system

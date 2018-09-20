@@ -23,12 +23,12 @@ heterogeneous. There is no further limit on the hart-DM mapping, but usually
 all harts in a single core are controlled by the same DM. In most platforms there
 will only be one DM that controls all the harts in the platform.
 
-DMs provide run control to their harts in the platform. Abstract commands
+DMs provide run control of their harts in the platform. Abstract commands
 provide access to GPRs. Additional registers are accessible through abstract
 commands or by writing programs to the optional Program Buffer.
 
 The Program Buffer allows the debugger to execute arbitrary instructions on a
-hart. This mechanism can be used to access memory.  An optional system bus
+hart. This mechanism can also be used to access memory.  An optional system bus
 access block allows memory accesses without using a RISC-V hart to perform the
 access.
 

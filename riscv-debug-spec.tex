@@ -2,7 +2,7 @@
 % riscv-privileged.tex
 %-----------------------------------------------------------------------
 
-\documentclass[twoside,11pt]{book}
+\documentclass[twoside,11pt,openany]{book}
 \setcounter{tocdepth}{4}
 \setcounter{secnumdepth}{4}
 
@@ -17,9 +17,9 @@
 \usepackage{xspace}
 \newcommand{\defregname}[2]{\providecommand{#1}{{\tt #2}\xspace}}
 \newcommand{\deffieldname}[2]{\providecommand{#1}{{$|#2|$}\xspace}}
-\deffieldname{\Fmprv}{mprv}
-\deffieldname{\Fmie}{mie}
-\deffieldname{\Fmxl}{mxl}
+\deffieldname{\Fmprv}{MPRV}
+\deffieldname{\Fmie}{MIE}
+\deffieldname{\Fmxl}{MXL}
 \defregname{\Rmisa}{misa}
 \defregname{\Rmstatus}{mstatus}
 \defregname{\Rmcause}{mcause}

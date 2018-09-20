@@ -32,7 +32,7 @@
             Contains the privilege level the hart was operating in when Debug
             Mode was entered. The encoding is described in Table
             \ref{tab:privlevel}, and matches the privilege level encoding from
-            the RISC-V Privileged ISA Specification. A user can write this
+            the Privileged Spec. A user can write this
             value to change the hart's privilege level when exiting Debug Mode.
         </field>
     </register>
