@@ -85,6 +85,9 @@ an instruction fetch causes an exception, that exception does not occurr until
 the next time the hart is resumed. Similarly, a trigger at the new address does
 not fire until the hart actually attempts to execute that instruction.
 
+If the instruction being stepped over is {\tt wfi} and would normally enter a
+wait state, then instead the instruction is treated as {\tt nop}.
+
 \section{Reset}
 
 If the halt signal (driven by the hart's halt request bit in the Debug Module)
