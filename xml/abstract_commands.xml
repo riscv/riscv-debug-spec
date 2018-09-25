@@ -11,6 +11,7 @@
             {\tt arg0} region of {\tt data} into the register specified by
             \Fregno, and perform any side effects that occur when this register
             is written from M mode.
+        \item If \Faarpostincrement is set, increment \Fregno.
         \item Execute the Program Buffer, if \Fpostexec is set.
         \end{steps}
 
@@ -52,6 +53,9 @@
         \begin{commentary}
             The encoding of \Faarsize was chosen to match \Fsbaccess in \Rsbcs.
         \end{commentary}
+
+        This command modifies {\tt arg0} only when a register is read. The
+        other {\tt data} registers are not changed.
 
         <field name="cmdtype" bits="31:24">
             This is 0 to indicate Access Register Command.
@@ -121,6 +125,8 @@
 
         Implementing this command is optional.
 
+        This command does not touch the {\tt data} registers.
+
         <field name="cmdtype" bits="31:24">
             This is 1 to indicate Quick Access command.
         </field>
@@ -137,7 +143,7 @@
             {\tt arg0} portion of {\tt data}, if \Fwrite is clear.
         \item Copy data from the {\tt arg0} portion of {\tt data} into the
             memory location specified in {\tt arg1}, if \Fwrite is set.
-        \item Increment {\tt arg1}, if \Faampostincrement is set.
+        \item If \Faampostincrement is set, increment {\tt arg1}.
         \end{steps}
 
         If any of these operations fail, \Fcmderr is set and none of the
@@ -157,6 +163,10 @@
         \begin{commentary}
             The encoding of \Faamsize was chosen to match \Fsbaccess in \Rsbcs.
         \end{commentary}
+
+        This command modifies {\tt arg0} only when memory is read. It modifies
+        {\tt arg1} only if \Faampostincrement is set.  The other {\tt data}
+        registers are not changed.
 
         <field name="cmdtype" bits="31:24">
             This is 2 to indicate Access Memory Command.
