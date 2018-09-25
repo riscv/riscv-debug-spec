@@ -66,6 +66,12 @@ sc} pairs.
     automate this.
 \end{commentary}
 
+\section{Wait for Interrupt Instruction}
+
+If halt is requested while {\tt wfi} is executing, then the hart must leave the
+stalled state, completing this instruction's execution, and then enter Debug
+Mode.
+
 \section{Single Step}
 
 A debugger can cause a halted hart to execute a single instruction and then
