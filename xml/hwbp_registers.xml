@@ -3,7 +3,7 @@
     prevent untrusted user code from causing entry into Debug Mode without the
     OS's permission.
 
-    In this section XLEN means MXLEN when in M Mode, DXLEN when in Debug Mode.
+    In this section XLEN means MXLEN when in M-mode, DXLEN when in Debug Mode.
     Note that this makes several of the fields in \Rtdataone move around based
     on the current execution mode and value of MXLEN.
 
@@ -44,7 +44,7 @@
         written. To verify that what they wrote is a valid index, debuggers can
         read back the value and check that \Rtselect holds what they wrote.
 
-        Since triggers can be used both by Debug Mode and M Mode, the debugger
+        Since triggers can be used both by Debug Mode and M-mode, the debugger
         must restore this register if it modifies it.
 
         <field name="index" bits="XLEN-1:0" access="R/W" reset="0" />
@@ -75,7 +75,7 @@
             Other values are reserved for future use.
         </field>
         <field name="dmode" bits="XLEN-5" access="R/W" reset="0">
-            0: Both Debug and M Mode can write the {\tt tdata} registers at the
+            0: Both Debug and M-mode can write the {\tt tdata} registers at the
             selected \Rtselect.
 
             1: Only Debug Mode can write the {\tt tdata} registers at the
@@ -121,25 +121,25 @@
 
     <register name="Trigger Control" short="tcontrol" address="0x7a5">
         This optional register is one solution to a problem regarding triggers
-        with action=0 firing in M mode trap handlers. See
+        with action=0 firing in M-mode trap handlers. See
         Section~\ref{sec:mmtrigger} for more details.
 
         <field name="0" bits="MXLEN-1:8" access="R" reset="0" />
         <field name="mpte" bits="7" access="R/W" reset="0">
-            M mode previous trigger enable field.
+            M-mode previous trigger enable field.
 
-            When a trap into M mode is taken, \Fmpte is set to the value of
+            When a trap into M-mode is taken, \Fmpte is set to the value of
             \Fmte.
         </field>
         <field name="0" bits="6:4" access="R" reset="0" />
         <field name="mte" bits="3" access="R/W" reset="0">
-            M mode trigger enable field.
+            M-mode trigger enable field.
 
-            0: Triggers do not match/fire while the hart is in M mode.
+            0: Triggers do not match/fire while the hart is in M-mode.
 
-            1: Triggers do match/fire while the hart is in M mode.
+            1: Triggers do match/fire while the hart is in M-mode.
 
-            When a trap into M mode is taken, \Fmte is set to 0. When {\tt
+            When a trap into M-mode is taken, \Fmte is set to 0. When {\tt
             mret} is executed, \Fmte is set to the value of \Fmpte.
         </field>
         <field name="0" bits="2:0" access="R" reset="0" />
@@ -323,14 +323,14 @@
             Other values are reserved for future use.
         </field>
         <field name="m" bits="6" access="R/W" reset="0">
-            When set, enable this trigger in M mode.
+            When set, enable this trigger in M-mode.
         </field>
         <field name="0" bits="5" access="R" reset="0" />
         <field name="s" bits="4" access="R/W" reset="0">
-            When set, enable this trigger in S mode.
+            When set, enable this trigger in S-mode.
         </field>
         <field name="u" bits="3" access="R/W" reset="0">
-            When set, enable this trigger in U mode.
+            When set, enable this trigger in U-mode.
         </field>
         <field name="execute" bits="2" access="R/W" reset="0">
             When set, the trigger fires on the virtual address or opcode of an
@@ -380,16 +380,16 @@
         </field>
 
         <field name="m" bits="9" access="R/W" reset="0">
-            When set, every instruction completed or exception taken in M mode decrements \Fcount
+            When set, every instruction completed or exception taken in M-mode decrements \Fcount
             by 1.
         </field>
         <field name="0" bits="8" access="R" reset="0" />
         <field name="s" bits="7" access="R/W" reset="0">
-            When set, every instruction completed or exception taken in S mode decrements \Fcount
+            When set, every instruction completed or exception taken in S-mode decrements \Fcount
             by 1.
         </field>
         <field name="u" bits="6" access="R/W" reset="0">
-            When set, every instruction completed or exception taken in U mode decrements \Fcount
+            When set, every instruction completed or exception taken in U-mode decrements \Fcount
             by 1.
         </field>
 

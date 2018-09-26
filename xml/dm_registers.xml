@@ -644,7 +644,7 @@
             4: 128-bit
 
             If \Fsbaccess has an unsupported value when the DM starts a bus
-            access, the access is not performed and \Fsberror is set to 3.
+            access, the access is not performed and \Fsberror is set to 4.
         </field>
         <field name="sbautoincrement" bits="16" access="R/W" reset="0">
             When 1, {\tt sbaddress} is incremented by the access size (in
@@ -656,12 +656,12 @@
         </field>
         <field name="sberror" bits="14:12" access="R/W1C" reset="0">
             When the Debug Module's system bus
-            master causes a bus error, this field gets set. The bits in this
+            master encounters an error, this field gets set. The bits in this
             field remain set until they are cleared by writing 1 to them.
             While this field is non-zero, no more system bus accesses can be
             initiated by the Debug Module.
 
-            An implementation may report "Other" (7) for any error condition.
+            An implementation may report ``Other'' (7) for any error condition.
 
             0: There was no bus error.
 

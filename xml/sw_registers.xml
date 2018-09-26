@@ -1,12 +1,15 @@
 <registers name="Virtual Core Debug Registers" prefix="VIRT_">
-  Users of the debugger shouldn't need to know about the core debug registers,
-  but may want to change things affected by them. 
-     A virtual register is one that doesn't exist directly in the hardware, but that the debugger exposes as if it does. 
-    
+    A virtual register is one that doesn't exist directly in the hardware, but
+    that the debugger exposes as if it does. Debug software should implement
+    them, but hardware can skip this section. Virtual registers exist to give
+    users access to functionality that's not part of standard debuggers without
+    requiring them to carefully modify debug registers while the debugger is
+    also accessing those same registers.
+
      <register name="Privilege Level" short="priv" address="virtual">
-        User can read this register to inspect the privilege level that
+        Users can read this register to inspect the privilege level that
         the hart was running in when the hart halted.
-        User can write this register to change the privilege level that
+        Users can write this register to change the privilege level that
         the hart will run in when it resumes.
 
         This register contains \Fprv from \Rdcsr, but in a place that the user

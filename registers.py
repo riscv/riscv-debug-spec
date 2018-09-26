@@ -340,7 +340,7 @@ def print_latex_index( registers ):
     print "      \\hline"
     for r in sorted( registers.registers,
             cmp=lambda a, b: compare_address(a.address, b.address)):
-        if r.fields and r.short:
+        if r.short and (r.fields or r.description):
             page = "\\pageref{%s}" % r.short
         else:
             page = ""
