@@ -66,6 +66,12 @@ sc} pairs.
     automate this.
 \end{commentary}
 
+\section{Wait for Interrupt Instruction}
+
+If halt is requested while {\tt wfi} is executing, then the hart must leave the
+stalled state, completing this instruction's execution, and then enter Debug
+Mode.
+
 \section{Single Step}
 
 A debugger can cause a halted hart to execute a single instruction and then
@@ -84,6 +90,9 @@ If the instruction that is executed causes the PC to change to an address where
 an instruction fetch causes an exception, that exception does not occurr until
 the next time the hart is resumed. Similarly, a trigger at the new address does
 not fire until the hart actually attempts to execute that instruction.
+
+If the instruction being stepped over is {\tt wfi} and would normally stall the
+hart, then instead the instruction is treated as {\tt nop}.
 
 \section{Reset}
 
