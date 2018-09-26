@@ -87,7 +87,8 @@
 
             4: The hart single stepped because \Fstep was set. (priority 0, lowest)
 
-            5: The hart halted directly out of reset. (priority 2)
+            5: The hart halted directly out of reset. (priority 2) It is also
+            acceptable to report 3 when this happens.
 
             Other values are reserved for future use.
         </field>
