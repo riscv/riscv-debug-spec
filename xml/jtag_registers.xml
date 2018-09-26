@@ -110,7 +110,7 @@
             The data to send to the DM over the DMI during Update-DR, and
             the data returned from the DM as a result of the previous operation.
         </field>
-        <field name="op" bits="1:0" access="R/W" reset="2">
+        <field name="op" bits="1:0" access="R/W" reset="0">
             When the debugger writes this field, it has the following meaning:
 
             0: Ignore \Fdata and \Faddress. (nop)
