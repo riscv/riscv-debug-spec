@@ -1,7 +1,3 @@
-%=======================================================================
-% riscv-privileged.tex
-%-----------------------------------------------------------------------
-
 \documentclass[twoside,11pt]{book}
 \setcounter{tocdepth}{4}
 \setcounter{secnumdepth}{4}
@@ -62,8 +58,12 @@
 
 \input{vc.tex}
 
-\newcommand{\versionnum}{0.13-DRAFT}
-
+\newcommand{\versionnum}{0.13
+\ifrelease
+\else
+    DRAFT
+\fi
+}
 
 \begin{document}
 
@@ -144,10 +144,13 @@ and Bryan Wyatt.
 \label{index}
 \printindex
 
-\chapter{Change Log}
+\ifrelease
+\else
+    \chapter{Change Log}
 
-\begin{versionhistory}
-    \input{changelog.tex}
-\end{versionhistory}
+    \begin{versionhistory}
+        \input{changelog.tex}
+    \end{versionhistory}
+\fi
 
 \end{document}
