@@ -132,6 +132,11 @@
         following bits: \Fhaltreq, \Fresumereq, \Fhartreset, \Fackhavereset,
         \Fsetresethaltreq, and \Fclrresethaltreq. The others must be written 0.
 
+\label{resethaltreq}
+\index{resethaltreq}
+        \Fresethaltreq is an internal bit of per-hart state that cannot be
+        read, but can be written with \Fsetresethaltreq and \Fclrresethaltreq.
+
         <!-- Fields that apply to all selected hart(s) -->
         <field name="haltreq" bits="31" access="W" reset="-">
             0: May cancel a halt request for any of the currently selected
