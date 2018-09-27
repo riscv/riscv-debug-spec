@@ -72,8 +72,7 @@
         <field name="version" bits="3:0" access="R" reset="1">
             0: Version described in spec version 0.11.
 
-            1: Version described in spec version 0.13 (and later?), which
-            reduces the DMI data width to 32 bits.
+            1: Version described in spec version 0.13.
 
             15: Version not described in any available version of this spec.
         </field>
@@ -110,7 +109,7 @@
             The data to send to the DM over the DMI during Update-DR, and
             the data returned from the DM as a result of the previous operation.
         </field>
-        <field name="op" bits="1:0" access="R/W" reset="2">
+        <field name="op" bits="1:0" access="R/W" reset="0">
             When the debugger writes this field, it has the following meaning:
 
             0: Ignore \Fdata and \Faddress. (nop)
@@ -137,7 +136,7 @@
             cleared by writing \Fdmireset in \Rdtmcs.
 
             This indicates that the DM itself responded with an error.
-            Note: there are no specified cases in which the DM would
+            There are no specified cases in which the DM would
             respond with an error, and DMI is not required to support
             returning errors.
 
@@ -148,12 +147,6 @@
             needs to give the target more TCK edges between Update-DR and
             Capture-DR. The simplest way to do that is to add extra transitions
             in Run-Test/Idle.
-
-            (The DTM, DM, and/or component may be in different clock domains,
-            so synchronization may be required. Some relatively fixed number of
-            TCK ticks may be needed for the request to reach the DM, complete,
-            and for the response to be synchronized back into the TCK domain.)
-
         </field>
     </register>
 

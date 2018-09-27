@@ -3,7 +3,7 @@
     prevent untrusted user code from causing entry into Debug Mode without the
     OS's permission.
 
-    In this section XLEN means MXLEN when in M-mode, DXLEN when in Debug Mode.
+    In this section XLEN means MXLEN when in M-mode, and DXLEN when in Debug Mode.
     Note that this makes several of the fields in \Rtdataone move around based
     on the current execution mode and value of MXLEN.
 
@@ -25,9 +25,7 @@
     \hline
     3 &amp; Stop tracing. \\
     \hline
-    4 &amp; Emit trace data for this match. If it is a data access match, emit
-    appropriate Load/Store Address/Data. If it is an instruction execution,
-    emit its PC. \\
+    4 &amp; Emit trace data for this match. \\
     \hline
     other &amp; Reserved for future use. \\
     \hline
@@ -103,7 +101,7 @@
     </register>
 
     <register name="Trigger Info" short="tinfo" address="0x7a4">
-        <field name="0" bits="MXLEN-1:16" access="R" reset="0" />
+        <field name="0" bits="XLEN-1:16" access="R" reset="0" />
         <field name="info" bits="15:0" access="R" reset="Preset">
             One bit for each possible \Ftype enumerated in \Rtdataone. Bit N
             corresponds to type N. If the bit is set, then that type is
@@ -124,7 +122,7 @@
         with action=0 firing in M-mode trap handlers. See
         Section~\ref{sec:mmtrigger} for more details.
 
-        <field name="0" bits="MXLEN-1:8" access="R" reset="0" />
+        <field name="0" bits="XLEN-1:8" access="R" reset="0" />
         <field name="mpte" bits="7" access="R/W" reset="0">
             M-mode previous trigger enable field.
 
@@ -201,20 +199,20 @@
         <field name="hit" bits="20" access="R/W" reset="0">
             If this optional bit is implemented, the hardware sets it when this
             trigger matches. The trigger's user can set or clear it at any
-            time. The trigger's user can use this bit to determine which
+            time. It is used to determine which
             trigger(s) matched.  If the bit is not implemented, it is always 0
             and writing it has no effect.
         </field>
         <field name="select" bits="19" access="R/W" reset="0">
             0: Perform a match on the virtual address.
 
-            1: Perform a match on the data value loaded/stored, or the
+            1: Perform a match on the data value loaded or stored, or the
             instruction executed.
         </field>
         <field name="timing" bits="18" access="R/W" reset="0">
             0: The action for this trigger will be taken just before the
             instruction that triggered it is executed, but after all preceding
-            instructions are are committed.
+            instructions are committed.
 
             1: The action for this trigger will be taken after the instruction
             that triggered it is executed. It should be taken before the next
@@ -245,8 +243,8 @@
             from \Fsizehi. The combined value is interpreted as follows:
 
             0: The trigger will attempt to match against an access of any size.
-            The behavior is only well-defined if the select=0, or if the access
-            size is MXLEN.
+            The behavior is only well-defined if $|select|=0$, or if the access
+            size is XLEN.
 
             1: The trigger will only match against 8-bit memory accesses.
 
@@ -282,7 +280,7 @@
 
             A trigger chain starts on the first trigger with $|chain|=1$ after
             a trigger with $|chain|=0$, or simply on the first trigger if that
-            has $|chain|=1$. It ends on the first trigger after that that has
+            has $|chain|=1$. It ends on the first trigger after that which has
             $|chain|=0$. This final trigger is part of the chain. The action
             on all but the final trigger is ignored.  The action on that final
             trigger will be taken if and only if all the triggers in the chain
@@ -368,7 +366,7 @@
         <field name="hit" bits="24" access="R/W" reset="0">
             If this optional bit is implemented, the hardware sets it when this
             trigger matches. The trigger's user can set or clear it at any
-            time. The trigger's user can use this bit to determine which
+            time. It is used to determine which
             trigger(s) matched.  If the bit is not implemented, it is always 0
             and writing it has no effect.
         </field>
@@ -412,7 +410,7 @@
         requested functionality is actually supported.
 
         The trigger only fires if the hart takes a trap because of the
-        interrupt. (Eg. it does not fire when a timer interrupt occurs but that
+        interrupt. (E.g.\  it does not fire when a timer interrupt occurs but that
         interrupt is not enabled in \Rmie.)
 
         When the trigger fires, all CSRs are updated as defined by the
@@ -424,7 +422,7 @@
         <field name="hit" bits="XLEN-6" access="R/W" reset="0">
             If this optional bit is implemented, the hardware sets it when this
             trigger matches. The trigger's user can set or clear it at any
-            time. The trigger's user can use this bit to determine which
+            time. It is used to determine which
             trigger(s) matched.  If the bit is not implemented, it is always 0
             and writing it has no effect.
         </field>
@@ -454,7 +452,7 @@
         This trigger may fire on up to XLEN of the Exception Codes defined in
         \Rmcause (described in the Privileged Spec, with Interrupt=0). Those
         causes are configured by writing the corresponding bit in \Rtdatatwo.
-        (Eg. to trap on an illegal instruction, the debugger sets bit 2 in
+        (E.g.\  to trap on an illegal instruction, the debugger sets bit 2 in
         \Rtdatatwo.)
 
         Hardware may support only a subset of exceptions. A debugger must read
@@ -470,7 +468,7 @@
         <field name="hit" bits="XLEN-6" access="R/W" reset="0">
             If this optional bit is implemented, the hardware sets it when this
             trigger matches. The trigger's user can set or clear it at any
-            time. The trigger's user can use this bit to determine which
+            time. It is used to determine which
             trigger(s) matched.  If the bit is not implemented, it is always 0
             and writing it has no effect.
         </field>
