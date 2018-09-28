@@ -18,49 +18,56 @@
         </field>
         <field name="0" bits="21:20" access="R" reset="0" />
         <field name="allhavereset" bits="19" access="R" reset="-">
-          This field is 1 when all currently selected harts have been reset but the reset has not been acknowledged.
+            This field is 1 when all currently selected harts have been reset
+            and reset has not been acknowledged for any of them.
         </field>
         <field name="anyhavereset" bits="18" access="R" reset="-">
-          This field is 1 when any currently selected hart has been reset but the reset has not been acknowledged.
+            This field is 1 when at least one currently selected hart has been
+            reset and reset has not been acknowledged for that hart.
         </field>
         <field name="allresumeack" bits="17" access="R" reset="-">
             This field is 1 when all currently selected harts have acknowledged
-            the previous resume request.
+            their last resume request.
         </field>
         <field name="anyresumeack" bits="16" access="R" reset="-">
             This field is 1 when any currently selected hart has acknowledged
-            the previous resume request.
+            its last resume request.
         </field>
         <field name="allnonexistent" bits="15" access="R" reset="-">
-          This field is 1 when all currently selected harts do not exist in this system.
+            This field is 1 when all currently selected harts do not exist in
+            this platform.
         </field>
         <field name="anynonexistent" bits="14" access="R" reset="-">
-          This field is 1 when any currently selected hart does not exist in this system.
+            This field is 1 when any currently selected hart does not exist in
+            this platform.
         </field>
         <field name="allunavail" bits="13" access="R" reset="-">
-          This field is 1 when all currently selected harts are unavailable.
+            This field is 1 when all currently selected harts are unavailable.
         </field>
         <field name="anyunavail" bits="12" access="R" reset="-">
-          This field is 1 when any currently selected hart is unavailable.
+            This field is 1 when any currently selected hart is unavailable.
         </field>
         <field name="allrunning" bits="11" access="R" reset="-">
-          This field is 1 when all currently selected harts are running.
+            This field is 1 when all currently selected harts are running.
         </field>
         <field name="anyrunning" bits="10" access="R" reset="-">
-          This field is 1 when any currently selected hart is running.
+            This field is 1 when any currently selected hart is running.
         </field>
         <field name="allhalted" bits="9" access="R" reset="-">
-          This field is 1 when all currently selected harts are halted.
+            This field is 1 when all currently selected harts are halted.
         </field>
         <field name="anyhalted" bits="8" access="R" reset="-">
-          This field is 1 when any currently selected hart is halted.
+            This field is 1 when any currently selected hart is halted.
         </field>
 
         <!-- Fields that apply to the entire DM. -->
         <field name="authenticated" bits="7" access="R" reset="Preset">
-            0 when authentication is required before using the DM.  1 when the
-            authentication check has passed. On components that don't implement
-            authentication, this bit must be preset as 1.
+            0: Authentication is required before using the DM.
+
+            1: The authentication check has passed.
+
+            On components that don't implement authentication, this bit must be
+            preset as 1.
         </field>
         <field name="authbusy" bits="6" access="R" reset="0">
             0: The authentication module is ready to process the next
@@ -168,12 +175,13 @@
         </field>
         <field name="0" bits="27" access="R" reset="0" />
         <field name="hasel" bits="26" access="R/W" reset="0">
-            Selects the  definition of currently selected harts.
+            Selects the definition of currently selected harts.
 
-            0: There is a single currently selected hart, that selected by \Fhartsel.
+            0: There is a single currently selected hart, that is selected by \Fhartsel.
 
-            1: There may be multiple currently selected harts -- that selected by \Fhartsel,
-               plus those selected by the hart array mask register.
+            1: There may be multiple currently selected harts -- the hart
+            selected by \Fhartsel, plus those selected by the hart array mask
+            register.
 
             An implementation which does not implement the hart array mask register
             must tie this field to 0. A debugger which wishes to use the hart array
@@ -227,15 +235,16 @@
             1: The module functions normally.
 
             No other mechanism should exist that may result in resetting the
-            Debug Module after power up, including the platform's system reset
-            or Debug Transport reset signals.
+            Debug Module after power up, with the possible (but not
+            recommended) exception of a global reset signal that resets the
+            entire platform.
 
             A debugger may pulse this bit low to get the Debug Module into a
             known state.
 
-            Implementations may use this bit to aid debugging, for example by
-            preventing the Debug Module from being power gated while debugging
-            is active.
+            Implementations may pay attention to this bit to further aid
+            debugging, for example by preventing the Debug Module from being
+            power gated while debugging is active.
         </field>
     </register>
 
@@ -260,15 +269,15 @@
         </field>
         <field name="0" bits="19:17" access="R" reset="0" />
         <field name="dataaccess" bits="16" access="R" reset="Preset">
-            0: The {\tt data} registers are shadowed in the hart by CSR
-            registers. Each CSR register is DXLEN bits in size, and corresponds
+            0: The {\tt data} registers are shadowed in the hart by CSRs.
+            Each CSR is DXLEN bits in size, and corresponds
             to a single argument, per Table~\ref{tab:datareg}.
 
             1: The {\tt data} registers are shadowed in the hart's memory map.
             Each register takes up 4 bytes in the memory map.
         </field>
         <field name="datasize" bits="15:12" access="R" reset="Preset">
-            If \Fdataaccess is 0: Number of CSR registers dedicated to
+            If \Fdataaccess is 0: Number of CSRs dedicated to
             shadowing the {\tt data} registers.
 
             If \Fdataaccess is 1: Number of 32-bit words in the memory map
@@ -346,7 +355,7 @@
             0 (none): No error.
 
             1 (busy): An abstract command was executing while \Rcommand,
-            \Rabstractcs, \Rabstractauto was written, or when one
+            \Rabstractcs, or \Rabstractauto was written, or when one
             of the {\tt data} or {\tt progbuf} registers was read or written.
             This status is only written if \Fcmderr contains 0.
 
@@ -360,7 +369,7 @@
             hart wasn't in the required state (running/halted), or unavailable.
 
             5 (bus): The abstract command failed due to a bus error (e.g.\ 
-            alignment, access size, timeout).
+            alignment, access size, or timeout).
 
             7 (other): The command failed for another reason.
         </field>
@@ -586,18 +595,6 @@
 
     <!-- =============== system bus mastering =============== -->
 
-    <register name="System Bus Address 127:96" short="sbaddress3" address="0x37">
-        If \Fsbasize is less than 97, then this register is not present.
-
-        When the system bus master is busy, writes to this register will set
-        \Fsbbusyerror and don't do anything else.
-
-        <field name="address" bits="31:0" access="R/W" reset="0">
-            Accesses bits 127:96 of the physical address in {\tt sbaddress} (if
-            the system address bus is that wide).
-        </field>
-    </register>
-
     <register name="System Bus Access Control and Status" short="sbcs" address="0x38">
         <field name="sbversion" bits="31:29" access="R" reset="1">
             0: The System Bus interface conforms to mainline drafts of this
@@ -614,7 +611,7 @@
             already in progress (while \Fsbbusy is set). It remains set until
             it's explicitly cleared by the debugger.
 
-            While this field is non-zero, no more system bus accesses can be
+            While this field is set, no more system bus accesses can be
             initiated by the Debug Module.
         </field>
         <field name="sbbusy" bits="21" access="R" reset="0">
@@ -737,6 +734,18 @@
 
         <field name="address" bits="31:0" access="R/W" reset="0">
             Accesses bits 95:64 of the physical address in {\tt sbaddress} (if
+            the system address bus is that wide).
+        </field>
+    </register>
+
+    <register name="System Bus Address 127:96" short="sbaddress3" address="0x37">
+        If \Fsbasize is less than 97, then this register is not present.
+
+        When the system bus master is busy, writes to this register will set
+        \Fsbbusyerror and don't do anything else.
+
+        <field name="address" bits="31:0" access="R/W" reset="0">
+            Accesses bits 127:96 of the physical address in {\tt sbaddress} (if
             the system address bus is that wide).
         </field>
     </register>
