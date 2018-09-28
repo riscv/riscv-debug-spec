@@ -5,8 +5,7 @@
     <register name="Debug Module Status" short="dmstatus" address="0x11">
         This register reports status for the overall Debug Module as well as
         the currently selected harts, as defined in \Fhasel.  Its address will
-        not change in the future, because it contains \Fversion.  It has
-        changed from version 0.11 of this spec.
+        not change in the future, because it contains \Fversion.
 
         <field name="0" bits="31:23" access="R" reset="0" />
         <field name="impebreak" bits="22" access="R" reset="Preset">
@@ -85,12 +84,12 @@
             controllable by the \Fsetresethaltreq and \Fclrresethaltreq bits.
             0 otherwise.
         </field>
-        <field name="devtreevalid" bits="4" reset="Preset" access="R">
-            0: \Rdevtreeaddrzero--\Rdevtreeaddrthree hold information which
-            is not relevant to the Device Tree.
+        <field name="confstrptrvalid" bits="4" reset="Preset" access="R">
+            0: \Rconfstrptrzero--\Rconfstrptrthree hold information which
+            is not relevant to the configuration string.
 
-            1: \Rdevtreeaddrzero--\Rdevtreeaddrthree registers hold the address of the
-            Device Tree.
+            1: \Rconfstrptrzero--\Rconfstrptrthree hold the address of the
+            configuration string.
         </field>
         <field name="version" bits="3:0" reset="2" access="R">
             0: There is no Debug Module present.
@@ -435,27 +434,26 @@
         </field>
     </register>
 
-    <register name="Device Tree Addr 0" short="devtreeaddr0" address="0x19">
-      When {\tt devtreevalid} is set, reading this register returns bits 31:0
-      of the Device Tree address. Reading the other {\tt devtreeaddr}
+    <register name="Configuration String Pointer 0" short="confstrptr0" address="0x19">
+      When \Fconfstrptrvalid is set, reading this register returns bits 31:0
+      of the configuration string pointer. Reading the other {\tt confstrptr}
       registers returns the upper bits of the address.
 
       When system bus mastering is implemented, this must be an
       address that can be used with the System Bus Access module. Otherwise,
       this must be an address that can be used to access the
-      Device Tree from the hart with ID 0.
+      configuration string from the hart with ID 0.
 
-      If {\tt devtreevalid} is 0, then the {\tt devtreeaddr} registers
+      If \Fconfstrptrvalid is 0, then the {\tt confstrptr} registers
       hold identifier information which is not
       further specified in this document.
 
-      The Device Tree itself is described in the RISC-V Privileged
-      Specification.
+      The configuration string itself is described in the Privileged Spec.
       <field name="addr" bits="31:0" access="R" reset="Preset"/>
     </register>
-    <register name="Device Tree Addr 1" short="devtreeaddr1" address="0x1a"/>
-    <register name="Device Tree Addr 2" short="devtreeaddr2" address="0x1b"/>
-    <register name="Device Tree Addr 3" short="devtreeaddr3" address="0x1c"/>
+    <register name="Configuration String Pointer 1" short="confstrptr1" address="0x1a"/>
+    <register name="Configuration String Pointer 2" short="confstrptr2" address="0x1b"/>
+    <register name="Configuration String Pointer 3" short="confstrptr3" address="0x1c"/>
 
     <register name="Next Debug Module" short="nextdm" address="0x1d">
         If there is more than one DM accessible on this DMI, this register

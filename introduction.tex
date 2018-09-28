@@ -33,9 +33,9 @@ of \Fmxl in \Rmisa.
 
 \begin{steps}{This document is written to work with:}
 \item The RISC-V Instruction Set Manual, Volume I: User-Level ISA, Document
-    Version 2.2
-\item The RISC-V Instruction Set Manual, Volume II: Privileged Architecture, Version
-    1.10
+    Version 2.2 (the ISA Spec)
+\item The RISC-V Instruction Set Manual, Volume II: Privileged Architecture,
+    Version 1.10 (the Privileged Spec)
 \end{steps}
 
 \section{About This Document}
@@ -45,9 +45,8 @@ of \Fmxl in \Rmisa.
 This document contains two parts. The main part of the document is the
 specification, which is given in the numbered sections. The second part
 of the document is a set of  appendices. The information
-in the appendix is intended to clarify and provide examples, but is
+in the appendices is intended to clarify and provide examples, but is
 not part of the actual specification.
-
 
 \subsection{Register Definition Format}
 
@@ -62,7 +61,7 @@ in Table~\ref{tab:access}. The reset value is either a constant or "Preset."
 The latter means it is an implementation-specific legal value.
 
 Names of registers and their fields are hyperlinks to their definition, and are
-indexed on page \pageref{index}.
+also listed in the index on page \pageref{index}.
 
 \input{sample_registers.tex}
 
@@ -115,27 +114,6 @@ not be supported.
 In addition, even without a hardware debugging interface,
 architectural support in a RISC-V CPU can aid software debugging and
 performance analysis by allowing hardware triggers and breakpoints.
-This specification aims to define common resources which can be used
-for different cases.
-
-When debugging software, this specification distinguishes between two
-forms of external debugging. The first is \emph{halt mode} debugging,
-where an external debugger halts some or all components of a
-platform and inspects their state while they are in stasis.
-The debugger can read and/or modify state, then direct the hardware
-to execute a single instruction, or continue to run freely.
-
-The second is \emph{run mode} debugging. In this mode a software
-debug agent runs on a component (e.g.\ triggered by a timer interrupt or breakpoint
-on a RISC-V core) which transfers data to or from the debugger
-without halting the component, only briefly interrupting its program flow.
-This functionality is essential if the component is controlling some real-time system (like a
-hard drive) where long timing delays could lead to physical damage.
-This requires additional software support (both on the system as well as on the debugger),
-and efficient communication channels between the component and the debugger.
-
-%MAW -- where does Quick Access fit in the above description? Is it fair to call
-% it run-mode debugging?
 
 \section{Supported Features}
 
