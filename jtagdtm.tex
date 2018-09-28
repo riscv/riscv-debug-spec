@@ -33,36 +33,71 @@ Unimplemented instructions must select the BYPASS register.
 
 \subsection{Recommended JTAG Connector}
 
-To make it easy to
-acquire debug hardware, this spec recommends a connector that is compatible
-with the Atmel AVR JTAG Connector, as described below.
+To make it easy to acquire debug hardware, this spec recommends a connector
+that is compatible with the MIPI-10 .05" connector specification, as described
+in the MIPI Alliance Recommendation for Debug and Trace Connectors, Version
+1.10.00, 16 March 2011.
 
 The connector is a .05"-spaced, gold-plated male header with .016" thick
-hardened copper or beryllium bronze square posts (SAMTEC FTSH-105 or
-equivalent). Female connectors are compatible $20\mu m$ gold
-connectors.
+hardened copper or beryllium bronze square posts (SAMTEC FTSH or equivalent).
+Female connectors are compatible $20\mu m$ gold connectors.
 
 Viewing the male header from above (the pins pointing at your eye), a target's
-connector looks as it does in Table~\ref{tab:header}. The function of each pin
+connector looks as it does in Table~\ref{tab:mipiten}.  The function of each pin
 is described in Table~\ref{tab:pinout}.
 
 \begin{table}[htp]
     \centering
-    \caption{JTAG Connector Diagram}
-    \label{tab:header}
-    \begin{tabulary}{\textwidth}{|R|c|c|L|}
+    \caption{MIPI-10 Connector Diagram}
+    \label{tab:mipiten}
+    \begin{tabular}{|r|c|c|l|}
         \hline
-        TCK & 1 & 2 & GND \\
+        VREF DEBUG & 1 & 2 & TMS \\
         \hline
-        TDO & 3 & 4 & VCC \\
+        GND & 3 & 4 & TCK \\
         \hline
-        TMS & 5 & 6 & (SRSTn) \\
+        GND & 5 & 6 & TDO \\
         \hline
-        (NC) & 7 & 8 & (TRSTn) \\
+        GND or KEY & 7 & 8 & TDI \\
         \hline
-        TDI & 9 & 10 & GND \\
+        GND & 9 & 10 & nRESET \\
         \hline
-    \end{tabulary}
+    \end{tabular}
+\end{table}
+
+If a platform requires nTRST then it is permissible to reuse the nRESET pin as
+the nTRST signal.  If a platform requires both system reset and TAP reset, the
+MIPI-20 connector should be used. Its physical connector is virtually identical
+to MIPI-10, except that it's twice as long, supporting twice as many pins. Its
+connector is show in Table~\ref{tab:mipitwenty}.
+
+\begin{table}[htp]
+    \centering
+    \caption{MIPI-20 Connector Diagram}
+    \label{tab:mipitwenty}
+    \begin{tabular}{|r|c|c|l|}
+        \hline
+        VREF DEBUG & 1 & 2 & TMS \\
+        \hline
+        GND & 3 & 4 & TCK \\
+        \hline
+        GND & 5 & 6 & TDO \\
+        \hline
+        GND or KEY & 7 & 8 & TDI \\
+        \hline
+        GND & 9 & 10 & nRESET \\
+        \hline
+        GND & 11 & 12 & RTCK \\
+        \hline
+        GND & 13 & 14 & nTRST\_PD \\
+        \hline
+        GND & 15 & 16 & nTRST \\
+        \hline
+        GND & 17 & 18 & DBGRQ \\
+        \hline
+        GND & 19 & 20 & DBGACK \\
+        \hline
+    \end{tabular}
 \end{table}
 
 \begin{table}[htp]
@@ -71,40 +106,51 @@ is described in Table~\ref{tab:pinout}.
     \label{tab:pinout}
     \begin{tabulary}{\textwidth}{|r|c|L|}
       \hline
-      1 & TCK & JTAG TCK signal, driven by the debug adapter.
-      This pin must be clearly marked in both male and female headers.\\
+      1 & VREF DEBUG & Reference voltage for logic high. \\
       \hline
-      5 & TMS & JTAG TMS signal, driven by debug adapter. \\
+      2 & TMS & JTAG TMS signal, driven by the debug adapter. \\
       \hline
-      9 & TDI & JTAG TDI signal, driven by the debug adapter. \\
+      4 & TCK & JTAG TCK signal, driven by the debug adapter. \\
       \hline
-      3 & TDO & JTAG TDO signal, driven by the target. \\
+      6 & TDO & JTAG TDO signal, driven by the target. \\
       \hline
-      8 & TRSTn & Test Reset (optional), only used by some devices. Used to reset the JTAG TAP Controller.\\
+      7 & GND or KEY &
+        This pin may be cut on the male and plugged on the female header to
+        ensure the header is always plugged in correctly. It is, however,
+        recommended to use this pin as an additional ground, to allow for
+        fastest TCK speeds. A shrouded connector should be used to prevent the
+        cable from being plugged in incorrectly. \\
       \hline
-      4 & VCC &
-      Reference voltage for logic high. A debug adapter may attempt to draw up
-      to 20mA from this pin to power itself, but a target is not obligated to
-      provide that power. \\
+      8 & TDI & JTAG TDI signal, driven by the debug adapter. \\
       \hline
-      2, 10 & GND & Target ground. \\
+      10 & nRESET & Active-low reset signal, driven by the debug adapter.
+        Asserting reset should reset any RISC-V cores as well as any other
+        peripherals on the PCB. It should not reset the debug logic.  This pin
+        is optional but strongly encouraged.
+
+        If necessary, this pin could be used as nTRST instead.
+
+        nRESET should never be connected to the TAP reset, otherwise the
+        debugger might not be able to debug through a reset to discover the
+        cause of a crash or to maintain execution control after the reset. \\
       \hline
-      6 & SRSTn & Active-low reset signal, driven by the debug adapter.
-      Asserting reset should
-      reset any RISC-V cores as well as any other peripherals on the PCB.
-      It should not reset the debug logic.
-      Although connecting this pin is optional, it is recommended as it allows
-      the debugger to hold the target device in a reset state, which may be essential
-      to debug some scenarios.
-      If not implemented in a target, this pin must not be connected. \\
+      12 & RTCK & Return test clock, driven by the target. A target may relay
+        the TCK signal here once it has processed it, allowing a debugger to
+        adjust its TCK frequency in response. \\
+      \hline
+      14 & nTRST\_PD & Test reset pull-down (optional), driven by the debug
+        adapter. Same function as nTRST, but with pull-down resistor on target.
+        \\
+      \hline
+      16 & nTRST & Test reset (optional), driven by the debug adapter.  Used to
+        reset the JTAG TAP Controller. \\
+      \hline
+      18 & TRIGIN & Not used, driven low by the debug adapter. \\
+      \hline
+      20 & TRIGOUT & Not used, driven by the target. \\
       \hline
     \end{tabulary}
 \end{table}
 
-Target connectors may be shrouded. In that case the key slot should be next to
-pin 5. Female headers should have a matching key.
-
-Debug adapters should be tagged or marked with their isolation voltage
-threshold (i.e. unisolated, 250V, etc.).
-
-All debug adapter pins other than GND should be current-limited to 20mA.
+The same connectors can be used for 2-wire cJTAG. In that case TMS is used for
+TMSC, and TCK is used for TCKC.
