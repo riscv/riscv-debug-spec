@@ -17,39 +17,36 @@
         </field>
         <field name="0" bits="27:16" access="R" reset="0" />
         <field name="ebreakm" bits="15" access="R/W" reset="0">
-            0: {\tt ebreak} instructions in M mode behave as described in the
+            0: {\tt ebreak} instructions in M-mode behave as described in the
             Privileged Spec.
 
-            1: {\tt ebreak} instructions in M Mode enter Debug Mode.
+            1: {\tt ebreak} instructions in M-mode enter Debug Mode.
         </field>
         <field name="0" bits="14" access="R" reset="0" />
         <field name="ebreaks" bits="13" access="R/W" reset="0">
-            0: {\tt ebreak} instructions in S mode behave as described in the
+            0: {\tt ebreak} instructions in S-mode behave as described in the
             Privileged Spec.
 
-            1: {\tt ebreak} instructions in S Mode enter Debug Mode.
+            1: {\tt ebreak} instructions in S-mode enter Debug Mode.
         </field>
         <field name="ebreaku" bits="12" access="R/W" reset="0">
-            0: {\tt ebreak} instructions in U mode behave as described in the
+            0: {\tt ebreak} instructions in U-mode behave as described in the
             Privileged Spec.
 
-            1: {\tt ebreak} instructions in U Mode enter Debug Mode.
+            1: {\tt ebreak} instructions in U-mode enter Debug Mode.
         </field>
-        <field name="stepie" bits="11" access="R/W" reset="0">
+        <field name="stepie" bits="11" access="WARL" reset="0">
             0: Interrupts are disabled during single stepping.
 
             1: Interrupts are enabled during single stepping.
 
             Implementations may hard wire this bit to 0.
-            The debugger must read back the value it
-            writes to check whether the feature is supported. If not
-            supported, interrupt behavior can be emulated by the debugger.
+            In that case interrupt behavior can be emulated by the debugger.
 
             The debugger must not change the value of this bit while the hart
             is running.
         </field>
-        <field name="stopcount" bits="10" access="R/W" reset="Preset">
-
+        <field name="stopcount" bits="10" access="WARL" reset="Preset">
             0: Increment counters as usual.
 
             1: Don't increment any counters while in Debug Mode or on {\tt
@@ -57,20 +54,14 @@
             counters include the {\tt cycle} and {\tt instret} CSRs. This is
             preferred for most debugging scenarios.
 
-            An implementation may choose not to support writing to this bit.
-            The debugger must read back the value it writes to check whether
-            the feature is supported.
-
+            An implementation may hardwire this bit to 0 or 1.
         </field>
-        <field name="stoptime" bits="9" access="R/W" reset="Preset">
+        <field name="stoptime" bits="9" access="WARL" reset="Preset">
             0: Increment timers as usual.
 
             1: Don't increment any hart-local timers while in Debug Mode.
 
-            An implementation may choose not to support writing to this bit.
-            The debugger must read back the value it writes to check whether
-            the feature is supported.
-
+            An implementation may hardwire this bit to 0 or 1.
         </field>
         <field name="cause" bits="8:6" access="R" reset="0">
             Explains why Debug Mode was entered.
