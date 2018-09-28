@@ -344,10 +344,14 @@ def print_latex_index( registers ):
             page = "\\pageref{%s}" % r.short
         else:
             page = ""
-        if r.sdesc:
-            print "%s & %s & %s & %s \\\\" % ( r.address, r.name, r.sdesc, page )
+        if r.short:
+            name = "%s ({\\tt %s})" % (r.name, r.short)
         else:
-            print "%s & %s & %s \\\\" % ( r.address, r.name, page )
+            name = r.name
+        if r.sdesc:
+            print "%s & %s & %s & %s \\\\" % ( r.address, name, r.sdesc, page )
+        else:
+            print "%s & %s & %s \\\\" % ( r.address, name, page )
     print "         \hline"
     print "      \end{tabular}"
     print "   \end{center}"
