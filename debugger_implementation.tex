@@ -2,7 +2,7 @@
 
 This section details how an external debugger might use the described debug
 interface to perform some common operations on RISC-V cores using the JTAG DTM
-described in Appendix~\ref{jtagdtm}.
+described in Section~\ref{sec:jtagdtm}.
 All these examples assume a 32-bit core but it should be easy to adapt the
 examples to 64- or 128-bit cores.
 
@@ -54,7 +54,7 @@ waits for \Fallhalted to indicate the harts are halted before clearing
 First, the debugger should restore any registers that it has overwritten.
 Then it can let the selected harts run by setting \Fresumereq. Once
 \Fallresumeack is set, the debugger knows the hart has resumed, and it can
-clear \Fresumereq. Note that harts might halt very quickly after resuming (e.g.
+clear \Fresumereq. Harts might halt very quickly after resuming (e.g.
 by hitting a software breakpoint) so the debugger cannot use
 \Fallhalted/\Fanyhalted to check whether the hart resumed.
 
@@ -72,28 +72,28 @@ before re-entering Debug Mode.
 
 \noindent Read \Szero using abstract command:
 
-\begin{tabulary}{\textwidth}{|r|r|r|L|}
+\begin{tabular}{|c|r|p{0.3\textwidth}|p{0.3\textwidth}|}
     \hline
     Op & Address & Value & Comment \\
     \hline
-    Write & \Rcommand & \Faarsize$=2$, \Ftransfer, 0x1008 & Read \Szero \\
+    Write & \Rcommand & \Faarsize$=2$, \Ftransfer, \Fregno = 0x1008 & Read \Szero \\
     \hline
     Read & \Rdatazero & - & Returns value that was in \Szero \\
     \hline
-\end{tabulary}
+\end{tabular}
 \medskip
 
 \noindent Write \Rmstatus using abstract command:
 
-\begin{tabulary}{\textwidth}{|r|r|r|L|}
+\begin{tabular}{|c|r|p{0.3\textwidth}|p{0.3\textwidth}|}
     \hline
     Op & Address & Value & Comment \\
     \hline
     Write & \Rdatazero & new value & \\
     \hline
-    Write & \Rcommand & \Faarsize$=2$, \Ftransfer, \Fwrite, 0x300 & Write \Rmstatus \\
+    Write & \Rcommand & \Faarsize$=2$, \Ftransfer, \Fwrite, \Fregno = 0x300 & Write \Rmstatus \\
     \hline
-\end{tabulary}
+\end{tabular}
 \medskip
 
 \subsection{Using Program Buffer} \label{deb:regprogbuf}
@@ -103,7 +103,7 @@ registers can be accessed by moving their value into/out of GPRs.
 
 \noindent Write \Rmstatus using program buffer:
 
-\begin{tabulary}{\textwidth}{|r|r|R|L|}
+\begin{tabular}{|c|r|p{0.3\textwidth}|p{0.3\textwidth}|}
     \hline
     Op & Address & Value & Comment \\
     \hline
@@ -113,15 +113,15 @@ registers can be accessed by moving their value into/out of GPRs.
     \hline
     Write & \Rdatazero & new value & \\
     \hline
-    Write & \Rcommand & \Faarsize$=2$, \Fpostexec, \Ftransfer, \Fwrite, 0x1008 &
+    Write & \Rcommand & \Faarsize$=2$, \Fpostexec, \Ftransfer, \Fwrite, \Fregno = 0x1008 &
         Write \Szero, then execute program buffer \\
     \hline
-\end{tabulary}
+\end{tabular}
 \medskip
 
 \noindent Read \Fone using program buffer:
 
-\begin{tabulary}{\textwidth}{|r|r|r|L|}
+\begin{tabular}{|c|r|p{0.3\textwidth}|p{0.3\textwidth}|}
     \hline
     Op & Address & Value & Comment \\
     \hline
@@ -131,11 +131,11 @@ registers can be accessed by moving their value into/out of GPRs.
     \hline
     Write & \Rcommand & \Fpostexec & Execute program buffer \\
     \hline
-    Write & \Rcommand & \Ftransfer 0x1008 & read \Szero \\
+    Write & \Rcommand & \Ftransfer, \Fregno = 0x1008 & read \Szero \\
     \hline
     Read & \Rdatazero & - & Returns the value that was in \Fone \\
     \hline
-\end{tabulary}
+\end{tabular}
 \medskip
 
 \section{Reading Memory}
@@ -146,7 +146,7 @@ With system bus access, addresses are physical system bus addresses.
 
 \noindent Read a word from memory using system bus access:
 
-\begin{tabulary}{\textwidth}{|r|r|r|L|}
+\begin{tabular}{|c|r|p{0.3\textwidth}|p{0.3\textwidth}|}
     \hline
     Op & Address & Value & Comment \\
     \hline
@@ -156,7 +156,7 @@ With system bus access, addresses are physical system bus addresses.
     \hline
     Read & \Rsbdatazero & - & Value read from memory \\
     \hline
-\end{tabulary}
+\end{tabular}
 \medskip
 
 \noindent Read block of memory using system bus access:
@@ -191,7 +191,7 @@ configuration).
 
 \noindent Read a word from memory using program buffer:
 
-\begin{tabulary}{\textwidth}{|r|r|r|L|}
+\begin{tabular}{|c|r|p{0.3\textwidth}|p{0.3\textwidth}|}
     \hline
     Op & Address & Value & Comment \\
     \hline
@@ -201,18 +201,18 @@ configuration).
     \hline
     Write & \Rdatazero & address & \\
     \hline
-    Write & \Rcommand & \Fwrite, \Fpostexec, 0x1008 & Write \Szero, then execute program buffer \\
+    Write & \Rcommand & \Fwrite, \Fpostexec, \Fregno = 0x1008 & Write \Szero, then execute program buffer \\
     \hline
-    Write & \Rcommand & 0x1008 & Read \Szero \\
+    Write & \Rcommand & \Fregno = 0x1008 & Read \Szero \\
     \hline
     Read & \Rdatazero & - & Value read from memory \\
     \hline
-\end{tabulary}
+\end{tabular}
 \medskip
 
 \noindent Read block of memory using program buffer:
 
-\begin{tabulary}{\textwidth}{|r|r|r|L|}
+\begin{tabular}{|c|r|p{0.3\textwidth}|p{0.3\textwidth}|}
     \hline
     Op & Address & Value & Comment \\
     \hline
@@ -224,9 +224,9 @@ configuration).
     \hline
     Write & \Rdatazero & address & \\
     \hline
-    Write & \Rcommand & \Fwrite, \Fpostexec, 0x1008 & Write \Szero, then execute program buffer \\
+    Write & \Rcommand & \Fwrite, \Fpostexec, \Fregno = 0x1008 & Write \Szero, then execute program buffer \\
     \hline
-    Write & \Rcommand & \Fpostexec, 0x1009 & Read \Sone, then execute program buffer \\
+    Write & \Rcommand & \Fpostexec, \Fregno = 0x1009 & Read \Sone, then execute program buffer \\
     \hline
     Write & \Rabstractauto & \Fautoexecdata[0] & Set \Fautoexecdata[0] \\
     \hline
@@ -240,69 +240,8 @@ configuration).
     \hline
     Read & \Rdatazero & - & Get last value read from memory. \\
     \hline
-\end{tabulary}
+\end{tabular}
 \medskip
-
-TODO: Table~\ref{tab:memread} shows the scans involved in reading a single word using
-this method.
-
-\begin{table}[htp]
-    \centering
-    \caption{Memory Read Timeline}
-    \label{tab:memread}
-    \begin{tabulary}{\textwidth}{|r|l|L|}
-        \hline
-        & JTAG State & Activity \\
-        \hline
-        TODO & TODO & TODO \\
-%        1 & Shift-DR & Debugger shifts in write of 0x41002403 to dram[0], and
-%        gets back the result of whatever happened previously. \\
-%        & Update-DR & DTM starts read from dram[0], followed by write to
-%        dram[0]. \\
-%        \hline
-%        2 & Capture-DR & DTM captures results of read from dram[0]. \\
-%        & Shift-DR & Debugger shifts in write of 0x42483 to dram[1], and gets
-%        back the old contents of the first word in Debug RAM. \\
-%        & Update-DR & DTM starts read from dram[1], followed by write to
-%        dram[1]. \\
-%        \hline
-%        3 & Capture-DR & DTM captures results of read from dram[1]. \\
-%        & Shift-DR & Debugger shifts in write of 0x40902823 to dram[2], and
-%        gets back the old contents of the second word in Debug RAM. \\
-%        & Update-DR & DTM starts read from dram[2], followed by write to
-%        dram[2]. \\
-%        \hline
-%        4 & Capture-DR & DTM captures results of read from dram[2]. \\
-%        & Shift-DR & Debugger shifts in write of 0x3f80006f to dram[3], and
-%        gets back the old contents of the third word in Debug RAM. \\
-%        & Update-DR & DTM starts read from dram[3], followed by write to
-%        dram[3]. \\
-%        \hline
-%        5 & Capture-DR & DTM captures results of read from dram[3]. \\
-%        & Shift-DR & Debugger shifts in write of the address the user wants to
-%        read from to dram[4], using the interrupting Debug RAM register to assert
-%        the Debug Interrupt. The old contents of the fourth word in Debug RAM
-%        are shifted out. \\
-%        & Update-DR & DTM starts read from dram[4], followed by write to
-%        dram[4], and then sets the interrupt bit. The hart will respond to the
-%        Debug Interrupt by executing the program in Debug RAM which in this
-%        case will read the address written, and replace the entry in Debug RAM
-%        with the data at that address. \\
-%        \hline
-%        6 & Capture-DR & DTM captures results of read from dram[4]. \\
-%        & Shift-DR & Debugger shifts in read from dram[4], and gets back the
-%        old contents of the fourth word in Debug RAM. (This is the value that
-%        was there just before the address was written there.) \\
-%        & Update-DR & DTM starts read from dram[4]. \\
-%        \hline
-%        7 & Capture-DR & DTM captures results of read from dram[4]. \\
-%        & Shift-DR & Debugger shifts in nop, and gets back the contents of the
-%        fourth word in Debug RAM. This is the value that was there during the
-%        previous Update-DR, which is the result of the Debug Program execution.
-%        \\
-        \hline
-    \end{tabulary}
-\end{table}
 
 \subsection{Using Abstract Memory Access} \label{deb:mrabstract}
 
@@ -311,7 +250,7 @@ actual implementation may differ.
 
 \noindent Read a word from memory using abstract memory access:
 
-\begin{tabulary}{\textwidth}{|r|r|r|L|}
+\begin{tabular}{|c|r|p{0.3\textwidth}|p{0.3\textwidth}|}
     \hline
     Op & Address & Value & Comment \\
     \hline
@@ -321,12 +260,12 @@ actual implementation may differ.
     \hline
     Read & \Rdatazero & - & Value read from memory \\
     \hline
-\end{tabulary}
+\end{tabular}
 \medskip
 
 \noindent Read block of memory using abstract memory access:
 
-\begin{tabular}{|r|r|p{13em}|l|}
+\begin{tabular}{|c|r|p{0.3\textwidth}|p{0.3\textwidth}|}
     \hline
     Op & Address & Value & Comment \\
     \hline
@@ -355,7 +294,7 @@ With system bus access, addresses are physical system bus addresses.
 
 \noindent Write a word to memory using system bus access:
 
-\begin{tabulary}{\textwidth}{|r|r|r|L|}
+\begin{tabular}{|c|r|p{0.3\textwidth}|p{0.3\textwidth}|}
     \hline
     Op & Address & Value & Comment \\
     \hline
@@ -363,12 +302,12 @@ With system bus access, addresses are physical system bus addresses.
     \hline
     Write & \Rsbdatazero & value & \\
     \hline
-\end{tabulary}
+\end{tabular}
 \medskip
 
-\noindent Write block of memory using system bus access:
+\noindent Write a block of memory using system bus access:
 
-\begin{tabular}{|r|r|p{13em}|l|}
+\begin{tabular}{|c|r|p{0.3\textwidth}|p{0.3\textwidth}|}
     \hline
     Op & Address & Value & Comment \\
     \hline
@@ -395,7 +334,7 @@ configuration).
 
 \noindent Write a word to memory using program buffer:
 
-\begin{tabulary}{\textwidth}{|r|r|r|L|}
+\begin{tabular}{|c|r|p{0.3\textwidth}|p{0.3\textwidth}|}
     \hline
     Op & Address & Value & Comment \\
     \hline
@@ -403,20 +342,20 @@ configuration).
     \hline
     Write & {\tt progbuf1} & {\tt ebreak} & \\
     \hline
-    Write & \Rdatazero & value & \\
-    \hline
-    Write & \Rcommand & \Fwrite, 0x1008 & Write \Szero \\
-    \hline
     Write & \Rdatazero & address & \\
     \hline
-    Write & \Rcommand & \Fwrite, \Fpostexec, 0x1009 & Write \Sone, then execute program buffer \\
+    Write & \Rcommand & \Fwrite, \Fregno = 0x1008 & Write \Szero \\
     \hline
-\end{tabulary}
+    Write & \Rdatazero & value & \\
+    \hline
+    Write & \Rcommand & \Fwrite, \Fpostexec, \Fregno = 0x1009 & Write \Sone, then execute program buffer \\
+    \hline
+\end{tabular}
 \medskip
 
 \noindent Write block of memory using program buffer:
 
-\begin{tabulary}{\textwidth}{|r|r|r|L|}
+\begin{tabular}{|c|r|p{0.3\textwidth}|p{0.3\textwidth}|}
     \hline
     Op & Address & Value & Comment \\
     \hline
@@ -428,11 +367,11 @@ configuration).
     \hline
     Write & \Rdatazero & address & \\
     \hline
-    Write & \Rcommand & \Fwrite, 0x1008 & Write \Szero \\
+    Write & \Rcommand & \Fwrite, \Fregno = 0x1008 & Write \Szero \\
     \hline
     Write & \Rdatazero & value0 & \\
     \hline
-    Write & \Rcommand & \Fwrite, \Fpostexec, 0x1009 & Write \Sone, then execute program buffer \\
+    Write & \Rcommand & \Fwrite, \Fpostexec, \Fregno = 0x1009 & Write \Sone, then execute program buffer \\
     \hline
     Write & \Rabstractauto & \Fautoexecdata[0] & Set \Fautoexecdata[0] \\
     \hline
@@ -444,7 +383,7 @@ configuration).
     \hline
     Write & \Rabstractauto & 0 & Clear \Fautoexecdata[0] \\
     \hline
-\end{tabulary}
+\end{tabular}
 \medskip
 
 \subsection{Using Abstract Memory Access} \label{deb:mwabstract}
@@ -454,7 +393,7 @@ actual implementation may differ.
 
 \noindent Write a word to memory using abstract memory access:
 
-\begin{tabulary}{\textwidth}{|r|r|r|L|}
+\begin{tabular}{|c|r|p{0.3\textwidth}|p{0.3\textwidth}|}
     \hline
     Op & Address & Value & Comment \\
     \hline
@@ -464,12 +403,12 @@ actual implementation may differ.
     \hline
     Write & \Rcommand & cmdtype=2, \Faamsize=2, write=1 & \\
     \hline
-\end{tabulary}
+\end{tabular}
 \medskip
 
-\noindent Write block of memory using abstract memory access:
+\noindent Write a block of memory using abstract memory access:
 
-\begin{tabular}{|r|r|p{13em}|l|}
+\begin{tabular}{|c|r|p{0.3\textwidth}|p{0.3\textwidth}|}
     \hline
     Op & Address & Value & Comment \\
     \hline
@@ -592,7 +531,7 @@ the pseudo-op {\tt transfer dest, src} to represent all these options.
 
 Halt the hart for a minimum amount of time to perform a single memory write:
 
-\begin{tabulary}{\textwidth}{|r|r|l|L|}
+\begin{tabular}{|c|r|p{0.3\textwidth}|p{0.3\textwidth}|}
     \hline
     Op & Address & Value & Comment \\
     \hline
@@ -618,14 +557,14 @@ Halt the hart for a minimum amount of time to perform a single memory write:
     \hline
     Write & \Rcommand & 0x10000000 & Perform quick access \\
     \hline
-\end{tabulary}
+\end{tabular}
 
 This shows an example of setting the \Fm bit in \Rmcontrol to
 enable a hardware breakpoint in M-mode.
 Similar quick access instructions could have been used previously
 to configure the trigger that is being enabled here:
 
-\begin{tabulary}{\textwidth}{|r|r|l|L|}
+\begin{tabular}{|c|r|p{0.3\textwidth}|p{0.3\textwidth}|}
     \hline
     Op & Address & Value & Comment \\
     \hline
@@ -641,7 +580,7 @@ to configure the trigger that is being enabled here:
    \hline
     Write & \Rcommand & 0x10000000 & Perform quick access \\
    \hline
-\end{tabulary}
+\end{tabular}
 
 
 
