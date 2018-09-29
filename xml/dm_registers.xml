@@ -133,25 +133,37 @@
 
 \label{resethaltreq}
 \index{resethaltreq}
-        \Fresethaltreq is an internal bit of per-hart state that cannot be
-        read, but can be written with \Fsetresethaltreq and \Fclrresethaltreq.
+        \Fresethaltreq is an optional internal bit of per-hart state that
+        cannot be read, but can be written with \Fsetresethaltreq and
+        \Fclrresethaltreq.
+
+        \begin{commentary}
+        There is an asymmetry between \Fhaltreq and \Fresumereq. \Fhaltreq is
+        level-sensitive when high, to enable debuggers to halt harts out of
+        reset when \Fresethaltreq is not implemented. \Fresumereq only causes
+        harts to resume exactly once, to avoid race conditions where harts
+        resume and immediately halt again faster than the debugger can clear
+        \Fresumereq.
+        \end{commentary}
 
         <!-- Fields that apply to all selected hart(s) -->
-        <field name="haltreq" bits="31" access="W" reset="-">
-            0: May cancel a halt request for any of the currently selected
-            harts, if those harts haven't halted yet.
+        <field name="haltreq" bits="31" access="R/W" reset="0">
+            Writing 0 may cancel a halt request for any of the currently
+            selected harts, if those are attempting to halt when the write
+            occurs.
 
-            1: Causes the currently selected harts to halt, if they are
-            currently running.
+            While the bit is 1, causes the currently selected harts to halt, if
+            they are running.
 
             Writes apply to the new value of \Fhartsel and \Fhasel.
         </field>
         <field name="resumereq" bits="30" access="W" reset="-">
-            0: May cancel a resume request for any of the currently selected
-            harts, if those harts haven't resumed yet.
+            Writing 0 may cancel a resume request for any of the currently
+            selected harts, if those harts are attempting to resume when the
+            write occurs.
 
-            1: Causes the currently selected harts to resume once, if they are
-            currently halted.
+            Writing 1 causes the currently selected harts to resume once, if
+            they halted when the write occurs.
 
             \Fresumereq is ignored if \Fhaltreq is set.
 
