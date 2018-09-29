@@ -163,7 +163,7 @@
             write occurs.
 
             Writing 1 causes the currently selected harts to resume once, if
-            they halted when the write occurs.
+            they are halted when the write occurs.
 
             \Fresumereq is ignored if \Fhaltreq is set.
 
