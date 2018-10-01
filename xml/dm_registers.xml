@@ -128,8 +128,9 @@
         \end{commentary}
 
         On any given write, a debugger may only write 1 to at most one of the
-        following bits: \Fhaltreq, \Fresumereq, \Fhartreset, \Fackhavereset,
-        \Fsetresethaltreq, and \Fclrresethaltreq. The others must be written 0.
+        following bits: \Fresumereq, \Fhartreset, \Fackhavereset,
+        \Fsetresethaltreq, and \Fclrresethaltreq.  The others must be written
+        0.
 
 \label{resethaltreq}
 \index{resethaltreq}
@@ -158,7 +159,8 @@
             Writes apply to the new value of \Fhartsel and \Fhasel.
         </field>
         <field name="resumereq" bits="30" access="W" reset="-">
-            Writing 0 may cancel a resume request for any of the currently
+            Writing 0 clears the hart's resume ack signal. It also
+            may cancel a resume request for any of the currently
             selected harts, if those harts are attempting to resume when the
             write occurs.
 
