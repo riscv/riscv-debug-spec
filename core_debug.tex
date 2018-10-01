@@ -5,13 +5,17 @@ Modifications to the RISC-V core to support debug are kept to a minimum.  There
 is a special execution mode (Debug Mode) and a few extra CSRs. The DM takes care
 of the rest.
 
+In order to be compliant with this specification an implementation must
+implement everything described in this section that is not explicitly listed as
+optional.
+
 \section{Debug Mode} \label{debugmode}
 
 Debug Mode is a special processor mode used only when a hart is halted for
 external debugging. How Debug Mode is implemented is not specified here.
 
-\begin{steps}{When executing code from the Program Buffer, the hart stays
-    in Debug Mode and the following apply:}
+\begin{steps}{When executing code from the optional Program Buffer, the hart
+    stays in Debug Mode and the following apply:}
 \item All operations are executed at machine mode privilege level, except that
     \Fmprv in \Rmstatus may be ignored according to \Fmprven.
 \item All interrupts (including NMI) are masked.

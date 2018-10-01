@@ -18,12 +18,10 @@
 \item Allow direct System Bus Access. (Optional)
 \end{steps}
 
-In order to implement memory access, a target must implement at least one of
-Program Buffer, System Bus Access, or Abstract Access Memory command
-mechanisms.
-
-In order to implement access to all registers, targets should implement either
-the Program Buffer or abstract access to all registers.
+In order to be compliant with this specification an implementation must
+implement all the required features listed above, at least one of Program Buffer,
+System Bus Access, or Abstract Access Memory command mechanisms, and either the
+Program Buffer or abstract access to all registers.
 
 A single DM can debug up to $2^{20}$ harts.
 
