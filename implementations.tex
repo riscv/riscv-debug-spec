@@ -22,18 +22,18 @@ even when that hart is unable to execute instructions.
 This implementation only implements the Access Register abstract command
 for GPRs on a halted hart, and relies on the Program Buffer for all other
 operations.
-
-This method uses the hart's existing pipeline
+It uses the hart's existing pipeline
 and ability to execute from arbitrary memory locations to avoid
 modifications to a hart's datapath.
+
 When the halt request bit is set, the Debug Module raises a special interrupt
-to the selected hart(s). This interrupt causes each
+to the selected harts. This interrupt causes each
 hart to enter Debug Mode and jump to a defined
 memory region that is serviced by the DM.
 When taking this exception, \Rpc is saved to \Rdpc and \Fcause is updated
 in \Rdcsr.
 
-The code in the Debug Module causes the hart to execute a ``park loop''.
+The code in the Debug Module causes the hart to execute a ``park loop.''
 In the park loop the hart writes its \Rmhartid to a
 memory location within the Debug Module to indicate that it is halted.
 To allow the DM to individually control one out of several
@@ -51,7 +51,7 @@ otherwise the DM causes a {\tt ebreak} to execute immediately.
 
 When {\tt ebreak} is executed (indicating the end of the
 Program Buffer code) the hart returns to its park loop. If an exception is
-encountered, the hart jumps to a defined debug exception address within
+encountered, the hart jumps to a debug exception address within
 the Debug Module. The code at that address causes the hart to
 write to an address in the Debug Module which indicates exception.
 This address is considered I/O for {\tt fence} instructions (see \#\ref{fence}
