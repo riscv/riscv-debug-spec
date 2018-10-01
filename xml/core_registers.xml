@@ -74,9 +74,13 @@
 
             2: The Trigger Module caused a breakpoint exception. (priority 4, highest)
 
-            3: The debugger requested entry to Debug Mode. (priority 2)
+            3: The debugger requested entry to Debug Mode using \Fhaltreq.
+            (priority 1)
 
-            4: The hart single stepped because \Fstep was set. (priority 1, lowest)
+            4: The hart single stepped because \Fstep was set. (priority 0, lowest)
+
+            5: The hart halted directly out of reset due to \Fresethaltreq. It
+            is also acceptable to report 3 when this happens. (priority 2)
 
             Other values are reserved for future use.
         </field>
