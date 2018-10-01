@@ -202,7 +202,7 @@
             select. This hart is always part of the currently selected harts.
         </field>
         <field name="0" bits="5:4" access="R" reset="0" />
-        <field name="setresethaltreq" bits="3" access="W1" reset="0">
+        <field name="setresethaltreq" bits="3" access="W1" reset="-">
             This optional field writes the halt-on-reset request bit for all
             currently selected harts, unless \Fclrresethaltreq is
             simultaneously set to 1.
@@ -214,7 +214,7 @@
 
             If \Fhasresethaltreq is 0, this field is not implemented.
         </field>
-        <field name="clrresethaltreq" bits="2" access="W1" reset="0">
+        <field name="clrresethaltreq" bits="2" access="W1" reset="-">
             This optional field clears the halt-on-reset request bit for all
             currently selected harts.
 
