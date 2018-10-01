@@ -21,11 +21,7 @@
     1 &amp; Enter Debug Mode. (Only supported when the trigger's \Fdmode is 1.)
     \\
     \hline
-    2 &amp; Start tracing. \\
-    \hline
-    3 &amp; Stop tracing. \\
-    \hline
-    4 &amp; Emit trace data for this match. \\
+    2 -- 5 &amp; Reserved for use by the trace specification. \\
     \hline
     other &amp; Reserved for future use. \\
     \hline
