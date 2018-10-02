@@ -9,6 +9,10 @@ features that can be useful without having the Debug Module present, so the
 Trigger Module is broken out as a separate piece that can be implemented
 separately.
 
+A hart can be compliant with this specification without implementing any
+trigger functionality at all, but if it is implemented then it must conform
+to this section.
+
 Triggers do not fire while in Debug Mode.
 
 \begin{steps}{Each trigger may support a variety of features. A debugger can
