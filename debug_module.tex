@@ -169,7 +169,7 @@ For every hart, the Debug Module contains 4 conceptual bits of state: halt
 request, resume ack, halt-on-reset request, and hart reset.  (The hart reset
 and halt-on-reset request bits are optional.) These bits all reset to 0. In
 addition there is a resume request signal.  A debugger can write these
-bits/signals for the currently selected harts through \Fhaltreq, \Fresumereq,
+bits/signals for the currently selected harts through \Fhaltreq,
 \Fsetresethaltreq/\Fclrresethaltreq, and \Fhartreset in \Rdmcontrol.  In
 addition the DM receives halted and running signals from each hart.
 
