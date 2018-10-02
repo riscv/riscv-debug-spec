@@ -46,8 +46,9 @@ process should start at one of the lower {\tt haltsum} registers.
 \section{Halting} \label{deb:halt}
 
 To halt one or more harts, the debugger selects them, sets \Fhaltreq, and then
-waits for \Fallhalted to indicate the harts are halted before clearing
-\Fhaltreq to 0.
+waits for \Fallhalted to indicate the harts are halted. Then it can clear
+\Fhaltreq to 0, or leave it high to catch a hart that unexpectedly resets while
+halted.
 
 \section{Running}
 
