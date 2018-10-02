@@ -29,9 +29,10 @@
         \item Implement abstract access to all registers that are visible to
             software running on the hart including all the registers that are
             present on the hart and listed in Table~\ref{tab:regno}.
-        \item Advertise the implementation as conforming to the ``Minimal
-            RISC-V Debug Specification \versionnum'', instead of the ``RISC-V
-            Debug Specification \versionnum''.
+        \item Implement abstract access to at least all GPRs, \Rdcsr, and
+            \Rdpc, and advertise the implementation as conforming to the
+            ``Minimal RISC-V Debug Specification \versionnum'', instead of the
+            ``RISC-V Debug Specification \versionnum''.
     \end{steps}
 \end{steps}
 
