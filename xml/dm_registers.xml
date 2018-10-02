@@ -158,14 +158,10 @@
 
             Writes apply to the new value of \Fhartsel and \Fhasel.
         </field>
-        <field name="resumereq" bits="30" access="W" reset="-">
-            Writing 0 clears the hart's resume ack signal. It also
-            may cancel a resume request for any of the currently
-            selected harts, if those harts are attempting to resume when the
-            write occurs.
-
+        <field name="resumereq" bits="30" access="W1" reset="-">
             Writing 1 causes the currently selected harts to resume once, if
-            they are halted when the write occurs.
+            they are halted when the write occurs. It also clears the resume
+            ack bit for those harts.
 
             \Fresumereq is ignored if \Fhaltreq is set.
 
