@@ -177,25 +177,29 @@ deasserted. Finally they end up either running or halted, depending on
 \section{Run Control} \label{runcontrol}
 
 For every hart, the Debug Module contains 4 conceptual bits of state: halt
-request, resume request, halt-on-reset request,  and hart reset.
-(The hart reset and halt-on-reset request bits are optional.)
-These bits all reset to 0. A debugger can write them for the currently selected
-harts through \Fhaltreq, \Fresumereq, \Fsetresethaltreq/\Fclrresethaltreq and
-\Fhartreset in \Rdmcontrol, only one of which may be high in any single write.
-In addition the DM receives halted, running, and resume ack signals from each
-hart.
+request, resume ack, halt-on-reset request, and hart reset.  (The hart reset
+and halt-on-reset request bits are optional.) These bits all reset to 0. In
+addition there is a resume request signal.  A debugger can write these
+bits/signals for the currently selected harts through \Fhaltreq, \Fresumereq,
+\Fsetresethaltreq/\Fclrresethaltreq, and \Fhartreset in \Rdmcontrol.  In
+addition the DM receives halted and running signals from each hart.
 
-When a running hart receives a halt request, it responds by halting,
-deasserting its running signal, and asserting its halted signal. The halted
-signals of all selected harts are reflected in the \Fallhalted and \Fanyhalted
-bits. \Fhaltreq is ignored by halted harts.
+% In my head bits imply flip-flops, while signals might just be the output of
+% combinational logic/state machine. Does that need more clarification?
 
-When a halted hart receives a resume request, it responds by resuming, clearing
-its halted signal, and asserting its running signal and resume ack signals. The
-resume ack signal is lowered when the resume request is deasserted.  These
-status signals of all selected harts are reflected in \Fallresumeack,
-\Fanyresumeack, \Fallrunning, and \Fanyrunning. \Fresumereq is ignored by
-running harts.
+To halt a hart, the debugger writes 1 to \Fhaltreq, which sets the halt request
+bit for each selected hart. Whenever a running hart sees its halt request bit
+high, it responds by halting, deasserting its running signal, and asserting its
+halted signal. The halted signals of all selected harts are reflected in the
+\Fallhalted and \Fanyhalted bits. Halted harts ignore the halt request bit.
+
+To resume a hart, the debugger writes 1 to \Fresumereq and 0 to \Fhaltreq. This
+causes the DM to send each selected hart a resume request, and to clear resume
+ack for each selected hart.  The selected, halted harts respond by resuming,
+clearing their halted signals, and asserting their running signals. The DM
+reacts to a hart's running signal going high by setting resume ack for that
+hart.  These status signals of all selected harts are reflected in
+\Fallresumeack, \Fanyresumeack, \Fallrunning, and \Fanyrunning.
 
 When halt or resume is requested, a hart must respond in
 less than one second, unless it is unavailable.

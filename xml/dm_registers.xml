@@ -128,30 +128,40 @@
         \end{commentary}
 
         On any given write, a debugger may only write 1 to at most one of the
-        following bits: \Fhaltreq, \Fresumereq, \Fhartreset, \Fackhavereset,
-        \Fsetresethaltreq, and \Fclrresethaltreq. The others must be written 0.
+        following bits: \Fresumereq, \Fhartreset, \Fackhavereset,
+        \Fsetresethaltreq, and \Fclrresethaltreq.  The others must be written
+        0.
 
 \label{resethaltreq}
 \index{resethaltreq}
-        \Fresethaltreq is an internal bit of per-hart state that cannot be
-        read, but can be written with \Fsetresethaltreq and \Fclrresethaltreq.
+        \Fresethaltreq is an optional internal bit of per-hart state that
+        cannot be read, but can be written with \Fsetresethaltreq and
+        \Fclrresethaltreq.
+
+        \begin{commentary}
+        There is an asymmetry between \Fhaltreq and \Fresumereq. \Fhaltreq is
+        level-sensitive when high, to enable debuggers to halt harts out of
+        reset when \Fresethaltreq is not implemented. \Fresumereq only causes
+        harts to resume exactly once, to avoid race conditions where harts
+        resume and immediately halt again faster than the debugger can clear
+        \Fresumereq.
+        \end{commentary}
 
         <!-- Fields that apply to all selected hart(s) -->
         <field name="haltreq" bits="31" access="W" reset="-">
-            0: May cancel a halt request for any of the currently selected
-            harts, if those harts haven't halted yet.
+            Writing 0 clears the halt request bit for all currently selected
+            harts. This may cancel outstanding halt requests for those harts.
 
-            1: Causes the currently selected harts to halt, if they are
-            currently running.
+            Writing 1 sets the halt request bit for all currently selected
+            harts. Running harts will halt whenever their halt request bit is
+            set.
 
             Writes apply to the new value of \Fhartsel and \Fhasel.
         </field>
-        <field name="resumereq" bits="30" access="W" reset="-">
-            0: May cancel a resume request for any of the currently selected
-            harts, if those harts haven't resumed yet.
-
-            1: Causes the currently selected harts to resume once, if they are
-            currently halted.
+        <field name="resumereq" bits="30" access="W1" reset="-">
+            Writing 1 causes the currently selected harts to resume once, if
+            they are halted when the write occurs. It also clears the resume
+            ack bit for those harts.
 
             \Fresumereq is ignored if \Fhaltreq is set.
 
