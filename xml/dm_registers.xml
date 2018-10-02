@@ -148,13 +148,13 @@
         \end{commentary}
 
         <!-- Fields that apply to all selected hart(s) -->
-        <field name="haltreq" bits="31" access="R/W" reset="0">
-            Writing 0 may cancel a halt request for any of the currently
-            selected harts, if those are attempting to halt when the write
-            occurs.
+        <field name="haltreq" bits="31" access="W" reset="-">
+            Writing 0 clears the halt request bit for all currently selected
+            harts. This may cancel outstanding halt requests for those harts.
 
-            While the bit is 1, causes the currently selected harts to halt, if
-            they are running.
+            Writing 1 sets the halt request bit for all currently selected
+            harts. Running harts will halt whenever their halt request bit is
+            set.
 
             Writes apply to the new value of \Fhartsel and \Fhasel.
         </field>
