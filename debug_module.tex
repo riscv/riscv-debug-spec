@@ -176,7 +176,7 @@ deasserted. Finally they end up either running or halted, depending on
 
 \section{Run Control} \label{runcontrol}
 
-For every hart, the Debug Module contains 4 conceptual bits of state: halt
+For every hart, the Debug Module tracks 4 conceptual bits of state: halt
 request, resume ack, halt-on-reset request,  and hart reset.
 (The hart reset and halt-on-reset request bits are optional.)
 These bits all reset to 0. A debugger can write them for the currently selected
