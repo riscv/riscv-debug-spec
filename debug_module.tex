@@ -179,15 +179,18 @@ deasserted. Finally they end up either running or halted, depending on
 For every hart, the Debug Module tracks 4 conceptual bits of state: halt
 request, resume ack, halt-on-reset request,  and hart reset.
 (The hart reset and halt-on-reset request bits are optional.)
-These bits all reset to 0. A debugger can write them for the currently selected
-harts through \Fhaltreq, \Fsetresethaltreq/\Fclrresethaltreq and
-\Fhartreset in \Rdmcontrol.
-In addition the DM receives halted and running signals from each hart.
+These 4 bits reset to 0, except for resume ack, which may reset to either 0 or 1.
+The DM receives halted, running, and havereset signals from each hart.
+The debugger can observe the state of resume ack in \Fallresumeack and
+\Fanyresumeack, and the state of halted, running, and havereset signals
+in \Fallhalted, \Fanyhalted, \Fallrunning, \Fanyrunning, \Fallhavereset,
+and \Fanyhavereset. The state of the other bits cannot be observed directly.
 
+When a debugger writes 1 to \Fhaltreq, each selected hart's halt request bit is
+set.
 When a running hart sees its halt request bit high, it responds by halting,
-deasserting its running signal, and asserting its halted signal. The halted
-signals of all selected harts are reflected in the \Fallhalted and \Fanyhalted
-bits. Halted harts ignore their halt request bit.
+deasserting its running signal, and asserting its halted signal.
+Halted harts ignore their halt request bit.
 
 When a debugger writes 1 to \Fresumereq, each selected hart's resume ack bit is
 cleared and each selected, halted hart is sent a resume request. Harts respond
