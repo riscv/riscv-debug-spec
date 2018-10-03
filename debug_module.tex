@@ -176,25 +176,25 @@ deasserted. Finally they end up either running or halted, depending on
 
 \section{Run Control} \label{runcontrol}
 
-For every hart, the Debug Module contains 4 conceptual bits of state: halt
-request, resume request, halt-on-reset request,  and hart reset.
+For every hart, the Debug Module tracks 4 conceptual bits of state: halt
+request, resume ack, halt-on-reset request,  and hart reset.
 (The hart reset and halt-on-reset request bits are optional.)
 These bits all reset to 0. A debugger can write them for the currently selected
-harts through \Fhaltreq, \Fresumereq, \Fsetresethaltreq/\Fclrresethaltreq and
-\Fhartreset in \Rdmcontrol, only one of which may be high in any single write.
-In addition the DM receives halted, running, and resume ack signals from each
-hart.
+harts through \Fhaltreq, \Fsetresethaltreq/\Fclrresethaltreq and
+\Fhartreset in \Rdmcontrol.
+In addition the DM receives halted and running signals from each hart.
 
-When a running hart receives a halt request, it responds by halting,
+When a running hart sees its halt request bit high, it responds by halting,
 deasserting its running signal, and asserting its halted signal. The halted
 signals of all selected harts are reflected in the \Fallhalted and \Fanyhalted
-bits. \Fhaltreq is ignored by halted harts.
+bits. Halted harts ignore their halt request bit.
 
-When a halted hart receives a resume request, it responds by resuming, clearing
-its halted signal, and asserting its running signal and resume ack signals. The
-resume ack signal is lowered when the resume request is deasserted.  These
+When a debugger writes 1 to \Fresumereq, each selected hart's resume ack bit is
+cleared and each selected, halted hart is sent a resume request. Harts respond
+by resuming, clearing their halted signal, and asserting their running signal.
+At the end of this process the resume ack bit is cleared.  These
 status signals of all selected harts are reflected in \Fallresumeack,
-\Fanyresumeack, \Fallrunning, and \Fanyrunning. \Fresumereq is ignored by
+\Fanyresumeack, \Fallrunning, and \Fanyrunning. Resume requests are ignored by
 running harts.
 
 When halt or resume is requested, a hart must respond in
