@@ -778,8 +778,8 @@
         \begin{steps}{Reads from this register start the following:}
             \item ``Return'' the data.
             \item Set \Fsbbusy.
-            \item If \Fsbautoincrement is set, increment {\tt sbaddress}.
             \item If \Fsbreadondata is set, perform another system bus read.
+            \item If \Fsbautoincrement is set, increment {\tt sbaddress}.
             \item Clear \Fsbbusy.
         \end{steps}
 
