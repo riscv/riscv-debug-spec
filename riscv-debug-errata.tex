@@ -1,0 +1,44 @@
+\documentclass[twoside,11pt]{article}
+\setcounter{tocdepth}{4}
+\setcounter{secnumdepth}{4}
+
+\usepackage{enumitem}
+
+\usepackage{xspace}
+\newcommand{\defregname}[2]{\providecommand{#1}{{\tt #2}\xspace}}
+\newcommand{\deffieldname}[2]{\providecommand{#1}{{\textsf #2}\xspace}}
+\defregname{\Rsbdatazero}{sbdata0}
+\deffieldname{\Fsbbusy}{sbbusy}
+\deffieldname{\Fsbreadondata}{sbreadondata}
+\deffieldname{\Fsbautoincrement}{sbautoincrement}
+
+\newenvironment{steps}[1]
+  {
+     \vspace{1ex}
+     \noindent #1
+     \begin{enumerate}[nolistsep]
+  }
+  {
+     \end{enumerate}
+     \vspace{1ex}
+ }
+
+\input{vc.tex}
+
+\begin{document}
+
+\title{RISC-V External Debug Support Errata\\
+\GITHash
+}
+\author{Editors: \\
+Tim Newsome \textless tim@sifive.com\textgreater, SiFive, Inc. \\
+Megan Wachs \textless megan@sifive.com\textgreater, SiFive, Inc.}
+\date{\GITAuthorDate}
+\maketitle
+
+\section{Errata to RISC-V Debug Specification 0.13}
+
+There are no documented errata yet, but watch this space because I'll be
+documenting some soon.
+
+\end{document}
