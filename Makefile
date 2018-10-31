@@ -32,7 +32,7 @@ INCLUDES_TEX += future.tex
 
 FIGURES = fig/*
 
-all:	draft $(NOTES).pdf debug_defines.h
+all:	draft $(NOTES).pdf debug_defines.h riscv-debug-errata.pdf
 
 draft:	$(DRAFT).pdf
 
@@ -40,6 +40,9 @@ release:	$(RELEASE).pdf
 
 %.pdf: %.tex $(REGISTERS_TEX) $(FIGURES) $(INCLUDES_TEX) vc.tex changelog.tex
 	pdflatex -shell-escape $< && makeindex $(basename $<) && pdflatex -shell-escape $<
+
+riscv-debug-errata.pdf: riscv-debug-errata.tex vc.tex
+	pdflatex -shell-escape $<
 
 publish:	$(DRAFT).pdf
 	cp $< $(DRAFT)-`git rev-parse --abbrev-ref HEAD`.`git rev-parse --short HEAD`.pdf
