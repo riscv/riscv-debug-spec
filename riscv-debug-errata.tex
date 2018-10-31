@@ -8,6 +8,7 @@
 \newcommand{\defregname}[2]{\providecommand{#1}{{\tt #2}\xspace}}
 \newcommand{\deffieldname}[2]{\providecommand{#1}{{\textsf #2}\xspace}}
 \defregname{\Rsbdatazero}{sbdata0}
+\defregname{\Rtdatatwo}{tdata2}
 \deffieldname{\Fsbbusy}{sbbusy}
 \deffieldname{\Fsbreadondata}{sbreadondata}
 \deffieldname{\Fsbautoincrement}{sbautoincrement}
@@ -38,7 +39,9 @@ Megan Wachs \textless megan@sifive.com\textgreater, SiFive, Inc.}
 
 \section{Errata to RISC-V Debug Specification 0.13}
 
-There are no documented errata yet, but watch this space because I'll be
-documenting some soon.
+\subsection{Last trigger example}
+
+In the last example in Section B.9, the value for \Rtdatatwo 1 should be
+0xefff8675.
 
 \end{document}
