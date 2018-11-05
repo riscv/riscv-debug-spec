@@ -541,7 +541,7 @@
             Data used together with \Fsselect.
         </field>
         <field name="sselect" bits="1:0" access="WARL" reset="0">
-            0: Ignore \Fmvalue.
+            0: Ignore \Fsvalue.
 
             1: This trigger will only match if the low bits of
             \Rscontext equal \Fsvalue.

@@ -6,12 +6,14 @@
 
 \usepackage{xspace}
 \newcommand{\defregname}[2]{\providecommand{#1}{{\tt #2}\xspace}}
-\newcommand{\deffieldname}[2]{\providecommand{#1}{{\textsf #2}\xspace}}
+\newcommand{\deffieldname}[2]{\providecommand{#1}{\textsf{#2}\xspace}}
 \defregname{\Rsbdatazero}{sbdata0}
 \defregname{\Rtdatatwo}{tdata2}
 \deffieldname{\Fsbbusy}{sbbusy}
 \deffieldname{\Fsbreadondata}{sbreadondata}
 \deffieldname{\Fsbautoincrement}{sbautoincrement}
+\deffieldname{\Fsselect}{sselect}
+\deffieldname{\Fsvalue}{svalue}
 
 \newenvironment{steps}[1]
   {
@@ -56,6 +58,10 @@ The order of operations listed in Section 3.12.23, describing reads from
     \item If \Fsbautoincrement is set, increment {\tt sbaddress}.
     \item Clear \Fsbbusy.
 \end{steps}
+
+\subsection{\Fsselect applies to \Fsvalue}
+
+In Section 5.2.13, when \Fsselect is 0 it ignores \Fsvalue.
 
 \subsection{Last trigger example}
 
