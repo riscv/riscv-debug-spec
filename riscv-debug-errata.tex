@@ -38,7 +38,17 @@ Megan Wachs \textless megan@sifive.com\textgreater, SiFive, Inc.}
 
 \section{Errata to RISC-V Debug Specification 0.13}
 
-There are no documented errata yet, but watch this space because I'll be
-documenting some soon.
+\subsection{\Rsbdatazero Reads Order of Operations}
+
+The order of operations listed in Section 3.12.23, describing reads from
+\Rsbdatazero, is incorrect. It should read:
+
+\begin{steps}{Reads from this register start the following:}
+    \item ``Return'' the data.
+    \item Set \Fsbbusy.
+    \item If \Fsbreadondata is set, perform another system bus read.
+    \item If \Fsbautoincrement is set, increment {\tt sbaddress}.
+    \item Clear \Fsbbusy.
+\end{steps}
 
 \end{document}
