@@ -43,4 +43,17 @@ Megan Wachs \textless megan@sifive.com\textgreater, SiFive, Inc.}
 The third paragraph of Section 3.5 has a mistake. At the end of the process
 described there, the resume ack bit is \emph{set}.
 
+\subsection{\Rsbdatazero Reads Order of Operations}
+
+The order of operations listed in Section 3.12.23, describing reads from
+\Rsbdatazero, is incorrect. It should read:
+
+\begin{steps}{Reads from this register start the following:}
+    \item ``Return'' the data.
+    \item Set \Fsbbusy.
+    \item If \Fsbreadondata is set, perform another system bus read.
+    \item If \Fsbautoincrement is set, increment {\tt sbaddress}.
+    \item Clear \Fsbbusy.
+\end{steps}
+
 \end{document}
