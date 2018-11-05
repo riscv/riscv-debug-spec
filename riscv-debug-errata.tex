@@ -8,6 +8,7 @@
 \newcommand{\defregname}[2]{\providecommand{#1}{{\tt #2}\xspace}}
 \newcommand{\deffieldname}[2]{\providecommand{#1}{{\textsf #2}\xspace}}
 \defregname{\Rsbdatazero}{sbdata0}
+\defregname{\Rtdatatwo}{tdata2}
 \deffieldname{\Fsbbusy}{sbbusy}
 \deffieldname{\Fsbreadondata}{sbreadondata}
 \deffieldname{\Fsbautoincrement}{sbautoincrement}
@@ -55,5 +56,10 @@ The order of operations listed in Section 3.12.23, describing reads from
     \item If \Fsbautoincrement is set, increment {\tt sbaddress}.
     \item Clear \Fsbbusy.
 \end{steps}
+
+\subsection{Last trigger example}
+
+In the last example in Section B.9, the value for \Rtdatatwo 1 should be
+0xefff8675.
 
 \end{document}
