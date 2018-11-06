@@ -540,6 +540,46 @@
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
 
+    <register name="Advanced" short="advanced" address="0x32">
+        <field name="0" bits="31:11" access="R" reset="0" />
+        <field name="exttrigger" bits="10:7" access="WARL" reset="0">
+            This field contains the currently selected external trigger.
+
+            If a non-existant trigger value is written here, the hardware will
+            change it to a valid one or 0 if no external triggers exist.
+        </field>
+        <field name="haltgroup" bits="6:2" access="WARL" reset="0">
+            When \Fhgselect is 0, contains the halt group of the hart
+            specified by \Fhartsel.
+
+            When \Fhgselect is 1, contains the halt group of the external
+            trigger selected by \Fexttrigger.
+
+            Writes only have an effect if \Fhgwrite is also written 1.
+
+            An implementation may tie any number of upper bits in this field to
+            0. If halt groups aren't implemented, then this entire field
+            is 0.
+        </field>
+        <field name="hgwrite" bits="1" access="W" reset="-">
+            When \Fhgselect is 0, writing 1 changes the halt group of all
+            selected harts to the value written to \Fhaltgroup.
+
+            When \Fhgselect is 1, writing 1 changes the halt group of the
+            external trigger selected by \Fexttrigger to the value written to
+            \Fhaltgroup.
+
+            Writing 0 has no effect.
+        </field>
+        <field name="hgselect" bits="0" access="WARL" reset="0">
+            0: Operate on harts.
+
+            1: Operate on external triggers.
+
+            If there are no external triggers, this field must be tied to 0.
+        </field>
+    </register>
+
     <register name="Halt Summary 0" short="haltsum0" address="0x40">
         Each bit in this read-only register indicates whether one specific hart
         is halted or not. Unavailable/nonexistent harts are not considered to
