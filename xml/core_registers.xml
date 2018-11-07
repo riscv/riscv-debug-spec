@@ -49,10 +49,11 @@
         <field name="stopcount" bits="10" access="WARL" reset="Preset">
             0: Increment counters as usual.
 
-            1: Don't increment any counters while in Debug Mode or on {\tt
-            ebreak} instructions that cause entry into Debug Mode.  These
-            counters include the {\tt cycle} and {\tt instret} CSRs. This is
-            preferred for most debugging scenarios.
+            1: Don't increment any hart-local counters while in Debug Mode or
+            on {\tt ebreak} instructions that cause entry into Debug Mode.
+            These counters include the {\tt instret} CSR. On single-hart cores
+            {\tt cycle} should be stopped, but on multi-hart cores it must keep
+            incrementing.
 
             An implementation may hardwire this bit to 0 or 1.
         </field>
