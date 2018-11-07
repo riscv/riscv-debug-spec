@@ -545,7 +545,7 @@
         <field name="exttrigger" bits="10:7" access="WARL" reset="0">
             This field contains the currently selected external trigger.
 
-            If a non-existant trigger value is written here, the hardware will
+            If a non-existent trigger value is written here, the hardware will
             change it to a valid one or 0 if no external triggers exist.
         </field>
         <field name="haltgroup" bits="6:2" access="WARL" reset="0">
