@@ -221,7 +221,9 @@ while the hart is selected, or by DM reset.
 
 An optional feature allows a debugger to create halt groups. When any hart in a
 halt group halts all the other harts in that group will quickly halt, even if
-they are currently in the process of resuming.
+they are currently in the process of resuming. Adding a hart to a halt group
+does not automatically halt that hart, even if other harts in the group are
+already halted.
 
 It is also possible to add external triggers to a halt group. External triggers
 are abstract concepts that can signal the DM and/or receive signals from the
