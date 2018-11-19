@@ -170,6 +170,9 @@ The debug interface described in this specification supports the following featu
        involving any hart. (Optional)
    \item A RISC-V hart can be halted when a trigger matches the PC,
        read/write address/data, or an instruction opcode. (Optional)
+    \item Harts can be grouped, and harts in the same group will all halt when
+        any of them halts. These groups can also react to or notify external
+        triggers. (Optional)
 \end{enumerate}
 
 This document does not suggest a strategy or implementation for hardware test,

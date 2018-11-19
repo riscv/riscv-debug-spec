@@ -16,6 +16,9 @@
 \item Allow multiple harts to be halted, resumed, and/or reset at the same time. (Optional)
 \item Allow memory access from a hart's point of view. (Optional)
 \item Allow direct System Bus Access. (Optional)
+\item Group harts. When any hart in the group halts, they all halt. (Optional)
+\item Respond to external triggers by halting each hart in a configured group. (Optional)
+\item Signal an external trigger when a hart in a group halts. (Optional)
 \end{steps}
 
 \begin{steps}{In order to be compliant with this specification an
