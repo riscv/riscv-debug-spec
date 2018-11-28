@@ -542,8 +542,7 @@
 
     <register name="Debug Module Control and Status 2" short="dmcs2" address="0x32">
         This register contains DM control and status bits that didn't easily
-        fit in \Rdmcontrol and \Rdmstatus, and are only likely to be
-        implemented in larger systems.
+        fit in \Rdmcontrol and \Rdmstatus. All are optional.
 
         <field name="0" bits="31:11" access="R" reset="0" />
         <field name="exttrigger" bits="10:7" access="WARL" reset="0">
