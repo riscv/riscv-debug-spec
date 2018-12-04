@@ -16,6 +16,9 @@
 \item Allow multiple harts to be halted, resumed, and/or reset at the same time. (Optional)
 \item Allow memory access from a hart's point of view. (Optional)
 \item Allow direct System Bus Access. (Optional)
+\item Group harts. When any hart in the group halts, they all halt. (Optional)
+\item Respond to external triggers by halting each hart in a configured group. (Optional)
+\item Signal an external trigger when a hart in a group halts. (Optional)
 \end{steps}
 
 \begin{steps}{In order to be compliant with this specification an
@@ -217,6 +220,33 @@ the reset's cause.
 The hart's halt-on-reset request bit remains set
 until cleared by the debugger writing 1 to \Fclrresethaltreq
 while the hart is selected, or by DM reset.
+
+\section{Halt Groups and External Triggers}
+
+An optional feature allows a debugger to create halt groups. When any hart in a
+halt group halts all the other harts in that group will quickly halt, even if
+they are currently in the process of resuming. Adding a hart to a halt group
+does not automatically halt that hart, even if other harts in the group are
+already halted.
+
+It is also possible to add external triggers to a halt group. External triggers
+are abstract concepts that can signal the DM and/or receive signals from the
+DM.  When an external trigger fires, all harts in its halt group are quickly
+halted. When a hart in a halt group halts, the external triggers in the same
+halt group are notified.
+
+\begin{commentary}
+    External triggers could be used to implement near simultaneous halting of
+    all cores in a system, when not all cores are RISC-V cores.
+\end{commentary}
+
+Halt group 0 is special, and has none of this behavior. Harts in halt group 0
+halt as if halt groups aren't implemented at all.
+
+To near simultaneously resume all harts in a group, the debugger can select all
+the harts, and write 1 to \Fresumereq as described above. An implementation
+must guarantee that all harts in the group halt again as soon as one of them
+halts, even if that hart halts before all harts have resumed.
 
 \section{Abstract Commands} \label{abstractcommands}
 

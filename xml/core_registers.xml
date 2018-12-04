@@ -72,7 +72,7 @@
 
             1: An {\tt ebreak} instruction was executed. (priority 3)
 
-            2: The Trigger Module caused a breakpoint exception. (priority 4, highest)
+            2: The Trigger Module caused a breakpoint exception. (priority 4)
 
             3: The debugger requested entry to Debug Mode using \Fhaltreq.
             (priority 1)
@@ -81,6 +81,9 @@
 
             5: The hart halted directly out of reset due to \Fresethaltreq. It
             is also acceptable to report 3 when this happens. (priority 2)
+
+            6: The hart halted because it's part of a halt group. (priority 5,
+            highest) Harts may report 3 for this cause instead.
 
             Other values are reserved for future use.
         </field>
