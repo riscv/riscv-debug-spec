@@ -875,4 +875,19 @@
         </field>
     </register>
 
+    <register name="Custom Features" short="custom" address="0x1f">
+        This optional register may be used for non-standard features. Future
+        version of the debug spec will not use this address.
+    </register>
+
+    <register name="Custom Features 0" short="custom0" address="0x70">
+        This optional register may be used for non-standard features. Future
+        version of the debug spec will not use this address.
+    </register>
+
+    <register name="Custom Features 15" short="custom15" address="0x7f">
+        This optional register may be used for non-standard features. Future
+        version of the debug spec will not use this address.
+    </register>
+
 </registers>
