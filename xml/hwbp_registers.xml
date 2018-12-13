@@ -129,9 +129,9 @@
         <field name="mte" bits="3" access="R/W" reset="0">
             M-mode trigger enable field.
 
-            0: Triggers do not match/fire while the hart is in M-mode.
+            0: Triggers with action=0 do not match/fire while the hart is in M-mode.
 
-            1: Triggers do match/fire while the hart is in M-mode.
+            1: Triggers with action=0 do match/fire while the hart is in M-mode.
 
             When a trap into M-mode is taken, \Fmte is set to 0. When {\tt
             mret} is executed, \Fmte is set to the value of \Fmpte.
