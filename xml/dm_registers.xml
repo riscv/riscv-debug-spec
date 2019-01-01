@@ -234,7 +234,9 @@
 
             0: The module's state, including authentication mechanism,
             takes its reset values (the \Fdmactive bit is the only bit which can
-            be written to something other than its reset value).
+            be written to something other than its reset value). Any accesses
+            to the module may fail. Specifically, \Fversion may not return
+            correct data.
 
             1: The module functions normally.
 
@@ -249,6 +251,9 @@
             Implementations may pay attention to this bit to further aid
             debugging, for example by preventing the Debug Module from being
             power gated while debugging is active.
+
+            For forward compatibility, \Fversion will always be readable when
+            \Fdmactive is 1.
         </field>
     </register>
 
