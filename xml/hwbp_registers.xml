@@ -129,7 +129,7 @@
         <field name="mte" bits="3" access="R/W" reset="0">
             M-mode trigger enable field.
 
-            0: Triggers do not match/fire while the hart is in M-mode.
+            0: Triggers with action=0 do not match/fire while the hart is in M-mode.
 
             1: Triggers do match/fire while the hart is in M-mode.
 

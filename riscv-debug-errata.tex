@@ -14,6 +14,7 @@
 \deffieldname{\Fsbautoincrement}{sbautoincrement}
 \deffieldname{\Fsselect}{sselect}
 \deffieldname{\Fsvalue}{svalue}
+\deffieldname{\Fmte}{mte}
 
 \newenvironment{steps}[1]
   {
@@ -58,6 +59,11 @@ The order of operations listed in Section 3.12.23, describing reads from
     \item If \Fsbautoincrement is set, increment {\tt sbaddress}.
     \item Clear \Fsbbusy.
 \end{steps}
+
+\subsection{\Fmte only applies when action=0}
+
+The definition of \Fmte in Section 5.2.6 should state that \Fmte only affects
+triggers whose action is 0.
 
 \subsection{\Fsselect applies to \Fsvalue}
 
