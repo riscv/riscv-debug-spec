@@ -63,6 +63,8 @@
             5: The trigger is an exception trigger. The remaining bits
             in this register act as described in \Retrigger.
 
+            12--14: These trigger types are available for non-standard use.
+
             15: This trigger exists (so enumeration shouldn't terminate), but
             is not currently available.
 
