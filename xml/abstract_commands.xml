@@ -189,9 +189,6 @@
             3: Access the lowest 64 bits of the memory location.
 
             4: Access the lowest 128 bits of the memory location.
-
-            This field controls the Argument Width as referenced in
-            Table~\ref{tab:datareg}.
         </field>
         <field name="aampostincrement" bits="19">
             After a memory access has completed, if this bit is 1, increment
