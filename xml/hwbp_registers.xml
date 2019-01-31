@@ -230,7 +230,8 @@
             and writing it has no effect.
         </field>
         <field name="select" bits="19" access="R/W" reset="0">
-            0: Perform a match on the virtual address.
+            0: Perform a match on the virtual base address of the access.
+            (E.g. on a 32-bit read from 0x4000, the base address is 0x4000.)
 
             1: Perform a match on the data value loaded or stored, or the
             instruction executed.
@@ -325,7 +326,11 @@
             \Fchain in writes to \Rmcontrol that would make the chain too long.
         </field>
         <field name="match" bits="10:7" access="R/W" reset="0">
-            0: Matches when the value equals \Rtdatatwo.
+            0: Matches when the value equals \Rtdatatwo. Additionally, if
+            \Fselect=0 then it is recommended that the trigger also matches if
+            any of the accessed addresses equal \Rtdatatwo. (E.g. on a 32-bit
+            read from 0x4000, the following addresses are accessed: 0x4000,
+            0x4001, 0x4002, and 0x4003.)
 
             1: Matches when the top M bits of the value match the top M bits of
             \Rtdatatwo. M is XLEN-1 minus the index of the least-significant
