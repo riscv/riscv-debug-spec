@@ -15,6 +15,7 @@
 \deffieldname{\Fsselect}{sselect}
 \deffieldname{\Fsvalue}{svalue}
 \deffieldname{\Fmte}{mte}
+\deffieldname{\Faamsize}{aamsize}
 
 \newenvironment{steps}[1]
   {
@@ -46,6 +47,11 @@ Megan Wachs \textless megan@sifive.com\textgreater, SiFive, Inc.}
 
 The third paragraph of Section 3.5 has a mistake. At the end of the process
 described there, the resume ack bit is \emph{set}.
+
+\subsection{\Faamsize does not affect Argument Width}
+
+The Argument Width of the Access Memory abstract command defined in Section
+3.7.1.3 is determined by DXLEN, and not by \Faamsize.
 
 \subsection{\Rsbdatazero Reads Order of Operations}
 
