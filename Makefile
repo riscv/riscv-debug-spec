@@ -32,7 +32,7 @@ INCLUDES_TEX += future.tex
 
 FIGURES = fig/*
 
-all:	draft $(NOTES).pdf debug_defines.h
+all:	release $(NOTES).pdf debug_defines.h
 
 draft:	$(DRAFT).pdf
 
