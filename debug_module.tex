@@ -99,6 +99,9 @@ can be cleared by writing 1 to \Fackhavereset in \Rdmcontrol.
 The {\tt havereset} bits may or may not be cleared
 when \Fdmactive is low.
 
+When a hart comes out of reset and \Fhaltreq or \Fresethaltreq are set, the
+hart will immediately enter Debug Mode. Otherwise it will execute normally.
+
 \section{Selecting Harts} \label{selectingharts}
 
 Up to $2^{20}$ harts can be connected to a single DM. The debugger
@@ -188,8 +191,9 @@ and \Fanyhavereset. The state of the other bits cannot be observed directly.
 
 When a debugger writes 1 to \Fhaltreq, each selected hart's halt request bit is
 set.
-When a running hart sees its halt request bit high, it responds by halting,
-deasserting its running signal, and asserting its halted signal.
+When a running hart, or a hart just coming out of reset, sees its halt request
+bit high, it responds by halting, deasserting its running signal, and asserting
+its halted signal.
 Halted harts ignore their halt request bit.
 
 When a debugger writes 1 to \Fresumereq, each selected hart's resume ack bit is
