@@ -91,7 +91,7 @@ set to 2 (trigger) instead of 4 (single step).  Whether the instruction is
 executed or not depends on the specific configuration of the trigger.
 
 If the instruction that is executed causes the PC to change to an address where
-an instruction fetch causes an exception, that exception does not occurr until
+an instruction fetch causes an exception, that exception does not occur until
 the next time the hart is resumed. Similarly, a trigger at the new address does
 not fire until the hart actually attempts to execute that instruction.
 
