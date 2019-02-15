@@ -1,3 +1,8 @@
+branches:
+    only:
+        - master
+        - release
+
 git:
   submodules: false
 
