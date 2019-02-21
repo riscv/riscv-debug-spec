@@ -10,14 +10,16 @@ Trigger Module is broken out as a separate piece that can be implemented
 separately.
 
 A hart can be compliant with this specification without implementing any
-trigger functionality at all, but if it is implemented then it must conform
-to this section.
+trigger functionality at all, but if it is implemented then it must conform to
+this section. If triggers aren't implemented, the CSRs may not exist at all and
+accessing them results in an illegal instruction exception.
 
 Triggers do not fire while in Debug Mode.
 
 \begin{steps}{Each trigger may support a variety of features. A debugger can
     build a list of all triggers and their features as follows:}
-\item Write 0 to \Rtselect.
+\item Write 0 to \Rtselect. If this results in an illegal instruction
+    exception, then there are no triggers implemented.
 \item Read back \Rtselect and check that it contains the written value. If not,
     exit the loop.
 \item Read \Rtinfo.
