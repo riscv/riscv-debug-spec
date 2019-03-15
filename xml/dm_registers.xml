@@ -136,6 +136,9 @@
         \Fresethaltreq is an optional internal bit of per-hart state that cannot be
         read, but can be written with \Fsetresethaltreq and \Fclrresethaltreq.
 
+        For forward compatibility, \Fversion will always be readable when bit 1
+        (\Fndmreset) is 0 and bit 0 (\Fdmactive) is 1.
+
         <!-- Fields that apply to all selected hart(s) -->
         <field name="haltreq" bits="31" access="W" reset="-">
             Writing 0 clears the halt request bit for all currently selected
@@ -251,9 +254,6 @@
             Implementations may pay attention to this bit to further aid
             debugging, for example by preventing the Debug Module from being
             power gated while debugging is active.
-
-            For forward compatibility, \Fversion will always be readable when
-            \Fdmactive is 1.
         </field>
     </register>
 
