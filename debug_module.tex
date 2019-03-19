@@ -535,6 +535,7 @@ while writes should be ignored, with the following mandatory exceptions:
     \item Write \Rdmcontrol, preserving \Fhartreset, \Fhasel, \Fhartsello, and
         \Fhartselhi from the value that was read, setting \Fdmactive, and
         clearing all the other bits.
+    \item Read \Rdmstatus, which contains \Fversion.
 \end{steps}
 
 \begin{steps}{This has the following unavoidable side effects:}
@@ -548,8 +549,11 @@ while writes should be ignored, with the following mandatory exceptions:
         is not observable by any harts.
 \end{steps}
 
-This procedure is guaranteed to work in future versions of this spec, which may
-reduce the number of side effects.
+This procedure is guaranteed to work in future versions of this spec.  The
+meaning of the \Rdmcontrol bits where \Fhartreset, \Fhasel, \Fhartsello, and
+\Fhartselhi currently reside might change, but preserving them will have no
+side effects. Clearing the bits of \Rdmcontrol not explicitly mentioned here
+will have no side effects beyond the ones mentioned above.
 
 \section{Debug Module Registers} \label{dmdebbus}
 
