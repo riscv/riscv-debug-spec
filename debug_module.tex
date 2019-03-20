@@ -78,8 +78,8 @@ Due to clock and power domain crossing issues,
 it may not be possible to perform arbitrary DMI accesses across
 system reset.
 While \Fndmreset or any external reset is asserted, the only supported DM
-operation is accessing \Rdmcontrol. The behavior of other accesses is
-undefined.
+operations are reading and writing \Rdmcontrol. The behavior of other accesses
+is undefined.
 
 There is no requirement on the duration of the assertion of \Fndmreset.
 The implementation must ensure that a write of \Fndmreset to 1 followed by
@@ -526,6 +526,34 @@ while writes should be ignored, with the following mandatory exceptions:
     \item \Fdmactive in \Rdmcontrol is readable and writable.
     \item \Rauthdata is readable and writable.
 \end{steps}
+
+\section{Version Detection}
+
+\begin{steps}{To detect the version of the Debug Module with a minimum of side
+    effects, use the following procedure:}
+    \item Read \Rdmcontrol.
+    \item Write \Rdmcontrol, preserving \Fhartreset, \Fhasel, \Fhartsello, and
+        \Fhartselhi from the value that was read, setting \Fdmactive, and
+        clearing all the other bits.
+    \item Read \Rdmstatus, which contains \Fversion.
+\end{steps}
+
+\begin{steps}{This has the following unavoidable side effects:}
+    \item \Fhaltreq is cleared, potentially preventing a halt request made by a
+        previous debugger from taking effect.
+    \item \Fresumereq is cleared, potentially preventing a resume request made
+        by a previous debugger from taking effect.
+    \item \Fndmreset is deasserted, releasing the system from reset if a
+        previous debugger had set it.
+    \item \Fdmactive is asserted, releasing the DM from reset. This in itself
+        is not observable by any harts.
+\end{steps}
+
+This procedure is guaranteed to work in future versions of this spec.  The
+meaning of the \Rdmcontrol bits where \Fhartreset, \Fhasel, \Fhartsello, and
+\Fhartselhi currently reside might change, but preserving them will have no
+side effects. Clearing the bits of \Rdmcontrol not explicitly mentioned here
+will have no side effects beyond the ones mentioned above.
 
 \section{Debug Module Registers} \label{dmdebbus}
 
