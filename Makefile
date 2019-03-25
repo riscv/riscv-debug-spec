@@ -39,7 +39,7 @@ draft:	$(DRAFT).pdf
 release:	$(RELEASE).pdf
 
 %.pdf: %.tex $(REGISTERS_TEX) $(FIGURES) $(INCLUDES_TEX) vc.tex changelog.tex
-	pdflatex -shell-escape $< && makeindex $(basename $<) && pdflatex -shell-escape $<
+	pdflatex $< && makeindex $(basename $<) && pdflatex -shell-escape $<
 
 publish:	$(DRAFT).pdf
 	cp $< $(DRAFT)-`git rev-parse --abbrev-ref HEAD`.`git rev-parse --short HEAD`.pdf
