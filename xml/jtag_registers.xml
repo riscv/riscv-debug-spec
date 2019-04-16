@@ -1,7 +1,7 @@
 <registers name="JTAG DTM TAP Registers" label="table:jtag_registers" prefix="DTM_">
     <!-- JTAG standard registers, everything starting with 0 -->
     <register name="BYPASS" address="0x00" sdesc="JTAG recommends this encoding"/>
-    <register name="IDCODE" address="0x01" sdesc="JTAG recommends this encoding">
+    <register name="IDCODE" address="0x01" sdesc="To identify a specific silicon version">
         This register is selected (in IR) when the TAP state machine is reset.
         Its definition is exactly as defined in IEEE Std 1149.1-2013.
 
