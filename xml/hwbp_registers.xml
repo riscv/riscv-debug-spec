@@ -337,7 +337,9 @@
 
             1: Matches when the top M bits of the value match the top M bits of
             \Rtdatatwo. M is XLEN-1 minus the index of the least-significant
-            bit containing 0 in \Rtdatatwo.
+            bit containing 0 in \Rtdatatwo. Debuggers should only write values
+            to \Rtdatatwo such that M + \Fmaskmax $\geq$ XLEN, otherwise it's
+            undefined on what conditions the trigger will fire.
 
             2: Matches when the value is greater than (unsigned) or equal to
             \Rtdatatwo.
