@@ -226,7 +226,7 @@
             the field contains 0.
         </field>
         <field name="hit" bits="20" access="R/W" reset="0">
-            If this optional bit is implemented, the hardware sets it when this
+            If this bit is implemented, the hardware sets it when this
             trigger matches. The trigger's user can set or clear it at any
             time. It is used to determine which
             trigger(s) matched.  If the bit is not implemented, it is always 0
@@ -398,7 +398,7 @@
         <field name="0" bits="XLEN-6:25" access="R" reset="0" />
 
         <field name="hit" bits="24" access="R/W" reset="0">
-            If this optional bit is implemented, the hardware sets it when this
+            If this bit is implemented, the hardware sets it when this
             trigger matches. The trigger's user can set or clear it at any
             time. It is used to determine which
             trigger(s) matched.  If the bit is not implemented, it is always 0
@@ -454,7 +454,7 @@
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="4" />
         <field name="dmode" bits="XLEN-5" access="R/W" reset="0" />
         <field name="hit" bits="XLEN-6" access="R/W" reset="0">
-            If this optional bit is implemented, the hardware sets it when this
+            If this bit is implemented, the hardware sets it when this
             trigger matches. The trigger's user can set or clear it at any
             time. It is used to determine which
             trigger(s) matched.  If the bit is not implemented, it is always 0
@@ -500,7 +500,7 @@
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="4" />
         <field name="dmode" bits="XLEN-5" access="R/W" reset="0" />
         <field name="hit" bits="XLEN-6" access="R/W" reset="0">
-            If this optional bit is implemented, the hardware sets it when this
+            If this bit is implemented, the hardware sets it when this
             trigger matches. The trigger's user can set or clear it at any
             time. It is used to determine which
             trigger(s) matched.  If the bit is not implemented, it is always 0
@@ -508,7 +508,7 @@
         </field>
         <field name="0" bits="XLEN-7:11" access="R" reset="0" />
         <field name="nmi" bits="10" access="R/W" reset="0">
-            When this optional bit is set, non-maskable interrupts cause this
+            When set, non-maskable interrupts cause this
             trigger to fire, regardless of the values of \Fm, \Fs, and \Fu.
         </field>
         <field name="m" bits="9" access="R/W" reset="0">
