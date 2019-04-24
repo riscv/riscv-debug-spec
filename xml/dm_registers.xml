@@ -810,7 +810,7 @@
         the read access is less than the width of {\tt sbdata}, the contents of
         the remaining high bits may take on any value.
 
-        If \Fsberror or \Fsbbusyerror both aren't 0 then accesses do nothing.
+        If either \Fsberror or \Fsbbusyerror isn't 0 then accesses do nothing.
 
         If the bus master is busy then accesses set \Fsbbusyerror, and don't do
         anything else.
