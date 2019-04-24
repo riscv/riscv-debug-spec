@@ -368,8 +368,10 @@
             of the {\tt data} or {\tt progbuf} registers was read or written.
             This status is only written if \Fcmderr contains 0.
 
-            2 (not supported): The requested command is not supported,
-            regardless of whether the hart is running or not.
+            2 (not supported): The command in \Rcommand is not supported.  It
+            may be supported with different options set, but it will not be
+            supported at a later time when the hart or system state are
+            different.
 
             3 (exception): An exception occurred while executing the command
             (e.g.\ while executing the Program Buffer).
