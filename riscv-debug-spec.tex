@@ -2,6 +2,10 @@
 \setcounter{tocdepth}{4}
 \setcounter{secnumdepth}{4}
 
+% Fix copy/pasting of ligatures in Acrobat
+\input{glyphtounicode.tex}
+\pdfgentounicode=1 %
+
 \input{preamble}
 
 % All registers are named here. That way when we rename one we'll get errors if
