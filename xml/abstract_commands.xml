@@ -210,4 +210,53 @@
         <field name="0" bits="13:0" />
     </register>
 
+    <register name="Command Discovery">
+        This optional command provides access to a data structure that
+        describes which abstract commands (full register contents) are
+        supported for the hart currently selected by \Fhartsel. If it is
+        implemented the structure must describe every implemented abstract
+        command, except for the Command Discovery command itself.
+
+        The data structure consists of a series of 32-bit words.  The words at
+        even indices consist of a sample supported command. The words at odd
+        indices contain a mask that applies to the previous sample command. A
+        command (full contents of \Rcommand) C is supported if and only if
+        there is a $|sample|/$|mask| pair in the data structure where $(C
+        \BitAnd |mask|) = (|sample| \BitAnd |mask|)$. See an example in
+        Table~\ref{tab:command_discovery}.
+
+        Because the CSR space is sparsely populated, it is allowed and
+        recommended to list Access Register CSR commands as supported even
+        though not every CSR exists.
+
+        \begin{table}[htp]
+            \centering
+            \caption{Example Command Discovery Structure}
+            \label{tab:command_discovery}
+            \begin{tabulary}{\textwidth}{|l|l|L|}
+                \hline
+                Index: Sample &amp; Index: Mask &amp; Comment \\
+                \hline
+                0: 0x201000 &amp; 1: 0xfff8ffe0 &amp; 32-bit GPR access, with
+                all combinations of postexec, transfer, and write \\
+                \hline
+                2: 0x2200000 &amp; 3: 0xfff6ffff &amp; 32-bit memory access,
+                read/write with optional postincrement \\
+                \hline
+            \end{tabulary}
+        \end{table}
+
+        When executed, this command will place the result at \Findex in the
+        data structure into \Rdatazero. When asked for an index that doesn't
+        exist, it sets \Fcmderr to 2.
+
+        <field name="cmdtype" bits="31:24">
+            This is 3 to indicate Command Discovery.
+        </field>
+        <field name="0" bits="23:16" />
+        <field name="index" bits="15:0">
+            Index into the data structure.
+        </field>
+    </register>
+
 </registers>
