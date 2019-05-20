@@ -38,8 +38,8 @@
         written. To verify that what they wrote is a valid index, debuggers can
         read back the value and check that \Rtselect holds what they wrote.
 
-        Since triggers can be used both by Debug Mode and M-mode, the debugger
-        must restore this register if it modifies it.
+        Since triggers can be used both by Debug Mode and M-mode, the external
+        debugger must restore this register if it modifies it.
 
         <field name="index" bits="XLEN-1:0" access="R/W" reset="0" />
     </register>
