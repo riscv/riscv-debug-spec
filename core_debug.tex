@@ -17,20 +17,20 @@ external debugging. How Debug Mode is implemented is not specified here.
 \begin{steps}{When executing code from the optional Program Buffer, the hart
     stays in Debug Mode and the following apply:}
 \item All operations are executed at machine mode privilege level, except that
-    \Fmprv in \Rmstatus may be ignored according to \Fmprven.
+    \FcsrMcontrolMprv in \Rmstatus may be ignored according to \FcsrDcsrMprven.
 \item All interrupts (including NMI) are masked.
 \item Exceptions don't update any registers.  That includes {\tt cause}, {\tt
     epc}, {\tt tval}, {\tt dpc}, and \Rmstatus. They do end execution of the
     Program Buffer.
 \item No action is taken if a trigger matches.
-\item Counters may be stopped, depending on \Fstopcount in \Rdcsr.
-\item Timers may be stopped, depending on \Fstoptime in \Rdcsr.
+\item Counters may be stopped, depending on \FcsrDcsrStopcount in \RcsrDcsr.
+\item Timers may be stopped, depending on \FcsrDcsrStoptime in \RcsrDcsr.
 \item The {\tt wfi} instruction acts as a {\tt nop}.
 \item Almost all instructions that change the privilege level have undefined
     behavior.  This includes {\tt ecall}, {\tt mret}, {\tt sret},
     and {\tt uret}.  (To change the privilege level, the debugger can write
-    \Fprv in \Rdcsr). The only exception is {\tt ebreak}. When that is executed
-    in Debug Mode, it halts the hart again but without updating \Rdpc or \Rdcsr.
+    \FcsrDcsrPrv in \RcsrDcsr). The only exception is {\tt ebreak}. When that is executed
+    in Debug Mode, it halts the hart again but without updating \RcsrDpc or \RcsrDcsr.
 \item \label{fence} Completing Program Buffer execution is considered output for the purpose
     of {\tt fence} instructions.
 \item All control transfer instructions may act as illegal instructions if
@@ -47,9 +47,9 @@ external debugging. How Debug Mode is implemented is not specified here.
 \end{steps}
 
 \begin{commentary}
-    In general, the debugger is expected to be able to simulate all the effects of \Fmprv.
-    The exception is the case of Sv32 systems, which need \Fmprv functionality in order to access
-    34-bit physical addresses. Other systems are likely to tie \Fmprven to 0.
+    In general, the debugger is expected to be able to simulate all the effects of \FcsrMcontrolMprv.
+    The exception is the case of Sv32 systems, which need \FcsrMcontrolMprv functionality in order to access
+    34-bit physical addresses. Other systems are likely to tie \FcsrDcsrMprven to 0.
 \end{commentary}
 
 \section{Load-Reserved/Store-Conditional Instructions}
@@ -79,14 +79,14 @@ Mode.
 \section{Single Step}
 
 A debugger can cause a halted hart to execute a single instruction and then
-re-enter Debug Mode by setting \Fstep before setting \Fresumereq.
+re-enter Debug Mode by setting \FcsrDcsrStep before setting \FdmDmcontrolResumereq.
 
 If executing or fetching that instruction causes an exception, Debug Mode is
 re-entered immediately after the PC is changed to the exception handler and the
 appropriate {\tt tval} and {\tt cause} registers are updated.
 
 If executing or fetching the instruction causes a trigger to fire, Debug Mode
-is re-entered immediately after that trigger has fired. In that case \Fcause is
+is re-entered immediately after that trigger has fired. In that case \FcsrDcsrCause is
 set to 2 (trigger) instead of 4 (single step).  Whether the instruction is
 executed or not depends on the specific configuration of the trigger.
 
@@ -111,8 +111,8 @@ executed.
 To return from Debug Mode, a new instruction is defined: {\tt dret}. It has an
 encoding of 0x7b200073. On harts which support this instruction,
 executing {\tt dret} in Debug Mode changes \Rpc to the value
-stored in \Rdpc. The current privilege level is changed to that specified by
-\Fprv in \Rdcsr. The hart is no longer in debug mode.
+stored in \RcsrDpc. The current privilege level is changed to that specified by
+\FcsrDcsrPrv in \RcsrDcsr. The hart is no longer in debug mode.
 
 Executing {\tt dret} outside of Debug Mode causes an illegal instruction exception.
 

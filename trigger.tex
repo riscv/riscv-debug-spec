@@ -18,25 +18,25 @@ Triggers do not fire while in Debug Mode.
 
 \begin{steps}{Each trigger may support a variety of features. A debugger can
     build a list of all triggers and their features as follows:}
-\item Write 0 to \Rtselect. If this results in an illegal instruction
+\item Write 0 to \RcsrTselect. If this results in an illegal instruction
     exception, then there are no triggers implemented.
-\item Read back \Rtselect and check that it contains the written value. If not,
+\item Read back \RcsrTselect and check that it contains the written value. If not,
     exit the loop.
-\item Read \Rtinfo.
-\item If that caused an exception, the debugger must read \Rtdataone to
-    discover the type. (If \Ftype is 0, this trigger doesn't exist. Exit the
+\item Read \RcsrTinfo.
+\item If that caused an exception, the debugger must read \RcsrTdataOne to
+    discover the type. (If \FcsrTdataOneType is 0, this trigger doesn't exist. Exit the
     loop.)
-\item If \Finfo is 1, this trigger doesn't exist. Exit the loop.
-\item Otherwise, the selected trigger supports the types discovered in \Finfo.
-\item Repeat, incrementing the value in \Rtselect.
+\item If \FcsrTinfoInfo is 1, this trigger doesn't exist. Exit the loop.
+\item Otherwise, the selected trigger supports the types discovered in \FcsrTinfoInfo.
+\item Repeat, incrementing the value in \RcsrTselect.
 \end{steps}
 
 \begin{commentary}
-    The above algorithm reads back \Rtselect so that implementations which have
-    $2^n$ triggers only need to implement $n$ bits of \Rtselect.
+    The above algorithm reads back \RcsrTselect so that implementations which have
+    $2^n$ triggers only need to implement $n$ bits of \RcsrTselect.
 
-    The algorithm checks \Rtinfo and \Ftype in case the implementation has $m$
-    bits of \Rtselect but fewer than $2^m$ triggers.
+    The algorithm checks \RcsrTinfo and \FcsrTdataOneType in case the implementation has $m$
+    bits of \RcsrTselect but fewer than $2^m$ triggers.
 \end{commentary}
 
 It is possible for a trigger with the ``enter Debug Mode'' action (1) and another
@@ -46,7 +46,7 @@ implementation-dependent which of the two happens first.  This ensures both
 that the presence of an external debugger doesn't affect execution and that a
 trigger set by user code doesn't affect the external debugger. If this is not
 implemented, then the hart must enter Debug Mode and ignore the breakpoint
-exception. In the latter case, \Fhit of the trigger whose action is 0 must still
+exception. In the latter case, \FcsrMcontrolHit of the trigger whose action is 0 must still
 be set, giving a debugger an opportunity to handle this case. What happens with
 trace actions when triggers with different actions are also firing is left to
 the trace specification.
@@ -55,7 +55,7 @@ the trace specification.
 \label{sec:mmtrigger}
 
 Triggers can be used for native debugging. On a fully featured system triggers
-will be set using \Fu or \Fs, and when firing they can cause a breakpoint exception
+will be set using \FcsrMcontrolU or \FcsrMcontrolS, and when firing they can cause a breakpoint exception
 to trap to a more privileged mode. It is possible to set triggers natively to
 fire in M mode as well. In that case there is no higher privilege mode to trap
 to. When such a trigger causes a breakpoint exception while already in a trap
@@ -67,11 +67,11 @@ implement one of two solutions to this problem. This way triggers can be useful
 for native debugging of even M mode code.
 
 The simple solution is to have the hardware prevent triggers with action=0 from
-firing while in M mode and while \Fmie in \Rmstatus is 0. Its limitation is
+firing while in M mode and while \FcsrMcontrolMie in \Rmstatus is 0. Its limitation is
 that interrupts might be disabled at other times when a user might want
 triggers to fire.
 
-A more complex solution is to implement \Fmte and \Fmpte in \Rtcontrol. This
+A more complex solution is to implement \FcsrTcontrolMte and \FcsrTcontrolMpte in \RcsrTcontrol. This
 solution has the benefit that it only disables triggers during the trap
 handler.
 

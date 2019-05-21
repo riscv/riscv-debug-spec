@@ -4,12 +4,12 @@
     OS's permission.
 
     In this section XLEN means MXLEN when in M-mode, and DXLEN when in Debug Mode.
-    Note that this makes several of the fields in \Rtdataone move around based
+    Note that this makes several of the fields in \RcsrTdataOne move around based
     on the current execution mode and value of MXLEN.
 
     \begin{table}[H]
     \centering
-    \caption{\Faction encoding}
+    \caption{\FcsrMcontrolAction encoding}
     \label{tab:action}
     \begin{tabular}{|r|L|}
     \hline
@@ -18,7 +18,7 @@
     0 &amp; Raise a breakpoint exception. (Used when software wants to use the
     trigger module without an external debugger attached.) \\
     \hline
-    1 &amp; Enter Debug Mode. (Only supported when the trigger's \Fdmode is 1.)
+    1 &amp; Enter Debug Mode. (Only supported when the trigger's \FcsrTdataOneDmode is 1.)
     \\
     \hline
     2 -- 5 &amp; Reserved for use by the trace specification. \\
@@ -36,7 +36,7 @@
         Writes of values greater than or equal to the number of supported
         triggers may result in a different value in this register than what was
         written. To verify that what they wrote is a valid index, debuggers can
-        read back the value and check that \Rtselect holds what they wrote.
+        read back the value and check that \RcsrTselect holds what they wrote.
 
         Since triggers can be used both by Debug Mode and M-mode, the debugger
         must restore this register if it modifies it.
@@ -48,22 +48,22 @@
         This register is optional if no triggers are implemented.
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R/W" reset="Preset">
-            0: There is no trigger at this \Rtselect.
+            0: There is no trigger at this \RcsrTselect.
 
             1: The trigger is a legacy SiFive address match trigger. These
             should not be implemented and aren't further documented here.
 
             2: The trigger is an address/data match trigger. The remaining bits
-            in this register act as described in \Rmcontrol.
+            in this register act as described in \RcsrMcontrol.
 
             3: The trigger is an instruction count trigger. The remaining bits
-            in this register act as described in \Ricount.
+            in this register act as described in \RcsrIcount.
 
             4: The trigger is an interrupt trigger. The remaining bits
-            in this register act as described in \Ritrigger.
+            in this register act as described in \RcsrItrigger.
 
             5: The trigger is an exception trigger. The remaining bits
-            in this register act as described in \Retrigger.
+            in this register act as described in \RcsrEtrigger.
 
             12--14: These trigger types are available for non-standard use.
 
@@ -74,10 +74,10 @@
         </field>
         <field name="dmode" bits="XLEN-5" access="R/W" reset="0">
             0: Both Debug and M-mode can write the {\tt tdata} registers at the
-            selected \Rtselect.
+            selected \RcsrTselect.
 
             1: Only Debug Mode can write the {\tt tdata} registers at the
-            selected \Rtselect.  Writes from other modes are ignored.
+            selected \RcsrTselect.  Writes from other modes are ignored.
 
             This bit is only writable from Debug Mode.
         </field>
@@ -103,13 +103,13 @@
     </register>
 
     <register name="Trigger Info" short="tinfo" address="0x7a4">
-        This register is optional if no triggers are implemented, or if \Ftype
+        This register is optional if no triggers are implemented, or if \FcsrTdataOneType
         is not writable. In this case the debugger can read the only supported
-        type from \Rtdataone.
+        type from \RcsrTdataOne.
 
         <field name="0" bits="XLEN-1:16" access="R" reset="0" />
         <field name="info" bits="15:0" access="R" reset="Preset">
-            One bit for each possible \Ftype enumerated in \Rtdataone. Bit N
+            One bit for each possible \FcsrTdataOneType enumerated in \RcsrTdataOne. Bit N
             corresponds to type N. If the bit is set, then that type is
             supported by the currently selected trigger.
 
@@ -127,8 +127,8 @@
         <field name="mpte" bits="7" access="R/W" reset="0">
             M-mode previous trigger enable field.
 
-            When a trap into M-mode is taken, \Fmpte is set to the value of
-            \Fmte.
+            When a trap into M-mode is taken, \FcsrTcontrolMpte is set to the value of
+            \FcsrTcontrolMte.
         </field>
         <field name="0" bits="6:4" access="R" reset="0" />
         <field name="mte" bits="3" access="R/W" reset="0">
@@ -138,8 +138,8 @@
 
             1: Triggers do match/fire while the hart is in M-mode.
 
-            When a trap into M-mode is taken, \Fmte is set to 0. When {\tt
-            mret} is executed, \Fmte is set to the value of \Fmpte.
+            When a trap into M-mode is taken, \FcsrTcontrolMte is set to 0. When {\tt
+            mret} is executed, \FcsrTcontrolMte is set to the value of \FcsrTcontrolMpte.
         </field>
         <field name="0" bits="2:0" access="R" reset="0" />
     </register>
@@ -173,13 +173,13 @@
     </register>
 
     <register name="Match Control" short="mcontrol" address="0x7a1">
-        This register is accessible as \Rtdataone when \Ftype is 2.
+        This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 2.
 
         Address and data trigger implementation are heavily dependent on how
         the processor core is implemented. To accommodate various
         implementations, execute, load, and store address/data triggers may fire at
         whatever point in time is most convenient for the implementation.
-        The debugger may request specific timings as described in \Ftiming.
+        The debugger may request specific timings as described in \FcsrMcontrolTiming.
         Table~\ref{tab:hwbp_timing} suggests timings for the best user experience.
 
         \begin{table}[H]
@@ -203,8 +203,8 @@
         \end{tabular}
         \end{table}
 
-        This trigger type may be limited to address comparisons (\Fselect is
-        always 0) only. If that is the case, then \Rtdatatwo must be able to
+        This trigger type may be limited to address comparisons (\FcsrMcontrolSelect is
+        always 0) only. If that is the case, then \RcsrTdataTwo must be able to
         hold all valid virtual addresses but it need not be capable of holding
         other values.
 
@@ -212,7 +212,7 @@
         <field name="dmode" bits="XLEN-5" access="R/W" reset="0" />
         <field name="maskmax" bits="XLEN-6:XLEN-11" access="R" reset="Preset">
             Specifies the largest naturally aligned powers-of-two (NAPOT) range
-            supported by the hardware when \Fmatch is 1. The value is the
+            supported by the hardware when \FcsrMcontrolMatch is 1. The value is the
             logarithm base 2 of the
             number of bytes in that range.  A value of 0 indicates that only
             exact value matches are supported (one byte range). A value of 63
@@ -222,7 +222,7 @@
         <field name="0" bits="XLEN-12:23" access="R" reset="0" />
         <field name="sizehi" bits="22:21" access="R/W" reset="0">
             This field only exists if XLEN is greater than 32. In that case it
-            extends \Fsize. If it does not exist then hardware operates as if
+            extends \FcsrMcontrolSizelo. If it does not exist then hardware operates as if
             the field contains 0.
         </field>
         <field name="hit" bits="20" access="R/W" reset="0">
@@ -253,27 +253,27 @@
             not implement that suggestion than to not implement them at all.
 
             Most hardware will only implement one timing or the other, possibly
-            dependent on \Fselect, \Fexecute, \Fload, and \Fstore. This bit
+            dependent on \FcsrMcontrolSelect, \FcsrMcontrolExecute, \FcsrMcontrolLoad, and \FcsrMcontrolStore. This bit
             primarily exists for the hardware to communicate to the debugger
             what will happen. Hardware may implement the bit fully writable, in
             which case the debugger has a little more control.
 
-            Data load triggers with \Ftiming of 0 will result in the same load
+            Data load triggers with \FcsrMcontrolTiming of 0 will result in the same load
             happening again when the debugger lets the hart run. For data load
             triggers, debuggers must first attempt to set the breakpoint with
-            \Ftiming of 1.
+            \FcsrMcontrolTiming of 1.
 
-            A chain of triggers that don't all have the same \Ftiming value
+            A chain of triggers that don't all have the same \FcsrMcontrolTiming value
             will never fire (unless consecutive instructions match the
             appropriate triggers).
 
-            If a trigger with \Ftiming of 0 matches, it is
+            If a trigger with \FcsrMcontrolTiming of 0 matches, it is
             implementation-dependent whether that prevents a trigger with
-            \Ftiming of 1 matching as well.
+            \FcsrMcontrolTiming of 1 matching as well.
         </field>
         <field name="sizelo" bits="17:16" access="R/W" reset="0">
-            This field contains the 2 low bits of \Fsize. The high bits come
-            from \Fsizehi. The combined value is interpreted as follows:
+            This field contains the 2 low bits of the access size. The high bits come
+            from \FcsrMcontrolSizehi. The combined value is interpreted as follows:
 
             0: The trigger will attempt to match against an access of any size.
             The behavior is only well-defined if $|select|=0$, or if the access
@@ -319,39 +319,39 @@
             trigger will be taken if and only if all the triggers in the chain
             match at the same time.
 
-            Because \Fchain affects the next trigger, hardware must zero it in
-            writes to \Rmcontrol that set \Fdmode to 0 if the next trigger has
-            \Fdmode of 1.
-            In addition hardware should ignore writes to \Rmcontrol that set
-            \Fdmode to 1 if the previous trigger has both \Fdmode of 0 and
-            \Fchain of 1. Debuggers must avoid the latter case by checking
-            \Fchain on the previous trigger if they're writing \Rmcontrol.
+            Because \FcsrMcontrolChain affects the next trigger, hardware must zero it in
+            writes to \RcsrMcontrol that set \FcsrTdataOneDmode to 0 if the next trigger has
+            \FcsrTdataOneDmode of 1.
+            In addition hardware should ignore writes to \RcsrMcontrol that set
+            \FcsrTdataOneDmode to 1 if the previous trigger has both \FcsrTdataOneDmode of 0 and
+            \FcsrMcontrolChain of 1. Debuggers must avoid the latter case by checking
+            \FcsrMcontrolChain on the previous trigger if they're writing \RcsrMcontrol.
 
             Implementations that wish to limit the maximum length of a trigger
             chain (eg. to meet timing requirements) may do so by zeroing
-            \Fchain in writes to \Rmcontrol that would make the chain too long.
+            \FcsrMcontrolChain in writes to \RcsrMcontrol that would make the chain too long.
         </field>
         <field name="match" bits="10:7" access="R/W" reset="0">
-            0: Matches when the value equals \Rtdatatwo.
+            0: Matches when the value equals \RcsrTdataTwo.
 
             1: Matches when the top M bits of the value match the top M bits of
-            \Rtdatatwo. M is XLEN-1 minus the index of the least-significant
-            bit containing 0 in \Rtdatatwo. Debuggers should only write values
-            to \Rtdatatwo such that M + \Fmaskmax $\geq$ XLEN, otherwise it's
+            \RcsrTdataTwo. M is XLEN-1 minus the index of the least-significant
+            bit containing 0 in \RcsrTdataTwo. Debuggers should only write values
+            to \RcsrTdataTwo such that M + \FcsrMcontrolMaskmax $\geq$ XLEN, otherwise it's
             undefined on what conditions the trigger will fire.
 
             2: Matches when the value is greater than (unsigned) or equal to
-            \Rtdatatwo.
+            \RcsrTdataTwo.
 
-            3: Matches when the value is less than (unsigned) \Rtdatatwo.
+            3: Matches when the value is less than (unsigned) \RcsrTdataTwo.
 
             4: Matches when the lower half of the value equals the lower half
-            of \Rtdatatwo after the lower half of the value is ANDed with the
-            upper half of \Rtdatatwo.
+            of \RcsrTdataTwo after the lower half of the value is ANDed with the
+            upper half of \RcsrTdataTwo.
 
             5: Matches when the upper half of the value equals the lower half
-            of \Rtdatatwo after the upper half of the value is ANDed with the
-            upper half of \Rtdatatwo.
+            of \RcsrTdataTwo after the upper half of the value is ANDed with the
+            upper half of \RcsrTdataTwo.
 
             Other values are reserved for future use.
         </field>
@@ -378,18 +378,18 @@
     </register>
 
     <register name="Instruction Count" short="icount" address="0x7a1">
-        This register is accessible as \Rtdataone when \Ftype is 3.
+        This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 3.
 
         \begin{commentary} This trigger type is intended to be used as a single
         step that's useful both for external debuggers and for software monitor
-        programs. For that case it is not necessary to support \Fcount greater
+        programs. For that case it is not necessary to support \FcsrIcountCount greater
         than
         1. The only two combinations of the mode bits that are useful in those
-        scenarios are \Fu by itself, or \Fm, \Fs, and \Fu all set.
+        scenarios are \FcsrMcontrolU by itself, or \FcsrMcontrolM, \FcsrMcontrolS, and \FcsrMcontrolU all set.
 
-        If the hardware limits \Fcount to 1, and changes mode bits instead of
-        decrementing \Fcount, this register can be implemented with just 2
-        bits. One for \Fu, and one for \Fm and \Fs tied together.  If
+        If the hardware limits \FcsrIcountCount to 1, and changes mode bits instead of
+        decrementing \FcsrIcountCount, this register can be implemented with just 2
+        bits. One for \FcsrMcontrolU, and one for \FcsrMcontrolM and \FcsrMcontrolS tied together.  If
         only the external debugger or only a software monitor needs to be
         supported, a single bit is enough.
         \end{commentary}
@@ -407,22 +407,22 @@
         </field>
         <field name="count" bits="23:10" access="R/W" reset="1">
             When count is decremented to 0, the trigger fires. Instead of
-            changing \Fcount from 1 to 0, it is also acceptable for hardware to
-            clear \Fm, \Fs, and \Fu. This allows \Fcount to be hard-wired
+            changing \FcsrIcountCount from 1 to 0, it is also acceptable for hardware to
+            clear \FcsrMcontrolM, \FcsrMcontrolS, and \FcsrMcontrolU. This allows \FcsrIcountCount to be hard-wired
             to 1 if this register just exists for single step.
         </field>
 
         <field name="m" bits="9" access="R/W" reset="0">
-            When set, every instruction completed or exception taken in M-mode decrements \Fcount
+            When set, every instruction completed or exception taken in M-mode decrements \FcsrIcountCount
             by 1.
         </field>
         <field name="0" bits="8" access="R" reset="0" />
         <field name="s" bits="7" access="R/W" reset="0">
-            When set, every instruction completed or exception taken in S-mode decrements \Fcount
+            When set, every instruction completed or exception taken in S-mode decrements \FcsrIcountCount
             by 1.
         </field>
         <field name="u" bits="6" access="R/W" reset="0">
-            When set, every instruction completed or exception taken in U-mode decrements \Fcount
+            When set, every instruction completed or exception taken in U-mode decrements \FcsrIcountCount
             by 1.
         </field>
 
@@ -433,15 +433,15 @@
     </register>
 
     <register name="Interrupt Trigger" short="itrigger" address="0x7a1">
-        This register is accessible as \Rtdataone when \Ftype is 4.
+        This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 4.
 
         This trigger may fire on any of the interrupts configurable in \Rmie
         (described in the Privileged Spec). The interrupts to fire on are
-        configured by setting the same bit in \Rtdatatwo as would be set in
+        configured by setting the same bit in \RcsrTdataTwo as would be set in
         \Rmie to enable the interrupt.
 
         Hardware may only support a subset of interrupts for this trigger.  A
-        debugger must read back \Rtdatatwo after writing it to confirm the
+        debugger must read back \RcsrTdataTwo after writing it to confirm the
         requested functionality is actually supported.
 
         The trigger only fires if the hart takes a trap because of the
@@ -482,16 +482,16 @@
     </register>
 
     <register name="Exception Trigger" short="etrigger" address="0x7a1">
-        This register is accessible as \Rtdataone when \Ftype is 5.
+        This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 5.
 
         This trigger may fire on up to XLEN of the Exception Codes defined in
         \Rmcause (described in the Privileged Spec, with Interrupt=0). Those
-        causes are configured by writing the corresponding bit in \Rtdatatwo.
+        causes are configured by writing the corresponding bit in \RcsrTdataTwo.
         (E.g.\  to trap on an illegal instruction, the debugger sets bit 2 in
-        \Rtdatatwo.)
+        \RcsrTdataTwo.)
 
         Hardware may support only a subset of exceptions. A debugger must read
-        back \Rtdatatwo after writing it to confirm the requested functionality
+        back \RcsrTdataTwo after writing it to confirm the requested functionality
         is actually supported.
 
         When the trigger fires, all CSRs are updated as defined by the
@@ -510,7 +510,7 @@
         <field name="0" bits="XLEN-7:11" access="R" reset="0" />
         <field name="nmi" bits="10" access="R/W" reset="0">
             When this optional bit is set, non-maskable interrupts cause this
-            trigger to fire, regardless of the values of \Fm, \Fs, and \Fu.
+            trigger to fire, regardless of the values of \FcsrMcontrolM, \FcsrMcontrolS, and \FcsrMcontrolU.
         </field>
         <field name="m" bits="9" access="R/W" reset="0">
             When set, enable this trigger for exceptions that are taken from M
@@ -532,7 +532,7 @@
     </register>
 
     <register name="Trigger Extra (RV32)" short="textra32" address="0x7a3">
-        This register is accessible as \Rtdatathree when \Ftype is 2, 3, 4, or
+        This register is accessible as \RcsrTdataThree when \FcsrTdataOneType is 2, 3, 4, or
         5.
 
         All functionality in this register is optional. The $|value|$ bits may
@@ -540,37 +540,37 @@
         0 (ignore).
 
         <field name="mvalue" bits="31:26" access="R/W" reset="0">
-            Data used together with \Fmselect.
+            Data used together with \FcsrTextraThirtytwoMselect.
         </field>
         <field name="mselect" bits="25" access="WARL" reset="0">
-            0: Ignore \Fmvalue.
+            0: Ignore \FcsrTextraThirtytwoMvalue.
 
             1: This trigger will only match if the low bits of
-            \Rmcontext equal \Fmvalue.
+            \RcsrMcontext equal \FcsrTextraThirtytwoMvalue.
         </field>
 
         <field name="0" bits="24:18" access="R" reset="0" />
         <!-- This is space left open for H mode support. -->
 
         <field name="svalue" bits="17:2" access="R/W" reset="0">
-            Data used together with \Fsselect.
+            Data used together with \FcsrTextraThirtytwoSselect.
         </field>
         <field name="sselect" bits="1:0" access="WARL" reset="0">
-            0: Ignore \Fsvalue.
+            0: Ignore \FcsrTextraThirtytwoSvalue.
 
             1: This trigger will only match if the low bits of
-            \Rscontext equal \Fsvalue.
+            \RcsrScontext equal \FcsrTextraThirtytwoSvalue.
 
             2: This trigger will only match if \Fasid in \Rsatp
             equals the lower ASIDMAX (defined in the Privileged Spec) bits of
-            \Fsvalue.
+            \FcsrTextraThirtytwoSvalue.
         </field>
 
     </register>
 
     <register name="Trigger Extra (RV64)" short="textra64" address="0x7a3">
         This is the layout of {\tt textra} if XLEN is 64. The fields are defined
-        above, in \Rtextrathirtytwo.
+        above, in \RcsrTextraThirtytwo.
 
         <field name="mvalue" bits="63:51" access="R/W" reset="0">
         </field>

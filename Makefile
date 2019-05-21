@@ -11,7 +11,6 @@ REGISTERS_TEX += dm_registers.tex
 REGISTERS_TEX += sample_registers.tex
 REGISTERS_TEX += abstract_commands.tex
 REGISTERS_TEX += sw_registers.tex
-REGISTERS_TEX += serial.tex
 
 REGISTERS_CHISEL += dm_registers.scala
 REGISTERS_CHISEL += abstract_commands.scala
@@ -68,7 +67,6 @@ debug_defines.h:	$(REGISTERS_TEX:.tex=.h)
 
 %.tex %.h: xml/%.xml registers.py
 	./registers.py --custom --definitions $@.inc --cheader $(basename $@).h $< > $@
-
 
 %.scala: xml/%.xml registers.py
 	./registers.py --chisel $(basename $@).scala $< > /dev/null
