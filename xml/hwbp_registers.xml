@@ -47,7 +47,7 @@
     <register name="Trigger Data 1" short="tdata1" address="0x7a1">
         This register is optional if no triggers are implemented.
 
-        <field name="type" bits="XLEN-1:XLEN-4" access="R/W" reset="Preset">
+        <field name="type" bits="XLEN-1:XLEN-4" access="WARL" reset="Preset">
             0: There is no trigger at this \Rtselect.
 
             1: The trigger is a legacy SiFive address match trigger. These
@@ -72,7 +72,7 @@
 
             Other values are reserved for future use.
         </field>
-        <field name="dmode" bits="XLEN-5" access="R/W" reset="0">
+        <field name="dmode" bits="XLEN-5" access="WARL" reset="0">
             0: Both Debug and M-mode can write the {\tt tdata} registers at the
             selected \Rtselect.
 
@@ -81,7 +81,7 @@
 
             This bit is only writable from Debug Mode.
         </field>
-        <field name="data" bits="XLEN-6:0" access="R/W" reset="Preset">
+        <field name="data" bits="XLEN-6:0" access="WARL" reset="Preset">
             Trigger-specific data.
         </field>
     </register>
