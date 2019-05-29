@@ -157,33 +157,40 @@ def parse_xml( path ):
         registers.add_register( register )
     return registers
 
-def toLatexIdentifier( text ):
+def toLatexIdentifier( *args ):
     replacements = (
             ( '/', '' ),
             ( '\\_', '' ),
             ( ' ', '' ),
             ( '-', '' ),
+            ( '_', '' ),
             ( '(', '' ),
             ( ')', '' ),
-            ( '64', 'sixtyfour' ),
-            ( '32', 'thirtytwo' ),
-            ( '28', 'twentyeight' ),
-            ( '16', 'sixteen' ),
-            ( '15', 'fifteen' ),
-            ( '11', 'eleven' ),
-            ( '9', 'nine' ),
-            ( '8', 'eight' ),
-            ( '7', 'seven' ),
-            ( '6', 'six' ),
-            ( '5', 'five' ),
-            ( '4', 'four' ),
-            ( '3', 'three' ),
-            ( '2', 'two' ),
-            ( '1', 'one' ),
-            ( '0', 'zero' )
+            ( '64', 'Sixtyfour' ),
+            ( '32', 'Thirtytwo' ),
+            ( '28', 'Twentyeight' ),
+            ( '16', 'Sixteen' ),
+            ( '15', 'Fifteen' ),
+            ( '11', 'Eleven' ),
+            ( '9', 'Nine' ),
+            ( '8', 'Eight' ),
+            ( '7', 'Seven' ),
+            ( '6', 'Six' ),
+            ( '5', 'Five' ),
+            ( '4', 'Four' ),
+            ( '3', 'Three' ),
+            ( '2', 'Two' ),
+            ( '1', 'One' ),
+            ( '0', 'Zero' )
             )
-    for frm, to in replacements:
-        text = text.replace( frm, to )
+    text = ""
+    for arg in args:
+        arg = (arg or "").lower()
+        for frm, to in replacements:
+            arg = arg.replace( frm, to )
+        if arg and text:
+            arg = arg[0].upper() + arg[1:]
+        text += arg
     return text
 
 def toCIdentifier( text ):
@@ -191,14 +198,17 @@ def toCIdentifier( text ):
 
 def write_definitions( fd, registers ):
     for r in registers.registers:
+        regid = r.short or r.label
         if r.define:
-            macroName = toLatexIdentifier( r.short or r.label )
+            macroName = toLatexIdentifier( registers.prefix, regid )
             fd.write( "\\defregname{\\R%s}{\\hyperref[%s]{%s}}\n" % (
-                macroName, r.label, r.short or r.label ) )
+                macroName, toLatexIdentifier( registers.prefix, r.label ), r.short or r.label ) )
         for f in r.fields:
             if f.description and f.define:
                 fd.write( "\\deffieldname{\\F%s}{\\hyperref[%s]{%s}}\n" % (
-                        toLatexIdentifier( f.name ), f.name, f.name ) )
+                        toLatexIdentifier( registers.prefix, regid, f.name ),
+                        toLatexIdentifier( registers.prefix, regid, f.name ),
+                        f.name ) )
 
 def write_cheader( fd, registers ):
     definitions = []
@@ -328,7 +338,7 @@ def print_latex_index( registers ):
     print "\\begin{table}[H]"
     print "   \\begin{center}"
     print "      \\caption{%s}" % registers.name
-    print "      \\label{%s}" % registers.label
+    print "      \\label{%s}" % toLatexIdentifier(registers.prefix, registers.label)
     if any( r.sdesc for r in registers.registers ):
         print "      \\begin{tabular}{|r|l|l|l|}"
         print "      \\hline"
@@ -341,7 +351,7 @@ def print_latex_index( registers ):
     for r in sorted( registers.registers,
             cmp=lambda a, b: compare_address(a.address, b.address)):
         if r.short and (r.fields or r.description):
-            page = "\\pageref{%s}" % r.short
+            page = "\\pageref{%s}" % toLatexIdentifier(registers.prefix, r.short)
         else:
             page = ""
         if r.short:
@@ -377,7 +387,7 @@ def print_latex_custom( registers ):
                 print "\\%ssection{%s}" % ( sub, r.name )
             print "\index{%s}" % r.name
         if r.label and r.define:
-            print "\\label{%s}" % r.label
+            print "\\label{%s}" % toLatexIdentifier(registers.prefix, r.label)
         print r.description
         print
 
@@ -463,7 +473,7 @@ def print_latex_custom( registers ):
 
             for f in r.fields:
                 if f.description:
-                    print "\\label{%s}" % f.name
+                    print "\\label{%s}" % toLatexIdentifier(registers.prefix, r.short or r.label, f.name)
                     print "\\index{%s}" % f.name
                     print "   |%s| &" % str(getattr(f, columns[0][2])),
                     print "%s\\\\" % " & ".join(str(getattr(f, c[2])) for c in columns[1:])
