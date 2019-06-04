@@ -86,7 +86,8 @@ also listed in the index on page \pageref{index}.
         \hline
         W & Write-only. When read this field returns 0. \\
         \hline
-        W1 & Write-only. Only writing 1 has an effect. \\
+        W1 & Write-only. Only writing 1 has an effect. When read the returned
+        value is undefined. \\
         \hline
         WARL & Write any, read legal. A debugger may write any value. If a
         value is unsupported, the implementation converts the value to one that

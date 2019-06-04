@@ -300,7 +300,7 @@
             shadowing the {\tt data} registers.
 
             If \FdmHartinfoDataaccess is 1: Signed address of RAM where the {\tt data}
-            registers are shadowed, to be used to access relative to \Rzero.
+            registers are shadowed, to be used to access relative to \Xzero.
         </field>
     </register>
 
@@ -571,7 +571,7 @@
             0. If halt groups aren't implemented, then this entire field
             is 0.
         </field>
-        <field name="hgwrite" bits="1" access="W" reset="-">
+        <field name="hgwrite" bits="1" access="W1" reset="-">
             When \FdmDmcsTwoHgselect is 0, writing 1 changes the halt group of all
             selected harts to the value written to \FdmDmcsTwoHaltgroup.
 

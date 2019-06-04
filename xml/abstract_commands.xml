@@ -26,14 +26,23 @@
         and must support read and write access to all GPRs when the selected hart is halted.
         Debug Modules may optionally support accessing other registers,
         or accessing registers when the hart is running.
-        Each individual register (aside from GPRs) may be supported differently
-        across read, write, and halt status.
+        It is recommended that if one register in a group is accessible, then
+        all registers in that group are accessible, but each individual
+        register (aside from GPRs) may be supported differently across read,
+        write, and halt status.
+
+        If registers are accessible using an abstract command, then they are
+        accessible even if the currently running code would not be able to
+        access them. (E.g. {\tt fflags} is accessible even when {\tt
+        mstatus}.$|FS|$ is 0.)
 
         \begin{table}[htp]
             \centering
             \caption{Abstract Register Numbers}
             \label{tab:regno}
             \begin{tabulary}{\textwidth}{|r|l|}
+                \hline
+                Numbers &amp; Group Description \\
                 \hline
                 0x0000 -- 0x0fff &amp; CSRs. The ``PC'' can be accessed here through \RcsrDpc.
                 \\
