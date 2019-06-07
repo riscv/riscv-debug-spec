@@ -31,10 +31,12 @@
         register (aside from GPRs) may be supported differently across read,
         write, and halt status.
 
-        If registers are accessible using an abstract command, then they are
-        accessible even if the currently running code would not be able to
-        access them. (E.g. {\tt fflags} is accessible even when {\tt
-        mstatus}.$|FS|$ is 0.)
+        Registers may not be accessible if they wouldn't be accessible by M
+        mode code currently running. (E.g. {\tt fflags} may not be accessible
+        when {\tt mstatus}.$|FS|$ is 0.) If this is the case, the debugger is
+        responsible for changing state to make the registers accessible. The
+        Core Debug Registers (Section~\ref{debreg}) should be accessible if
+        abstract CSR access is implemented.
 
         \begin{table}[htp]
             \centering
