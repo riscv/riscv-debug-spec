@@ -299,8 +299,10 @@
             If \FdmHartinfoDataaccess is 0: The number of the first CSR dedicated to
             shadowing the {\tt data} registers.
 
-            If \FdmHartinfoDataaccess is 1: Signed address of RAM where the {\tt data}
-            registers are shadowed, to be used to access relative to \Xzero.
+            If \FdmHartinfoDataaccess is 1: Address of RAM where the data
+            registers are shadowed. This address is sign extended giving a
+            range of -2048 to 2047, easily addressed with a load or store using
+            \Xzero as the address register.
         </field>
     </register>
 
