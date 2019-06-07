@@ -220,10 +220,10 @@
             size.
         </field>
         <field name="0" bits="XLEN-12:23" access="R" reset="0" />
-        <field name="sizehi" bits="22:21" access="R/W" reset="0">
-            This field only exists if XLEN is greater than 32. In that case it
-            extends \FcsrMcontrolSizelo. If it does not exist then hardware operates as if
-            the field contains 0.
+        <field name="sizehi" bits="22:21" access="WARL" reset="0">
+            This field contains the 2 high bits of the access size. The low bits
+            come from \FcsrMcontrolSizelo. See \FcsrMcontrolSizelo for how this
+            is used.
         </field>
         <field name="hit" bits="20" access="R/W" reset="0">
             If this optional bit is implemented, the hardware sets it when this
@@ -253,7 +253,8 @@
             not implement that suggestion than to not implement them at all.
 
             Most hardware will only implement one timing or the other, possibly
-            dependent on \FcsrMcontrolSelect, \FcsrMcontrolExecute, \FcsrMcontrolLoad, and \FcsrMcontrolStore. This bit
+            dependent on \FcsrMcontrolSelect, \FcsrMcontrolExecute,
+            \FcsrMcontrolLoad, and \FcsrMcontrolStore. This bit
             primarily exists for the hardware to communicate to the debugger
             what will happen. Hardware may implement the bit fully writable, in
             which case the debugger has a little more control.
@@ -271,7 +272,7 @@
             implementation-dependent whether that prevents a trigger with
             \FcsrMcontrolTiming of 1 matching as well.
         </field>
-        <field name="sizelo" bits="17:16" access="R/W" reset="0">
+        <field name="sizelo" bits="17:16" access="WARL" reset="0">
             This field contains the 2 low bits of the access size. The high bits come
             from \FcsrMcontrolSizehi. The combined value is interpreted as follows:
 
@@ -300,6 +301,11 @@
 
             9: The trigger will only match against 128-bit memory accesses or
             execution of 128-bit instructions.
+
+            An implementation must support the value of 0, but all other values
+            are optional. It is recommended to support triggers for every
+            access size the hart supports, as well as for every instruction
+            size the hart supports.
         </field>
         <field name="action" bits="15:12" access="R/W" reset="0">
             The action to take when the trigger fires. The values are explained
