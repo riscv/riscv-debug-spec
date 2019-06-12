@@ -87,8 +87,10 @@
         <field name="aarpostincrement" bits="19">
             0: No effect. This variant must be supported.
 
-            1: After a successful register access, \FacAccessregisterRegno is incremented
-            (wrapping around to 0). Supporting this variant is optional.
+            1: After a successful register access, \FacAccessregisterRegno is
+            incremented (wrapping around to 0). Supporting this variant is
+            optional. It is undefined whether the increment happens when
+            \FacAccessregisterTransfer is 0.
         </field>
         <field name="postexec" bits="18">
             0: No effect. This variant must be supported, and is the only
