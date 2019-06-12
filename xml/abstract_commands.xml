@@ -3,7 +3,9 @@
     <register name="Access Register">
         \begin{steps}{This command gives the debugger access to CPU registers
         and allows it to execute the Program Buffer.
-        It performs the following sequence of operations:}
+        If the command and all requested options are supported in the current state
+	(see Section~\ref{abstractcommands}),
+        it performs the following sequence of operations:}
         \item If \FacAccessregisterWrite is clear and \FacAccessregisterTransfer is set, then copy data from
             the register specified by \FacAccessregisterRegno into the {\tt arg0} region of
             {\tt data}, and perform any side effects that occur when this
@@ -54,6 +56,9 @@
 
         This command modifies {\tt arg0} only when a register is read. The
         other {\tt data} registers are not changed.
+
+	For the Access Register Command, the \RdmCommand register (see Section~\ref{command})
+	is formatted as follows:
 
         <field name="cmdtype" bits="31:24">
             This is 0 to indicate Access Register Command.

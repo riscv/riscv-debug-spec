@@ -263,13 +263,15 @@ Debuggers can only determine which abstract commands
 are supported by a given hart in a given state by attempting them
 and then looking at \FdmAbstractcsCmderr in \RdmAbstractcs to see if they were successful.
 Commands may be supported with some options set, but not with other options
-set. If a command has unsupported options set, the DM must set \FdmAbstractcsCmderr to 2
-(not supported).
+set. If a command is not supported or has unsupported options set,
+the DM must set \FdmAbstractcsCmderr to 2 (not supported).
+If a command and its options are supported but not in the
+current hart state, the DM must set \FdmAbstractcsCmderr to 4 (halt/resume).
 
 \begin{commentary}
-    Example: Every system must support the Access Register command, but may not
-    support accessing CSRs. If the debugger requests to read a CSR in that
-    case, the command will return ``not supported.''
+    Example: Every system must support the Access Register command, but may
+    choose not to support accessing CSRs. If the debugger requests to read
+    a CSR in that case, the command will return ``not supported.''
 \end{commentary}
 
 Debuggers execute abstract commands by writing them to \RdmCommand.  They
@@ -352,11 +354,11 @@ determines the kind of command. Table~\ref{tab:cmdtype} lists all commands.
         \hline
         \FdmCommandCmdtype & Command & Page \\
         \hline
-        0 & Access Register Command & \pageref{access register} \\
+        0 & Access Register Command & \pageref{acAccessregister} \\
         \hline
-        1 & Quick Access & \pageref{quick access} \\
+        1 & Quick Access & \pageref{acQuickaccess} \\
         \hline
-        2 & Access Memory Command & \pageref{access memory} \\
+        2 & Access Memory Command & \pageref{acAccessmemory} \\
         \hline
     \end{tabulary}
 \end{table}
