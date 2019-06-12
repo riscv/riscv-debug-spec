@@ -33,5 +33,5 @@ access block allows memory accesses without using a RISC-V hart to perform the
 access.
 
 Each RISC-V hart may implement a Trigger Module. When trigger conditions
-are met, harts will halt and inform the debug module that they have
-halted.
+are met, harts may either halt and inform the debug module that they have
+halted, or raise a machine mode breakpoint trap.
