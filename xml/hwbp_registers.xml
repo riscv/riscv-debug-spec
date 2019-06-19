@@ -432,7 +432,7 @@
         </field>
 
         <field name="m" bits="9" access="R/W" reset="0">
-            When set, every instruction completed in or exception taken from
+            When set, every instruction completed in or trap taken from
             M-mode decrements \FcsrIcountCount by 1.
         </field>
         <field name="0" bits="8" access="R" reset="0" />
