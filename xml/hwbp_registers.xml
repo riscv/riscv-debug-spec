@@ -441,7 +441,7 @@
             S-mode decrements \FcsrIcountCount by 1.
         </field>
         <field name="u" bits="6" access="R/W" reset="0">
-            When set, every instruction completed in or exception taken from
+            When set, every instruction completed in or trap taken from
             U-mode decrements \FcsrIcountCount by 1.
         </field>
 
