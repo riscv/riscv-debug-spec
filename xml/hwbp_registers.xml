@@ -560,6 +560,8 @@
 
         <field name="svalue" bits="17:2" access="R/W" reset="0">
             Data used together with \FcsrTextraThirtytwoSselect.
+
+            This field should be tied to 0 when S-mode is not supported.
         </field>
         <field name="sselect" bits="1:0" access="WARL" reset="0">
             0: Ignore \FcsrTextraThirtytwoSvalue.
@@ -570,6 +572,8 @@
             2: This trigger will only match if \Fasid in \Rsatp
             equals the lower ASIDMAX (defined in the Privileged Spec) bits of
             \FcsrTextraThirtytwoSvalue.
+
+            This field should be tied to 0 when S-mode is not supported.
         </field>
 
     </register>
