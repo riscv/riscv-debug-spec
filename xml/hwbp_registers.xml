@@ -218,7 +218,7 @@
         other values.
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="2" />
-        <field name="dmode" bits="XLEN-5" access="R/W" reset="0" />
+        <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
         <field name="maskmax" bits="XLEN-6:XLEN-11" access="R" reset="Preset">
             Specifies the largest naturally aligned powers-of-two (NAPOT) range
             supported by the hardware when \FcsrMcontrolMatch is 1. The value is the
@@ -234,14 +234,14 @@
             come from \FcsrMcontrolSizelo. See \FcsrMcontrolSizelo for how this
             is used.
         </field>
-        <field name="hit" bits="20" access="R/W" reset="0">
+        <field name="hit" bits="20" access="WARL" reset="0">
             If this optional bit is implemented, the hardware sets it when this
             trigger matches. The trigger's user can set or clear it at any
             time. It is used to determine which
             trigger(s) matched.  If the bit is not implemented, it is always 0
             and writing it has no effect.
         </field>
-        <field name="select" bits="19" access="R/W" reset="0">
+        <field name="select" bits="19" access="WARL" reset="0">
             0: Perform a match on the lowest virtual address of the access.  In
             addition, it is recommended that the trigger also fires if any of
             the other accessed virtual addresses match.
@@ -312,11 +312,11 @@
             access size the hart supports, as well as for every instruction
             size the hart supports.
         </field>
-        <field name="action" bits="15:12" access="R/W" reset="0">
+        <field name="action" bits="15:12" access="WARL" reset="0">
             The action to take when the trigger fires. The values are explained
             in Table~\ref{tab:action}.
         </field>
-        <field name="chain" bits="11" access="R/W" reset="0">
+        <field name="chain" bits="11" access="WARL" reset="0">
             0: When this trigger matches, the configured action is taken.
 
             1: While this trigger does not match, it prevents the trigger with
@@ -342,7 +342,7 @@
             chain (eg. to meet timing requirements) may do so by zeroing
             \FcsrMcontrolChain in writes to \RcsrMcontrol that would make the chain too long.
         </field>
-        <field name="match" bits="10:7" access="R/W" reset="0">
+        <field name="match" bits="10:7" access="WARL" reset="0">
             0: Matches when the value equals \RcsrTdataTwo.
 
             1: Matches when the top M bits of the value match the top M bits of
@@ -374,24 +374,24 @@
 
             Other values are reserved for future use.
         </field>
-        <field name="m" bits="6" access="R/W" reset="0">
+        <field name="m" bits="6" access="WARL" reset="0">
             When set, enable this trigger in M-mode.
         </field>
         <field name="0" bits="5" access="R" reset="0" />
-        <field name="s" bits="4" access="R/W" reset="0">
+        <field name="s" bits="4" access="WARL" reset="0">
             When set, enable this trigger in S-mode.
         </field>
-        <field name="u" bits="3" access="R/W" reset="0">
+        <field name="u" bits="3" access="WARL" reset="0">
             When set, enable this trigger in U-mode.
         </field>
-        <field name="execute" bits="2" access="R/W" reset="0">
+        <field name="execute" bits="2" access="WARL" reset="0">
             When set, the trigger fires on the virtual address or opcode of an
             instruction that is executed.
         </field>
-        <field name="store" bits="1" access="R/W" reset="0">
+        <field name="store" bits="1" access="WARL" reset="0">
             When set, the trigger fires on the virtual address or data of a store.
         </field>
-        <field name="load" bits="0" access="R/W" reset="0">
+        <field name="load" bits="0" access="WARL" reset="0">
             When set, the trigger fires on the virtual address or data of a load.
         </field>
     </register>
