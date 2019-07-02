@@ -398,8 +398,8 @@
         executed.
 
         Writing this register while an abstract command is executing causes
-        \FdmAbstractcsCmderr to become to 1 (busy) if it is 0, when busy
-        becomes 0.
+        \FdmAbstractcsCmderr to become 1 (busy) once the command completes
+        (busy becomes 0).
 
         If \FdmAbstractcsCmderr is non-zero, writes to this register are ignored.
 
