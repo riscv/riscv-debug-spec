@@ -40,9 +40,9 @@
             This bit is hardwired to 0 if the hart does not support U mode.
         </field>
         <field name="stepie" bits="11" access="WARL" reset="0">
-            0: Interrupts are disabled during single stepping.
+            0: Interrupts (including NMI) are disabled during single stepping.
 
-            1: Interrupts are enabled during single stepping.
+            1: Interrupts (including NMI) are enabled during single stepping.
 
             Implementations may hard wire this bit to 0.
             In that case interrupt behavior can be emulated by the debugger.
