@@ -337,7 +337,8 @@
 
     <register name="Abstract Control and Status" short="abstractcs" address="0x16">
         Writing this register while an abstract command is executing causes
-        \FdmAbstractcsCmderr to be set to 1 (busy) if it is 0.
+        \FdmAbstractcsCmderr to become 1 (busy) once the command completes
+        (busy becomes 0).
 
         \begin{commentary}
             \FdmAbstractcsDatacount must be at least 1 to support RV32 harts, 2 to support
@@ -428,7 +429,8 @@
         and reading them back.
 
         Writing this register while an abstract command is executing causes
-        \FdmAbstractcsCmderr to be set to 1 (busy) if it is 0.
+        \FdmAbstractcsCmderr to become 1 (busy) once the command completes
+        (busy becomes 0).
 
         <field name="autoexecprogbuf" bits="31:16" access="R/W" reset="0">
             When a bit in this field is 1, read or write accesses to the
