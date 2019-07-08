@@ -140,7 +140,7 @@
         (\FdmDmcontrolNdmreset) is 0 and bit 0 (\FdmDmcontrolDmactive) is 1.
 
         <!-- Fields that apply to all selected hart(s) -->
-        <field name="haltreq" bits="31" access="W" reset="-">
+        <field name="haltreq" bits="31" access="WARZ" reset="-">
             Writing 0 clears the halt request bit for all currently selected
             harts. This may cancel outstanding halt requests for those harts.
 
@@ -299,8 +299,10 @@
             If \FdmHartinfoDataaccess is 0: The number of the first CSR dedicated to
             shadowing the {\tt data} registers.
 
-            If \FdmHartinfoDataaccess is 1: Signed address of RAM where the {\tt data}
-            registers are shadowed, to be used to access relative to \Rzero.
+            If \FdmHartinfoDataaccess is 1: Address of RAM where the data
+            registers are shadowed. This address is sign extended giving a
+            range of -2048 to 2047, easily addressed with a load or store using
+            \Xzero as the address register.
         </field>
     </register>
 
@@ -335,7 +337,8 @@
 
     <register name="Abstract Control and Status" short="abstractcs" address="0x16">
         Writing this register while an abstract command is executing causes
-        \FdmAbstractcsCmderr to be set to 1 (busy) if it is 0.
+        \FdmAbstractcsCmderr to become 1 (busy) once the command completes
+        (busy becomes 0).
 
         \begin{commentary}
             \FdmAbstractcsDatacount must be at least 1 to support RV32 harts, 2 to support
@@ -396,7 +399,8 @@
         executed.
 
         Writing this register while an abstract command is executing causes
-        \FdmAbstractcsCmderr to be set to 1 (busy) if it is 0.
+        \FdmAbstractcsCmderr to become 1 (busy) once the command completes
+        (busy becomes 0).
 
         If \FdmAbstractcsCmderr is non-zero, writes to this register are ignored.
 
@@ -409,11 +413,11 @@
             previous one succeeding) passed.
         \end{commentary}
 
-        <field name="cmdtype"    bits="31:24" access="W" reset="0">
+        <field name="cmdtype"    bits="31:24" access="WARZ" reset="0">
             The type determines the overall functionality of this
             abstract command.
         </field>
-        <field name="control" bits="23:0" access="W" reset="0" >
+        <field name="control" bits="23:0" access="WARZ" reset="0" >
             This field is interpreted in a command-specific manner,
             described for each abstract command.
         </field>
@@ -425,7 +429,8 @@
         and reading them back.
 
         Writing this register while an abstract command is executing causes
-        \FdmAbstractcsCmderr to be set to 1 (busy) if it is 0.
+        \FdmAbstractcsCmderr to become 1 (busy) once the command completes
+        (busy becomes 0).
 
         <field name="autoexecprogbuf" bits="31:16" access="R/W" reset="0">
             When a bit in this field is 1, read or write accesses to the
@@ -571,7 +576,7 @@
             0. If halt groups aren't implemented, then this entire field
             is 0.
         </field>
-        <field name="hgwrite" bits="1" access="W" reset="-">
+        <field name="hgwrite" bits="1" access="W1" reset="-">
             When \FdmDmcsTwoHgselect is 0, writing 1 changes the halt group of all
             selected harts to the value written to \FdmDmcsTwoHaltgroup.
 

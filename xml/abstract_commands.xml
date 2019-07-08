@@ -26,14 +26,25 @@
         and must support read and write access to all GPRs when the selected hart is halted.
         Debug Modules may optionally support accessing other registers,
         or accessing registers when the hart is running.
-        Each individual register (aside from GPRs) may be supported differently
-        across read, write, and halt status.
+        It is recommended that if one register in a group is accessible, then
+        all registers in that group are accessible, but each individual
+        register (aside from GPRs) may be supported differently across read,
+        write, and halt status.
+
+        Registers might not be accessible if they wouldn't be accessible by M
+        mode code currently running. (E.g. {\tt fflags} may not be accessible
+        when {\tt mstatus}.$|FS|$ is 0.) If this is the case, the debugger is
+        responsible for changing state to make the registers accessible. The
+        Core Debug Registers (Section~\ref{debreg}) should be accessible if
+        abstract CSR access is implemented.
 
         \begin{table}[htp]
             \centering
             \caption{Abstract Register Numbers}
             \label{tab:regno}
             \begin{tabulary}{\textwidth}{|r|l|}
+                \hline
+                Numbers &amp; Group Description \\
                 \hline
                 0x0000 -- 0x0fff &amp; CSRs. The ``PC'' can be accessed here through \RcsrDpc.
                 \\
@@ -76,8 +87,10 @@
         <field name="aarpostincrement" bits="19">
             0: No effect. This variant must be supported.
 
-            1: After a successful register access, \FacAccessregisterRegno is incremented
-            (wrapping around to 0). Supporting this variant is optional.
+            1: After a successful register access, \FacAccessregisterRegno is
+            incremented (wrapping around to 0). Supporting this variant is
+            optional. It is undefined whether the increment happens when
+            \FacAccessregisterTransfer is 0.
         </field>
         <field name="postexec" bits="18">
             0: No effect. This variant must be supported, and is the only
