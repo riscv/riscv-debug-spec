@@ -82,7 +82,9 @@ also listed in the index on page \pageref{index}.
         \hline
         R/W & Read/Write. \\
         \hline
-        R/W1C & Read/Write. For each bit in the field, writing 1 clears that bit. Writing 0 has no effect. \\
+        R/W1C & Read/Write Ones to Clear. Writing 0 to every bit has no effect.
+        Writing 1 to every bit clears the field. The result of other writes is
+        undefined. \\
         \hline
         WARZ & Write any, read zero. A debugger may write any value. When read
         this field returns 0. \\
