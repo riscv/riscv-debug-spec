@@ -29,6 +29,12 @@ A single RISC-V core contains one or more hardware threads, called
 \emph{DXLEN} of a hart is its widest supported XLEN, ignoring the current value
 of \Fmxl in \Rmisa.
 
+A \emph{physical address} is directly usable on the system bus.
+
+A \emph{virtual address} is an address as a hart sees it. If there is address
+translation this may be different from the \emph{physical address}. If there is
+no translation then it will be the same.
+
 \subsection{Context}
 
 \begin{steps}{This document is written to work with:}
