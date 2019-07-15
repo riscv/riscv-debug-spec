@@ -165,6 +165,10 @@
     <register name="Supervisor Context" short="scontext" address="0x7aa">
         This optional register is only writable in S mode, M mode and Debug Mode.
 
+        Note that the register number does not follow the read and write
+        accessibility of the CSRs according to privilege level as defined in
+        the Privileged Spec.
+
         <field name="data" bits="XLEN-1:0" access="R/W" reset="0">
             Supervisor mode software can write a context number to this
             register, which can be used to set triggers that only fire in that
