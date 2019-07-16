@@ -462,9 +462,21 @@
       The configuration string itself is described in the Privileged Spec.
       <field name="addr" bits="31:0" access="R" reset="Preset"/>
     </register>
-    <register name="Configuration String Pointer 1" short="confstrptr1" address="0x1a"/>
-    <register name="Configuration String Pointer 2" short="confstrptr2" address="0x1b"/>
-    <register name="Configuration String Pointer 3" short="confstrptr3" address="0x1c"/>
+    <register name="Configuration String Pointer 1" short="confstrptr1" address="0x1a">
+      When \FdmDmstatusConfstrptrvalid is set, reading this register returns bits 63:32
+      of the configuration string pointer. See \RdmConfstrptrZero for more details.
+      <field name="addr" bits="31:0" access="R" reset="Preset"/>
+    </register>
+    <register name="Configuration String Pointer 2" short="confstrptr2" address="0x1b">
+      When \FdmDmstatusConfstrptrvalid is set, reading this register returns bits 95:64
+      of the configuration string pointer. See \RdmConfstrptrZero for more details.
+      <field name="addr" bits="31:0" access="R" reset="Preset"/>
+    </register>
+    <register name="Configuration String Pointer 3" short="confstrptr3" address="0x1c">
+      When \FdmDmstatusConfstrptrvalid is set, reading this register returns bits 127:96
+      of the configuration string pointer. See \RdmConfstrptrZero for more details.
+      <field name="addr" bits="31:0" access="R" reset="Preset"/>
+    </register>
 
     <register name="Next Debug Module" short="nextdm" address="0x1d">
         If there is more than one DM accessible on this DMI, this register
