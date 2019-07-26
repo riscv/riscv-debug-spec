@@ -20,7 +20,7 @@
         Since triggers can be used both by Debug Mode and M-mode, the external
         debugger must restore this register if it modifies it.
 
-        <field name="index" bits="XLEN-1:0" access="R/W" reset="0" />
+        <field name="index" bits="XLEN-1:0" access="WARL" reset="0" />
     </register>
 
     <register name="Trigger Data 1" short="tdata1" address="0x7a1">
@@ -74,7 +74,7 @@
         it.
 
         If XLEN is less than DXLEN, writes to this register are sign-extended.
-        <field name="data" bits="XLEN-1:0" access="R/W" reset="Preset" />
+        <field name="data" bits="XLEN-1:0" access="WARL" reset="Preset" />
     </register>
 
     <register name="Trigger Data 3" short="tdata3" address="0x7a3">
@@ -82,7 +82,7 @@
         it.
 
         If XLEN is less than DXLEN, writes to this register are sign-extended.
-        <field name="data" bits="XLEN-1:0" access="R/W" reset="Preset" />
+        <field name="data" bits="XLEN-1:0" access="WARL" reset="Preset" />
     </register>
 
     <register name="Trigger Info" short="tinfo" address="0x7a4">
@@ -107,14 +107,14 @@
         Section~\ref{sec:mmtrigger} for more details.
 
         <field name="0" bits="XLEN-1:8" access="R" reset="0" />
-        <field name="mpte" bits="7" access="R/W" reset="0">
+        <field name="mpte" bits="7" access="WARL" reset="0">
             M-mode previous trigger enable field.
 
             When a trap into M-mode is taken, \FcsrTcontrolMpte is set to the value of
             \FcsrTcontrolMte.
         </field>
         <field name="0" bits="6:4" access="R" reset="0" />
-        <field name="mte" bits="3" access="R/W" reset="0">
+        <field name="mte" bits="3" access="WARL" reset="0">
             M-mode trigger enable field.
 
             0: Triggers with action=0 do not match/fire while the hart is in M-mode.
@@ -130,7 +130,7 @@
     <register name="Machine Context" short="mcontext" address="0x7a8">
         This optional register is only writable in M mode and Debug Mode.
 
-        <field name="mcontext" bits="XLEN-1:0" access="R/W" reset="0">
+        <field name="mcontext" bits="XLEN-1:0" access="WARL" reset="0">
             Machine mode software can write a context number to this register,
             which can be used to set triggers that only fire in that specific
             context.
@@ -148,7 +148,7 @@
         accessibility of the CSRs according to privilege level as defined in
         the Privileged Spec.
 
-        <field name="data" bits="XLEN-1:0" access="R/W" reset="0">
+        <field name="data" bits="XLEN-1:0" access="WARL" reset="0">
             Supervisor mode software can write a context number to this
             register, which can be used to set triggers that only fire in that
             specific context.
@@ -401,38 +401,38 @@
         \end{commentary}
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="3" />
-        <field name="dmode" bits="XLEN-5" access="R/W" reset="0" />
+        <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
         <field name="0" bits="XLEN-6:25" access="R" reset="0" />
 
-        <field name="hit" bits="24" access="R/W" reset="0">
+        <field name="hit" bits="24" access="WARL" reset="0">
             If this optional bit is implemented, the hardware sets it when this
             trigger matches. The trigger's user can set or clear it at any
             time. It is used to determine which
             trigger(s) matched.  If the bit is not implemented, it is always 0
             and writing it has no effect.
         </field>
-        <field name="count" bits="23:10" access="R/W" reset="1">
+        <field name="count" bits="23:10" access="WARL" reset="1">
             When count is decremented to 0, the trigger fires. Instead of
             changing \FcsrIcountCount from 1 to 0, it is also acceptable for hardware to
             clear \FcsrMcontrolM, \FcsrMcontrolS, and \FcsrMcontrolU. This allows \FcsrIcountCount to be hard-wired
             to 1 if this register just exists for single step.
         </field>
 
-        <field name="m" bits="9" access="R/W" reset="0">
+        <field name="m" bits="9" access="WARL" reset="0">
             When set, every instruction completed in or trap taken from
             M-mode decrements \FcsrIcountCount by 1.
         </field>
         <field name="0" bits="8" access="R" reset="0" />
-        <field name="s" bits="7" access="R/W" reset="0">
+        <field name="s" bits="7" access="WARL" reset="0">
             When set, every instruction completed in or trap taken from
             S-mode decrements \FcsrIcountCount by 1.
         </field>
-        <field name="u" bits="6" access="R/W" reset="0">
+        <field name="u" bits="6" access="WARL" reset="0">
             When set, every instruction completed in or trap taken from
             U-mode decrements \FcsrIcountCount by 1.
         </field>
 
-        <field name="action" bits="5:0" access="R/W" reset="0">
+        <field name="action" bits="5:0" access="WARL" reset="0">
             The action to take when the trigger fires. The values are explained
             in Table~\ref{tab:action}.
         </field>
@@ -459,8 +459,8 @@
         first instruction of the interrupt/exception handler is executed.
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="4" />
-        <field name="dmode" bits="XLEN-5" access="R/W" reset="0" />
-        <field name="hit" bits="XLEN-6" access="R/W" reset="0">
+        <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
+        <field name="hit" bits="XLEN-6" access="WARL" reset="0">
             If this optional bit is implemented, the hardware sets it when this
             trigger matches. The trigger's user can set or clear it at any
             time. It is used to determine which
@@ -468,20 +468,20 @@
             and writing it has no effect.
         </field>
         <field name="0" bits="XLEN-7:10" access="R" reset="0" />
-        <field name="m" bits="9" access="R/W" reset="0">
+        <field name="m" bits="9" access="WARL" reset="0">
             When set, enable this trigger for interrupts that are taken from M
             mode.
         </field>
         <field name="0" bits="8" access="R" reset="0" />
-        <field name="s" bits="7" access="R/W" reset="0">
+        <field name="s" bits="7" access="WARL" reset="0">
             When set, enable this trigger for interrupts that are taken from S
             mode.
         </field>
-        <field name="u" bits="6" access="R/W" reset="0">
+        <field name="u" bits="6" access="WARL" reset="0">
             When set, enable this trigger for interrupts that are taken from U
             mode.
         </field>
-        <field name="action" bits="5:0" access="R/W" reset="0">
+        <field name="action" bits="5:0" access="WARL" reset="0">
             The action to take when the trigger fires. The values are explained
             in Table~\ref{tab:action}.
         </field>
@@ -505,8 +505,8 @@
         first instruction of the interrupt/exception handler is executed.
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="4" />
-        <field name="dmode" bits="XLEN-5" access="R/W" reset="0" />
-        <field name="hit" bits="XLEN-6" access="R/W" reset="0">
+        <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
+        <field name="hit" bits="XLEN-6" access="WARL" reset="0">
             If this optional bit is implemented, the hardware sets it when this
             trigger matches. The trigger's user can set or clear it at any
             time. It is used to determine which
@@ -514,24 +514,24 @@
             and writing it has no effect.
         </field>
         <field name="0" bits="XLEN-7:11" access="R" reset="0" />
-        <field name="nmi" bits="10" access="R/W" reset="0">
+        <field name="nmi" bits="10" access="WARL" reset="0">
             When this optional bit is set, non-maskable interrupts cause this
             trigger to fire, regardless of the values of \FcsrMcontrolM, \FcsrMcontrolS, and \FcsrMcontrolU.
         </field>
-        <field name="m" bits="9" access="R/W" reset="0">
+        <field name="m" bits="9" access="WARL" reset="0">
             When set, enable this trigger for exceptions that are taken from M
             mode.
         </field>
         <field name="0" bits="8" access="R" reset="0" />
-        <field name="s" bits="7" access="R/W" reset="0">
+        <field name="s" bits="7" access="WARL" reset="0">
             When set, enable this trigger for exceptions that are taken from S
             mode.
         </field>
-        <field name="u" bits="6" access="R/W" reset="0">
+        <field name="u" bits="6" access="WARL" reset="0">
             When set, enable this trigger for exceptions that are taken from U
             mode.
         </field>
-        <field name="action" bits="5:0" access="R/W" reset="0">
+        <field name="action" bits="5:0" access="WARL" reset="0">
             The action to take when the trigger fires. The values are explained
             in Table~\ref{tab:action}.
         </field>
@@ -545,7 +545,7 @@
         tie any number of upper bits to 0. The $|select|$ bits may only support
         0 (ignore).
 
-        <field name="mvalue" bits="31:26" access="R/W" reset="0">
+        <field name="mvalue" bits="31:26" access="WARL" reset="0">
             Data used together with \FcsrTextraThirtytwoMselect.
         </field>
         <field name="mselect" bits="25" access="WARL" reset="0">
@@ -558,7 +558,7 @@
         <field name="0" bits="24:18" access="R" reset="0" />
         <!-- This is space left open for H mode support. -->
 
-        <field name="svalue" bits="17:2" access="R/W" reset="0">
+        <field name="svalue" bits="17:2" access="WARL" reset="0">
             Data used together with \FcsrTextraThirtytwoSselect.
 
             This field should be tied to 0 when S-mode is not supported.
@@ -582,7 +582,7 @@
         This is the layout of {\tt textra} if XLEN is 64. The fields are defined
         above, in \RcsrTextraThirtytwo.
 
-        <field name="mvalue" bits="63:51" access="R/W" reset="0">
+        <field name="mvalue" bits="63:51" access="WARL" reset="0">
         </field>
         <field name="mselect" bits="50" access="WARL" reset="0">
         </field>
@@ -590,7 +590,7 @@
         <field name="0" bits="49:36" access="R" reset="0" />
         <!-- This is space left open for H mode support. -->
 
-        <field name="svalue" bits="35:2" access="R/W" reset="0">
+        <field name="svalue" bits="35:2" access="WARL" reset="0">
         </field>
         <field name="sselect" bits="1:0" access="WARL" reset="0">
         </field>
