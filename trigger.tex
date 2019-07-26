@@ -81,6 +81,8 @@ this table contradicts the table in the Privileged Spec, then the latter takes
 precedence. This table only applies if triggers are precise. Otherwise triggers
 will fire some indeterminate time after the event, and the priority is
 irrelevant.
+When triggers are chained, the priority is the lowest priority of the triggers
+in the chain.
 
 \begin{table}[H]
 \centering
@@ -91,23 +93,23 @@ irrelevant.
                 &      Code &             & \\
   \hline
   {\em Highest} &          3 & & icount \\ \hline
-                &          3 & Instruction address breakpoint & mcontrol address before execute \\ \hline
+                &          3 & Instruction address breakpoint & mcontrol execute address before \\ \hline
                 &         12 & Instruction page fault & \\ \hline
                 &          1 & Instruction access fault & \\ \hline
-                &          3 & & mcontrol data before execute \\ \hline
+                &          3 & & mcontrol execute data before \\ \hline
                 &          2 & Illegal instruction & \\
                 &          0 & Instruction address misaligned & \\
                 &   8, 9, 11 & Environment call & \\
                 &          3 & Environment break & \\
-                &          3 & Load/Store/AMO address breakpoint & mcontrol address before load/store \\
-                &          3 & & mcontrol data before store \\ \hline
+                &          3 & Load/Store/AMO address breakpoint & mcontrol load/store address before \\
+                &          3 & & mcontrol store data before \\ \hline
                 &          6 & Store/AMO address misaligned & \\
                 &          4 & Load address misaligned & \\ \hline
                 &         15 & Store/AMO page fault & \\
                 &         13 & Load page fault & \\ \hline
                 &          7 & Store/AMO access fault & \\
                 &          5 & Load access fault & \\ \hline
-                &          3 & & mcontrol data before load \\
+                &          3 & & mcontrol load data before \\
   {\em Lowest}  &          3 & & mcontrol after \\
   \hline
 \end{tabular}
