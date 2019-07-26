@@ -6,8 +6,7 @@ without having to execute a special instruction. This makes them invaluable
 when debugging code from ROM. They can trigger on execution of instructions at
 a given memory address, or on the address/data in loads/stores.  These are all
 features that can be useful without having the Debug Module present, so the
-Trigger Module is broken out as a separate piece that can be implemented
-separately.
+Trigger Module is broken out as a piece that can be implemented separately.
 
 A hart can be compliant with this specification without implementing any
 trigger functionality at all, but if it is implemented then it must conform to
@@ -15,6 +14,8 @@ this section. If triggers aren't implemented, the CSRs may not exist at all and
 accessing them results in an illegal instruction exception.
 
 Triggers do not fire while in Debug Mode.
+
+\section{Enumeration}
 
 \begin{steps}{Each trigger may support a variety of features. A debugger can
     build a list of all triggers and their features as follows:}
@@ -39,9 +40,84 @@ Triggers do not fire while in Debug Mode.
     bits of \RcsrTselect but fewer than $2^m$ triggers.
 \end{commentary}
 
-It is possible for a trigger with the ``enter Debug Mode'' action (1) and another
-trigger with the ``raise a breakpoint exception'' action (0) to fire at the same
-time. The preferred behavior is to have both actions take place.  It is
+\section{Actions}
+
+Triggers can be configured to take one of several actions when they fire.
+Table~\ref{tab:action} lists all options.
+
+\begin{table}[H]
+\centering
+\caption{\FcsrMcontrolAction encoding}
+\label{tab:action}
+\begin{tabular}{|r|L|}
+\hline
+Value & Description \\
+\hline
+0 & Raise a breakpoint exception into M-Mode. (Used when software wants to
+    use the trigger module without an external debugger attached.)
+    If the trigger is precise, \Rmepc must contain the address of the
+    instruction that caused the trigger to fire. If the trigger is imprecise
+    \Rmepc will contain the address of the next instruction to be executed. \\
+\hline
+1 & Enter Debug Mode. (Only supported when the trigger's \FcsrTdataOneDmode
+    is 1.)
+    If the trigger is precise, \RcsrDpc must contain the address of the
+    instruction that caused the trigger to fire. If the trigger is imprecise
+    \RcsrDpc will contain the address of the next instruction to be executed. \\
+\hline
+2 -- 5 & Reserved for use by the trace specification. \\
+\hline
+other & Reserved for future use. \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Priority}
+
+Table~\ref{tab:priority} lists the synchronous exceptions from the Privileged
+Spec, and where the various types of triggers fit in. The first 3 columns come
+from the Privileged Spec, and the final column shows where triggers fit in. If
+this table contradicts the table in the Privileged Spec, then the latter takes
+precedence. This table only applies if triggers are precise. Otherwise triggers
+will fire some indeterminate time after the event, and the priority is
+irrelevant.
+
+\begin{table}[H]
+\centering
+\label{tab:priority}
+\begin{tabular}{|l|r|l|l|}
+  \hline
+  Priority      & Exception & Description & Trigger \\
+                &      Code &             & \\
+  \hline
+  {\em Highest} &          3 & & icount \\ \hline
+                &          3 & Instruction address breakpoint & dmcontrol address before execute \\ \hline
+                &         12 & Instruction page fault & \\ \hline
+                &          1 & Instruction access fault & \\ \hline
+                &          3 & & dmcontrol data before execute \\ \hline
+                &          2 & Illegal instruction & \\
+                &          0 & Instruction address misaligned & \\
+                &   8, 9, 11 & Environment call & \\
+                &          3 & Environment break & \\
+                &          3 & Load/Store/AMO address breakpoint & dmcontrol data before load/store \\ \hline
+                &          6 & Store/AMO address misaligned & \\
+                &          4 & Load address misaligned & \\ \hline
+                &         15 & Store/AMO page fault & \\
+                &         13 & Load page fault & \\ \hline
+                &          7 & Store/AMO access fault & \\
+                &          5 & Load access fault & \\ \hline
+                &          3 & & dmcontrol data before load \\
+  {\em Lowest}  &          3 & & dmcontrol after \\
+  \hline
+\end{tabular}
+\caption{Synchronous exception priority in decreasing priority order.}
+\end{table}
+
+When multiple triggers in the same priority fire at once, \FcsrMcontrolHit (if
+implemented) is set for all of them. If one of these triggers has
+the ``enter Debug Mode'' action (1) and another
+trigger has the ``raise a breakpoint exception'' action (0),
+the preferred behavior is to have both actions take place.  It is
 implementation-dependent which of the two happens first.  This ensures both
 that the presence of an external debugger doesn't affect execution and that a
 trigger set by user code doesn't affect the external debugger. If this is not
