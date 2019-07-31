@@ -237,7 +237,11 @@
         <field name="timing" bits="18" access="WARL" reset="0">
             0: The action for this trigger will be taken just before the
             instruction that triggered it is executed, but after all preceding
-            instructions are committed. If this is combined with \FcsrMcontrolLoad
+            instructions are committed. \Rmepc or \RcsrDpc (depending on
+            \FcsrMcontrolAction) must be set to the virtual address of the
+            instruction that matched.
+
+            If this is combined with \FcsrMcontrolLoad
             then there will be side effects even if the instruction isn't fully
             executed.
 
@@ -245,6 +249,9 @@
             that triggered it is executed. It should be taken before the next
             instruction is executed, but it is better to implement triggers imprecisely
             than to not implement them at all.
+            \Rmepc or \RcsrDpc (depending on \FcsrMcontrolAction) must be set to
+            the virtaul address of the next instruction that must be executed to
+            preserve the program flow.
 
             Most hardware will only implement one timing or the other, possibly
             dependent on \FcsrMcontrolSelect, \FcsrMcontrolExecute,

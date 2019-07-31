@@ -55,15 +55,13 @@ Value & Description \\
 \hline
 0 & Raise a breakpoint exception into M-Mode. (Used when software wants to
     use the trigger module without an external debugger attached.)
-    If the trigger is precise, \Rmepc must contain the address of the
-    instruction that caused the trigger to fire. If the trigger is imprecise
-    \Rmepc will contain the address of the next instruction to be executed. \\
+    \Rmepc must contain the virtual address of the next instruction that must
+    be executed to preserve the program flow. \\
 \hline
 1 & Enter Debug Mode. (Only legal when the trigger's \FcsrTdataOneDmode
     is 1.)
-    If the trigger is precise, \RcsrDpc must contain the address of the
-    instruction that caused the trigger to fire. If the trigger is imprecise
-    \RcsrDpc will contain the address of the next instruction to be executed. \\
+    \RcsrDpc must contain the virtual address of the next instruction that must
+    be executed to preserve the program flow. \\
 \hline
 2 -- 5 & Reserved for use by the trace specification. \\
 \hline
