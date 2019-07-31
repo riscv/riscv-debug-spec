@@ -90,7 +90,12 @@ in the chain.
   Priority      & Exception & Description & Trigger \\
                 &      Code &             & \\
   \hline
-  {\em Highest} &          3 & & icount \\ \hline
+  {\em Highest} &          3 & & etrigger \\
+                &          3 & & icount \\
+                &          3 & & itrigger \\
+                &          3 & & mcontrol after \\
+                &            & & \hspace{2em}(on previous instruction) \\
+                \hline
                 &          3 & Instruction address breakpoint & mcontrol execute address before \\ \hline
                 &         12 & Instruction page fault & \\ \hline
                 &          1 & Instruction access fault & \\ \hline
@@ -106,9 +111,8 @@ in the chain.
                 &         15 & Store/AMO page fault & \\
                 &         13 & Load page fault & \\ \hline
                 &          7 & Store/AMO access fault & \\
-                &          5 & Load access fault & \\ \hline
-                &          3 & & mcontrol load data before \\
-  {\em Lowest}  &          3 & & mcontrol after \\
+                &          5 & Load access fault & \\
+  {\em Lowest}  &          3 & & mcontrol load data before \\
   \hline
 \end{tabular}
 \caption{Synchronous exception priority in decreasing priority order.}
