@@ -210,12 +210,12 @@
         <field name="0" bits="13:0" />
     </register>
 
-    <register name="Command Discovery">
+    <register name="Feature Discovery">
         This optional command provides access to a data structure that
         describes which abstract commands (full register contents) are
         supported for the hart currently selected by \Fhartsel. If it is
         implemented the structure must describe every implemented abstract
-        command, except for the Command Discovery command itself.
+        command, except for the Feature Discovery command itself.
 
         The data structure consists of a series of 32-bit words.  The words at
         even indices consist of a sample supported command. The words at odd
@@ -231,7 +231,7 @@
 
         \begin{table}[htp]
             \centering
-            \caption{Example Command Discovery Structure}
+            \caption{Example Feature Discovery Structure}
             \label{tab:command_discovery}
             \begin{tabulary}{\textwidth}{|l|l|L|}
                 \hline
@@ -251,7 +251,7 @@
         exist, it sets \Fcmderr to 2.
 
         <field name="cmdtype" bits="31:24">
-            This is 3 to indicate Command Discovery.
+            This is 3 to indicate Feature Discovery.
         </field>
         <field name="0" bits="23:16" />
         <field name="index" bits="15:0">
