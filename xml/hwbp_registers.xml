@@ -241,9 +241,11 @@
             \FcsrMcontrolAction) must be set to the virtual address of the
             instruction that matched.
 
-            If this is combined with \FcsrMcontrolLoad
-            then there will be side effects even if the instruction isn't fully
-            executed.
+            If this is combined with \FcsrMcontrolLoad then a memory access will be
+            performed (including any side effects of performing such an access) even
+            though the load will not update its destination register. Debuggers
+            should consider this when setting such breakpoints on, for example,
+            memory-mapped I/O addresses.
 
             1: The action for this trigger will be taken after the instruction
             that triggered it is executed. It should be taken before the next
