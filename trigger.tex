@@ -74,9 +74,13 @@ other & Reserved for future use. \\
 
 Table~\ref{tab:priority} lists the synchronous exceptions from the Privileged
 Spec, and where the various types of triggers fit in. The first 3 columns come
-from the Privileged Spec, and the final column shows where triggers fit in. If
-this table contradicts the table in the Privileged Spec, then the latter takes
-precedence. This table only applies if triggers are precise. Otherwise triggers
+from the Privileged Spec, and the final column shows where triggers fit in.
+Priorities in the table are separated by horizontal lines, so e.g. etrigger and
+itrigger have the same priority.
+If this table contradicts the table in the Privileged Spec, then the latter
+takes precedence.
+
+This table only applies if triggers are precise. Otherwise triggers
 will fire some indeterminate time after the event, and the priority is
 irrelevant.
 When triggers are chained, the priority is the lowest priority of the triggers
