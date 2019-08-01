@@ -250,7 +250,7 @@
             instruction is executed, but it is better to implement triggers imprecisely
             than to not implement them at all.
             \Rmepc or \RcsrDpc (depending on \FcsrMcontrolAction) must be set to
-            the virtaul address of the next instruction that must be executed to
+            the virtual address of the next instruction that must be executed to
             preserve the program flow.
 
             Most hardware will only implement one timing or the other, possibly
