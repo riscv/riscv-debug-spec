@@ -46,6 +46,11 @@ external debugging. How Debug Mode is implemented is not specified here.
 \item Effective XLEN is DXLEN.
 \end{steps}
 
+While in Debug Mode, the hart is waiting for commands from the external
+debugger.  Except when executing code from the optional Program Buffer,
+architectural forward progress guarantees are suspended while the hart
+is in Debug Mode.
+
 \begin{commentary}
     In general, the debugger is expected to be able to simulate all the effects of \FcsrMcontrolMprv.
     The exception is the case of Sv32 systems, which need \FcsrMcontrolMprv functionality in order to access
