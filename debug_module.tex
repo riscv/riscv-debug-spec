@@ -82,6 +82,10 @@ While \FdmDmcontrolNdmreset or any external reset is asserted, the only supporte
 operations are reading and writing \RdmDmcontrol. The behavior of other accesses
 is undefined.
 
+A debugger must only use \FdmDmcontrolDmactive to reset the debug module.  If the
+debug module is reset by any other means when \FdmDmcontrolDmactive is 1, the
+behavior of the debug module is undefined.
+
 There is no requirement on the duration of the assertion of \FdmDmcontrolNdmreset.
 The implementation must ensure that a write of \FdmDmcontrolNdmreset to 1 followed by
 a write of \FdmDmcontrolNdmreset to 0 triggers system reset. The system may take
