@@ -159,7 +159,7 @@
 
             Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
         </field>
-        <field name="hartreset" bits="29" access="R/W" reset="0">
+        <field name="hartreset" bits="29" access="WARL" reset="0">
             This optional field writes the reset bit for all the currently
             selected harts.  To perform a reset the debugger writes 1, and then
             writes 0 to deassert the reset signal.
