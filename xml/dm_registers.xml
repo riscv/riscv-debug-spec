@@ -385,6 +385,8 @@
             5 (bus): The abstract command failed due to a bus error (e.g.\ 
             alignment, access size, or timeout).
 
+            6: Reserved for future use.
+
             7 (other): The command failed for another reason.
         </field>
         <field name="0" bits="7:4" access="R" reset="0"/>
