@@ -244,9 +244,7 @@
             1: The module functions normally.
 
             No other mechanism should exist that may result in resetting the
-            Debug Module after power up, with the possible (but not
-            recommended) exception of a global reset signal that resets the
-            entire platform.
+            Debug Module after power up.
 
             A debugger may pulse this bit low to get the Debug Module into a
             known state.
