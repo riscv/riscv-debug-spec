@@ -69,7 +69,9 @@ Exactly what is affected by this reset is implementation dependent, as long as
 it is possible to debug programs from the first instruction executed.
 The Debug Module's own state and registers should only be
 reset at power-up and while
-\FdmDmcontrolDmactive in \RdmDmcontrol is 0.
+\FdmDmcontrolDmactive in \RdmDmcontrol is 0. If there is another mechanism to
+reset the DM, this mechanism must also reset all the harts accessible to the
+DM.
 The halt state of harts should be
 maintained across system reset provided that \FdmDmcontrolDmactive is 1,
 although trigger CSRs may be cleared.
