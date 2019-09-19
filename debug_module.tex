@@ -56,25 +56,46 @@ debug devices, other cores, additional DMs, etc. If there are additional DMs
 on this DMI, the base address of the next DM in the DMI address space is given
 in \RdmNextdm.
 
-
 The Debug Module is controlled via register accesses to its DMI address space.
 
 \section{Reset Control} \label{reset}
 
-The Debug Module controls a global reset signal, \FdmDmcontrolNdmreset
-(non-debug module reset),
-which can reset, or hold in reset, every component in the platform,
-except for the Debug Module and Debug Transport Modules.
-Exactly what is affected by this reset is implementation dependent, as long as
-it is possible to debug programs from the first instruction executed.
+There are two methods that allow a debugger to reset harts.
+\FdmDmcontrolNdmreset resets all the harts in the system, as well as all other
+parts of the system except for the Debug Module and Debug Transport Modules.
+Exactly what is affected by this reset is implementation dependent, but it
+must be possible to debug programs from the first instruction executed.
+\FdmDmcontrolHartreset resets all the currently selected harts. In this case an
+implementation may reset more harts than just the ones that are selected. The
+debugger can discover which other harts are reset (if any) by selecting them
+and checking \FdmDmstatusAnyhavereset and \FdmDmstatusAllhavereset.
+
+To perform either of these resets, the debugger first asserts the bit, and then
+clears it. The actual reset may start as soon as the bit is asserted, but is allowed
+to start a long time after the bit is deasserted. While the reset is
+on-going, harts are either in the running state, indicating it's possible to
+perform some abstract commands during this time, or in the unavailable state,
+indicating it's not possible to perform any abstract commands during this time.
+Once a hart's reset is complete, {\tt havereset} becomes set.  When a hart comes out
+of reset and \FdmDmcontrolHaltreq or \Fresethaltreq are set, the hart will
+immediately enter Debug Mode. Otherwise it will execute normally.
+
+*** TODO *** How does a debugger know that the reset has started and they can
+execute abstract commands during the reset? Having the debugger halt all harts
+so it can tell whether they're running doesn't really work, because below we
+say that hart state should be maintained? Why do we say that? 2017 change by
+Megan.
+*** /TODO ***
+
+The halt state of harts should be
+maintained across system reset provided that \FdmDmcontrolDmactive is 1,
+although trigger CSRs may be cleared.
+
 The Debug Module's own state and registers should only be
 reset at power-up and while
 \FdmDmcontrolDmactive in \RdmDmcontrol is 0. If there is another mechanism to
 reset the DM, this mechanism must also reset all the harts accessible to the
 DM.
-The halt state of harts should be
-maintained across system reset provided that \FdmDmcontrolDmactive is 1,
-although trigger CSRs may be cleared.
 
 Due to clock and power domain crossing issues,
 it may not be possible to perform arbitrary DMI accesses across
@@ -82,18 +103,6 @@ system reset.
 While \FdmDmcontrolNdmreset or any external reset is asserted, the only supported DM
 operations are reading and writing \RdmDmcontrol. The behavior of other accesses
 is undefined.
-
-There is no requirement on the duration of the assertion of \FdmDmcontrolNdmreset.
-The implementation must ensure that a write of \FdmDmcontrolNdmreset to 1 followed by
-a write of \FdmDmcontrolNdmreset to 0 triggers system reset. The system may take
-an arbitrarily long time to come out of reset, as reported by \FdmDmstatusAllunavail,
-\FdmDmstatusAnyunavail.
-
-Individual harts (or several at once) can be reset by selecting them, setting
-and then clearing \FdmDmcontrolHartreset. In this case an implementation may reset more
-harts than just the ones that are selected. The debugger can discover which
-other harts are reset (if any) by selecting them and checking \FdmDmstatusAnyhavereset
-and \FdmDmstatusAllhavereset.
 
 When harts have been reset, they must set a sticky {\tt havereset} state bit.
 The conceptual {\tt havereset} state bits can be read for selected harts in
@@ -103,9 +112,6 @@ The {\tt havereset} bits for the selected harts
 can be cleared by writing 1 to \FdmDmcontrolAckhavereset in \RdmDmcontrol.
 The {\tt havereset} bits may or may not be cleared
 when \FdmDmcontrolDmactive is low.
-
-When a hart comes out of reset and \FdmDmcontrolHaltreq or \Fresethaltreq are set, the
-hart will immediately enter Debug Mode. Otherwise it will execute normally.
 
 \section{Selecting Harts} \label{selectingharts}
 
