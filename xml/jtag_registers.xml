@@ -88,8 +88,7 @@
         In Capture-DR, the DTM updates \FdmSbdataZeroData with the result from that
         operation, updating \FdtmDmiOp if the current \FdtmDmiOp isn't sticky.
 
-        See Section~\ref{dmiaccess} and Table~\ref{tab:memread} for examples
-        of how this is used.
+        See Section~\ref{dmiaccess} for examples of how this is used.
 
         \begin{commentary}
         The still-in-progress status is sticky to accommodate debuggers that
