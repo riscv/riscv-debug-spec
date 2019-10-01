@@ -62,7 +62,8 @@ The Debug Module is controlled via register accesses to its DMI address space.
 
 There are two methods that allow a debugger to reset harts.
 \FdmDmcontrolNdmreset resets all the harts in the system, as well as all other
-parts of the system except for the Debug Module and Debug Transport Modules.
+parts of the system except for the Debug Modules, Debug Transport Modules,
+and Debug Module Interface.
 Exactly what is affected by this reset is implementation dependent, but it
 must be possible to debug programs from the first instruction executed.
 \FdmDmcontrolHartreset resets all the currently selected harts. In this case an
@@ -71,8 +72,9 @@ debugger can discover which other harts are reset (if any) by selecting them
 and checking \FdmDmstatusAnyhavereset and \FdmDmstatusAllhavereset.
 
 To perform either of these resets, the debugger first asserts the bit, and then
-clears it. The actual reset may start as soon as the bit is asserted, but is allowed
-to start a long time after the bit is deasserted. While the reset is
+clears it. The actual reset may start as soon as the bit is asserted, but may
+start an arbitrarily long time after the bit is deasserted. The reset itself
+may also take an arbitrarily long time.  While the reset is
 on-going, harts are either in the running state, indicating it's possible to
 perform some abstract commands during this time, or in the unavailable state,
 indicating it's not possible to perform any abstract commands during this time.
