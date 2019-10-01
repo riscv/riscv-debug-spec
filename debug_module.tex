@@ -83,12 +83,10 @@ of reset and \FdmDmcontrolHaltreq or \Fresethaltreq are set, the hart will
 immediately enter Debug Mode (halted state). Otherwise it will execute normally
 (running state).
 
-*** TODO *** How does a debugger know that the reset has started and they can
-execute abstract commands during the reset? Having the debugger halt all harts
-so it can tell whether they're running doesn't really work, because below we
-say that hart state should be maintained? Why do we say that? 2017 change by
-Megan.
-*** /TODO ***
+\begin{commentary}
+    There is no general, reliable way for the debugger to know when reset has
+    actually begun.
+\end{commentary}
 
 The halt state of harts should be
 maintained across system reset provided that \FdmDmcontrolDmactive is 1,
