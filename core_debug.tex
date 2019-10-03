@@ -12,10 +12,12 @@ optional.
 \section{Debug Mode} \label{debugmode}
 
 Debug Mode is a special processor mode used only when a hart is halted for
-external debugging. How Debug Mode is implemented is not specified here.
+external debugging. Because the hart is halted, there is no forward progress in
+the normal instruction stream.
+How Debug Mode is implemented is not specified here.
 
-\begin{steps}{When executing code from the optional Program Buffer, the hart
-    stays in Debug Mode and the following apply:}
+\begin{steps}{When executing code due to an abstract command, the hart stays in
+    Debug Mode and the following apply:}
 \item All operations are executed at machine mode privilege level, except that
     \FcsrMcontrolMprv in \Rmstatus may be ignored according to \FcsrDcsrMprven.
 \item All interrupts (including NMI) are masked.
@@ -44,6 +46,7 @@ external debugging. How Debug Mode is implemented is not specified here.
 \item Instructions that depend on the value of the PC (e.g.\ {\tt auipc}) may act
     as illegal instructions.
 \item Effective XLEN is DXLEN.
+\item Forward progress is guaranteed.
 \end{steps}
 
 \begin{commentary}
