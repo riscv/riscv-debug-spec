@@ -12,10 +12,12 @@ optional.
 \section{Debug Mode} \label{debugmode}
 
 Debug Mode is a special processor mode used only when a hart is halted for
-external debugging. How Debug Mode is implemented is not specified here.
+external debugging. Because the hart is halted, there is no forward progress in
+the normal instruction stream.
+How Debug Mode is implemented is not specified here.
 
-\begin{steps}{When executing code from the optional Program Buffer, the hart
-    stays in Debug Mode and the following apply:}
+\begin{steps}{When executing code due to an abstract command, the hart stays in
+    Debug Mode and the following apply:}
 \item All operations are executed at machine mode privilege level, except that
     \FcsrMcontrolMprv in \Rmstatus may be ignored according to \FcsrDcsrMprven.
 \item All interrupts (including NMI) are masked.
@@ -23,8 +25,10 @@ external debugging. How Debug Mode is implemented is not specified here.
     epc}, {\tt tval}, {\tt dpc}, and \Rmstatus. They do end execution of the
     Program Buffer.
 \item No action is taken if a trigger matches.
-\item Counters may be stopped, depending on \FcsrDcsrStopcount in \RcsrDcsr.
-\item Timers may be stopped, depending on \FcsrDcsrStoptime in \RcsrDcsr.
+\item If \FcsrDcsrStopcount is 0 then counters continue. If it is 1 then
+    counters are stopped.
+\item If \FcsrDcsrStoptime is 0 then timers continue. If it is 1 then
+    timers are stopped.
 \item The {\tt wfi} instruction acts as a {\tt nop}.
 \item Almost all instructions that change the privilege level have undefined
     behavior.  This includes {\tt ecall}, {\tt mret}, {\tt sret},
@@ -35,15 +39,16 @@ external debugging. How Debug Mode is implemented is not specified here.
     of {\tt fence} instructions.
 \item All control transfer instructions may act as illegal instructions if
     their destination is in the Program Buffer. If one such instruction acts as
-    an illegal instruction, all such instructions must act as an illegal
-    instruction.
+    an illegal instruction, all such instructions must act as illegal
+    instructions.
 \item All control transfer instructions may act as illegal instructions if
     their destination is outside the Program Buffer. If one such instruction
-    acts as an illegal instruction, all such instructions must act as an
-    illegal instruction.
+    acts as an illegal instruction, all such instructions must act as
+    illegal instructions.
 \item Instructions that depend on the value of the PC (e.g.\ {\tt auipc}) may act
     as illegal instructions.
 \item Effective XLEN is DXLEN.
+\item Forward progress is guaranteed.
 \end{steps}
 
 \begin{commentary}
