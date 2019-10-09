@@ -4,30 +4,39 @@
         \begin{steps}{This command gives the debugger access to CPU registers
         and allows it to execute the Program Buffer.
         It performs the following sequence of operations:}
-        \item If \Fwrite is clear and \Ftransfer is set, then copy data from
-            the register specified by \Fregno into the {\tt arg0} region of
+        \item If \FacAccessregisterWrite is clear and \FacAccessregisterTransfer is set, then copy data from
+            the register specified by \FacAccessregisterRegno into the {\tt arg0} region of
             {\tt data}, and perform any side effects that occur when this
             register is read from M-mode.
-        \item If \Fwrite is set and \Ftransfer is set, then copy data from the
+        \item If \FacAccessregisterWrite is set and \FacAccessregisterTransfer is set, then copy data from the
             {\tt arg0} region of {\tt data} into the register specified by
-            \Fregno, and perform any side effects that occur when this register
+            \FacAccessregisterRegno, and perform any side effects that occur when this register
             is written from M-mode.
-        \item If \Faarpostincrement is set, increment \Fregno.
-        \item Execute the Program Buffer, if \Fpostexec is set.
+        \item If \FacAccessregisterAarpostincrement is set, increment \FacAccessregisterRegno.
+        \item Execute the Program Buffer, if \FacAccessregisterPostexec is set.
         \end{steps}
 
-        If any of these operations fail, \Fcmderr is set and none of the
+        If any of these operations fail, \FdmAbstractcsCmderr is set and none of the
         remaining steps are executed. An implementation may detect an upcoming
         failure early, and fail the overall command before it reaches the step
         that would cause failure. If the failure is that the requested register
-        does not exist in the hart, \Fcmderr must be set to 3 (exception).
+        does not exist in the hart, \FdmAbstractcsCmderr must be set to 3 (exception).
 
         Debug Modules must implement this command
         and must support read and write access to all GPRs when the selected hart is halted.
         Debug Modules may optionally support accessing other registers,
         or accessing registers when the hart is running.
-        Each individual register (aside from GPRs) may be supported differently
-        across read, write, and halt status.
+        It is recommended that if one register in a group is accessible, then
+        all registers in that group are accessible, but each individual
+        register (aside from GPRs) may be supported differently across read,
+        write, and halt status.
+
+        Registers might not be accessible if they wouldn't be accessible by M
+        mode code currently running. (E.g. {\tt fflags} may not be accessible
+        when {\tt mstatus}.$|FS|$ is 0.) If this is the case, the debugger is
+        responsible for changing state to make the registers accessible. The
+        Core Debug Registers (Section~\ref{debreg}) should be accessible if
+        abstract CSR access is implemented.
 
         \begin{table}[htp]
             \centering
@@ -35,7 +44,9 @@
             \label{tab:regno}
             \begin{tabulary}{\textwidth}{|r|l|}
                 \hline
-                0x0000 -- 0x0fff &amp; CSRs. The ``PC'' can be accessed here through \Rdpc.
+                Numbers &amp; Group Description \\
+                \hline
+                0x0000 -- 0x0fff &amp; CSRs. The ``PC'' can be accessed here through \RcsrDpc.
                 \\
                 \hline
                 0x1000 -- 0x101f &amp; GPRs \\
@@ -49,7 +60,7 @@
         \end{table}
 
         \begin{commentary}
-            The encoding of \Faarsize was chosen to match \Fsbaccess in \Rsbcs.
+            The encoding of \FacAccessregisterAarsize was chosen to match \FdmSbcsSbaccess in \RdmSbcs.
         \end{commentary}
 
         This command modifies {\tt arg0} only when a register is read. The
@@ -66,8 +77,8 @@
 
             4: Access the lowest 128 bits of the register.
 
-            If \Faarsize specifies a size larger than the register's actual size,
-            then the access must fail. If a register is accessible, then reads of \Faarsize
+            If \FacAccessregisterAarsize specifies a size larger than the register's actual size,
+            then the access must fail. If a register is accessible, then reads of \FacAccessregisterAarsize
             less than or equal to the register's actual size must be supported.
 
             This field controls the Argument Width as referenced in
@@ -76,27 +87,29 @@
         <field name="aarpostincrement" bits="19">
             0: No effect. This variant must be supported.
 
-            1: After a successful register access, \Fregno is incremented
-            (wrapping around to 0). Supporting this variant is optional.
+            1: After a successful register access, \FacAccessregisterRegno is
+            incremented (wrapping around to 0). Supporting this variant is
+            optional. It is undefined whether the increment happens when
+            \FacAccessregisterTransfer is 0.
         </field>
         <field name="postexec" bits="18">
             0: No effect. This variant must be supported, and is the only
-            supported one if \Fprogbufsize is 0.
+            supported one if \FdmAbstractcsProgbufsize is 0.
 
             1: Execute the program in the Program Buffer exactly once after
             performing the transfer, if any. Supporting this variant is
             optional.
         </field>
         <field name="transfer" bits = "17">
-            0: Don't do the operation specified by \Fwrite.
+            0: Don't do the operation specified by \FacAccessregisterWrite.
 
-            1: Do the operation specified by \Fwrite.
+            1: Do the operation specified by \FacAccessregisterWrite.
 
             This bit can be used to just execute the Program Buffer without
-            having to worry about placing valid values into \Faarsize or \Fregno.
+            having to worry about placing valid values into \FacAccessregisterAarsize or \FacAccessregisterRegno.
         </field>
         <field name="write" bits="16">
-            When \Ftransfer is set:
+            When \FacAccessregisterTransfer is set:
             0: Copy data from the specified register into {\tt arg0} portion
                of {\tt data}.
 
@@ -106,17 +119,17 @@
         <field name="regno" bits="15:0">
           Number of the register to access, as described in
           Table~\ref{tab:regno}.
-          \Rdpc may be used as an alias for PC if this command is
+          \RcsrDpc may be used as an alias for PC if this command is
           supported on a non-halted hart.
         </field>
     </register>
 
     <register name="Quick Access">
         \begin{steps}{Perform the following sequence of operations:}
-        \item If the hart is halted, the command  sets \Fcmderr to ``halt/resume'' and does not continue.
+        \item If the hart is halted, the command  sets \FdmAbstractcsCmderr to ``halt/resume'' and does not continue.
         \item Halt the hart. If the hart halts for some other reason (e.g. breakpoint), the command
-            sets \Fcmderr to ``halt/resume'' and does not continue.
-        \item Execute the Program Buffer. If an exception occurs, \Fcmderr is set to ``exception''
+            sets \FdmAbstractcsCmderr to ``halt/resume'' and does not continue.
+        \item Execute the Program Buffer. If an exception occurs, \FdmAbstractcsCmderr is set to ``exception''
             and the program buffer execution ends, but the quick access command continues.
         \item Resume the hart.
         \end{steps}
@@ -138,13 +151,13 @@
             registers, etc. The command performs the following sequence of
             operations:}
         \item Copy data from the memory location specified in {\tt arg1} into the
-            {\tt arg0} portion of {\tt data}, if \Fwrite is clear.
+            {\tt arg0} portion of {\tt data}, if \FacAccessregisterWrite is clear.
         \item Copy data from the {\tt arg0} portion of {\tt data} into the
-            memory location specified in {\tt arg1}, if \Fwrite is set.
-        \item If \Faampostincrement is set, increment {\tt arg1}.
+            memory location specified in {\tt arg1}, if \FacAccessregisterWrite is set.
+        \item If \FacAccessmemoryAampostincrement is set, increment {\tt arg1}.
         \end{steps}
 
-        If any of these operations fail, \Fcmderr is set and none of the
+        If any of these operations fail, \FdmAbstractcsCmderr is set and none of the
         remaining steps are executed. An access may only fail if the hart,
         running M-mode code, might encounter that same failure when it attempts
         the same access.
@@ -159,11 +172,11 @@
         support memory accesses while the hart is halted.
 
         \begin{commentary}
-            The encoding of \Faamsize was chosen to match \Fsbaccess in \Rsbcs.
+            The encoding of \FacAccessmemoryAamsize was chosen to match \FdmSbcsSbaccess in \RdmSbcs.
         \end{commentary}
 
         This command modifies {\tt arg0} only when memory is read. It modifies
-        {\tt arg1} only if \Faampostincrement is set.  The other {\tt data}
+        {\tt arg1} only if \FacAccessmemoryAampostincrement is set.  The other {\tt data}
         registers are not changed.
 
         <field name="cmdtype" bits="31:24">
@@ -177,7 +190,7 @@
             0: Addresses are physical (to the hart they are performed on).
 
             1: Addresses are virtual, and translated the way they would be from
-            M-mode, with \Fmprv set.
+            M-mode, with \FcsrMcontrolMprv set.
         </field>
         <field name="aamsize" bits="22:20">
             0: Access the lowest 8 bits of the memory location.
@@ -193,7 +206,7 @@
         <field name="aampostincrement" bits="19">
             After a memory access has completed, if this bit is 1, increment
             {\tt arg1} (which contains the address used) by the number of bytes
-            encoded in \Faamsize.
+            encoded in \FacAccessmemoryAamsize.
         </field>
         <field name="0" bits="18:17" />
         <field name="write" bits="16">

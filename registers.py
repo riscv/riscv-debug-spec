@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 import sys
 import xml.etree.ElementTree
@@ -8,6 +8,7 @@ from sympy.functions.elementary.miscellaneous import Max
 import math
 import re
 import collections
+from functools import cmp_to_key
 
 class Registers( object ):
     def __init__( self, name, label, prefix, description, skip_index,
@@ -46,7 +47,7 @@ class Register( object ):
 
     def add_field( self, field ):
         self.fields.append( field )
-        self.fields.sort( cmp=sympy_compare_lowBit, reverse=True )
+        self.fields.sort( key=cmp_to_key(sympy_compare_lowBit), reverse=True )
 
     def check( self ):
         previous = None
@@ -157,33 +158,40 @@ def parse_xml( path ):
         registers.add_register( register )
     return registers
 
-def toLatexIdentifier( text ):
+def toLatexIdentifier( *args ):
     replacements = (
             ( '/', '' ),
             ( '\\_', '' ),
             ( ' ', '' ),
             ( '-', '' ),
+            ( '_', '' ),
             ( '(', '' ),
             ( ')', '' ),
-            ( '64', 'sixtyfour' ),
-            ( '32', 'thirtytwo' ),
-            ( '28', 'twentyeight' ),
-            ( '16', 'sixteen' ),
-            ( '15', 'fifteen' ),
-            ( '11', 'eleven' ),
-            ( '9', 'nine' ),
-            ( '8', 'eight' ),
-            ( '7', 'seven' ),
-            ( '6', 'six' ),
-            ( '5', 'five' ),
-            ( '4', 'four' ),
-            ( '3', 'three' ),
-            ( '2', 'two' ),
-            ( '1', 'one' ),
-            ( '0', 'zero' )
+            ( '64', 'Sixtyfour' ),
+            ( '32', 'Thirtytwo' ),
+            ( '28', 'Twentyeight' ),
+            ( '16', 'Sixteen' ),
+            ( '15', 'Fifteen' ),
+            ( '11', 'Eleven' ),
+            ( '9', 'Nine' ),
+            ( '8', 'Eight' ),
+            ( '7', 'Seven' ),
+            ( '6', 'Six' ),
+            ( '5', 'Five' ),
+            ( '4', 'Four' ),
+            ( '3', 'Three' ),
+            ( '2', 'Two' ),
+            ( '1', 'One' ),
+            ( '0', 'Zero' )
             )
-    for frm, to in replacements:
-        text = text.replace( frm, to )
+    text = ""
+    for arg in args:
+        arg = (arg or "").lower()
+        for frm, to in replacements:
+            arg = arg.replace( frm, to )
+        if arg and text:
+            arg = arg[0].upper() + arg[1:]
+        text += arg
     return text
 
 def toCIdentifier( text ):
@@ -191,14 +199,17 @@ def toCIdentifier( text ):
 
 def write_definitions( fd, registers ):
     for r in registers.registers:
+        regid = r.short or r.label
         if r.define:
-            macroName = toLatexIdentifier( r.short or r.label )
+            macroName = toLatexIdentifier( registers.prefix, regid )
             fd.write( "\\defregname{\\R%s}{\\hyperref[%s]{%s}}\n" % (
-                macroName, r.label, r.short or r.label ) )
+                macroName, toLatexIdentifier( registers.prefix, r.label ), r.short or r.label ) )
         for f in r.fields:
             if f.description and f.define:
                 fd.write( "\\deffieldname{\\F%s}{\\hyperref[%s]{%s}}\n" % (
-                        toLatexIdentifier( f.name ), f.name, f.name ) )
+                        toLatexIdentifier( registers.prefix, regid, f.name ),
+                        toLatexIdentifier( registers.prefix, regid, f.name ),
+                        f.name ) )
 
 def write_cheader( fd, registers ):
     definitions = []
@@ -263,7 +274,7 @@ def write_chisel( fd, registers ):
 
     for r in registers.registers:
         name = toCIdentifier( r.short or r.label ).upper()
- 
+
         if (r.fields and r.define) :
             sorted_fields = sorted(r.fields, key = lambda x: int(x.lowBit), reverse = True)
             topbit = 31
@@ -281,8 +292,8 @@ def write_chisel( fd, registers ):
 
                 if (newtopbit != topbit):
                     reservedwidth = topbit - newtopbit
-                    print reserved
-                    print reservedwidth
+                    print(reserved)
+                    print(reservedwidth)
                     fd.write("  val reserved%d = UInt(%d.W)\n\n" % (reserved, reservedwidth))
                     reserved = reserved + 1
                 if not f.define:
@@ -322,26 +333,26 @@ def compare_address(a, b):
         return cmp(a, b)
 
 def print_latex_index( registers ):
-    print registers.description
+    print(registers.description)
     # Force this table HERE so that it doesn't get moved into the next section,
     # which will be the description of a register.
-    print "\\begin{table}[H]"
-    print "   \\begin{center}"
-    print "      \\caption{%s}" % registers.name
-    print "      \\label{%s}" % registers.label
+    print("\\begin{table}[H]")
+    print("   \\begin{center}")
+    print("      \\caption{%s}" % registers.name)
+    print("      \\label{%s}" % toLatexIdentifier(registers.prefix, registers.label))
     if any( r.sdesc for r in registers.registers ):
-        print "      \\begin{tabular}{|r|l|l|l|}"
-        print "      \\hline"
-        print "      Address & Name & Description & Page \\\\"
+        print("      \\begin{tabular}{|r|l|l|l|}")
+        print("      \\hline")
+        print("      Address & Name & Description & Page \\\\")
     else:
-        print "      \\begin{tabular}{|r|l|l|}"
-        print "      \\hline"
-        print "      Address & Name & Page \\\\"
-    print "      \\hline"
+        print("      \\begin{tabular}{|r|l|l|}")
+        print("      \\hline")
+        print("      Address & Name & Page \\\\")
+    print("      \\hline")
     for r in sorted( registers.registers,
-            cmp=lambda a, b: compare_address(a.address, b.address)):
+            key=cmp_to_key(lambda a, b: compare_address(a.address, b.address))):
         if r.short and (r.fields or r.description):
-            page = "\\pageref{%s}" % r.short
+            page = "\\pageref{%s}" % toLatexIdentifier(registers.prefix, r.short)
         else:
             page = ""
         if r.short:
@@ -349,13 +360,13 @@ def print_latex_index( registers ):
         else:
             name = r.name
         if r.sdesc:
-            print "%s & %s & %s & %s \\\\" % ( r.address, name, r.sdesc, page )
+            print("%s & %s & %s & %s \\\\" % ( r.address, name, r.sdesc, page ))
         else:
-            print "%s & %s & %s \\\\" % ( r.address, name, page )
-    print "         \hline"
-    print "      \end{tabular}"
-    print "   \end{center}"
-    print "\end{table}"
+            print("%s & %s & %s \\\\" % ( r.address, name, page ))
+    print("         \hline")
+    print("      \end{tabular}")
+    print("   \end{center}")
+    print("\end{table}")
 
 def print_latex_custom( registers ):
     sub = "sub" * registers.depth
@@ -365,27 +376,27 @@ def print_latex_custom( registers ):
 
         if r.short:
             if r.address:
-                print "\\%ssection{%s ({\\tt %s}, at %s)}" % ( sub, r.name,
-                        r.short, r.address )
+                print("\\%ssection{%s ({\\tt %s}, at %s)}" % ( sub, r.name,
+                        r.short, r.address ))
             else:
-                print "\\%ssection{%s ({\\tt %s})}" % ( sub, r.name, r.short )
-            print "\index{%s}" % r.short
+                print("\\%ssection{%s ({\\tt %s})}" % ( sub, r.name, r.short ))
+            print("\index{%s}" % r.short)
         else:
             if r.address:
-                print "\\%ssection{%s (at %s)}" % ( sub, r.name, r.address )
+                print("\\%ssection{%s (at %s)}" % ( sub, r.name, r.address ))
             else:
-                print "\\%ssection{%s}" % ( sub, r.name )
-            print "\index{%s}" % r.name
+                print("\\%ssection{%s}" % ( sub, r.name ))
+            print("\index{%s}" % r.name)
         if r.label and r.define:
-            print "\\label{%s}" % r.label
-        print r.description
-        print
+            print("\\label{%s}" % toLatexIdentifier(registers.prefix, r.label))
+        print(r.description)
+        print()
 
         if r.fields:
             if all(f.access in ('R', '0') for f in r.fields):
-                print "This entire register is read-only."
+                print("This entire register is read-only.")
 
-            print "\\begin{center}"
+            print("\\begin{center}")
 
             totalWidth = sum( ( 3 + f.columnWidth() ) for f in r.fields )
             split = int( math.ceil( totalWidth / 80. ) )
@@ -402,41 +413,41 @@ def print_latex_custom( registers ):
                     highLen = float( len( f.highBit ) )
                     tabularCols += "p{%.1f ex}" % ( f.columnWidth() * highLen / ( lowLen + highLen ) )
                     tabularCols += "p{%.1f ex}" % ( f.columnWidth() * lowLen / ( lowLen + highLen ) )
-                print "\\begin{tabular}{%s}" % tabularCols
+                print("\\begin{tabular}{%s}" % tabularCols)
 
                 first = True
                 for f in registerFields:
                     if not first:
-                        print "&"
+                        print("&")
                     first = False
                     if f.highBit == f.lowBit:
-                        print "\\multicolumn{2}{c}{\\scriptsize %s}" % f.highBit
+                        print("\\multicolumn{2}{c}{\\scriptsize %s}" % f.highBit)
                     else:
-                        print "{\\scriptsize %s} &" % f.highBit
-                        print "\\multicolumn{1}{r}{\\scriptsize %s}" % f.lowBit
+                        print("{\\scriptsize %s} &" % f.highBit)
+                        print("\\multicolumn{1}{r}{\\scriptsize %s}" % f.lowBit)
 
                 # The actual field names
-                print "\\\\"
-                print "         \hline"
+                print("\\\\")
+                print("         \hline")
                 first = True
                 for f in registerFields:
                     if first:
                         cols = "|c|"
                     else:
                         cols = "c|"
-                        print "&"
+                        print("&")
                     first = False
-                    print "\\multicolumn{2}{%s}{$|%s|$}" % ( cols, f.name )
-                print "\\\\"
-                print "         \hline"
+                    print("\\multicolumn{2}{%s}{$|%s|$}" % ( cols, f.name ))
+                print("\\\\")
+                print("         \hline")
 
                 # Size of each field in bits
-                print " & ".join( "\\multicolumn{2}{c}{\\scriptsize %s}" % f.length() for f in registerFields )
-                print "\\\\"
+                print(" & ".join( "\\multicolumn{2}{c}{\\scriptsize %s}" % f.length() for f in registerFields ))
+                print("\\\\")
 
-                print "   \\end{tabular}"
+                print("   \\end{tabular}")
 
-            print "\\end{center}"
+            print("\\end{center}")
 
         columns = [("l", "Field", "name")]
         columns += [("p{0.5\\textwidth}", "Description", "description")]
@@ -446,70 +457,70 @@ def print_latex_custom( registers ):
             columns += [("l", "Reset", "reset")]
 
         if any( f.description for f in r.fields ):
-            print "\\tabletail{\\hline \\multicolumn{%d}{|r|}" % len(columns)
-            print "   {{Continued on next page}} \\\\ \\hline}"
-            print "\\begin{center}"
-            print "   \\begin{longtable}{|%s|}" % "|".join(c[0] for c in columns)
+            print("\\tabletail{\\hline \\multicolumn{%d}{|r|}" % len(columns))
+            print("   {{Continued on next page}} \\\\ \\hline}")
+            print("\\begin{center}")
+            print("   \\begin{longtable}{|%s|}" % "|".join(c[0] for c in columns))
 
-            print "   \\hline"
-            print "   %s\\\\" % " & ".join(c[1] for c in columns)
-            print "   \\hline"
-            print "   \\endhead"
+            print("   \\hline")
+            print("   %s\\\\" % " & ".join(c[1] for c in columns))
+            print("   \\hline")
+            print("   \\endhead")
 
-            print "   \\multicolumn{%d}{r}{\\textit{Continued on next page}} \\\\" % \
-                    len(columns)
-            print "   \\endfoot"
-            print "   \\endlastfoot"
+            print("   \\multicolumn{%d}{r}{\\textit{Continued on next page}} \\\\" % \
+                    len(columns))
+            print("   \\endfoot")
+            print("   \\endlastfoot")
 
             for f in r.fields:
                 if f.description:
-                    print "\\label{%s}" % f.name
-                    print "\\index{%s}" % f.name
-                    print "   |%s| &" % str(getattr(f, columns[0][2])),
-                    print "%s\\\\" % " & ".join(str(getattr(f, c[2])) for c in columns[1:])
-                    print "   \\hline"
+                    print("\\label{%s}" % toLatexIdentifier(registers.prefix, r.short or r.label, f.name))
+                    print("\\index{%s}" % f.name)
+                    print("   |%s| &" % str(getattr(f, columns[0][2])), end=' ')
+                    print("%s\\\\" % " & ".join(str(getattr(f, c[2])) for c in columns[1:]))
+                    print("   \\hline")
 
             #print "   \\end{tabulary}"
-            print "   \\end{longtable}"
-            print "\\end{center}"
-        print
+            print("   \\end{longtable}")
+            print("\\end{center}")
+        print()
 
 def print_latex_register( registers ):
-    print "%\usepackage{register}"
+    print("%\\usepackage{register}")
     sub = "sub" * registers.depth
     for r in registers.registers:
         if not r.fields and not r.description:
             continue
 
         if r.short:
-            print "\\%ssection{%s (%s)}" % ( sub, r.name, r.short )
+            print("\\%ssection{%s (%s)}" % ( sub, r.name, r.short ))
         else:
-            print "\\%ssection{%s}" % ( sub, r.name )
-        print r.description
+            print("\\%ssection{%s}" % ( sub, r.name ))
+        print(r.description)
 
         if not r.fields:
             continue
-        print "\\begin{register}{H}{%s}{%s}" % ( r.name, r.address )
-        print "   \\label{reg:%s}{}" % r.label
+        print("\\begin{register}{H}{%s}{%s}" % ( r.name, r.address ))
+        print("   \\label{reg:%s}{}" % r.label)
         for f in r.fields:
             length = f.length()
             if length is None:
                 # If we don't know the length, draw it as 10 bits.
                 length = 10
-            print "   \\regfield{%s}{%d}{%s}{{%s}}" % (
-                    f.name, length, f.lowBit, f.reset )
+            print("   \\regfield{%s}{%d}{%s}{{%s}}" % (
+                    f.name, length, f.lowBit, f.reset ))
 
-        print "   \\begin{regdesc}"
-        print "      \\begin{reglist}"
+        print("   \\begin{regdesc}")
+        print("      \\begin{reglist}")
         for f in r.fields:
             if f.description:
-                print "      \\item[%s] (%s) %s" % ( f.name, f.access,
-                        f.description )
-        print "      \\end{reglist}"
-        print "   \\end{regdesc}"
+                print("      \\item[%s] (%s) %s" % ( f.name, f.access,
+                        f.description ))
+        print("      \\end{reglist}")
+        print("   \\end{regdesc}")
 
-        print "\\end{register}"
-        print
+        print("\\end{register}")
+        print()
 
 def main():
     parser = argparse.ArgumentParser()
@@ -529,11 +540,11 @@ def main():
 
     registers = parse_xml( parsed.path )
     if parsed.definitions:
-        write_definitions( file( parsed.definitions, "w" ), registers )
+        write_definitions( open( parsed.definitions, "w" ), registers )
     if parsed.cheader:
-        write_cheader( file( parsed.cheader, "w" ), registers )
+        write_cheader( open( parsed.cheader, "w" ), registers )
     if parsed.chisel:
-        write_chisel( file( parsed.chisel, "w" ), registers )
+        write_chisel( open( parsed.chisel, "w" ), registers )
     if not registers.skip_index:
         print_latex_index( registers )
     if parsed.register:

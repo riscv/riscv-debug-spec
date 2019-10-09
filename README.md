@@ -9,7 +9,7 @@ Build Instructions
 ------------------
 
 ```
-sudo apt-get install git make python python-sympy graphviz texlive-full
+sudo apt-get install git make python3 python3-sympy graphviz texlive-full
 make
 ```
 
@@ -26,5 +26,5 @@ Please note that pull requests will only be reviewed/accepted from RISC-V Founda
 For More Information
 ------------------
 
-Additional information can be found at 
+Additional information can be found at
 https://github.com/riscv/debug-taskgroup

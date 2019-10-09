@@ -3,7 +3,7 @@
 
     <register name="Debug Control and Status" short="dcsr" address="0x7b0">
         \begin{commentary}
-            \Fcause priorities are assigned such that the least predictable
+            \FcsrDcsrCause priorities are assigned such that the least predictable
             events have the highest priority.
         \end{commentary}
 
@@ -23,22 +23,26 @@
             1: {\tt ebreak} instructions in M-mode enter Debug Mode.
         </field>
         <field name="0" bits="14" access="R" reset="0" />
-        <field name="ebreaks" bits="13" access="R/W" reset="0">
+        <field name="ebreaks" bits="13" access="WARL" reset="0">
             0: {\tt ebreak} instructions in S-mode behave as described in the
             Privileged Spec.
 
             1: {\tt ebreak} instructions in S-mode enter Debug Mode.
+
+            This bit is hardwired to 0 if the hart does not support S mode.
         </field>
-        <field name="ebreaku" bits="12" access="R/W" reset="0">
+        <field name="ebreaku" bits="12" access="WARL" reset="0">
             0: {\tt ebreak} instructions in U-mode behave as described in the
             Privileged Spec.
 
             1: {\tt ebreak} instructions in U-mode enter Debug Mode.
+
+            This bit is hardwired to 0 if the hart does not support U mode.
         </field>
         <field name="stepie" bits="11" access="WARL" reset="0">
-            0: Interrupts are disabled during single stepping.
+            0: Interrupts (including NMI) are disabled during single stepping.
 
-            1: Interrupts are enabled during single stepping.
+            1: Interrupts (including NMI) are enabled during single stepping.
 
             Implementations may hard wire this bit to 0.
             In that case interrupt behavior can be emulated by the debugger.
@@ -68,17 +72,17 @@
             Explains why Debug Mode was entered.
 
             When there are multiple reasons to enter Debug Mode in a single
-            cycle, hardware should set \Fcause to the cause with the highest
+            cycle, hardware should set \FcsrDcsrCause to the cause with the highest
             priority.
 
             1: An {\tt ebreak} instruction was executed. (priority 3)
 
             2: The Trigger Module caused a breakpoint exception. (priority 4)
 
-            3: The debugger requested entry to Debug Mode using \Fhaltreq.
+            3: The debugger requested entry to Debug Mode using \FdmDmcontrolHaltreq.
             (priority 1)
 
-            4: The hart single stepped because \Fstep was set. (priority 0, lowest)
+            4: The hart single stepped because \FcsrDcsrStep was set. (priority 0, lowest)
 
             5: The hart halted directly out of reset due to \Fresethaltreq. It
             is also acceptable to report 3 when this happens. (priority 2)
@@ -90,9 +94,9 @@
         </field>
         <field name="0" bits="5" access="R" reset="0" />
         <field name="mprven" bits="4" access="WARL" reset="Preset">
-            0: \Fmprv in \Rmstatus is ignored in Debug Mode.
+            0: \FcsrMcontrolMprv in \Rmstatus is ignored in Debug Mode.
 
-            1: \Fmprv in \Rmstatus takes effect in Debug Mode.
+            1: \FcsrMcontrolMprv in \Rmstatus takes effect in Debug Mode.
 
             Implementing this bit is optional. It may be tied to either 0 or 1.
 	</field>
@@ -126,7 +130,7 @@
     </register>
 
     <register name="Debug PC" short="dpc" address="0x7b1">
-        Upon entry to debug mode, \Rdpc is updated with the virtual address of
+        Upon entry to debug mode, \RcsrDpc is updated with the virtual address of
         the next instruction to be executed. The behavior is described in more
         detail in Table~\ref{tab:dpc}.
 
@@ -145,8 +149,8 @@
         that don't change program flow, the destination PC on taken
         jumps/branches, etc. \\
         \hline
-        trigger module &amp; If \Ftiming is 0, the address of the
-        instruction which caused the trigger to fire. If \Ftiming is 1, the
+        trigger module &amp; If \FcsrMcontrolTiming is 0, the address of the
+        instruction which caused the trigger to fire. If \FcsrMcontrolTiming is 1, the
         address of the next instruction to be executed at the time that
         debug mode was entered. \\
         \hline
@@ -157,19 +161,19 @@
         \end{table}
 
         When resuming, the hart's PC is updated to the virtual address stored in
-        \Rdpc. A debugger may write \Rdpc to change where the hart resumes.
+        \RcsrDpc. A debugger may write \RcsrDpc to change where the hart resumes.
         <field name="dpc" bits="DXLEN-1:0" access="R/W" reset="0" />
     </register>
 
     <register name="Debug Scratch Register 0" short="dscratch0" address="0x7b2">
         Optional scratch register that can be used by implementations that need
-        it. A debugger must not write to this register unless \Rhartinfo
+        it. A debugger must not write to this register unless \RdmHartinfo
         explicitly mentions it (the Debug Module may use this register internally).
     </register>
 
     <register name="Debug Scratch Register 1" short="dscratch1" address="0x7b3">
         Optional scratch register that can be used by implementations that need
-        it. A debugger must not write to this register unless \Rhartinfo
+        it. A debugger must not write to this register unless \RdmHartinfo
         explicitly mentions it (the Debug Module may use this register internally).
     </register>
 </registers>

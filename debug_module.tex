@@ -32,8 +32,8 @@
         \item Implement abstract access to all registers that are visible to
             software running on the hart including all the registers that are
             present on the hart and listed in Table~\ref{tab:regno}.
-        \item Implement abstract access to at least all GPRs, \Rdcsr, and
-            \Rdpc, and advertise the implementation as conforming to the
+        \item Implement abstract access to at least all GPRs, \RcsrDcsr, and
+            \RcsrDpc, and advertise the implementation as conforming to the
             ``Minimal RISC-V Debug Specification \versionnum'', instead of the
             ``RISC-V Debug Specification \versionnum''.
     \end{steps}
@@ -54,56 +54,65 @@ operations.  The bottom of the address space is
 used for the first (and usually only) DM. Extra space can be used for custom
 debug devices, other cores, additional DMs, etc. If there are additional DMs
 on this DMI, the base address of the next DM in the DMI address space is given
-in \Rnextdm.
-
+in \RdmNextdm.
 
 The Debug Module is controlled via register accesses to its DMI address space.
 
 \section{Reset Control} \label{reset}
 
-The Debug Module controls a global reset signal, \Fndmreset
-(non-debug module reset),
-which can reset, or hold in reset, every component in the platform,
-except for the Debug Module and Debug Transport Modules.
-Exactly what is affected by this reset is implementation dependent, as long as
-it is possible to debug programs from the first instruction executed.
+There are two methods that allow a debugger to reset harts.
+\FdmDmcontrolNdmreset resets all the harts in the system, as well as all other
+parts of the system except for the Debug Modules, Debug Transport Modules,
+and Debug Module Interface.
+Exactly what is affected by this reset is implementation dependent, but it
+must be possible to debug programs from the first instruction executed.
+\FdmDmcontrolHartreset resets all the currently selected harts. In this case an
+implementation may reset more harts than just the ones that are selected. The
+debugger can discover which other harts are reset (if any) by selecting them
+and checking \FdmDmstatusAnyhavereset and \FdmDmstatusAllhavereset.
+
+To perform either of these resets, the debugger first asserts the bit, and then
+clears it. The actual reset may start as soon as the bit is asserted, but may
+start an arbitrarily long time after the bit is deasserted. The reset itself
+may also take an arbitrarily long time.  While the reset is
+on-going, harts are either in the running state, indicating it's possible to
+perform some abstract commands during this time, or in the unavailable state,
+indicating it's not possible to perform any abstract commands during this time.
+Once a hart's reset is complete, {\tt havereset} becomes set.  When a hart comes out
+of reset and \FdmDmcontrolHaltreq or \Fresethaltreq are set, the hart will
+immediately enter Debug Mode (halted state). Otherwise it will execute normally
+(running state).
+
+\begin{commentary}
+    There is no general, reliable way for the debugger to know when reset has
+    actually begun.
+\end{commentary}
+
+The halt state of harts should be
+maintained across system reset provided that \FdmDmcontrolDmactive is 1,
+although trigger CSRs may be cleared.
+
 The Debug Module's own state and registers should only be
 reset at power-up and while
-\Fdmactive in \Rdmcontrol is 0.
-The halt state of harts should be
-maintained across system reset provided that \Fdmactive is 1,
-although trigger CSRs may be cleared.
+\FdmDmcontrolDmactive in \RdmDmcontrol is 0. If there is another mechanism to
+reset the DM, this mechanism must also reset all the harts accessible to the
+DM.
 
 Due to clock and power domain crossing issues,
 it may not be possible to perform arbitrary DMI accesses across
 system reset.
-While \Fndmreset or any external reset is asserted, the only supported DM
-operations are reading and writing \Rdmcontrol. The behavior of other accesses
+While \FdmDmcontrolNdmreset or any external reset is asserted, the only supported DM
+operations are reading and writing \RdmDmcontrol. The behavior of other accesses
 is undefined.
-
-There is no requirement on the duration of the assertion of \Fndmreset.
-The implementation must ensure that a write of \Fndmreset to 1 followed by
-a write of \Fndmreset to 0 triggers system reset. The system may take
-an arbitrarily long time to come out of reset, as reported by \Fallunavail,
-\Fanyunavail.
-
-Individual harts (or several at once) can be reset by selecting them, setting
-and then clearing \Fhartreset. In this case an implementation may reset more
-harts than just the ones that are selected. The debugger can discover which
-other harts are reset (if any) by selecting them and checking \Fanyhavereset
-and \Fallhavereset.
 
 When harts have been reset, they must set a sticky {\tt havereset} state bit.
 The conceptual {\tt havereset} state bits can be read for selected harts in
-\Fanyhavereset and \Fallhavereset in \Rdmstatus.
+\FdmDmstatusAnyhavereset and \FdmDmstatusAllhavereset in \RdmDmstatus.
 These bits must be set regardless of the cause of the reset.
 The {\tt havereset} bits for the selected harts
-can be cleared by writing 1 to \Fackhavereset in \Rdmcontrol.
+can be cleared by writing 1 to \FdmDmcontrolAckhavereset in \RdmDmcontrol.
 The {\tt havereset} bits may or may not be cleared
-when \Fdmactive is low.
-
-When a hart comes out of reset and \Fhaltreq or \Fresethaltreq are set, the
-hart will immediately enter Debug Mode. Otherwise it will execute normally.
+when \FdmDmcontrolDmactive is low.
 
 \section{Selecting Harts} \label{selectingharts}
 
@@ -114,7 +123,7 @@ commands are specific to that hart.
 To enumerate all the harts, a debugger must first determine {\tt HARTSELLEN}
 by writing  all ones to \Fhartsel (assuming the maximum size) and reading back
 the value to see which bits were actually set.  Then it selects each hart
-starting from 0 until either \Fanynonexistent in \Rdmstatus is 1, or the
+starting from 0 until either \FdmDmstatusAnynonexistent in \RdmDmstatus is 1, or the
 highest index (depending on {\tt HARTSELLEN}) is reached.
 
 The debugger can discover the mapping between hart indices and
@@ -135,23 +144,24 @@ the hart with index $n$. If the bit is 1 then the hart is selected.  Usually a D
 will have a Hart Array Mask register exactly wide enough to select all the
 harts it supports, but it's allowed to tie any of these bits to 0.
 
-The debugger can set bits in the hart array mask register using \Rhawindowsel
-and \Rhawindow, then apply actions to all selected harts by setting \Fhasel. If
+The debugger can set bits in the hart array mask register using \RdmHawindowsel
+and \RdmHawindow, then apply actions to all selected harts by setting \FdmDmcontrolHasel. If
 this feature is supported, multiple harts can be halted, resumed, and reset
 simultaneously. The state of the hart array mask register is not affected by
-setting or clearing \Fhasel.
+setting or clearing \FdmDmcontrolHasel.
 
-Only the actions initiated by \Rdmcontrol can apply to multiple harts
+Only the actions initiated by \RdmDmcontrol can apply to multiple harts
 at once, Abstract Commands apply only to the hart selected by
 \Fhartsel.
 
-\section{Hart States}
+\section{Hart DM States}
 
-Every hart that can be selected is in exactly one of the following four states:
+Every hart that can be selected is in exactly one of the following four DM states:
 non-existent, unavailable, running, or halted. Which state
-the selected harts are in is reflected by \Fallnonexistent, \Fanynonexistent,
-\Fallunavail, \Fanyunavail, \Fallrunning, \Fanyrunning, \Fallhalted, and
-\Fanyhalted.
+the selected harts are in is reflected by \FdmDmstatusAllnonexistent,
+\FdmDmstatusAnynonexistent, \FdmDmstatusAllunavail, \FdmDmstatusAnyunavail,
+\FdmDmstatusAllrunning, \FdmDmstatusAnyrunning, \FdmDmstatusAllhalted, and
+\FdmDmstatusAnyhalted.
 
 Harts are nonexistent if they will never be part of this system, no matter how
 long a user waits. E.g.\ in a simple single-hart system only one hart exists,
@@ -179,7 +189,7 @@ Which states a hart that is reset goes through is implementation dependent.
 Harts may be unavailable while reset is asserted, and some time after reset is
 deasserted. They might transition to running for some time after reset is
 deasserted. Finally they end up either running or halted, depending on
-\Fhaltreq and \Fresethaltreq.
+\FdmDmcontrolHaltreq and \Fresethaltreq.
 
 \section{Run Control} \label{runcontrol}
 
@@ -188,24 +198,24 @@ request, resume ack, halt-on-reset request,  and hart reset.
 (The hart reset and halt-on-reset request bits are optional.)
 These 4 bits reset to 0, except for resume ack, which may reset to either 0 or 1.
 The DM receives halted, running, and havereset signals from each hart.
-The debugger can observe the state of resume ack in \Fallresumeack and
-\Fanyresumeack, and the state of halted, running, and havereset signals
-in \Fallhalted, \Fanyhalted, \Fallrunning, \Fanyrunning, \Fallhavereset,
-and \Fanyhavereset. The state of the other bits cannot be observed directly.
+The debugger can observe the state of resume ack in \FdmDmstatusAllresumeack and
+\FdmDmstatusAnyresumeack, and the state of halted, running, and havereset signals
+in \FdmDmstatusAllhalted, \FdmDmstatusAnyhalted, \FdmDmstatusAllrunning, \FdmDmstatusAnyrunning, \FdmDmstatusAllhavereset,
+and \FdmDmstatusAnyhavereset. The state of the other bits cannot be observed directly.
 
-When a debugger writes 1 to \Fhaltreq, each selected hart's halt request bit is
+When a debugger writes 1 to \FdmDmcontrolHaltreq, each selected hart's halt request bit is
 set.
 When a running hart, or a hart just coming out of reset, sees its halt request
 bit high, it responds by halting, deasserting its running signal, and asserting
 its halted signal.
 Halted harts ignore their halt request bit.
 
-When a debugger writes 1 to \Fresumereq, each selected hart's resume ack bit is
+When a debugger writes 1 to \FdmDmcontrolResumereq, each selected hart's resume ack bit is
 cleared and each selected, halted hart is sent a resume request. Harts respond
 by resuming, clearing their halted signal, and asserting their running signal.
 At the end of this process the resume ack bit is set.  These
-status signals of all selected harts are reflected in \Fallresumeack,
-\Fanyresumeack, \Fallrunning, and \Fanyrunning. Resume requests are ignored by
+status signals of all selected harts are reflected in \FdmDmstatusAllresumeack,
+\FdmDmstatusAnyresumeack, \FdmDmstatusAllrunning, and \FdmDmstatusAnyrunning. Resume requests are ignored by
 running harts.
 
 When halt or resume is requested, a hart must respond in
@@ -214,15 +224,15 @@ less than one second, unless it is unavailable.
 clock cycles will be a more typical latency).
 
 The DM can implement optional halt-on-reset bits for each hart,
-which it indicates by setting \Fhasresethaltreq to 1.
-This means the DM implements the \Fsetresethaltreq and \Fclrresethaltreq bits.
-Writing 1 to \Fsetresethaltreq sets the halt-on-reset request bit for each
+which it indicates by setting \FdmDmstatusHasresethaltreq to 1.
+This means the DM implements the \FdmDmcontrolSetresethaltreq and \FdmDmcontrolClrresethaltreq bits.
+Writing 1 to \FdmDmcontrolSetresethaltreq sets the halt-on-reset request bit for each
 selected hart.
 When a hart's halt-on-reset request bit is set, the hart will immediately enter
 debug mode on the next deassertion of its reset. This is true regardless of
 the reset's cause.
 The hart's halt-on-reset request bit remains set
-until cleared by the debugger writing 1 to \Fclrresethaltreq
+until cleared by the debugger writing 1 to \FdmDmcontrolClrresethaltreq
 while the hart is selected, or by DM reset.
 
 \section{Halt Groups and External Triggers}
@@ -248,7 +258,7 @@ Halt group 0 is special, and has none of this behavior. Harts in halt group 0
 halt as if halt groups aren't implemented at all.
 
 To near simultaneously resume all harts in a group, the debugger can select all
-the harts, and write 1 to \Fresumereq as described above. An implementation
+the harts, and write 1 to \FdmDmcontrolResumereq as described above. An implementation
 must guarantee that all harts in the group halt again as soon as one of them
 halts, even if that hart halts before all harts have resumed.
 
@@ -259,11 +269,11 @@ are optional. Depending on the implementation, the debugger may
 be able to perform
 some abstract commands even when the selected hart is not halted.
 Debuggers can only determine which abstract commands
-are supported by a given hart in a given state by attempting them
-and then looking at \Fcmderr in \Rabstractcs to see if they were successful.
+are supported by a given hart in a given state (running, halted, or held in reset) by attempting them
+and then looking at \FdmAbstractcsCmderr in \RdmAbstractcs to see if they were successful.
 Commands may be supported with some options set, but not with other options
-set. If a command has unsupported options set, the DM must set \Fcmderr to 2
-(not supported).
+set. If a command has unsupported options set or if bits that are defined as 0
+aren't 0, then the DM must set \FdmAbstractcsCmderr to 2 (not supported).
 
 \begin{commentary}
     Example: Every system must support the Access Register command, but may not
@@ -271,16 +281,19 @@ set. If a command has unsupported options set, the DM must set \Fcmderr to 2
     case, the command will return ``not supported.''
 \end{commentary}
 
-Debuggers execute abstract commands by writing them to \Rcommand.  They
-can determine whether an abstract command is complete by reading \Fbusy in
-\Rabstractcs. After completion, \Fcmderr indicates whether the command was
+Debuggers execute abstract commands by writing them to \RdmCommand.  They
+can determine whether an abstract command is complete by reading \FdmAbstractcsBusy in
+\RdmAbstractcs. If the debugger starts a new command while \FdmAbstractcsBusy is set,
+\FdmAbstractcsCmderr becomes 1 (busy), the currently executing command still gets to
+run to completion, but any error generated by the currently executing command is lost.
+After completion, \FdmAbstractcsCmderr indicates whether the command was
 successful or not. Commands may fail because a hart is not halted, not running,
 unavailable, or because they encounter an error during execution.
 
 If the command takes arguments, the debugger
-must write them to the {\tt data} registers before writing to \Rcommand. If a
+must write them to the {\tt data} registers before writing to \RdmCommand. If a
 command returns results, the Debug Module must ensure they are placed
-in the {\tt data} registers before \Fbusy is cleared.
+in the {\tt data} registers before \FdmAbstractcsBusy is cleared.
 Which {\tt data} registers are used for the arguments is
 described in Table~\ref{tab:datareg}.  In all cases the least-significant word
 is placed in the lowest-numbered {\tt data} register. The argument width
@@ -295,11 +308,11 @@ specified.
         \hline
         Argument Width & arg0/return value & arg1 & arg2 \\
         \hline
-        32 & \Rdatazero & {\tt data1} & {\tt data2} \\
+        32 & \RdmDataZero & {\tt data1} & {\tt data2} \\
         \hline
-        64 & \Rdatazero, {\tt data1} & {\tt data2}, {\tt data3} & {\tt data4}, {\tt data5} \\
+        64 & \RdmDataZero, {\tt data1} & {\tt data2}, {\tt data3} & {\tt data4}, {\tt data5} \\
         \hline
-        128 & \Rdatazero--{\tt data3} & {\tt data4}--{\tt data7} & {\tt data8}--{\tt data11} \\
+        128 & \RdmDataZero--{\tt data3} & {\tt data4}--{\tt data7} & {\tt data8}--{\tt data11} \\
         \hline
     \end{tabulary}
 \end{table}
@@ -311,51 +324,51 @@ specified.
     the target and commands succeed, which allows for maximum throughput. If
     there is a failure, the interface ensures that no commands execute after
     the failing one.  To discover which command failed, the debugger has to
-    look at the state of the DM (e.g.\ contents of \Rdatazero) or hart (e.g.\ 
+    look at the state of the DM (e.g.\ contents of \RdmDataZero) or hart (e.g.\ 
     contents of a register modified by a Program Buffer program) to determine
     which one failed.
 \end{commentary}
 
-Before starting an abstract command, a debugger must ensure that \Fhaltreq,
-\Fresumereq, and \Fackhavereset are all 0.
+Before starting an abstract command, a debugger must ensure that \FdmDmcontrolHaltreq,
+\FdmDmcontrolResumereq, and \FdmDmcontrolAckhavereset are all 0.
 
-While an abstract command is executing (\Fbusy in \Rabstractcs is high), a
-debugger must not change \Fhartsel, and must not write 1 to \Fhaltreq,
-\Fresumereq, \Fackhavereset, \Fsetresethaltreq, or \Fclrresethaltreq.
+While an abstract command is executing (\FdmAbstractcsBusy in \RdmAbstractcs is high), a
+debugger must not change \Fhartsel, and must not write 1 to \FdmDmcontrolHaltreq,
+\FdmDmcontrolResumereq, \FdmDmcontrolAckhavereset, \FdmDmcontrolSetresethaltreq, or \FdmDmcontrolClrresethaltreq.
 
 If an abstract command does not complete in the expected time and appears to be
-hung, the following procedure can be attempted to abort the command: First the
-debugger resets the hart (using \Fhartreset or \Fndmreset), and then it resets
-the Debug Module (using \Fdmactive).
+hung, the debugger can try to reset the hart (using \FdmDmcontrolHartreset or
+\FdmDmcontrolNdmreset). If that doesn't clear \FdmAbstractcsBusy, then it
+can try resetting the Debug Module (using \FdmDmcontrolDmactive).
 
 If an abstract command is started while the selected hart is unavailable or if
 a hart becomes unavailable while executing an abstract command, then the
-Debug Module may terminate the abstract command, setting \Fbusy low, and
-\Fcmderr to 4 (halt/resume). Alternatively, the command could just appear to be
-hung (\Fbusy never goes low).
+Debug Module may terminate the abstract command, setting \FdmAbstractcsBusy low, and
+\FdmAbstractcsCmderr to 4 (halt/resume). Alternatively, the command could just appear to be
+hung (\FdmAbstractcsBusy never goes low).
 
 \subsection{Abstract Command Listing}
 
 This section describes each of the different abstract commands
 and how their fields should be interpreted when
-they are written to \Rcommand.
+they are written to \RdmCommand.
 
-Each abstract command is a 32-bit value. The top 8 bits contain \Fcmdtype which
+Each abstract command is a 32-bit value. The top 8 bits contain \FdmCommandCmdtype which
 determines the kind of command. Table~\ref{tab:cmdtype} lists all commands.
 
 \begin{table}[htp]
     \centering
-    \caption{Meaning of \Fcmdtype}
+    \caption{Meaning of \FdmCommandCmdtype}
     \label{tab:cmdtype}
     \begin{tabulary}{\textwidth}{|r|l|l|l|}
         \hline
-        \Fcmdtype & Command & Page \\
+        \FdmCommandCmdtype & Command & Page \\
         \hline
-        0 & Access Register Command & \pageref{access register} \\
+        0 & Access Register Command & \pageref{acAccessregister} \\
         \hline
-        1 & Quick Access & \pageref{quick access} \\
+        1 & Quick Access & \pageref{acQuickaccess} \\
         \hline
-        2 & Access Memory Command & \pageref{access memory} \\
+        2 & Access Memory Command & \pageref{acAccessmemory} \\
         \hline
         3 & Feature Discovery & \pageref{feature discovery} \\
         \hline
@@ -374,15 +387,15 @@ only may choose to omit the Program Buffer.
 
 A debugger can write a small program to the Program Buffer, and then
 execute it exactly once with the Access Register Abstract Command,
-setting the \Fpostexec bit in \Rcommand.
+setting the \FacAccessregisterPostexec bit in \RdmCommand.
 The debugger can write whatever program it likes (including jumps out of the
 Program Buffer), but the program must end with
 {\tt ebreak} or {\tt c.ebreak}. An implementation may support
 an implied {\tt ebreak} that is executed when a hart runs off the end of the
-Program Buffer. This is indicated by \Fimpebreak. With this feature, a Program
+Program Buffer. This is indicated by \FdmDmstatusImpebreak. With this feature, a Program
 Buffer of just 2 32-bit words can offer efficient debugging.
 
-If \Fprogbufsize is 1, \Fimpebreak must be 1. It is possible that the Program
+If \FdmAbstractcsProgbufsize is 1, \FdmDmstatusImpebreak must be 1. It is possible that the Program
 Buffer can hold only one 32- or 16-bit instruction, so the debugger must only
 write a single instruction in this case, regardless of its size.
 This instruction can be a 32-bit
@@ -399,17 +412,17 @@ compressed {\tt nop} in the upper 16 bits.
 While these programs are executed, the hart does not leave Debug Mode (see
 Section~\ref{debugmode}).  If an exception is encountered during execution of
 the Program Buffer, no more instructions are executed, the hart remains in Debug
-Mode, and \Fcmderr is set to 3 ({\tt exception error}).  If the debugger
+Mode, and \FdmAbstractcsCmderr is set to 3 ({\tt exception error}).  If the debugger
 executes a program that doesn't terminate with an {\tt ebreak} instruction, the
 hart will remain in Debug Mode and the debugger will lose control of the hart.
 
-Executing the Program Buffer may clobber \Rdpc. If that is the case, it must be
-possible to read/write \Rdpc using an abstract command with \Fpostexec not set.
-The debugger must attempt to save \Rdpc between halting and
-executing a Program Buffer, and then restore \Rdpc before leaving Debug Mode.
+Executing the Program Buffer may clobber \RcsrDpc. If that is the case, it must be
+possible to read/write \RcsrDpc using an abstract command with \FacAccessregisterPostexec not set.
+The debugger must attempt to save \RcsrDpc between halting and
+executing a Program Buffer, and then restore \RcsrDpc before leaving Debug Mode.
 
 \begin{commentary}
-    Allowing Program Buffer execution to clobber \Rdpc allows for direct
+    Allowing Program Buffer execution to clobber \RcsrDpc allows for direct
     implementations that don't have a separate PC register, and do need to use
     the PC when executing the Program Buffer.
 \end{commentary}
@@ -420,12 +433,12 @@ programs that attempt to write and read back relative to \Rpc while executing
 from the Program Buffer.
 If so, the debugger has more flexibility in what it can do with the program buffer.
 
-\section{Overview of States}
+\section{Overview of Hart Debug States}
 
 Figure~\ref{fig:abstract_sm} shows a conceptual view of the states
 passed through by a hart during run/halt debugging as influenced
-by the different fields of \Rdmcontrol, \Rabstractcs, \Rabstractauto, and
-\Rcommand.
+by the different fields of \RdmDmcontrol, \RdmAbstractcs, \RdmAbstractauto, and
+\RdmCommand.
 
 \begin{figure}
    \centering
@@ -457,15 +470,15 @@ for each access size.
         \hline
         Access Size & Data Bits \\
         \hline
-        8 & \Rsbdatazero bits 7:0 \\
+        8 & \RdmSbdataZero bits 7:0 \\
         \hline
-        16 & \Rsbdatazero bits 15:0 \\
+        16 & \RdmSbdataZero bits 15:0 \\
         \hline
-        32 & \Rsbdatazero \\
+        32 & \RdmSbdataZero \\
         \hline
-        64 & \Rsbdataone, \Rsbdatazero \\
+        64 & \RdmSbdataOne, \RdmSbdataZero \\
         \hline
-        128 & \Rsbdatathree, \Rsbdatatwo, \Rsbdataone, \Rsbdatazero \\
+        128 & \RdmSbdataThree, \RdmSbdataTwo, \RdmSbdataOne, \RdmSbdataZero \\
         \hline
     \end{tabulary}
 \end{table}
@@ -516,45 +529,45 @@ Module that can be used to be permanently disable it. Since this is technology
 specific, it is not further addressed in this spec.
 
 Another option is to allow the DM to be unlocked only by users who have an
-access key. Between \Fauthenticated, \Fauthbusy, and \Rauthdata arbitrarily
-complex authentication mechanism can be supported.  When \Fauthenticated is
+access key. Between \FdmDmstatusAuthenticated, \FdmDmstatusAuthbusy, and \RdmAuthdata arbitrarily
+complex authentication mechanism can be supported.  When \FdmDmstatusAuthenticated is
 clear, the DM must not interact with the rest of the platform, nor expose
 details about the harts connected to the DM. All DM registers should read 0,
 while writes should be ignored, with the following mandatory exceptions:
 \begin{steps}{}
-    \item \Fauthenticated in \Rdmstatus is readable.
-    \item \Fauthbusy in \Rdmstatus is readable.
-    \item \Fversion in \Rdmstatus is readable.
-    \item \Fdmactive in \Rdmcontrol is readable and writable.
-    \item \Rauthdata is readable and writable.
+    \item \FdmDmstatusAuthenticated in \RdmDmstatus is readable.
+    \item \FdmDmstatusAuthbusy in \RdmDmstatus is readable.
+    \item \FdmDmstatusVersion in \RdmDmstatus is readable.
+    \item \FdmDmcontrolDmactive in \RdmDmcontrol is readable and writable.
+    \item \RdmAuthdata is readable and writable.
 \end{steps}
 
 \section{Version Detection}
 
 \begin{steps}{To detect the version of the Debug Module with a minimum of side
     effects, use the following procedure:}
-    \item Read \Rdmcontrol.
-    \item Write \Rdmcontrol, preserving \Fhartreset, \Fhasel, \Fhartsello, and
-        \Fhartselhi from the value that was read, setting \Fdmactive, and
+    \item Read \RdmDmcontrol.
+    \item Write \RdmDmcontrol, preserving \FdmDmcontrolHartreset, \FdmDmcontrolHasel, \FdmDmcontrolHartsello, and
+        \FdmDmcontrolHartselhi from the value that was read, setting \FdmDmcontrolDmactive, and
         clearing all the other bits.
-    \item Read \Rdmstatus, which contains \Fversion.
+    \item Read \RdmDmstatus, which contains \FdmDmstatusVersion.
 \end{steps}
 
 \begin{steps}{This has the following unavoidable side effects:}
-    \item \Fhaltreq is cleared, potentially preventing a halt request made by a
+    \item \FdmDmcontrolHaltreq is cleared, potentially preventing a halt request made by a
         previous debugger from taking effect.
-    \item \Fresumereq is cleared, potentially preventing a resume request made
+    \item \FdmDmcontrolResumereq is cleared, potentially preventing a resume request made
         by a previous debugger from taking effect.
-    \item \Fndmreset is deasserted, releasing the system from reset if a
+    \item \FdmDmcontrolNdmreset is deasserted, releasing the system from reset if a
         previous debugger had set it.
-    \item \Fdmactive is asserted, releasing the DM from reset. This in itself
+    \item \FdmDmcontrolDmactive is asserted, releasing the DM from reset. This in itself
         is not observable by any harts.
 \end{steps}
 
 This procedure is guaranteed to work in future versions of this spec.  The
-meaning of the \Rdmcontrol bits where \Fhartreset, \Fhasel, \Fhartsello, and
-\Fhartselhi currently reside might change, but preserving them will have no
-side effects. Clearing the bits of \Rdmcontrol not explicitly mentioned here
+meaning of the \RdmDmcontrol bits where \FdmDmcontrolHartreset, \FdmDmcontrolHasel, \FdmDmcontrolHartsello, and
+\FdmDmcontrolHartselhi currently reside might change, but preserving them will have no
+side effects. Clearing the bits of \RdmDmcontrol not explicitly mentioned here
 will have no side effects beyond the ones mentioned above.
 
 \section{Debug Module Registers} \label{dmdebbus}
@@ -567,7 +580,7 @@ When read, unimplemented Debug Module DMI Registers return 0. Writing them has
 no effect.
 
 For each register it is possible to determine that it is implemented by reading
-it and getting a non-zero value (e.g.\ \Rsbcs), or by checking bits in another
-register (e.g.\ \Fprogbufsize).
+it and getting a non-zero value (e.g.\ \RdmSbcs), or by checking bits in another
+register (e.g.\ \FdmAbstractcsProgbufsize).
 
 \input{dm_registers.tex}

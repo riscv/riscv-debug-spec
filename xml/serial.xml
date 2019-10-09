@@ -3,14 +3,14 @@
     <!-- =============== serial ports =============== -->
 
     <register name="Serial Control and Status" short="sercs" address="0x34">
-        If \Fserialcount is 0, this register is not present.
+        If \FdmiSercsSerialcount is 0, this register is not present.
 
         <field name="serialcount" bits="31:28" access="R" reset="Preset">
             Number of supported serial ports.
         </field>
         <field name="0" bits="27" access="R" reset="0" />
         <field name="serial" bits="26:24" access="R/W" reset="0">
-            Select which serial port is accessed by \Rserrx and \Rsertx.
+            Select which serial port is accessed by \RdmiSerrx and \RdmiSertx.
         </field>
         <field name="error7" bits="23" access="R/W1C" reset="0"/>
         <field name="valid7" bits="22" access="R" reset="0" />
@@ -47,10 +47,10 @@
     </register>
 
     <register name="Serial TX Data" short="sertx" address="0x35">
-        If \Fserialcount is 0, this register is not present.
+        If \FdmiSercsSerialcount is 0, this register is not present.
 
         This register provides access to the write data queue of the serial port
-        selected by \Fserial in \Rsercs.
+        selected by \FdmiSercsSerial in \RdmiSercs.
 
         If the {\tt error} bit is not set and the queue is not full, a write to this register
         adds the written data to the core-to-debugger queue.
@@ -62,10 +62,10 @@
     </register>
 
     <register name="Serial RX Data" short="serrx" address="0x36">
-        If \Fserialcount is 0, this register is not present.
+        If \FdmiSercsSerialcount is 0, this register is not present.
 
         This register provides access to the read data queues of the serial port
-        selected by \Fserial in \Rsercs.
+        selected by \FdmiSercsSerial in \RdmiSercs.
 
         If the {\tt error} bit is not set and the queue is not empty, a read from this register reads the
         oldest entry in the debugger-to-core queue, and removes that entry from the queue.
