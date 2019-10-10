@@ -377,6 +377,181 @@ determines the kind of command. Table~\ref{tab:cmdtype} lists all commands.
 
 \input{abstract_commands.tex}
 
+\section{Feature Discovery Structure} \label{featurestructure}
+
+The structure is encoded in a series of bytes. Where a multi-byte value is
+required, those are stored with least-significant byte at the lowest address.
+
+Many numbers in this structure will usually be very small, but could be very
+large on unusual systems. To accommodate this, Variable Numbers (varnums) are
+used. To decode a varnum, the debugger first needs to look at the least
+significant bits of the first byte. Table~\ref{tab:varnum} describes this
+encoding.
+
+\begin{table}[htp]
+    \centering
+    \caption{Variable number (varnum) encoding}
+    \label{tab:varnum}
+    \begin{tabulary}{\textwidth}{|r|l|l|l|}
+        \hline
+        LSBs & Number Size & Number LSBs & Remaining data \\ \hline
+        0 & 7 bits & top 7 bits of first byte & None \\ \hline
+        01 & 14 bits & top 6 bits of this byte & in the next byte \\ \hline
+        011 & 21 bits & top 5 bits of this byte & in the next 2 bytes \\ \hline
+        0111 & 28 bits & top 4 bits of this byte & in the next 3 bytes \\ \hline
+        01111 & 35 bits & top 3 bits of this byte & in the next 4 bytes \\ \hline
+        00011111 & 40 bits & None & in the next 5 bytes \\ \hline
+        00111111 & 48 bits & None & in the next 6 bytes \\ \hline
+        01011111 & 56 bits & None & in the next 7 bytes \\ \hline
+        01111111 & 64 bits & None & in the next 8 bytes \\ \hline
+        10011111 & 80 bits & None & in the next 10 bytes \\ \hline
+        10111111 & 96 bits & None & in the next 12 bytes \\ \hline
+        11011111 & 112 bits & None & in the next 14 bytes \\ \hline
+        11111111 & 128 bits & None & in the next 16 bytes \\ \hline
+    \end{tabulary}
+\end{table}
+
+The structure consists of a series of sections. Parsers don't have to support
+all sections. They should skip sections of a type they do not support.
+
+Each section consists of a header followed by a body. The header consists of 2
+varnums.  The first varnum describes the section type. Known section types are
+listed in Table~\ref{tab:sectiontype}.  The second varnum contains the size of
+the section body, in bytes.
+
+\begin{table}[htp]
+    \centering
+    \caption{Feature discovery structure section types}
+    \label{tab:sectiontype}
+    \begin{tabulary}{\textwidth}{|r|l|l|}
+        \hline
+        Type & Name & Page \\
+        \hline
+        0 & End Of Data & \pageref{sectionEndOfData} \\ \hline
+        0x10 & Hart Select & \pageref{sectionHartSelect} \\ \hline
+        0x29 & Magic & \pageref{sectionMagic} \\ \hline
+        0x30 & Abstract Command Support & \pageref{sectionAbstractCommandSupport} \\ \hline
+        0x31 & Trigger Support & \pageref{sectionTriggerSupport} \\ \hline
+    \end{tabulary}
+\end{table}
+
+\subsection{End Of Data} \label{sectionEndOfData}
+
+This section with size 0 indicates the end of the structure. It's optional if
+the end of the structure can be determined some other way, as is true when
+using the abstract command to read it.
+
+\subsection{Hart Select} \label{sectionHartSelect}
+
+This section is optional, and never needed on single-hart systems.
+
+A parser must maintain a selected hart list. At the beginning of parsing this
+defaults to including all harts in the system. As new Hart Select sections are
+encountered, the list is updated accordingly. Each section applies to the harts
+that are the result of cumulatively parsing all Hart Select sections that
+precede it.
+
+Hart select records consist of a type byte, and one or more varnum arguments
+which refer to harts by their hart id. Note that hart id may not be the same as
+hart index, which is used in much of the Debug Specification. The records are
+described in Table~\ref{tab:hartselect}.
+
+\begin{table}[htp]
+    \centering
+    \caption{Hart Select Record Types}
+    \label{tab:hartselect}
+    \begin{tabulary}{\textwidth}{|r|r|L|}
+        \hline
+        \makecell{Type\\Byte} & \makecell{Number of\\arguments} & Description \\
+        \hline
+        0 & 1 & Empty the hart list, then select just the hart specified by
+        arg0. \\ \hline
+        1 & 2 & Add the range of harts from arg0 to arg1 (inclusive) to the
+        hart list. \\ \hline
+        2 & 2 & Remove the range of harts from arg0 to arg1 (inclusive) from
+        the hart list. \\ \hline
+    \end{tabulary}
+\end{table}
+
+\subsection{Magic} \label{sectionMagic}
+
+The optional magic section should be ignored by parsers. It can be used to put
+in the beginning of files so that other tools can identify the file type.
+Suggested verbatim sequences (including the section header) are 0x52 0x04 0x56
+0x05 for a 4-byte magic sequence, and 0x52 0x0c 0x49 0x53 0x43 0x2d 0x56 0x00
+for an 8-byte magic sequence. In ASCII, those look like
+"R\textbackslash{}x04V\textbackslash{}x05" and
+"R\textbackslash{}0x0cISC-V\textbackslash{}0".
+
+\subsection{Abstract Command Support} \label{sectionAbstractCommandSupport}
+
+This optional section describes which abstract commands (full register
+contents) are supported for the harts currently in the selected list. If it is
+implemented the structure must describe every implemented abstract command.
+
+The contents consist of a series of 32-bit words.  The words at even indices
+consist of a sample supported command. The words at odd indices contain a mask
+that applies to the previous sample command. A command (full contents of
+\RdmCommand) C is supported if and only if there is a $|sample|/$|mask| pair in
+the data structure where $(C \BitAnd |mask|) = (|sample| \BitAnd |mask|)$. See
+an example in Table~\ref{tab:command_discovery}.
+
+Because the CSR space is sparsely populated, it is allowed and recommended to
+list Access Register CSR commands as supported even though not every CSR
+exists.
+
+\begin{table}[htp]
+    \centering
+    \caption{Example Feature Discovery Structure}
+    \label{tab:command_discovery}
+    \begin{tabulary}{\textwidth}{|l|l|L|}
+        \hline
+        Index: Sample & Index: Mask & Comment \\
+        \hline
+        0: 0x201000 & 1: 0xfff8ffe0 & 32-bit GPR access, with all combinations
+        of postexec, transfer, and write \\
+        \hline
+        2: 0x2200000 & 3: 0xfff6ffff & 32-bit memory access, read/write with
+        optional postincrement \\
+        \hline
+    \end{tabulary}
+\end{table}
+
+\subsection{Trigger Support} \label{sectionTriggerSupport}
+
+This optional section describes which triggers (full contents of \RcsrTdataOne)
+are supported for the harts currently in the selected list. If it is
+implemented the structure must describe every implemented trigger. Triggers
+that are not described here should be assumed not to be implemented. All
+selected harts must have the same XLEN.
+
+The data structure consists of a series of trigger records. Each record
+consists of a type byte followed by data depending on the record type. The
+records are described in Table~\ref{tab:triggersupport}.
+
+\begin{table}[htp]
+    \centering
+    \caption{Hart Select Record Types}
+    \label{tab:triggersupport}
+    \begin{tabulary}{\textwidth}{|r|l|L|}
+        \hline
+        \makecell{Type\\Byte} & Arguments & Description \\
+        \hline
+        0x00 & $|id|$ & $|id|$ is a varnum. Empty the trigger list, then select
+        just the trigger specified by $|id|$. \\ \hline
+        0x01 & $|low|$ $|high|$ & $|low|$ and $|high|$ are varnums. Add the
+        range of triggers from $|low|$ to $|high|$ (inclusive) to the trigger
+        list. \\ \hline
+        0x02 & $|low|$ $|high|$ & $|low|$ and $|high|$ are varnums. Remove the
+        range of triggers from $|low|$ to $|high|$ (inclusive) from the trigger
+        list. \\ \hline
+        0x10 & $|data|$ $|mask|$ & $|data|$ and $|mask|$ are XLEN-bit values.
+        Indicate that for the currently selected triggers, on the currently
+        selected harts, every trigger T is supported if $(T \BitAnd |mask|) =
+        (|sample| \BitAnd |mask|)$. \\ \hline
+    \end{tabulary}
+\end{table}
+
 \section{Program Buffer} \label{programbuffer}
 
 To support executing arbitrary instructions on a halted hart,
