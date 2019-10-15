@@ -15,6 +15,8 @@
 \makeindex
 
 \usepackage{xspace}
+\usepackage{minted} % needed for the inclusion of source code
+
 \newcommand{\defregname}[2]{\providecommand{#1}{{\tt #2}\xspace}}
 \newcommand{\deffieldname}[2]{\providecommand{#1}{{$|#2|$}\xspace}}
 \deffieldname{\FcsrMcontrolMprv}{MPRV}
@@ -151,6 +153,7 @@ and Bryan Wyatt.
 
 \include{implementations}
 \include{debugger_implementation}
+\include{source_examples}
 
 \clearpage
 \addcontentsline{toc}{chapter}{Index}

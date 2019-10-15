@@ -29,6 +29,7 @@ INCLUDES_TEX += implementations.tex
 INCLUDES_TEX += debugger_implementation.tex
 INCLUDES_TEX += riscv-debug-spec.tex
 INCLUDES_TEX += future.tex
+INCLUDES_TEX += source_examples.tex
 
 FIGURES = fig/*
 
@@ -39,7 +40,7 @@ draft:	$(DRAFT).pdf
 release:	$(RELEASE).pdf
 
 %.pdf: %.tex $(REGISTERS_TEX) $(FIGURES) $(INCLUDES_TEX) vc.tex changelog.tex
-	pdflatex $< && makeindex $(basename $<) && pdflatex -shell-escape $<
+	pdflatex -shell-escape $< && makeindex $(basename $<) && pdflatex -shell-escape $<
 
 publish:	$(DRAFT).pdf
 	cp $< $(DRAFT)-`git rev-parse --abbrev-ref HEAD`.`git rev-parse --short HEAD`.pdf

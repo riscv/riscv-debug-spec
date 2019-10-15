@@ -382,11 +382,17 @@ determines the kind of command. Table~\ref{tab:cmdtype} lists all commands.
 The structure is encoded in a series of bytes. Where a multi-byte value is
 required, those are stored with least-significant byte at the lowest address.
 
-Many numbers in this structure will usually be very small, but could be very
-large on unusual systems. To accommodate this, Variable Numbers (varnums) are
-used. To decode a varnum, the debugger first needs to look at the least
-significant bits of the first byte. Table~\ref{tab:varnum} describes this
-encoding.
+\index{varnum} \index{Variable Numbers} Many numbers in this structure will
+usually be very small, but could be very large on unusual systems. To
+accommodate this, Variable Numbers (varnums) are used. To decode a varnum, the
+debugger first needs to look at the least significant bits of the first byte.
+Table~\ref{tab:varnum} describes this encoding. The actual numerical value is
+determined by combining the remaining bits in the first byte with between 0 and
+16 additional bytes of data that follow. If there are bits remaining in the
+first byte, those bits are used as the least significant bits of the number.
+Then the 8 bits in each additional byte are used to fill in the next 8 least
+significant bits in the number. Table~\ref{tab:varexample} contains some
+examples, and Section~\ref{varnumcode} contains code to read/write varnums.
 
 \begin{table}[htp]
     \centering
@@ -411,6 +417,21 @@ encoding.
     \end{tabulary}
 \end{table}
 
+\begin{table}[htp]
+    \centering
+    \caption{Variable number (varnum) examples}
+    \label{tab:varexample}
+    \begin{tabulary}{\textwidth}{|l|l|}
+        \hline
+        Bytes & Number \\ \hline
+        0x54 & 42 \\ \hline
+        0x49 0x13 & 1234 \\ \hline
+        0xd7 0xfe 0x45 0x08 & 8675309 \\ \hline
+        \makecell{0xff 0x16 0x15 0x14 0x13 0x12 0x11 0x10 0x09\\0x08 0x07 0x06 0x05 0x04 0x03 0x02 0x01} &
+        0x01020304050607080910111213141516 \\ \hline
+    \end{tabulary}
+\end{table}
+
 The structure consists of a series of sections. Parsers don't have to support
 all sections. They should skip sections of a type they do not support.
 
@@ -428,6 +449,7 @@ the section body, in bytes.
         Type & Name & Page \\
         \hline
         0 & End Of Data & \pageref{sectionEndOfData} \\ \hline
+        1 & Jump & \pageref{sectionJump} \\ \hline
         0x10 & Hart Select & \pageref{sectionHartSelect} \\ \hline
         0x29 & Magic & \pageref{sectionMagic} \\ \hline
         0x30 & Abstract Command Support & \pageref{sectionAbstractCommandSupport} \\ \hline
@@ -440,6 +462,8 @@ the section body, in bytes.
 This section with size 0 indicates the end of the structure. It's optional if
 the end of the structure can be determined some other way, as is true when
 using the abstract command to read it.
+
+\subsection{Jump} \label{sectionJump}
 
 \subsection{Hart Select} \label{sectionHartSelect}
 
