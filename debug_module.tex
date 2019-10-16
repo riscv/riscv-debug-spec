@@ -394,6 +394,10 @@ Then the 8 bits in each additional byte are used to fill in the next 8 least
 significant bits in the number. Table~\ref{tab:varexample} contains some
 examples, and Section~\ref{varnumcode} contains code to read/write varnums.
 
+All parsers must support varnums encoding numbers up to 32 bits in size. In
+addition parsers should also support varnums encoding numbers as wide as the
+GPRs as well as virtual and physical addresses.
+
 \begin{table}[htp]
     \centering
     \caption{Variable number (varnum) encoding}
@@ -423,11 +427,11 @@ examples, and Section~\ref{varnumcode} contains code to read/write varnums.
     \label{tab:varexample}
     \begin{tabulary}{\textwidth}{|l|l|}
         \hline
-        Bytes & Number \\ \hline
-        0x54 & 42 \\ \hline
-        0x49 0x13 & 1234 \\ \hline
-        0xd7 0xfe 0x45 0x08 & 8675309 \\ \hline
-        \makecell{0xff 0x16 0x15 0x14 0x13 0x12 0x11 0x10 0x09\\0x08 0x07 0x06 0x05 0x04 0x03 0x02 0x01} &
+        Bytes (Hex) & Number \\ \hline
+        54 & 42 \\ \hline
+        49 13 & 1234 \\ \hline
+        d7 fe 45 08 & 8675309 \\ \hline
+        ff 16 15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 &
         0x01020304050607080910111213141516 \\ \hline
     \end{tabulary}
 \end{table}
@@ -436,9 +440,17 @@ The structure consists of a series of sections. Parsers don't have to support
 all sections. They should skip sections of a type they do not support.
 
 Each section consists of a header followed by a body. The header consists of 2
-varnums.  The first varnum describes the section type. Known section types are
-listed in Table~\ref{tab:sectiontype}.  The second varnum contains the size of
-the section body, in bytes.
+varnums.  The first varnum contains the size of the section including the type
+and the body, in bytes.  The second varnum describes the section type. Known
+section types are listed in Table~\ref{tab:sectiontype}.  A section size of 0
+indicates indicates the end of the structure is reached. Marking the end of the
+structure is optional if the end can be determined some other way, as is true
+when using the abstract command to read it.
+
+\begin{commentary}
+    Section type numbers are chosen such that types common on tiny
+    implementations can be encoded in a single byte varnum.
+\end{commentary}
 
 \begin{table}[htp]
     \centering
@@ -448,22 +460,16 @@ the section body, in bytes.
         \hline
         Type & Name & Page \\
         \hline
-        0 & End Of Data & \pageref{sectionEndOfData} \\ \hline
-        1 & Jump & \pageref{sectionJump} \\ \hline
         0x10 & Hart Select & \pageref{sectionHartSelect} \\ \hline
         0x29 & Magic & \pageref{sectionMagic} \\ \hline
         0x30 & Abstract Command Support & \pageref{sectionAbstractCommandSupport} \\ \hline
         0x31 & Trigger Support & \pageref{sectionTriggerSupport} \\ \hline
+        0x100 & Absolute Jump & \pageref{sectionJump} \\ \hline
+        0x101 & Relative Jump & \pageref{sectionJump} \\ \hline
+        0x102 & Absolute Include & \pageref{sectionInclude} \\ \hline
+        0x103 & Relative Include & \pageref{sectionInclude} \\ \hline
     \end{tabulary}
 \end{table}
-
-\subsection{End Of Data} \label{sectionEndOfData}
-
-This section with size 0 indicates the end of the structure. It's optional if
-the end of the structure can be determined some other way, as is true when
-using the abstract command to read it.
-
-\subsection{Jump} \label{sectionJump}
 
 \subsection{Hart Select} \label{sectionHartSelect}
 
@@ -575,6 +581,21 @@ records are described in Table~\ref{tab:triggersupport}.
         (|sample| \BitAnd |mask|)$. \\ \hline
     \end{tabulary}
 \end{table}
+
+\subsection{Jump/Include} \label{sectionJump} \label{sectionInclude}
+
+Jump sections tell a parser to continue parsing at a different address. Include
+sections tell a parser to start parsing at a different address, and when the
+end of that structure is reached to resume at the next section immediately
+after the Include section. Include sections require the parser to maintain a
+stack of addresses to return from. Parsers must support a stack at least 2
+addresses deep, and structures must never go more than 8 addresses deep.
+
+The body of all these packets contains a single varnum, which is to be
+interpreted as an address jump to or include. If the section type is relative,
+then the address varnum is interpreted as a signed two's complement number that
+is added to the address where the next section would start. Addresses do not
+wrap.
 
 \section{Program Buffer} \label{programbuffer}
 
