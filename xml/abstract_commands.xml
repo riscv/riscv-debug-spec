@@ -228,16 +228,18 @@
         can describe in detail the features of the system. The structure
         is described in Section~\ref{featurestructure}.
 
-        When executed, this command will place the result at \FacFeaturediscoveryIndex in the
-        data structure into \RdmSbdataZero. When asked for an index that doesn't
-        exist, it sets \FdmAbstractcsCmderr to 2.
+        When executed, this command will place the 4 bytes at
+        \FacFeaturediscoveryAddress in the data structure into \RdmSbdataZero, in
+        little-endian order. All bytes that are read past the end of the structure
+        are 0.
 
         <field name="cmdtype" bits="31:24">
             This is 3 to indicate Feature Discovery.
         </field>
         <field name="0" bits="23:16" />
-        <field name="index" bits="15:0">
-            Index into the data structure.
+        <field name="address" bits="15:0">
+            Address of the feature discovery structure to access. The two LSBs must
+            always be 0.
         </field>
     </register>
 
