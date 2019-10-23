@@ -463,6 +463,7 @@ structure is optional if the end can be determined some other way.
         0x29 & Magic & \pageref{sectionMagic} \\ \hline
         0x30 & Abstract Command Support & \pageref{sectionAbstractCommandSupport} \\ \hline
         0x31 & Trigger Support & \pageref{sectionTriggerSupport} \\ \hline
+        0x32 & Hart Index to Hartid Map & \pageref{sectionHartMap} \\ \hline
         0x100 & Absolute Jump & \pageref{sectionJump} \\ \hline
         0x101 & Relative Jump & \pageref{sectionJump} \\ \hline
         0x102 & Absolute Include & \pageref{sectionInclude} \\ \hline
@@ -552,7 +553,7 @@ This optional section describes which triggers (full contents of \RcsrTdataOne)
 are supported for the harts currently in the selected list. If it is
 implemented the structure must describe every implemented trigger. Triggers
 that are not described here should be assumed not to be implemented. All
-selected harts must have the same XLEN.
+selected harts must have the same DXLEN.
 
 The data structure consists of a series of trigger records. Each record
 consists of a type byte followed by data depending on the record type. The
@@ -574,12 +575,23 @@ records are described in Table~\ref{tab:triggersupport}.
         0x02 & $|low|$ $|high|$ & $|low|$ and $|high|$ are varnums. Remove the
         range of triggers from $|low|$ to $|high|$ (inclusive) from the trigger
         list. \\ \hline
-        0x10 & $|data|$ $|mask|$ & $|data|$ and $|mask|$ are XLEN-bit values.
+        0x10 & $|data|$ $|mask|$ & $|data|$ and $|mask|$ are DXLEN-bit values.
         Indicate that for the currently selected triggers, on the currently
         selected harts, every trigger T is supported if $(T \BitAnd |mask|) =
         (|sample| \BitAnd |mask|)$. \\ \hline
     \end{tabulary}
 \end{table}
+
+\subsection{Hart Index to Hartid Map} \label{sectionHartMap}
+
+The external debug interface uses hart indices, which may not be the same as
+hart ids. This section contains the hartid of every hart in the system in hart
+index order. Each hartid consists of a single varnum.
+
+If this section exists but does not include every hart in the system, then the
+unlisted harts must have a hartid that's equal to their hart index. Simple
+systems where hartids and hart indices are equal can describe this by including
+this section with a size of 0.
 
 \subsection{Jump/Include} \label{sectionJump} \label{sectionInclude}
 
