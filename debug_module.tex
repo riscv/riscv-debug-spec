@@ -468,6 +468,7 @@ structure is optional if the end can be determined some other way.
         0x101 & Relative Jump & \pageref{sectionJump} \\ \hline
         0x102 & Absolute Include & \pageref{sectionInclude} \\ \hline
         0x103 & Relative Include & \pageref{sectionInclude} \\ \hline
+        0x1000 -- 0x1fff & CSR Value & \pageref{sectionCsr} \\ \hline
     \end{tabulary}
 \end{table}
 
@@ -607,6 +608,22 @@ interpreted as an address jump to or include. If the section type is relative,
 then the address varnum is interpreted as a signed two's complement number that
 is added to the address where the next section would start. Addresses do not
 wrap.
+
+\subsection{CSR Value} \label{sectionCsr}
+
+These optional sections contain the value of exactly one CSR register as it
+would be when the most features are enabled. It's intended for registers that
+contain a lot of information about the hart like \Rmvendorid, \Rmarchid,
+\Rmimpid, and \Rmisa. The size of the register (in bytes) is given by the size
+of the section, while bits 11:0 of the section number encode the CSR number in
+question.
+
+\begin{commentary}
+    While the number of CSRs whose contents are useful is small, we reserve
+    space for all of them so that arbitrary extensions that describe features
+    through CSRs can be described in this structure without requiring an
+    explicit mention in this description.
+\end{commentary}
 
 \section{Program Buffer} \label{programbuffer}
 
