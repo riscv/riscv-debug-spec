@@ -516,9 +516,10 @@ for an 8-byte magic sequence. In ASCII, those look like
 
 \subsection{Abstract Command Support} \label{sectionAbstractCommandSupport}
 
-This optional section describes which abstract commands (full register
-contents) are supported for the harts currently in the selected list. If it is
-implemented the structure must describe every implemented abstract command.
+This optional section describes which abstract commands (full register contents
+or \RdmCommand) are supported for the harts currently in the selected list. If
+it is present the structure must describe every implemented abstract command.
+This section should exist if abstract commands are implemented.
 
 The contents consist of a series of 32-bit words.  The words at even indices
 consist of a sample supported command. The words at odd indices contain a mask
@@ -528,8 +529,8 @@ the data structure where $(C \BitAnd |mask|) = (|sample| \BitAnd |mask|)$. See
 an example in Table~\ref{tab:command_discovery}.
 
 Because the CSR space is sparsely populated, it is allowed and recommended to
-list Access Register CSR commands as supported even though not every CSR
-exists.
+list the Access Register CSR command as supported for all CSRs even though not
+every CSR exists.
 
 \begin{table}[htp]
     \centering
@@ -552,9 +553,10 @@ exists.
 
 This optional section describes which triggers (full contents of \RcsrTdataOne)
 are supported for the harts currently in the selected list. If it is
-implemented the structure must describe every implemented trigger. Triggers
-that are not described here should be assumed not to be implemented. All
-selected harts must have the same DXLEN.
+present the structure must describe every implemented trigger. Triggers
+that are not described here should be assumed not to be implemented. This
+section should exist if triggers are implemented. All selected harts must have
+the same DXLEN.
 
 The data structure consists of a series of trigger records. Each record
 consists of a type byte followed by data depending on the record type. The
@@ -586,8 +588,12 @@ records are described in Table~\ref{tab:triggersupport}.
 \subsection{Hart Index to Hartid Map} \label{sectionHartMap}
 
 The external debug interface uses hart indices, which may not be the same as
-hart ids. This section contains the hartid of every hart in the system in hart
-index order. Each hartid consists of a single varnum.
+hart ids. To make this structure useful for an external debugger, it must know
+the mapping between the two, and this section is the simplest way of doing
+that.
+
+This optional section contains the hartid of every hart in the system in hart
+index order with no gaps. Each hartid consists of a single varnum.
 
 If this section exists but does not include every hart in the system, then the
 unlisted harts must have a hartid that's equal to their hart index. Simple
@@ -617,6 +623,9 @@ contain a lot of information about the hart like \Rmvendorid, \Rmarchid,
 \Rmimpid, and \Rmisa. The size of the register (in bytes) is given by the size
 of the section, while bits 11:0 of the section number encode the CSR number in
 question.
+
+This section should exist describing \Rmisa for each hart. If it does not exist
+a debugger will have to halt each hart to discover XLEN.
 
 \begin{commentary}
     While the number of CSRs whose contents are useful is small, we reserve
