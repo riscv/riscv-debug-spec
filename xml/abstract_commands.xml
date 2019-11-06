@@ -227,7 +227,7 @@
         This optional command provides access to a data structure that
         can describe in detail the features of the system. The structure
         is described in Section~\ref{featurestructure}. This data structure
-        is static. It may change when power the system is power cycled, but
+        is static. It may change when the system is power cycled, but
         not due to a simple reset.
 
         When executed, this command will place the 4 bytes at

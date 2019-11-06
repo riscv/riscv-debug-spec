@@ -517,7 +517,7 @@ for an 8-byte magic sequence. In ASCII, those look like
 \subsection{Abstract Command Support} \label{sectionAbstractCommandSupport}
 
 This optional section describes which abstract commands (full register contents
-or \RdmCommand) are supported for the harts currently in the selected list. If
+of \RdmCommand) are supported for the harts currently in the selected list. If
 it is present the structure must describe every implemented abstract command.
 This section should exist if abstract commands are implemented.
 
@@ -578,10 +578,14 @@ records are described in Table~\ref{tab:triggersupport}.
         0x02 & $|low|$ $|high|$ & $|low|$ and $|high|$ are varnums. Remove the
         range of triggers from $|low|$ to $|high|$ (inclusive) from the trigger
         list. \\ \hline
-        0x10 & $|data|$ $|mask|$ & $|data|$ and $|mask|$ are DXLEN-bit values.
-        Indicate that for the currently selected triggers, on the currently
-        selected harts, every trigger T is supported if $(T \BitAnd |mask|) =
-        (|sample| \BitAnd |mask|)$. \\ \hline
+        0x10 & $|data|$ $|mask|$ & $|data|$ and $|mask|$ are 32-bit values.
+        They indicate that for the currently selected triggers, on the
+        currently selected harts, every trigger T is supported if $(T \BitAnd
+        |mask|) = (|sample| \BitAnd |mask|)$. This implies DXLEN is 32. \\ \hline
+        0x11 & $|data|$ $|mask|$ & $|data|$ and $|mask|$ are 64-bit values.
+        They indicate that for the currently selected triggers, on the
+        currently selected harts, every trigger T is supported if $(T \BitAnd
+        |mask|) = (|sample| \BitAnd |mask|)$. This implies DXLEN is 64. \\ \hline
     \end{tabulary}
 \end{table}
 
