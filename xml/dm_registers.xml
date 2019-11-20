@@ -241,7 +241,10 @@
             to the module may fail. Specifically, \FdmDmstatusVersion may not return
             correct data.
 
-            1: The module functions normally.
+            1: The module functions normally. After writing 1, the debugger should
+            read \RdmDmcontrol to confirm that this bit is now high. Hardware may
+            take a long time to set this bit if it's not currently ready for
+            debugging to take place.
 
             No other mechanism should exist that may result in resetting the
             Debug Module after power up.
