@@ -242,9 +242,9 @@
             correct data.
 
             1: The module functions normally. After writing 1, the debugger should
-            read \RdmDmcontrol to confirm that this bit is now high. Hardware may
-            take a long time to set this bit if it's not currently ready for
-            debugging to take place.
+            poll \RdmDmcontrol until \FdmDmcontrolDmactive is high. Hardware may
+            take an arbitrarily long time to initialize and will indicate completion
+            by setting dmactive to 1.
 
             No other mechanism should exist that may result in resetting the
             Debug Module after power up.
