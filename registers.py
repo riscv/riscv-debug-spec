@@ -255,7 +255,7 @@ def write_cheader( fd, registers ):
 
 def write_chisel( fd, registers ):
     fd.write("package freechips.rocketchip.devices.debug\n\n")
-    fd.write("import Chisel._\n\n")
+    fd.write("import chisel3._\n\n")
 
     fd.write("// This file was auto-generated from the repository at https://github.com/riscv/riscv-debug-spec.git,\n")
     fd.write("// 'make chisel'\n\n")
