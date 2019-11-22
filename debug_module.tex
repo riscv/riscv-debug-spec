@@ -548,6 +548,7 @@ while writes should be ignored, with the following mandatory exceptions:
     \item Write \RdmDmcontrol, preserving \FdmDmcontrolHartreset, \FdmDmcontrolHasel, \FdmDmcontrolHartsello, and
         \FdmDmcontrolHartselhi from the value that was read, setting \FdmDmcontrolDmactive, and
         clearing all the other bits.
+    \item Read \RdmDmcontrol until \FdmDmcontrolDmactive is high.
     \item Read \RdmDmstatus, which contains \FdmDmstatusVersion.
 \end{steps}
 
