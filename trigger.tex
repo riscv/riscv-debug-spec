@@ -63,8 +63,9 @@ Value & Description \\
     be executed to preserve the program flow.
 
     This action is only legal when the trigger's \FcsrTdataOneDmode is 1.
-    Hardware should ignore triggers which have this action configured without
-    having \FcsrTdataOneDmode set. \\
+    Since the {\tt tdata} registers are WARL, hardware should clear the action
+    field whenever the action field is 1, \FcsrTdataOneDmode is cleared, and the
+    new value of the action field would also be 1. \\
 \hline
 2 -- 5 & Reserved for use by the trace specification. \\
 \hline
