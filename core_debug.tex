@@ -131,13 +131,22 @@ enter Debug Mode before executing any instructions, but after performing any
 initialization that would usually happen before the first instruction is
 executed.
 
+\section{Resume}
+
+\begin{steps}{When a hart resumes:}
+    \item \Rpc changes to the value stored in \RcsrDpc.
+    \item The current privilege mode is changed to that specified by
+        \FcsrDcsrPrv.
+    \item If the new privilege mode is less privileged than M mode,
+        \FcsrMcontrolMprv in \Rmstatus is cleared.
+    \item The hart is no longer in debug mode.
+\end{steps}
+
 \section{{\tt dret} Instruction} \label{dret}
 
 To return from Debug Mode, a new instruction is defined: {\tt dret}. It has an
 encoding of 0x7b200073. On harts which support this instruction,
-executing {\tt dret} in Debug Mode changes \Rpc to the value
-stored in \RcsrDpc. The current privilege level is changed to that specified by
-\FcsrDcsrPrv in \RcsrDcsr. The hart is no longer in debug mode.
+executing {\tt dret} in Debug Mode cause the hart to resume as described above.
 
 Executing {\tt dret} outside of Debug Mode causes an illegal instruction exception.
 
