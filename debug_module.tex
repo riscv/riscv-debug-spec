@@ -80,17 +80,14 @@ perform some abstract commands during this time, or in the unavailable state,
 indicating it's not possible to perform any abstract commands during this time.
 Once a hart's reset is complete, {\tt havereset} becomes set.  When a hart comes out
 of reset and \FdmDmcontrolHaltreq or \Fresethaltreq are set, the hart will
-immediately enter Debug Mode (halted state). Otherwise it will execute normally
-(running state).
+immediately enter Debug Mode (halted state).
+Otherwise, if the hart was initially running it will execute normally (running state)
+and if the hart was initially halted it should now be running but may be halted.
 
 \begin{commentary}
     There is no general, reliable way for the debugger to know when reset has
     actually begun.
 \end{commentary}
-
-The halt state of harts should be
-maintained across system reset provided that \FdmDmcontrolDmactive is 1,
-although trigger CSRs may be cleared.
 
 The Debug Module's own state and registers should only be
 reset at power-up and while
