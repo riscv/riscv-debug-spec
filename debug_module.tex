@@ -81,8 +81,8 @@ indicating it's not possible to perform any abstract commands during this time.
 Once a hart's reset is complete, {\tt havereset} becomes set.  When a hart comes out
 of reset and \FdmDmcontrolHaltreq or \Fresethaltreq are set, the hart will
 immediately enter Debug Mode (halted state).
-If the hart was initially running it will execute normally (running state).
-If the hart was initially halted it should now be running but may be halted.
+Otherwise, if the hart was initially running it will execute normally (running state)
+and if the hart was initially halted it should now be running but may be halted.
 
 \begin{commentary}
     There is no general, reliable way for the debugger to know when reset has
