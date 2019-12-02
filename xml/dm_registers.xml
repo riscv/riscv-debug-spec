@@ -615,6 +615,8 @@
         is halted or not. Unavailable/nonexistent harts are not considered to
         be halted.
 
+        This register may not be present in systems with fewer than 2 harts.
+
         The LSB reflects the halt status of hart \{hartsel[19:5],5'h0\}, and the
         MSB reflects halt status of hart \{hartsel[19:5],5'h1f\}.
 
