@@ -251,7 +251,8 @@ other harts in the group are already halted.
 \begin{steps}{When any hart in a resume group resumes, or an external trigger
     that's a member of the resume group fires:}
 \item All the other harts in that group will quickly resume as soon as any
-    currently executing abstract commands have completed.
+    currently executing abstract commands have completed, except for the harts
+    that are in the process of halting.
 \item Any external triggers in that group are notified.
 \end{steps}
 Adding a hart to a resume group does not automatically resume that hart, even
