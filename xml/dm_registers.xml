@@ -615,6 +615,9 @@
         is halted or not. Unavailable/nonexistent harts are not considered to
         be halted.
 
+        This register might not be present if fewer than 2 harts are connected
+        to this DM.
+
         The LSB reflects the halt status of hart \{hartsel[19:5],5'h0\}, and the
         MSB reflects halt status of hart \{hartsel[19:5],5'h1f\}.
 
@@ -626,8 +629,8 @@
         harts is halted or not. Unavailable/nonexistent harts are not considered to
         be halted.
 
-        This register may not be present in systems with fewer than
-        33 harts.
+        This register might not be present if fewer than 33 harts are connected
+        to this DM.
 
         The LSB reflects the halt status of harts \{hartsel[19:10],10'h0\}
         through \{hartsel[19:10],10'h1f\}.
@@ -642,8 +645,8 @@
         harts is halted or not. Unavailable/nonexistent harts are not considered to
         be halted.
 
-        This register may not be present in systems with fewer than
-        1025 harts.
+        This register might not be present if fewer than 1025 harts are connected
+        to this DM.
 
         The LSB reflects the halt status of harts \{hartsel[19:15],15'h0\}
         through \{hartsel[19:15],15'h3ff\}.
@@ -658,8 +661,8 @@
         harts is halted or not. Unavailable/nonexistent harts are not considered to
         be halted.
 
-        This register may not be present in systems with fewer than
-        32769 harts.
+        This register might not be present if fewer than 32769 harts are connected
+        to this DM.
 
         The LSB reflects the halt status of harts 20'h0 through 20'h7fff.
         The MSB reflects the halt status of harts 20'hf8000 through 20'hfffff.
