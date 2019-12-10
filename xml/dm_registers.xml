@@ -571,33 +571,50 @@
         This register contains DM control and status bits that didn't easily
         fit in \RdmDmcontrol and \RdmDmstatus. All are optional.
 
-        <field name="0" bits="31:11" access="R" reset="0" />
+        If halt groups are not implemented, then \FdmDmcsTwoGroup will always
+        be 0 when \FdmDmcsTwoGrouptype is 0.
+
+        If resume groups are not implemented, then \FdmDmcsTwoGrouptype will
+        remain 0 even after 1 is written there.
+
+        The external triggers available to add to halt groups may or may not
+        be distinct from the external triggers available to add to resume groups.
+
+        <field name="0" bits="31:12" access="R" reset="0" />
+        <field name="grouptype" bits="11" access="WARL" reset="0">
+            0: The remaining fields in this register configure halt groups.
+
+            1: The remaining fields in this register configure resume groups.
+        </field>
         <field name="exttrigger" bits="10:7" access="WARL" reset="0">
             This field contains the currently selected external trigger.
 
             If a non-existent trigger value is written here, the hardware will
             change it to a valid one or 0 if no external triggers exist.
         </field>
-        <field name="haltgroup" bits="6:2" access="WARL" reset="0">
-            When \FdmDmcsTwoHgselect is 0, contains the halt group of the hart
+        <field name="group" bits="6:2" access="WARL" reset="0">
+            When \FdmDmcsTwoHgselect is 0, contains the group of the hart
             specified by \Fhartsel.
 
-            When \FdmDmcsTwoHgselect is 1, contains the halt group of the external
+            When \FdmDmcsTwoHgselect is 1, contains the group of the external
             trigger selected by \FdmDmcsTwoExttrigger.
 
             Writes only have an effect if \FdmDmcsTwoHgwrite is also written 1.
 
-            An implementation may tie any number of upper bits in this field to
-            0. If halt groups aren't implemented, then this entire field
-            is 0.
+            Group numbers are contiguous starting at 0, with the highest number
+            being implementation-dependent, and possibly different between
+            different group types. Debuggers should read back this field after
+            writing to confirm they are using a hart group that is supported.
+
+            If groups aren't implemented, then this entire field is 0.
         </field>
         <field name="hgwrite" bits="1" access="W1" reset="-">
-            When \FdmDmcsTwoHgselect is 0, writing 1 changes the halt group of all
-            selected harts to the value written to \FdmDmcsTwoHaltgroup.
+            When \FdmDmcsTwoHgselect is 0, writing 1 changes the group of all
+            selected harts to the value written to \FdmDmcsTwoGroup.
 
-            When \FdmDmcsTwoHgselect is 1, writing 1 changes the halt group of the
+            When \FdmDmcsTwoHgselect is 1, writing 1 changes the group of the
             external trigger selected by \FdmDmcsTwoExttrigger to the value written to
-            \FdmDmcsTwoHaltgroup.
+            \FdmDmcsTwoGroup.
 
             Writing 0 has no effect.
         </field>
