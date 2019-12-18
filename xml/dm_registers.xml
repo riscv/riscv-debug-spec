@@ -868,10 +868,11 @@
         \begin{steps}{Reads from this register start the following:}
             \item ``Return'' the data.
             \item Set \FdmSbcsSbbusy.
-            \item If \FdmSbcsSbreadondata is set, perform a system bus read from the
-            address contained in {\tt sbaddress}, placing the result in {\tt
-            sbdata}.
-            \item If \FdmSbcsSbautoincrement is set, increment {\tt sbaddress}.
+            \item \begin{steps}{If \FdmSbcsSbreadondata is set:}
+                \item Perform a system bus read from the address contained in
+                        {\tt sbaddress}, placing the result in {\tt sbdata}.
+                \item If \FdmSbcsSbautoincrement is set, increment {\tt sbaddress}.
+            \end{steps}
             \item Clear \FdmSbcsSbbusy.
         \end{steps}
 
