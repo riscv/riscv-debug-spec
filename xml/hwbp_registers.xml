@@ -61,6 +61,8 @@
             selected \RcsrTselect.  Writes from other modes are ignored.
 
             This bit is only writable from Debug Mode.
+            When clearing this bit, the debugger should also clear the action field
+            (whose location depends on \FcsrTdataOneType).
         </field>
         <field name="data" bits="XLEN-6:0" access="WARL" reset="Preset">
             If \FcsrTdataOneType is 0, then this field is hard-wired to 0.
