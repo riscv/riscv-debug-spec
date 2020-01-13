@@ -29,16 +29,16 @@
         <field name="0" bits="31:18" access="R" reset="0" />
         <field name="dmihardreset" bits="17" access="W1" reset="-">
           Writing 1 to this bit does a hard reset of the DTM,
-          causing the DTM to forget about any outstanding DMI transactions.
+          causing the DTM to forget about any outstanding DMI transactions, and
+          returning all registers and internal state to their reset value.
           In general this should only be used when the Debugger has
           reason to expect that the outstanding DMI transaction will never
           complete (e.g. a reset condition caused an inflight DMI transaction to
           be cancelled).
         </field>
         <field name="dmireset" bits="16" access="W1" reset="-">
-          Writing 1 to this bit clears the sticky error state
-          and allows the DTM to retry or complete the previous
-          transaction.
+            Writing 1 to this bit clears the sticky error state, but does
+            not affect outstanding DMI transactions.
         </field>
         <field name="0" bits="15" access="R" reset="0" />
         <field name="idle" bits="14:12" access="R" reset="Preset">
