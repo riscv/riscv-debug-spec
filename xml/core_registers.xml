@@ -109,10 +109,8 @@
         </field>
         <field name="step" bits="2" access="R/W" reset="0">
             When set and not in Debug Mode, the hart will only execute a single
-            instruction and then enter Debug Mode.
-            If the instruction does not complete due to an exception,
-            the hart will immediately enter Debug Mode before executing
-            the trap handler, with appropriate exception registers set.
+            instruction and then enter Debug Mode. See Section~\ref{stepBit}
+            for details.
 
             The debugger must not change the value of this bit while the hart
             is running.

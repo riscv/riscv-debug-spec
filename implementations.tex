@@ -30,7 +30,7 @@ When the halt request bit is set, the Debug Module raises a special interrupt
 to the selected harts. This interrupt causes each
 hart to enter Debug Mode and jump to a defined
 memory region that is serviced by the DM and is only accessible to the harts in Debug Mode.
-When taking this exception, \Rpc is saved to \RcsrDpc and \FcsrDcsrCause is updated
+When taking this trap, \Rpc is saved to \RcsrDpc and \FcsrDcsrCause is updated
 in \RcsrDcsr.
 
 The code in the Debug Module causes the hart to execute a ``park loop.''
@@ -51,7 +51,7 @@ otherwise the DM causes a {\tt ebreak} to execute immediately.
 
 When {\tt ebreak} is executed (indicating the end of the
 Program Buffer code) the hart returns to its park loop. If an exception is
-encountered, the hart jumps to a debug exception address within
+encountered, the hart jumps to a debug trap address within
 the Debug Module. The code at that address causes the hart to
 write to an address in the Debug Module which indicates exception.
 This address is considered I/O for {\tt fence} instructions (see \#\ref{fence}
