@@ -115,7 +115,7 @@
             The debugger must not change the value of this bit while the hart
             is running.
         </field>
-        <field name="prv" bits="1:0" access="R/W" reset="3">
+        <field name="prv" bits="1:0" access="WARL" reset="3">
             Contains the privilege level the hart was operating in when Debug
             Mode was entered. The encoding is described in Table
             \ref{tab:privlevel}.  A debugger can change this value to change
