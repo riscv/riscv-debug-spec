@@ -215,7 +215,8 @@
         </field>
         <field name="0" bits="XLEN-12:23" access="R" reset="0" />
         <field name="sizehi" bits="22:21" access="WARL" reset="0">
-            This field contains the 2 high bits of the access size. The low bits
+            This field only exists when XLEN is at least 64.
+            It contains the 2 high bits of the access size. The low bits
             come from \FcsrMcontrolSizelo. See \FcsrMcontrolSizelo for how this
             is used.
         </field>
