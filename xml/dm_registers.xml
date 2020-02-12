@@ -100,8 +100,8 @@
             2: There is a Debug Module and it conforms to version 0.13 of this
             specification.
 
-	    3: There is a Debug Module and it conforms to version 0.14 of this
-	    specification.
+            3: There is a Debug Module and it conforms to version 0.14 of this
+            specification.
 
             15: There is a Debug Module but it does not conform to any
             available version of this spec.
