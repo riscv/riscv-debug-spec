@@ -595,7 +595,7 @@
             If a non-existent trigger value is written here, the hardware will
             change it to a valid one or 0 if no external triggers exist.
         </field>
-        <field name="group" bits="6:2" access="WARL" reset="0">
+        <field name="group" bits="6:2" access="WARL" reset="preset">
             When \FdmDmcsTwoHgselect is 0, contains the group of the hart
             specified by \Fhartsel.
 
@@ -615,9 +615,14 @@
             When \FdmDmcsTwoHgselect is 0, writing 1 changes the group of all
             selected harts to the value written to \FdmDmcsTwoGroup.
 
-            When \FdmDmcsTwoHgselect is 1, writing 1 changes the group of the
-            external trigger selected by \FdmDmcsTwoExttrigger to the value written to
-            \FdmDmcsTwoGroup.
+            When 1 is written and \FdmDmcsTwoHgselect is 0, for every selected
+            hart the DM will change its group to the value written to \FdmDmcsTwoGroup,
+            if the hardware supports that group for that hart.
+
+            When 1 is written and \FdmDmcsTwoHgselect is 1, the DM will change
+            the group of the external trigger selected by \FdmDmcsTwoExttrigger
+            to the value written to \FdmDmcsTwoGroup, if the hardware supports
+            that group for that trigger.
 
             Writing 0 has no effect.
         </field>
