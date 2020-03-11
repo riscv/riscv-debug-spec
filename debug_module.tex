@@ -237,7 +237,8 @@ while the hart is selected, or by DM reset.
 An optional feature allows a debugger to create two kinds of groups: halt
 groups and resume groups.  It is also possible to add external triggers to a
 halt and resume groups.  External triggers are abstract concepts that can
-signal the DM and/or receive signals from the DM.
+signal the DM and/or receive signals from the DM. This configuration is done
+through \RdmDmcsTwo.
 
 \begin{steps}{When any hart in a halt group halts, or an external trigger
     that's a member of the halt group fires:}
@@ -266,6 +267,14 @@ if other harts in the group are currently running.
 
 In both halt and resume groups, group 0 is special. Harts in group 0
 halt/resume as if groups aren't implemented at all.
+
+When the DM is reset, all harts must be placed in the lowest-numbered halt and
+resume groups that they can be in. (This will usually be group 0.)
+
+Some designs may choose to hardcode hart groups to a group other than group 0,
+meaning it is never possible to halt or resume just a single hart. This is
+explicitly allowed. In that case it must be possible to discover the groups by
+using \RdmDmcsTwo even if it's not possible to change the configuration.
 
 \section{Abstract Commands} \label{abstractcommands}
 
