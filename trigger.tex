@@ -173,7 +173,7 @@ working on.
 These registers are CSRs, accessible using the RISC-V {\tt csr} opcodes and
 optionally also using abstract debug commands.
 
-Most trigger functionality is optional. All {\tt tdata} registers follow
+Almost all trigger functionality is optional. All {\tt tdata} registers follow
 write-any-read-legal semantics. If a debugger writes an unsupported
 configuration, the register will read back a value that is supported (which may
 simply be a disabled trigger).  This means that a debugger must always read
