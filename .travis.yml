@@ -1,3 +1,5 @@
+dist: xenial
+
 branches:
     only:
         - master
@@ -6,14 +8,14 @@ branches:
 git:
   submodules: false
 
-language: latex
+language: minimal
 
 addons:
   apt:
     packages:
       - make
-      - python
-      - python-sympy
+      - python3
+      - python3-sympy
       - graphviz
       - texlive-base
       - texlive-latex-base
@@ -21,9 +23,7 @@ addons:
       - texlive-fonts-extra
       - texlive-science
 
-# sympy ends up in /usr/lib/python2.7/dist-packages, which is not part of the
-# default python path.
 script:
-  - PYTHONPATH=$PYTHONPATH:/usr/lib/python2.7/dist-packages make
-  - PYTHONPATH=$PYTHONPATH:/usr/lib/python2.7/dist-packages make chisel
+  - make
+  - make chisel
   

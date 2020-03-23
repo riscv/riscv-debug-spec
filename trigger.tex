@@ -6,8 +6,7 @@ without having to execute a special instruction. This makes them invaluable
 when debugging code from ROM. They can trigger on execution of instructions at
 a given memory address, or on the address/data in loads/stores.  These are all
 features that can be useful without having the Debug Module present, so the
-Trigger Module is broken out as a separate piece that can be implemented
-separately.
+Trigger Module is broken out as a piece that can be implemented separately.
 
 A hart can be compliant with this specification without implementing any
 trigger functionality at all, but if it is implemented then it must conform to
@@ -16,37 +15,127 @@ accessing them results in an illegal instruction exception.
 
 Triggers do not fire while in Debug Mode.
 
+\section{Enumeration}
+
 \begin{steps}{Each trigger may support a variety of features. A debugger can
     build a list of all triggers and their features as follows:}
-\item Write 0 to \Rtselect. If this results in an illegal instruction
+\item Write 0 to \RcsrTselect. If this results in an illegal instruction
     exception, then there are no triggers implemented.
-\item Read back \Rtselect and check that it contains the written value. If not,
+\item Read back \RcsrTselect and check that it contains the written value. If not,
     exit the loop.
-\item Read \Rtinfo.
-\item If that caused an exception, the debugger must read \Rtdataone to
-    discover the type. (If \Ftype is 0, this trigger doesn't exist. Exit the
+\item Read \RcsrTinfo.
+\item If that caused an exception, the debugger must read \RcsrTdataOne to
+    discover the type. (If \FcsrTdataOneType is 0, this trigger doesn't exist. Exit the
     loop.)
-\item If \Finfo is 1, this trigger doesn't exist. Exit the loop.
-\item Otherwise, the selected trigger supports the types discovered in \Finfo.
-\item Repeat, incrementing the value in \Rtselect.
+\item If \FcsrTinfoInfo is 1, this trigger doesn't exist. Exit the loop.
+\item Otherwise, the selected trigger supports the types discovered in \FcsrTinfoInfo.
+\item Repeat, incrementing the value in \RcsrTselect.
 \end{steps}
 
 \begin{commentary}
-    The above algorithm reads back \Rtselect so that implementations which have
-    $2^n$ triggers only need to implement $n$ bits of \Rtselect.
+    The above algorithm reads back \RcsrTselect so that implementations which have
+    $2^n$ triggers only need to implement $n$ bits of \RcsrTselect.
 
-    The algorithm checks \Rtinfo and \Ftype in case the implementation has $m$
-    bits of \Rtselect but fewer than $2^m$ triggers.
+    The algorithm checks \RcsrTinfo and \FcsrTdataOneType in case the implementation has $m$
+    bits of \RcsrTselect but fewer than $2^m$ triggers.
 \end{commentary}
 
-It is possible for a trigger with the ``enter Debug Mode'' action (1) and another
-trigger with the ``raise a breakpoint exception'' action (0) to fire at the same
-time. The preferred behavior is to have both actions take place.  It is
+\section{Actions}
+
+Triggers can be configured to take one of several actions when they fire.
+Table~\ref{tab:action} lists all options.
+
+\begin{table}[H]
+\centering
+\caption{\FcsrMcontrolAction encoding}
+\label{tab:action}
+\begin{tabular}{|r|L|}
+\hline
+Value & Description \\
+\hline
+0 & Raise a breakpoint exception into M-Mode. (Used when software wants to
+    use the trigger module without an external debugger attached.)
+    \Rmepc must contain the virtual address of the next instruction that must
+    be executed to preserve the program flow. \\
+\hline
+1 & Enter Debug Mode.
+    \RcsrDpc must contain the virtual address of the next instruction that must
+    be executed to preserve the program flow.
+
+    This action is only legal when the trigger's \FcsrTdataOneDmode is 1.
+    Since the {\tt tdata} registers are WARL, hardware should clear the action
+    field whenever the action field is 1, \FcsrTdataOneDmode is cleared, and the
+    new value of the action field would also be 1. \\
+\hline
+2 -- 5 & Reserved for use by the trace specification. \\
+\hline
+other & Reserved for future use. \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Priority}
+
+Table~\ref{tab:priority} lists the synchronous exceptions from the Privileged
+Spec, and where the various types of triggers fit in. The first 3 columns come
+from the Privileged Spec, and the final column shows where triggers fit in.
+Priorities in the table are separated by horizontal lines, so e.g. etrigger and
+itrigger have the same priority.
+If this table contradicts the table in the Privileged Spec, then the latter
+takes precedence.
+
+This table only applies if triggers are precise. Otherwise triggers
+will fire some indeterminate time after the event, and the priority is
+irrelevant.
+When triggers are chained, the priority is the lowest priority of the triggers
+in the chain.
+
+\begin{table}[H]
+\centering
+\label{tab:priority}
+\begin{tabular}{|l|r|l|l|}
+  \hline
+  Priority      & Exception & Description & Trigger \\
+                &      Code &             & \\
+  \hline
+  {\em Highest} &          3 & & etrigger \\
+                &          3 & & icount \\
+                &          3 & & itrigger \\
+                &          3 & & mcontrol after \\
+                &            & & \hspace{2em}(on previous instruction) \\
+                \hline
+                &          3 & Instruction address breakpoint & mcontrol execute address before \\ \hline
+                &         12 & Instruction page fault & \\ \hline
+                &          1 & Instruction access fault & \\ \hline
+                &          3 & & mcontrol execute data before \\ \hline
+                &          2 & Illegal instruction & \\
+                &          0 & Instruction address misaligned & \\
+                &   8, 9, 11 & Environment call & \\
+                &          3 & Environment break & \\
+                &          3 & Load/Store/AMO address breakpoint & mcontrol load/store address before \\
+                &          3 & & mcontrol store data before \\ \hline
+                &          6 & Store/AMO address misaligned & \\
+                &          4 & Load address misaligned & \\ \hline
+                &         15 & Store/AMO page fault & \\
+                &         13 & Load page fault & \\ \hline
+                &          7 & Store/AMO access fault & \\
+                &          5 & Load access fault & \\
+  {\em Lowest}  &          3 & & mcontrol load data before \\
+  \hline
+\end{tabular}
+\caption{Synchronous exception priority in decreasing priority order.}
+\end{table}
+
+When multiple triggers in the same priority fire at once, \FcsrMcontrolHit (if
+implemented) is set for all of them. If one of these triggers has
+the ``enter Debug Mode'' action (1) and another
+trigger has the ``raise a breakpoint exception'' action (0),
+the preferred behavior is to have both actions take place.  It is
 implementation-dependent which of the two happens first.  This ensures both
 that the presence of an external debugger doesn't affect execution and that a
 trigger set by user code doesn't affect the external debugger. If this is not
 implemented, then the hart must enter Debug Mode and ignore the breakpoint
-exception. In the latter case, \Fhit of the trigger whose action is 0 must still
+exception. In the latter case, \FcsrMcontrolHit of the trigger whose action is 0 must still
 be set, giving a debugger an opportunity to handle this case. What happens with
 trace actions when triggers with different actions are also firing is left to
 the trace specification.
@@ -55,7 +144,7 @@ the trace specification.
 \label{sec:mmtrigger}
 
 Triggers can be used for native debugging. On a fully featured system triggers
-will be set using \Fu or \Fs, and when firing they can cause a breakpoint exception
+will be set using \FcsrMcontrolU or \FcsrMcontrolS, and when firing they can cause a breakpoint exception
 to trap to a more privileged mode. It is possible to set triggers natively to
 fire in M mode as well. In that case there is no higher privilege mode to trap
 to. When such a trigger causes a breakpoint exception while already in a trap
@@ -67,11 +156,11 @@ implement one of two solutions to this problem. This way triggers can be useful
 for native debugging of even M mode code.
 
 The simple solution is to have the hardware prevent triggers with action=0 from
-firing while in M mode and while \Fmie in \Rmstatus is 0. Its limitation is
+firing while in M mode and while \FcsrMcontrolMie in \Rmstatus is 0. Its limitation is
 that interrupts might be disabled at other times when a user might want
 triggers to fire.
 
-A more complex solution is to implement \Fmte and \Fmpte in \Rtcontrol. This
+A more complex solution is to implement \FcsrTcontrolMte and \FcsrTcontrolMpte in \RcsrTcontrol. This
 solution has the benefit that it only disables triggers during the trap
 handler.
 

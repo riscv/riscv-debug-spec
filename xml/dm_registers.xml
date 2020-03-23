@@ -1,11 +1,11 @@
-<registers name="Debug Module Debug Bus Registers" prefix="DMI_">
+<registers name="Debug Module Debug Bus Registers" prefix="DM_">
 
     <!-- =============== halt/reset/select hart  =============== -->
 
     <register name="Debug Module Status" short="dmstatus" address="0x11">
         This register reports status for the overall Debug Module as well as
-        the currently selected harts, as defined in \Fhasel.  Its address will
-        not change in the future, because it contains \Fversion.
+        the currently selected harts, as defined in \FdmDmcontrolHasel.  Its address will
+        not change in the future, because it contains \FdmDmstatusVersion.
 
         <field name="0" bits="31:23" access="R" reset="0" />
         <field name="impebreak" bits="22" access="R" reset="Preset">
@@ -14,7 +14,7 @@
             the debugger from having to write the {\tt ebreak} itself, and
             allows the Program Buffer to be one word smaller.
 
-            This must be 1 when \Fprogbufsize is 1.
+            This must be 1 when \FdmAbstractcsProgbufsize is 1.
         </field>
         <field name="0" bits="21:20" access="R" reset="0" />
         <field name="allhavereset" bits="19" access="R" reset="-">
@@ -71,33 +71,36 @@
         </field>
         <field name="authbusy" bits="6" access="R" reset="0">
             0: The authentication module is ready to process the next
-            read/write to \Rauthdata.
+            read/write to \RdmAuthdata.
 
-            1: The authentication module is busy. Accessing \Rauthdata results
+            1: The authentication module is busy. Accessing \RdmAuthdata results
             in unspecified behavior.
 
-            \Fauthbusy only becomes set in immediate response to an access to
-            \Rauthdata.
+            \FdmDmstatusAuthbusy only becomes set in immediate response to an access to
+            \RdmAuthdata.
         </field>
         <field name="hasresethaltreq" bits="5" reset="Preset" access="R">
             1 if this Debug Module supports halt-on-reset functionality
-            controllable by the \Fsetresethaltreq and \Fclrresethaltreq bits.
+            controllable by the \FdmDmcontrolSetresethaltreq and \FdmDmcontrolClrresethaltreq bits.
             0 otherwise.
         </field>
         <field name="confstrptrvalid" bits="4" reset="Preset" access="R">
-            0: \Rconfstrptrzero--\Rconfstrptrthree hold information which
+            0: \RdmConfstrptrZero--\RdmConfstrptrThree hold information which
             is not relevant to the configuration string.
 
-            1: \Rconfstrptrzero--\Rconfstrptrthree hold the address of the
+            1: \RdmConfstrptrZero--\RdmConfstrptrThree hold the address of the
             configuration string.
         </field>
-        <field name="version" bits="3:0" reset="2" access="R">
+        <field name="version" bits="3:0" reset="3" access="R">
             0: There is no Debug Module present.
 
             1: There is a Debug Module and it conforms to version 0.11 of this
             specification.
 
             2: There is a Debug Module and it conforms to version 0.13 of this
+            specification.
+
+            3: There is a Debug Module and it conforms to version 0.14 of this
             specification.
 
             15: There is a Debug Module but it does not conform to any
@@ -107,12 +110,12 @@
 
     <register name="Debug Module Control" short="dmcontrol" address="0x10">
         This register controls the overall Debug Module
-        as well as the currently selected harts, as defined in \Fhasel.
+        as well as the currently selected harts, as defined in \FdmDmcontrolHasel.
 
 \label{hartsel}
 \index{hartsel}
-        Throughout this document we refer to \Fhartsel, which is \Fhartselhi
-        combined with \Fhartsello. While the spec allows for 20 \Fhartsel bits,
+        Throughout this document we refer to \Fhartsel, which is \FdmDmcontrolHartselhi
+        combined with \FdmDmcontrolHartsello. While the spec allows for 20 \Fhartsel bits,
         an implementation may choose to implement fewer than that. The actual
         width of \Fhartsel is called {\tt HARTSELLEN}. It must be at least 0
         and at most 20. A debugger should discover {\tt HARTSELLEN} by writing
@@ -121,26 +124,26 @@
         \Fhartsel while an abstract command is executing.
 
         \begin{commentary}
-        There are separate \Fsetresethaltreq and \Fclrresethaltreq bits so that
-        it is possible to write \Rdmcontrol without changing the halt-on-reset
+        There are separate \FdmDmcontrolSetresethaltreq and \FdmDmcontrolClrresethaltreq bits so that
+        it is possible to write \RdmDmcontrol without changing the halt-on-reset
         request bit for each selected hart, when not all selected harts have
         the same configuration.
         \end{commentary}
 
         On any given write, a debugger may only write 1 to at most one of the
-        following bits: \Fresumereq, \Fhartreset, \Fackhavereset,
-        \Fsetresethaltreq, and \Fclrresethaltreq. The others must be written 0.
+        following bits: \FdmDmcontrolResumereq, \FdmDmcontrolHartreset, \FdmDmcontrolAckhavereset,
+        \FdmDmcontrolSetresethaltreq, and \FdmDmcontrolClrresethaltreq. The others must be written 0.
 
 \label{resethaltreq}
 \index{resethaltreq}
         \Fresethaltreq is an optional internal bit of per-hart state that cannot be
-        read, but can be written with \Fsetresethaltreq and \Fclrresethaltreq.
+        read, but can be written with \FdmDmcontrolSetresethaltreq and \FdmDmcontrolClrresethaltreq.
 
-        For forward compatibility, \Fversion will always be readable when bit 1
-        (\Fndmreset) is 0 and bit 0 (\Fdmactive) is 1.
+        For forward compatibility, \FdmDmstatusVersion will always be readable when bit 1
+        (\FdmDmcontrolNdmreset) is 0 and bit 0 (\FdmDmcontrolDmactive) is 1.
 
         <!-- Fields that apply to all selected hart(s) -->
-        <field name="haltreq" bits="31" access="W" reset="-">
+        <field name="haltreq" bits="31" access="WARZ" reset="-">
             Writing 0 clears the halt request bit for all currently selected
             harts. This may cancel outstanding halt requests for those harts.
 
@@ -148,18 +151,18 @@
             harts. Running harts will halt whenever their halt request bit is
             set.
 
-            Writes apply to the new value of \Fhartsel and \Fhasel.
+            Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
         </field>
         <field name="resumereq" bits="30" access="W1" reset="-">
             Writing 1 causes the currently selected harts to resume once, if
             they are halted when the write occurs. It also clears the resume
             ack bit for those harts.
 
-            \Fresumereq is ignored if \Fhaltreq is set.
+            \FdmDmcontrolResumereq is ignored if \FdmDmcontrolHaltreq is set.
 
-            Writes apply to the new value of \Fhartsel and \Fhasel.
+            Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
         </field>
-        <field name="hartreset" bits="29" access="R/W" reset="0">
+        <field name="hartreset" bits="29" access="WARL" reset="0">
             This optional field writes the reset bit for all the currently
             selected harts.  To perform a reset the debugger writes 1, and then
             writes 0 to deassert the reset signal.
@@ -171,14 +174,14 @@
             after writing 1 the debugger can read the register back to see if
             the feature is supported.
 
-            Writes apply to the new value of \Fhartsel and \Fhasel.
+            Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
         </field>
         <field name="ackhavereset" bits="28" access="W1" reset="-">
             0: No effect.
 
             1: Clears {\tt havereset} for any selected harts.
 
-            Writes apply to the new value of \Fhartsel and \Fhasel.
+            Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
         </field>
         <field name="0" bits="27" access="R" reset="0" />
         <field name="hasel" bits="26" access="R/W" reset="0">
@@ -206,21 +209,21 @@
         <field name="0" bits="5:4" access="R" reset="0" />
         <field name="setresethaltreq" bits="3" access="W1" reset="-">
             This optional field writes the halt-on-reset request bit for all
-            currently selected harts, unless \Fclrresethaltreq is
+            currently selected harts, unless \FdmDmcontrolClrresethaltreq is
             simultaneously set to 1.
             When set to 1, each selected hart will halt upon the next deassertion
             of its reset. The halt-on-reset request bit is not automatically
-            cleared. The debugger must write to \Fclrresethaltreq to clear it.
+            cleared. The debugger must write to \FdmDmcontrolClrresethaltreq to clear it.
 
-            Writes apply to the new value of \Fhartsel and \Fhasel.
+            Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
 
-            If \Fhasresethaltreq is 0, this field is not implemented.
+            If \FdmDmstatusHasresethaltreq is 0, this field is not implemented.
         </field>
         <field name="clrresethaltreq" bits="2" access="W1" reset="-">
             This optional field clears the halt-on-reset request bit for all
             currently selected harts.
 
-            Writes apply to the new value of \Fhartsel and \Fhasel.
+            Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
         </field>
         <!-- Fields that apply to the entire DM. -->
         <field name="ndmreset" bits="1" access="R/W" reset="0">
@@ -236,17 +239,18 @@
             This bit serves as a reset signal for the Debug Module itself.
 
             0: The module's state, including authentication mechanism,
-            takes its reset values (the \Fdmactive bit is the only bit which can
+            takes its reset values (the \FdmDmcontrolDmactive bit is the only bit which can
             be written to something other than its reset value). Any accesses
-            to the module may fail. Specifically, \Fversion may not return
+            to the module may fail. Specifically, \FdmDmstatusVersion may not return
             correct data.
 
-            1: The module functions normally.
+            1: The module functions normally. After writing 1, the debugger should
+            poll \RdmDmcontrol until \FdmDmcontrolDmactive is high. Hardware may
+            take an arbitrarily long time to initialize and will indicate completion
+            by setting dmactive to 1.
 
             No other mechanism should exist that may result in resetting the
-            Debug Module after power up, with the possible (but not
-            recommended) exception of a global reset signal that resets the
-            entire platform.
+            Debug Module after power up.
 
             A debugger may pulse this bit low to get the Debug Module into a
             known state.
@@ -272,7 +276,7 @@
         <field name="0" bits="31:24" access="R" reset="0" />
         <field name="nscratch" bits="23:20" access="R" reset="Preset">
             Number of {\tt dscratch} registers available for the debugger
-            to use during program buffer execution, starting from \Rdscratchzero.
+            to use during program buffer execution, starting from \RcsrDscratchZero.
             The debugger can make no assumptions about the contents of these
             registers between commands.
         </field>
@@ -286,21 +290,23 @@
             Each register takes up 4 bytes in the memory map.
         </field>
         <field name="datasize" bits="15:12" access="R" reset="Preset">
-            If \Fdataaccess is 0: Number of CSRs dedicated to
+            If \FdmHartinfoDataaccess is 0: Number of CSRs dedicated to
             shadowing the {\tt data} registers.
 
-            If \Fdataaccess is 1: Number of 32-bit words in the memory map
+            If \FdmHartinfoDataaccess is 1: Number of 32-bit words in the memory map
             dedicated to shadowing the {\tt data} registers.
 
             Since there are at most 12 {\tt data} registers, the value in this
             register must be 12 or smaller.
         </field>
         <field name="dataaddr" bits="11:0" access="R" reset="Preset">
-            If \Fdataaccess is 0: The number of the first CSR dedicated to
+            If \FdmHartinfoDataaccess is 0: The number of the first CSR dedicated to
             shadowing the {\tt data} registers.
 
-            If \Fdataaccess is 1: Signed address of RAM where the {\tt data}
-            registers are shadowed, to be used to access relative to \Rzero.
+            If \FdmHartinfoDataaccess is 1: Address of RAM where the data
+            registers are shadowed. This address is sign extended giving a
+            range of -2048 to 2047, easily addressed with a load or store using
+            \Xzero as the address register.
         </field>
     </register>
 
@@ -308,7 +314,7 @@
 
     <register name="Hart Array Window Select" short="hawindowsel" address="0x14">
       This register selects which of the 32-bit portion of the hart array mask
-      register (see Section~\ref{hartarraymask}) is accessible in \Rhawindow.
+      register (see Section~\ref{hartarraymask}) is accessible in \RdmHawindow.
 
       <field name="0" bits="31:15" access="R/W" reset="0" />
       <field name="hawindowsel" bits="14:0" access="R/W" reset="0">
@@ -321,13 +327,13 @@
     <register name="Hart Array Window " short="hawindow" address="0x15">
       This register provides R/W access to a 32-bit portion of the
       hart array mask register (see Section~\ref{hartarraymask}).
-      The position of the window is determined by \Rhawindowsel. I.e. bit 0
-      refers to hart $\Rhawindowsel * 32$, while bit 31 refers to hart
-      $\Rhawindowsel * 32 + 31$.
+      The position of the window is determined by \RdmHawindowsel. I.e. bit 0
+      refers to hart $\RdmHawindowsel * 32$, while bit 31 refers to hart
+      $\RdmHawindowsel * 32 + 31$.
 
       Since some bits in the hart array mask register may be constant 0, some
       bits in this register may be constant 0, depending on the current value
-      of \Fhawindowsel.
+      of \FdmHawindowselHawindowsel.
       <field name="maskdata" bits="31:0" access="R/W" reset="0" />
     </register>
 
@@ -335,10 +341,11 @@
 
     <register name="Abstract Control and Status" short="abstractcs" address="0x16">
         Writing this register while an abstract command is executing causes
-        \Fcmderr to be set to 1 (busy) if it is 0.
+        \FdmAbstractcsCmderr to become 1 (busy) once the command completes
+        (busy becomes 0).
 
         \begin{commentary}
-            \Fdatacount must be at least 1 to support RV32 harts, 2 to support
+            \FdmAbstractcsDatacount must be at least 1 to support RV32 harts, 2 to support
             RV64 harts, or 4 to support RV128 harts.
         \end{commentary}
 
@@ -350,7 +357,7 @@
         <field name="busy" bits="12" access="R" reset="0">
             1: An abstract command is currently being executed.
 
-            This bit is set as soon as \Rcommand is written, and is
+            This bit is set as soon as \RdmCommand is written, and is
             not cleared until that command has completed.
         </field>
         <field name="0" bits="11" access="R" reset="0" />
@@ -359,17 +366,19 @@
             they are cleared by writing 1 to them. No abstract command is
             started until the value is reset to 0.
 
-            This field only contains a valid value if \Fbusy is 0.
+            This field only contains a valid value if \FdmAbstractcsBusy is 0.
 
             0 (none): No error.
 
-            1 (busy): An abstract command was executing while \Rcommand,
-            \Rabstractcs, or \Rabstractauto was written, or when one
+            1 (busy): An abstract command was executing while \RdmCommand,
+            \RdmAbstractcs, or \RdmAbstractauto was written, or when one
             of the {\tt data} or {\tt progbuf} registers was read or written.
-            This status is only written if \Fcmderr contains 0.
+            This status is only written if \FdmAbstractcsCmderr contains 0.
 
-            2 (not supported): The requested command is not supported,
-            regardless of whether the hart is running or not.
+            2 (not supported): The command in \RdmCommand is not supported.  It
+            may be supported with different options set, but it will not be
+            supported at a later time when the hart or system state are
+            different.
 
             3 (exception): An exception occurred while executing the command
             (e.g.\ while executing the Program Buffer).
@@ -379,6 +388,8 @@
 
             5 (bus): The abstract command failed due to a bus error (e.g.\ 
             alignment, access size, or timeout).
+
+            6: Reserved for future use.
 
             7 (other): The command failed for another reason.
         </field>
@@ -394,24 +405,25 @@
         executed.
 
         Writing this register while an abstract command is executing causes
-        \Fcmderr to be set to 1 (busy) if it is 0.
+        \FdmAbstractcsCmderr to become 1 (busy) once the command completes
+        (busy becomes 0).
 
-        If \Fcmderr is non-zero, writes to this register are ignored.
+        If \FdmAbstractcsCmderr is non-zero, writes to this register are ignored.
 
         \begin{commentary}
-            \Fcmderr inhibits starting a new command to accommodate debuggers
+            \FdmAbstractcsCmderr inhibits starting a new command to accommodate debuggers
             that, for performance reasons, send several commands to be executed
-            in a row without checking \Fcmderr in between. They can safely do
-            so and check \Fcmderr at the end without worrying that one command
+            in a row without checking \FdmAbstractcsCmderr in between. They can safely do
+            so and check \FdmAbstractcsCmderr at the end without worrying that one command
             failed but then a later command (which might have depended on the
             previous one succeeding) passed.
         \end{commentary}
 
-        <field name="cmdtype"    bits="31:24" access="W" reset="0">
+        <field name="cmdtype"    bits="31:24" access="WARZ" reset="0">
             The type determines the overall functionality of this
             abstract command.
         </field>
-        <field name="control" bits="23:0" access="W" reset="0" >
+        <field name="control" bits="23:0" access="WARZ" reset="0" >
             This field is interpreted in a command-specific manner,
             described for each abstract command.
         </field>
@@ -423,23 +435,24 @@
         and reading them back.
 
         Writing this register while an abstract command is executing causes
-        \Fcmderr to be set to 1 (busy) if it is 0.
+        \FdmAbstractcsCmderr to become 1 (busy) once the command completes
+        (busy becomes 0).
 
         <field name="autoexecprogbuf" bits="31:16" access="R/W" reset="0">
             When a bit in this field is 1, read or write accesses to the
-            corresponding {\tt progbuf} word cause the command in \Rcommand to
+            corresponding {\tt progbuf} word cause the command in \RdmCommand to
             be executed again.
         </field>
         <field name="0" bits ="15:12" access="R" reset = "0"/>
         <field name="autoexecdata" bits="11:0" access="R/W" reset="0">
             When a bit in this field is 1, read or write accesses to the
-            corresponding {\tt data} word cause the command in \Rcommand to be
+            corresponding {\tt data} word cause the command in \RdmCommand to be
             executed again.
         </field>
     </register>
 
     <register name="Configuration String Pointer 0" short="confstrptr0" address="0x19">
-      When \Fconfstrptrvalid is set, reading this register returns bits 31:0
+      When \FdmDmstatusConfstrptrvalid is set, reading this register returns bits 31:0
       of the configuration string pointer. Reading the other {\tt confstrptr}
       registers returns the upper bits of the address.
 
@@ -448,16 +461,28 @@
       this must be an address that can be used to access the
       configuration string from the hart with ID 0.
 
-      If \Fconfstrptrvalid is 0, then the {\tt confstrptr} registers
+      If \FdmDmstatusConfstrptrvalid is 0, then the {\tt confstrptr} registers
       hold identifier information which is not
       further specified in this document.
 
       The configuration string itself is described in the Privileged Spec.
       <field name="addr" bits="31:0" access="R" reset="Preset"/>
     </register>
-    <register name="Configuration String Pointer 1" short="confstrptr1" address="0x1a"/>
-    <register name="Configuration String Pointer 2" short="confstrptr2" address="0x1b"/>
-    <register name="Configuration String Pointer 3" short="confstrptr3" address="0x1c"/>
+    <register name="Configuration String Pointer 1" short="confstrptr1" address="0x1a">
+      When \FdmDmstatusConfstrptrvalid is set, reading this register returns bits 63:32
+      of the configuration string pointer. See \RdmConfstrptrZero for more details.
+      <field name="addr" bits="31:0" access="R" reset="Preset"/>
+    </register>
+    <register name="Configuration String Pointer 2" short="confstrptr2" address="0x1b">
+      When \FdmDmstatusConfstrptrvalid is set, reading this register returns bits 95:64
+      of the configuration string pointer. See \RdmConfstrptrZero for more details.
+      <field name="addr" bits="31:0" access="R" reset="Preset"/>
+    </register>
+    <register name="Configuration String Pointer 3" short="confstrptr3" address="0x1c">
+      When \FdmDmstatusConfstrptrvalid is set, reading this register returns bits 127:96
+      of the configuration string pointer. See \RdmConfstrptrZero for more details.
+      <field name="addr" bits="31:0" access="R" reset="Preset"/>
+    </register>
 
     <register name="Next Debug Module" short="nextdm" address="0x1d">
         If there is more than one DM accessible on this DMI, this register
@@ -468,16 +493,16 @@
     </register>
 
     <register name="Abstract Data 0" short="data0" address="0x04">
-        \Rdatazero through \Rdataeleven are basic read/write registers that may
-        be read or changed by abstract commands. \Fdatacount indicates how many
-        of them are implemented, starting at \Rdatazero, counting up.
+        \RdmDataZero through \RdmDataEleven are basic read/write registers that may
+        be read or changed by abstract commands. \FdmAbstractcsDatacount indicates how many
+        of them are implemented, starting at \RdmDataZero, counting up.
         Table~\ref{tab:datareg} shows how abstract commands use these
         registers.
 
         Accessing these registers while an abstract command is executing causes
-        \Fcmderr to be set to 1 (busy) if it is 0.
+        \FdmAbstractcsCmderr to be set to 1 (busy) if it is 0.
 
-        Attempts to write them while \Fbusy is set does not change their value.
+        Attempts to write them while \FdmAbstractcsBusy is set does not change their value.
 
         The values in these registers may not be preserved after an abstract
         command is executed. The only guarantees on their contents are the ones
@@ -503,14 +528,14 @@
     <!-- =============== Program Buffer =============== -->
 
     <register name="Program Buffer 0" short="progbuf0" address="0x20">
-        \Rprogbufzero through \Rprogbuffifteen provide read/write access to the
-        optional program buffer. \Fprogbufsize indicates how many of them are
-        implemented starting at \Rprogbufzero, counting up.
+        \RdmProgbufZero through \RdmProgbufFifteen provide read/write access to the
+        optional program buffer. \FdmAbstractcsProgbufsize indicates how many of them are
+        implemented starting at \RdmProgbufZero, counting up.
 
         Accessing these registers while an abstract command is executing causes
-        \Fcmderr to be set to 1 (busy) if it is 0.
+        \FdmAbstractcsCmderr to be set to 1 (busy) if it is 0.
 
-        Attempts to write them while \Fbusy is set does not change their value.
+        Attempts to write them while \FdmAbstractcsBusy is set does not change their value.
 
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
@@ -538,7 +563,7 @@
         This register serves as a 32-bit serial port to/from the authentication
         module.
 
-        When \Fauthbusy is clear, the debugger can communicate with the
+        When \FdmDmstatusAuthbusy is clear, the debugger can communicate with the
         authentication module by reading or writing this register. There is no
         separate mechanism to signal overflow/underflow.
 
@@ -547,35 +572,57 @@
 
     <register name="Debug Module Control and Status 2" short="dmcs2" address="0x32">
         This register contains DM control and status bits that didn't easily
-        fit in \Rdmcontrol and \Rdmstatus. All are optional.
+        fit in \RdmDmcontrol and \RdmDmstatus. All are optional.
 
-        <field name="0" bits="31:11" access="R" reset="0" />
+        If halt groups are not implemented, then \FdmDmcsTwoGroup will always
+        be 0 when \FdmDmcsTwoGrouptype is 0.
+
+        If resume groups are not implemented, then \FdmDmcsTwoGrouptype will
+        remain 0 even after 1 is written there.
+
+        The external triggers available to add to halt groups may or may not
+        be distinct from the external triggers available to add to resume groups.
+
+        <field name="0" bits="31:12" access="R" reset="0" />
+        <field name="grouptype" bits="11" access="WARL" reset="0">
+            0: The remaining fields in this register configure halt groups.
+
+            1: The remaining fields in this register configure resume groups.
+        </field>
         <field name="exttrigger" bits="10:7" access="WARL" reset="0">
             This field contains the currently selected external trigger.
 
             If a non-existent trigger value is written here, the hardware will
             change it to a valid one or 0 if no external triggers exist.
         </field>
-        <field name="haltgroup" bits="6:2" access="WARL" reset="0">
-            When \Fhgselect is 0, contains the halt group of the hart
+        <field name="group" bits="6:2" access="WARL" reset="preset">
+            When \FdmDmcsTwoHgselect is 0, contains the group of the hart
             specified by \Fhartsel.
 
-            When \Fhgselect is 1, contains the halt group of the external
-            trigger selected by \Fexttrigger.
+            When \FdmDmcsTwoHgselect is 1, contains the group of the external
+            trigger selected by \FdmDmcsTwoExttrigger.
 
-            Writes only have an effect if \Fhgwrite is also written 1.
+            Writes only have an effect if \FdmDmcsTwoHgwrite is also written 1.
 
-            An implementation may tie any number of upper bits in this field to
-            0. If halt groups aren't implemented, then this entire field
-            is 0.
+            Group numbers are contiguous starting at 0, with the highest number
+            being implementation-dependent, and possibly different between
+            different group types. Debuggers should read back this field after
+            writing to confirm they are using a hart group that is supported.
+
+            If groups aren't implemented, then this entire field is 0.
         </field>
-        <field name="hgwrite" bits="1" access="W" reset="-">
-            When \Fhgselect is 0, writing 1 changes the halt group of all
-            selected harts to the value written to \Fhaltgroup.
+        <field name="hgwrite" bits="1" access="W1" reset="-">
+            When \FdmDmcsTwoHgselect is 0, writing 1 changes the group of all
+            selected harts to the value written to \FdmDmcsTwoGroup.
 
-            When \Fhgselect is 1, writing 1 changes the halt group of the
-            external trigger selected by \Fexttrigger to the value written to
-            \Fhaltgroup.
+            When 1 is written and \FdmDmcsTwoHgselect is 0, for every selected
+            hart the DM will change its group to the value written to \FdmDmcsTwoGroup,
+            if the hardware supports that group for that hart.
+
+            When 1 is written and \FdmDmcsTwoHgselect is 1, the DM will change
+            the group of the external trigger selected by \FdmDmcsTwoExttrigger
+            to the value written to \FdmDmcsTwoGroup, if the hardware supports
+            that group for that trigger.
 
             Writing 0 has no effect.
         </field>
@@ -593,6 +640,9 @@
         is halted or not. Unavailable/nonexistent harts are not considered to
         be halted.
 
+        This register might not be present if fewer than 2 harts are connected
+        to this DM.
+
         The LSB reflects the halt status of hart \{hartsel[19:5],5'h0\}, and the
         MSB reflects halt status of hart \{hartsel[19:5],5'h1f\}.
 
@@ -604,8 +654,8 @@
         harts is halted or not. Unavailable/nonexistent harts are not considered to
         be halted.
 
-        This register may not be present in systems with fewer than
-        33 harts.
+        This register might not be present if fewer than 33 harts are connected
+        to this DM.
 
         The LSB reflects the halt status of harts \{hartsel[19:10],10'h0\}
         through \{hartsel[19:10],10'h1f\}.
@@ -620,8 +670,8 @@
         harts is halted or not. Unavailable/nonexistent harts are not considered to
         be halted.
 
-        This register may not be present in systems with fewer than
-        1025 harts.
+        This register might not be present if fewer than 1025 harts are connected
+        to this DM.
 
         The LSB reflects the halt status of harts \{hartsel[19:15],15'h0\}
         through \{hartsel[19:15],15'h3ff\}.
@@ -636,8 +686,8 @@
         harts is halted or not. Unavailable/nonexistent harts are not considered to
         be halted.
 
-        This register may not be present in systems with fewer than
-        32769 harts.
+        This register might not be present if fewer than 32769 harts are connected
+        to this DM.
 
         The LSB reflects the halt status of harts 20'h0 through 20'h7fff.
         The MSB reflects the halt status of harts 20'hf8000 through 20'hfffff.
@@ -660,7 +710,7 @@
         <field name="sbbusyerror" bits="22" access="R/W1C" reset="0">
             Set when the debugger attempts to read data while a read is in
             progress, or when the debugger initiates a new access while one is
-            already in progress (while \Fsbbusy is set). It remains set until
+            already in progress (while \FdmSbcsSbbusy is set). It remains set until
             it's explicitly cleared by the debugger.
 
             While this field is set, no more system bus accesses can be
@@ -672,12 +722,12 @@
             bit goes high immediately when a read or write is requested for any
             reason, and does not go low until the access is fully completed.
 
-            Writes to \Rsbcs while \Fsbbusy is high result in undefined
-            behavior.  A debugger must not write to \Rsbcs until it reads
-            \Fsbbusy as 0.
+            Writes to \RdmSbcs while \FdmSbcsSbbusy is high result in undefined
+            behavior.  A debugger must not write to \RdmSbcs until it reads
+            \FdmSbcsSbbusy as 0.
         </field>
         <field name="sbreadonaddr" bits="20" access="R/W" reset="0">
-            When 1, every write to \Rsbaddresszero automatically triggers a
+            When 1, every write to \RdmSbaddressZero automatically triggers a
             system bus read at the new address.
         </field>
         <field name="sbaccess" bits="19:17" access="R/W" reset="2">
@@ -693,15 +743,15 @@
 
             4: 128-bit
 
-            If \Fsbaccess has an unsupported value when the DM starts a bus
-            access, the access is not performed and \Fsberror is set to 4.
+            If \FdmSbcsSbaccess has an unsupported value when the DM starts a bus
+            access, the access is not performed and \FdmSbcsSberror is set to 4.
         </field>
         <field name="sbautoincrement" bits="16" access="R/W" reset="0">
             When 1, {\tt sbaddress} is incremented by the access size (in
-            bytes) selected in \Fsbaccess after every system bus access.
+            bytes) selected in \FdmSbcsSbaccess after every system bus access.
         </field>
         <field name="sbreadondata" bits="15" access="R/W" reset="0">
-            When 1, every read from \Rsbdatazero automatically triggers a
+            When 1, every read from \RdmSbdataZero automatically triggers a
             system bus read at the (possibly auto-incremented) address.
         </field>
         <field name="sberror" bits="14:12" access="R/W1C" reset="0">
@@ -747,18 +797,18 @@
     </register>
 
     <register name="System Bus Address 31:0" short="sbaddress0" address="0x39">
-        If \Fsbasize is 0, then this register is not present.
+        If \FdmSbcsSbasize is 0, then this register is not present.
 
         When the system bus master is busy, writes to this register will set
-        \Fsbbusyerror and don't do anything else.
+        \FdmSbcsSbbusyerror and don't do anything else.
 
-        \begin{steps}{If \Fsberror is 0, \Fsbbusyerror is 0, and \Fsbreadonaddr
+        \begin{steps}{If \FdmSbcsSberror is 0, \FdmSbcsSbbusyerror is 0, and \FdmSbcsSbreadonaddr
         is set then writes to this register start the following:}
-            \item Set \Fsbbusy.
+            \item Set \FdmSbcsSbbusy.
             \item Perform a bus read from the new value of {\tt sbaddress}.
-            \item If the read succeeded and \Fsbautoincrement is set, increment
+            \item If the read succeeded and \FdmSbcsSbautoincrement is set, increment
             {\tt sbaddress}.
-            \item Clear \Fsbbusy.
+            \item Clear \FdmSbcsSbbusy.
         \end{steps}
 
         <field name="address" bits="31:0" access="R/W" reset="0">
@@ -767,10 +817,10 @@
     </register>
 
     <register name="System Bus Address 63:32" short="sbaddress1" address="0x3a">
-        If \Fsbasize is less than 33, then this register is not present.
+        If \FdmSbcsSbasize is less than 33, then this register is not present.
 
         When the system bus master is busy, writes to this register will set
-        \Fsbbusyerror and don't do anything else.
+        \FdmSbcsSbbusyerror and don't do anything else.
 
         <field name="address" bits="31:0" access="R/W" reset="0">
             Accesses bits 63:32 of the physical address in {\tt sbaddress} (if
@@ -779,10 +829,10 @@
     </register>
 
     <register name="System Bus Address 95:64" short="sbaddress2" address="0x3b">
-        If \Fsbasize is less than 65, then this register is not present.
+        If \FdmSbcsSbasize is less than 65, then this register is not present.
 
         When the system bus master is busy, writes to this register will set
-        \Fsbbusyerror and don't do anything else.
+        \FdmSbcsSbbusyerror and don't do anything else.
 
         <field name="address" bits="31:0" access="R/W" reset="0">
             Accesses bits 95:64 of the physical address in {\tt sbaddress} (if
@@ -791,10 +841,10 @@
     </register>
 
     <register name="System Bus Address 127:96" short="sbaddress3" address="0x37">
-        If \Fsbasize is less than 97, then this register is not present.
+        If \FdmSbcsSbasize is less than 97, then this register is not present.
 
         When the system bus master is busy, writes to this register will set
-        \Fsbbusyerror and don't do anything else.
+        \FdmSbcsSbbusyerror and don't do anything else.
 
         <field name="address" bits="31:0" access="R/W" reset="0">
             Accesses bits 127:96 of the physical address in {\tt sbaddress} (if
@@ -803,39 +853,41 @@
     </register>
 
     <register name="System Bus Data 31:0" short="sbdata0" address="0x3c">
-        If all of the {\tt sbaccess} bits in \Rsbcs are 0, then this register
+        If all of the {\tt sbaccess} bits in \RdmSbcs are 0, then this register
         is not present.
 
         Any successful system bus read updates {\tt sbdata}. If the width of
         the read access is less than the width of {\tt sbdata}, the contents of
         the remaining high bits may take on any value.
 
-        If \Fsberror or \Fsbbusyerror both aren't 0 then accesses do nothing.
+        If either \FdmSbcsSberror or \FdmSbcsSbbusyerror isn't 0 then accesses do nothing.
 
-        If the bus master is busy then accesses set \Fsbbusyerror, and don't do
+        If the bus master is busy then accesses set \FdmSbcsSbbusyerror, and don't do
         anything else.
 
         \begin{steps}{Writes to this register start the following:}
-            \item Set \Fsbbusy.
+            \item Set \FdmSbcsSbbusy.
             \item Perform a bus write of the new value of {\tt sbdata} to {\tt sbaddress}.
-            \item If the write succeeded and \Fsbautoincrement is set,
+            \item If the write succeeded and \FdmSbcsSbautoincrement is set,
             increment {\tt sbaddress}.
-            \item Clear \Fsbbusy.
+            \item Clear \FdmSbcsSbbusy.
         \end{steps}
 
         \begin{steps}{Reads from this register start the following:}
             \item ``Return'' the data.
-            \item Set \Fsbbusy.
-            \item If \Fsbreadondata is set, perform a system bus read from the
-            address contained in {\tt sbaddress}, placing the result in {\tt
-            sbdata}.
-            \item If \Fsbautoincrement is set, increment {\tt sbaddress}.
-            \item Clear \Fsbbusy.
+            \item Set \FdmSbcsSbbusy.
+            \item \begin{steps}{If \FdmSbcsSbreadondata is set:}
+                \item Perform a system bus read from the address contained in
+                        {\tt sbaddress}, placing the result in {\tt sbdata}.
+                \item If \FdmSbcsSbautoincrement is set and the read was
+                        successful, increment {\tt sbaddress}.
+            \end{steps}
+            \item Clear \FdmSbcsSbbusy.
         \end{steps}
 
-        Only \Rsbdatazero has this behavior. The other {\tt sbdata} registers
+        Only \RdmSbdataZero has this behavior. The other {\tt sbdata} registers
         have no side effects. On systems that have buses wider than 32 bits, a
-        debugger should access \Rsbdatazero after accessing the other {\tt
+        debugger should access \RdmSbdataZero after accessing the other {\tt
         sbdata} registers.
 
         <field name="data" bits="31:0" access="R/W" reset="0">
@@ -844,10 +896,10 @@
     </register>
 
     <register name="System Bus Data 63:32" short="sbdata1" address="0x3d">
-        If \Fsbaccesssixtyfour and \Fsbaccessonetwentyeight are 0, then this
+        If \FdmSbcsSbaccessSixtyfour and \FdmSbcsSbaccessOneTwentyeight are 0, then this
         register is not present.
 
-        If the bus master is busy then accesses set \Fsbbusyerror, and don't do
+        If the bus master is busy then accesses set \FdmSbcsSbbusyerror, and don't do
         anything else.
 
         <field name="data" bits="31:0" access="R/W" reset="0">
@@ -857,9 +909,9 @@
     </register>
 
     <register name="System Bus Data 95:64" short="sbdata2" address="0x3e">
-        This register only exists if \Fsbaccessonetwentyeight is 1.
+        This register only exists if \FdmSbcsSbaccessOneTwentyeight is 1.
 
-        If the bus master is busy then accesses set \Fsbbusyerror, and don't do
+        If the bus master is busy then accesses set \FdmSbcsSbbusyerror, and don't do
         anything else.
 
         <field name="data" bits="31:0" access="R/W" reset="0">
@@ -869,9 +921,9 @@
     </register>
 
     <register name="System Bus Data 127:96" short="sbdata3" address="0x3f">
-        This register only exists if \Fsbaccessonetwentyeight is 1.
+        This register only exists if \FdmSbcsSbaccessOneTwentyeight is 1.
 
-        If the bus master is busy then accesses set \Fsbbusyerror, and don't do
+        If the bus master is busy then accesses set \FdmSbcsSbbusyerror, and don't do
         anything else.
 
         <field name="data" bits="31:0" access="R/W" reset="0">

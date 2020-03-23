@@ -21,9 +21,9 @@ communicate with debug hardware in a component.
 JTAG TAPs used as a DTM must have an IR of at least 5 bits.
 When the TAP is reset, IR must default to
 00001, selecting the IDCODE instruction. A full list of JTAG registers along
-with their encoding is in Table~\ref{table:jtag_registers}.
+with their encoding is in Table~\ref{dtmTable:jtagregisters}.
 If the IR actually has more than 5 bits, then the encodings in
-Table~\ref{table:jtag_registers} should be extended with 0's in their most
+Table~\ref{dtmTable:jtagregisters} should be extended with 0's in their most
 significant bits, except for the 0x1f encoding of BYPASS, which must be
 extended with 1's in the most significant bits.
 The only regular JTAG registers a debugger might use are BYPASS and IDCODE, but this
