@@ -42,10 +42,12 @@
             this platform.
         </field>
         <field name="allunavail" bits="13" access="R" reset="-">
-            This field is 1 when all currently selected harts are unavailable.
+            This field is 1 when all currently selected harts are unavailable,
+            or were unavailable without that being acknowledged.
         </field>
         <field name="anyunavail" bits="12" access="R" reset="-">
-            This field is 1 when any currently selected hart is unavailable.
+            This field is 1 when any currently selected hart is unavailable,
+            or was unavailable without that being acknowledged.
         </field>
         <field name="allrunning" bits="11" access="R" reset="-">
             This field is 1 when all currently selected harts are running.
@@ -183,7 +185,13 @@
 
             Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
         </field>
-        <field name="0" bits="27" access="R" reset="0" />
+        <field name="ackunavail" bits="27" access="W1" reset="-">
+            0: No effect.
+
+            1: Clears {\tt unavail} for any selected harts.
+
+            Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
+        </field>
         <field name="hasel" bits="26" access="R/W" reset="0">
             Selects the definition of currently selected harts.
 
