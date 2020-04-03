@@ -175,10 +175,10 @@ continuous hart index space. In order to let the debugger discover all harts,
 they must show up as unavailable even if there is no chance of them ever
 becoming available.
 
-While a hart is unavailable, {\tt unavail} is set for that hart. The bit
-remains set once the hart is available again, until the debugger acknowledges
-it using \FdmDmcontrolAckunavail. There are no guarantees about the state of
-the hart when it comes back.
+While a hart is unavailable, {\tt unavail} is set for that hart. If
+\FdmDmstatusStickyunavail is set, then the bit remains set once the hart is
+available again, until the debugger acknowledges it using
+\FdmDmcontrolAckunavail. There are no guarantees about the state of the hart when it comes back.
 
 Harts are running when they are executing normally, as if no debugger was
 attached. This includes being in a low power mode or waiting for an interrupt,

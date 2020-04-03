@@ -7,7 +7,13 @@
         the currently selected harts, as defined in \FdmDmcontrolHasel.  Its address will
         not change in the future, because it contains \FdmDmstatusVersion.
 
-        <field name="0" bits="31:23" access="R" reset="0" />
+        <field name="0" bits="31:24" access="R" reset="0" />
+        <field name="stickyunavail" bits="23" access="R" reset="Preset">
+            0: The per-hart {\tt unavail} bits reflect the current state of the hart.
+
+            1: The per-hart {\tt unavail} bits are sticky. Once they are set, they will
+            not clear until the debugger acknowledges them using \FdmDmcontrolAckunavail.
+        </field>
         <field name="impebreak" bits="22" access="R" reset="Preset">
             If 1, then there is an implicit {\tt ebreak} instruction at the
             non-existent word immediately after the Program Buffer. This saves
