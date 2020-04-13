@@ -554,6 +554,9 @@ while writes should be ignored, with the following mandatory exceptions:
     \item \RdmAuthdata is readable and writable.
 \end{steps}
 
+Implementations where it's not possible to unlock the DM by using \RdmAuthdata
+should not implement that register.
+
 \section{Version Detection}
 
 \begin{steps}{To detect the version of the Debug Module with a minimum of side
