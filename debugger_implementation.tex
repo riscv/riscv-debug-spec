@@ -33,6 +33,39 @@ a read, except that a write is performed instead of the read.
 It should almost never be necessary to scan IR, avoiding a big part of the
 inefficiency in typical JTAG use.
 
+\section{Debug Module Interface Signals}
+
+As stated in section \ref{dmi} the details of the DMI is left to the system designer.
+It is quite often the case that only one DTM and DM is implemented.
+In this case it might be useful to comply with the signals suggested in table \ref{tab:dmi_signals}.
+
+\begin{table}[ht]\centering
+	\begin{tabular}[h]{l l l}
+		\hline
+		Signal 				& Source	& Description 		  \\
+		\hline
+		REQ\_VALID 			& DTM		& Indicates that the a valid request is pending \\
+		\hline
+		REQ\_READY 			& DM		& Indicates that the DM is able to process a request \\
+		\hline
+		REQ\_ADDRESS		& DTM		& Requested address \\
+		\hline
+		REQ\_DATA			& DTM		& Requested data \\
+		\hline
+		REQ\_OP 			& DTM		& Same meaning as the \FdtmDmiOp field\\
+		\hline
+		RSP\_VALID 			& DM		& Indicates that the a valid respond is pending \\
+		\hline
+		RSP\_READY			& DTM		& Indicates that the DTM is able to process a respond \\
+		\hline
+		RSP\_DATA			& DM		& Response data \\
+		\hline
+		RSP\_OP				& DM		& Same meaning as the \FdtmDmiOp field\\
+		\hline
+	\end{tabular}
+	\caption{Signals for the suggested DMI between one DTM and one DM \label{tab:dmi_signals}}
+\end{table}
+
 \section{Checking for Halted Harts}
 
 A user will want to know as quickly as possible when a hart is halted (e.g.\ due
