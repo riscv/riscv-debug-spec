@@ -41,27 +41,27 @@ In this case it might be useful to comply with the signals suggested in table \r
 which is the implementation used in the open-source \href{https://github.com/chipsalliance/rocket-chip/blob/master/src/main/scala/devices/debug/Debug.scala#L170}{rocket-chip} RISC-V core.
 
 \begin{table}[ht]\centering
-	\begin{tabular}[h]{l l l}
+	\begin{tabular}[h]{l l l l}
 		\hline
-		Signal 				& Source	& Description 		  \\
+		Signal 			& Width				& Source	& Description 		  \\
 		\hline
-		REQ\_VALID 			& DTM		& Indicates that the a valid request is pending \\
+		REQ\_VALID 		& 1					& DTM		& Indicates that the a valid request is pending \\
 		\hline
-		REQ\_READY 			& DM		& Indicates that the DM is able to process a request \\
+		REQ\_READY 		& 1					& DM		& Indicates that the DM is able to process a request \\
 		\hline
-		REQ\_ADDRESS		& DTM		& Requested address \\
+		REQ\_ADDRESS	& \FdtmDtmcsAbits	& DTM		& Requested address \\
 		\hline
-		REQ\_DATA			& DTM		& Requested data \\
+		REQ\_DATA		& 32				& DTM		& Requested data \\
 		\hline
-		REQ\_OP 			& DTM		& Same meaning as the \FdtmDmiOp field\\
+		REQ\_OP 		& 2					& DTM		& Same meaning as the \FdtmDmiOp field\\
 		\hline
-		RSP\_VALID 			& DM		& Indicates that the a valid respond is pending \\
+		RSP\_VALID 		& 1					& DM		& Indicates that the a valid respond is pending \\
 		\hline
-		RSP\_READY			& DTM		& Indicates that the DTM is able to process a respond \\
+		RSP\_READY		& 1					& DTM		& Indicates that the DTM is able to process a respond \\
 		\hline
-		RSP\_DATA			& DM		& Response data \\
+		RSP\_DATA		& 32				& DM		& Response data \\
 		\hline
-		RSP\_OP				& DM		& Same meaning as the \FdtmDmiOp field\\
+		RSP\_OP			& 2					& DM		& Same meaning as the \FdtmDmiOp field\\
 		\hline
 	\end{tabular}
 	\caption{Signals for the suggested DMI between one DTM and one DM \label{tab:dmi_signals}}
