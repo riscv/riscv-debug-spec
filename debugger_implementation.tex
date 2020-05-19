@@ -37,7 +37,9 @@ inefficiency in typical JTAG use.
 
 As stated in section \ref{dmi} the details of the DMI is left to the system designer.
 It is quite often the case that only one DTM and DM is implemented.
-In this case it might be useful to comply with the signals suggested in table \ref{tab:dmi_signals}.
+In this case it might be useful to comply with the signals suggested in table \ref{tab:dmi_signals},
+which is the implementation used in the open-source rocket-chip RISC-V core:
+https://github.com/sifive/rocket-chip/blob/master/src/main/scala/devices/debug/Debug.scala#L170
 
 \begin{table}[ht]\centering
 	\begin{tabular}[h]{l l l}
