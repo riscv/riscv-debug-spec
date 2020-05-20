@@ -74,17 +74,19 @@ can be used for either program execution or data transfer.
 
 \section{Debug Module Interface Signals} \label{dmi_signals}
 
-As stated in section \ref{dmi} the details of the DMI is left to the system designer.
-It is quite often the case that only one DTM and DM is implemented.
+As stated in section \ref{dmi} the details of the DMI are left to the system designer.
+It is quite often the case that only one DTM and one DM is implemented.
 In this case it might be useful to comply with the signals suggested in table \ref{tab:dmi_signals},
 which is the implementation used in the open-source \href{https://github.com/chipsalliance/rocket-chip/blob/master/src/main/scala/devices/debug/Debug.scala#L170}{rocket-chip} RISC-V core.
 
-In order for the DTM to perform a read it has to wait for REQ\_READY to be high.
-Is this the case REQ\_OP can be set to 1 to indicate a read action and REQ\_ADDRESS to the required address.
+The DTM can start a request when the DM sets REQ\_READY to 1.
+When this is the case REQ\_OP can be set to 1 for a read or 2 for a write request.
+The desired address is driven with the REQ\_ADDRESS signal.
 Finally REQ\_VALID is set high, indicating to the DM that a valid request is pending.
 
-The DM can respond to a request from the DTM when RSP\_READY is high.
-The status of the respond is indicated with the RSP\_OP signal (See \FdtmDmiOp) and potential respond data with RSP\_DATA.
+The DM must respond to a request from the DTM when RSP\_READY is high.
+The status of the response is indicated by the RSP\_OP signal (see \FdtmDmiOp).
+The data of the response is driven to RSP\_DATA.
 A pending response is signalled by setting RSP\_VALID.
 
 \begin{table}[ht]\centering
