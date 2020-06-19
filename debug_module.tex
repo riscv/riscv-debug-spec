@@ -234,11 +234,9 @@ while the hart is selected, or by DM reset.
 
 \section{Halt Groups, Resume Groups, and External Triggers}
 
-An optional feature allows a debugger to create two kinds of groups: halt
+An optional feature allows a debugger to place harts into two kinds of groups: halt
 groups and resume groups.  It is also possible to add external triggers to a
-halt and resume groups.  External triggers are abstract concepts that can
-signal the DM and/or receive signals from the DM. This configuration is done
-through \RdmDmcsTwo.
+halt and resume groups.
 
 \begin{steps}{When any hart in a halt group halts, or an external trigger
     that's a member of the halt group fires:}
@@ -258,6 +256,15 @@ other harts in the group are already halted.
 \end{steps}
 Adding a hart to a resume group does not automatically resume that hart, even
 if other harts in the group are currently running.
+
+External triggers are abstract concepts that can signal the DM and/or receive
+signals from the DM. This configuration is done through \RdmDmcsTwo, where
+external triggers are referred to by a number. Commonly, external triggers
+are capable of sending a signal from the system into the DM, as well as
+receiving a signal from the DM to take their own action on. It is also
+allowable for an external trigger to be input-only or output-only. By
+convention external triggers 0--7 are bidirectional, triggers 8--11 are
+input-only, and triggers 12--15 are output-only but this is not required.
 
 \begin{commentary}
     External triggers could be used to implement near simultaneous
