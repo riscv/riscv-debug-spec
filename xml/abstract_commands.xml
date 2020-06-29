@@ -207,6 +207,9 @@
             After a memory access has completed, if this bit is 1, increment
             {\tt arg1} (which contains the address used) by the number of bytes
             encoded in \FacAccessmemoryAamsize.
+
+            Supporting this variant is optional, but highly recommended for
+            performance reasons.
         </field>
         <field name="0" bits="18:17" />
         <field name="write" bits="16">
