@@ -1,5 +1,5 @@
-RISC-V Debug Specification
-==========================
+Debug Specification for RISC-V
+==============================
 
 You may be looking for one of the following pre-built PDFs:
 * [Latest draft](https://github.com/riscv/riscv-debug-spec/blob/master/riscv-debug-draft.pdf)
