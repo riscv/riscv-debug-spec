@@ -8,11 +8,11 @@
         \end{commentary}
 
         <field name="xdebugver" bits="31:28" access="R" reset="Preset">
-          0: There is no external debug support.
+          0: There is no debug support.
 
-          4: External debug support exists as it is described in this document.
+          4: Debug support exists as it is described in this document.
 
-          15: There is external debug support, but it does not conform to any
+          15: There is debug support, but it does not conform to any
           available version of this spec.
         </field>
         <field name="0" bits="27:16" access="R" reset="0" />

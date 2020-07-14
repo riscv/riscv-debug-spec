@@ -14,7 +14,7 @@ make
 ```
 
 Contributing
-------------------
+------------
 
 There are various ways to contribute to this spec. You can use a combination of them to get your idea across.
 Please note that pull requests will only be reviewed/accepted from RISC-V Foundation members.
@@ -24,7 +24,7 @@ Please note that pull requests will only be reviewed/accepted from RISC-V Founda
 3. Discuss higher-level questions or ideas on the riscv-debug-group mailing list: https://groups.google.com/a/groups.riscv.org/forum/#!forum/debug
 
 For More Information
-------------------
+--------------------
 
 Additional information can be found at
 https://github.com/riscv/debug-taskgroup
