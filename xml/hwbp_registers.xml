@@ -1,7 +1,7 @@
 <registers name="Trigger Registers" prefix="CSR_">
-    The trigger registers are only accessible in machine and Debug Mode to
-    prevent untrusted user code from causing entry into Debug Mode without the
-    OS's permission.
+    The trigger registers, except \Rcsrscontext2, are only accessible in machine
+    and Debug Mode to prevent untrusted user code from causing entry into Debug
+    Mode without the OS's permission.
 
     In this section XLEN means MXLEN when in M-mode, and DXLEN when in Debug Mode.
     Note that this makes several of the fields in \RcsrTdataOne move around based
@@ -148,7 +148,28 @@
 
         Note that the register number does not follow the read and write
         accessibility of the CSRs according to privilege level as defined in
-        the Privileged Spec.
+        the Privileged Spec. For backward-compatibility, an implementation may
+        have \Rcsrscontext, but it is recommended to implement \Rcsrscontext2 instead.
+        If both are implemented, then \Rcsrscontext and \Rcsrscontext2 must refer
+        to the same underlying hardware register.
+
+        <field name="data" bits="XLEN-1:0" access="WARL" reset="0">
+            Supervisor mode software can write a context number to this
+            register, which can be used to set triggers that only fire in that
+            specific context.
+
+            An implementation may tie any number of high bits in this field to
+            0. It's recommended to implement no more than 16 bits on RV32, and
+            34 on RV64.
+        </field>
+    </register>
+
+    <register name="Supervisor Context 2" short="scontext2" address="0x5a8">
+        This optional register is only writable in S mode, M mode and Debug Mode.
+
+        This register is an alias for \Rcsrscontext and is placed in a CSR region
+        consistent with its accessibility. Implementing \Rcsrscontext2 is
+        recommended over \Rcsrscontext.
 
         <field name="data" bits="XLEN-1:0" access="WARL" reset="0">
             Supervisor mode software can write a context number to this
