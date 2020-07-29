@@ -20,6 +20,8 @@ How Debug Mode is implemented is not specified here.
     Debug Mode and the following apply:}
 \item All operations are executed at machine mode privilege level, except that
     \FcsrMcontrolMprv in \Rmstatus may be ignored according to \FcsrDcsrMprven.
+    Full permission checks, or a relaxed set of permission checks, will apply
+    according to \FdmDmcontrolRelaxedpriv}.
 \item All interrupts (including NMI) are masked.
 \item Exceptions don't update any registers.  That includes {\tt cause}, {\tt
     epc}, {\tt tval}, {\tt dpc}, and \Rmstatus. They do end execution of the

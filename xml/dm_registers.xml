@@ -186,11 +186,11 @@
         <field name="relaxedpriv" bits="27" access="WARL" reset="Preset">
             This optional bit controls whether program buffer and abstract
             memory accesses are performed with the exact and full set of
-            permissions that apply based on the current architectural state of
-            the hart performing the access, or with a relaxed set of
-            permissions (e.g. PMP restrictions are ignored).  The details of
-            the latter are implementation-specific.  When set to 0, full
-            permissions apply; when set to 1, relaxed permissions apply.
+            permission checks that apply based on the current architectural
+            state of the hart performing the access, or with a relaxed set of
+            permission checks (e.g. PMP restrictions are ignored).  The
+            details of the latter are implementation-specific.  When set to 0,
+            full permissions apply; when set to 1, relaxed permissions apply.
         </field>
         <field name="hasel" bits="26" access="R/W" reset="0">
             Selects the definition of currently selected harts.
