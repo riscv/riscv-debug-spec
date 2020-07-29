@@ -394,7 +394,7 @@
             4 (halt/resume): The abstract command couldn't execute because the
             hart wasn't in the required state (running/halted), or unavailable.
 
-            5 (bus): The abstract command failed due to a bus error (e.g.\
+            5 (bus): The abstract command failed due to a bus error (e.g.\ 
             alignment, access size, or timeout).
 
             6: Reserved for future use.
@@ -564,7 +564,7 @@
     <register name="Program Buffer 14" short="progbuf14" address="0x2e" />
     -->
     <register name="Program Buffer 15" short="progbuf15" address="0x2f" />
-
+ 
     <!-- =============== authentication =============== -->
 
     <register name="Authentication Data" short="authdata" address="0x30">
