@@ -183,7 +183,15 @@
 
             Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
         </field>
-        <field name="0" bits="27" access="R" reset="0" />
+        <field name="relaxedpriv" bits="27" access="WARL" reset="Preset">
+            This optional bit controls whether program buffer and abstract
+            memory accesses are performed with the exact and full set of
+            permissions that apply based on the current architectural state of
+            the hart performing the access, or with a relaxed set of
+            permissions (e.g. PMP restrictions are ignored).  The details of
+            the latter are implementation-specific.  When set to 0, full
+            permissions apply; when set to 1, relaxed permissions apply.
+        </field>
         <field name="hasel" bits="26" access="R/W" reset="0">
             Selects the definition of currently selected harts.
 
@@ -386,7 +394,7 @@
             4 (halt/resume): The abstract command couldn't execute because the
             hart wasn't in the required state (running/halted), or unavailable.
 
-            5 (bus): The abstract command failed due to a bus error (e.g.\ 
+            5 (bus): The abstract command failed due to a bus error (e.g.\
             alignment, access size, or timeout).
 
             6: Reserved for future use.
@@ -556,7 +564,7 @@
     <register name="Program Buffer 14" short="progbuf14" address="0x2e" />
     -->
     <register name="Program Buffer 15" short="progbuf15" address="0x2f" />
- 
+
     <!-- =============== authentication =============== -->
 
     <register name="Authentication Data" short="authdata" address="0x30">
