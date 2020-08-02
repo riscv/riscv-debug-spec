@@ -143,7 +143,7 @@
         </field>
     </register>
 
-    <register name="Supervisor Context" short="mscontext" address="0x7aa">
+    <register name="Machine Supervisor Context" short="mscontext" address="0x7aa">
         This optional register is only writable in S mode, M mode and Debug Mode.
 
         Note that the register number does not follow the read and write
@@ -164,7 +164,7 @@
         </field>
     </register>
 
-    <register name="Supervisor Context 2" short="scontext" address="0x5a8">
+    <register name="Supervisor Context" short="scontext" address="0x5a8">
         This optional register is only writable in S mode, M mode and Debug Mode.
 
         This register is an alias for \RcsrMscontext and is placed in a CSR region
