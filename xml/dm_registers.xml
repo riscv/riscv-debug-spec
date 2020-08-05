@@ -360,7 +360,15 @@
             This bit is set as soon as \RdmCommand is written, and is
             not cleared until that command has completed.
         </field>
-        <field name="0" bits="11" access="R" reset="0" />
+        <field name="relaxedpriv" bits="11" access="WARL" reset="Preset">
+           This optional bit controls whether program buffer and abstract
+           memory accesses are performed with the exact and full set of
+           permission checks that apply based on the current architectural
+           state of the hart performing the access, or with a relaxed set of
+           permission checks (e.g. PMP restrictions are ignored).  The
+           details of the latter are implementation-specific.  When set to 0,
+           full permissions apply; when set to 1, relaxed permissions apply.
+        </field>
         <field name="cmderr" bits="10:8" access="R/W1C" reset="0">
             Gets set if an abstract command fails. The bits in this field remain set until
             they are cleared by writing 1 to them. No abstract command is
