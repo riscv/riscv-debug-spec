@@ -104,13 +104,33 @@
     </register>
 
     <register name="Trigger Control" short="tcontrol" address="0x7a5">
-        This optional register is one solution to a problem regarding triggers
-        with action=0 firing in M-mode trap handlers. See
-        Section~\ref{sec:mmtrigger} for more details.
+        This optional register is only writable in M mode and Debug Mode and
+        provides various control bits related to triggers.
 
-        <field name="0" bits="XLEN-1:8" access="R" reset="0" />
+        <field name="0" bits="XLEN-1:10" access="R" reset="0" />
+        <field name="hcxe" bits="9" access="WARL" reset="0">
+            Hcontext enable.
+
+            0: \RcsrHcontext is set to 0 and writes are ignored.
+
+            1: \RcsrHcontext may be written and read.
+        </field>
+        <field name="scxe" bits="8" access="WARL" reset="0">
+            Scontext enable.
+
+            0: \RcsrScontext is set to 0 and writes are ignored.
+
+            1: \RcsrScontext may be written and read.
+
+            Enabling \RcsrScontext can be a security risk in a
+            virtualized system with a hypervisor that does not swap \RcsrScontext.
+        </field>
         <field name="mpte" bits="7" access="WARL" reset="0">
             M-mode previous trigger enable field.
+
+            \FcsrTcontrolMpte and \FcsrTcontrolMte provide one solution to a problem
+            regarding triggers with action=0 firing in M-mode trap handlers. See
+            Section~\ref{sec:mmtrigger} for more details.
 
             When a trap into M-mode is taken, \FcsrTcontrolMpte is set to the value of
             \FcsrTcontrolMte.
@@ -129,11 +149,11 @@
         <field name="0" bits="2:0" access="R" reset="0" />
     </register>
 
-    <register name="Machine Context" short="mcontext" address="0x7a8">
-        This optional register is only writable in M mode and Debug Mode.
+    <register name="Hypervisor Context" short="hcontext" address="0x6a8">
+        This optional register is only writable in HS mode, M mode and Debug Mode.
 
-        <field name="mcontext" bits="XLEN-1:0" access="WARL" reset="0">
-            Machine mode software can write a context number to this register,
+        <field name="hcontext" bits="XLEN-1:0" access="WARL" reset="0">
+            Hypervisor mode software can write a context number to this register,
             which can be used to set triggers that only fire in that specific
             context.
 
@@ -143,15 +163,8 @@
         </field>
     </register>
 
-    <register name="Machine Supervisor Context" short="mscontext" address="0x7aa">
+    <register name="Supervisor Context" short="scontext" address="0x5a8">
         This optional register is only writable in S mode, M mode and Debug Mode.
-
-        Note that the register number does not follow the read and write
-        accessibility of the CSRs according to privilege level as defined in
-        the Privileged Spec. For backward-compatibility, an implementation may
-        have \RcsrMscontext, but it is recommended to implement \RcsrScontext instead.
-        If both are implemented, then \RcsrMscontext and \RcsrScontext must refer
-        to the same underlying hardware register.
 
         <field name="data" bits="XLEN-1:0" access="WARL" reset="0">
             Supervisor mode software can write a context number to this
@@ -164,22 +177,12 @@
         </field>
     </register>
 
-    <register name="Supervisor Context" short="scontext" address="0x5a8">
-        This optional register is only writable in S mode, M mode and Debug Mode.
+    <register name="Machine Context" short="mcontext" address="0x7a8">
+        This register is an alias for \RcsrHcontext.
+    </register>
 
-        This register is an alias for \RcsrMscontext and is placed in a CSR region
-        consistent with its accessibility. Implementing \RcsrScontext is
-        recommended over \RcsrMscontext.
-
-        <field name="data" bits="XLEN-1:0" access="WARL" reset="0">
-            Supervisor mode software can write a context number to this
-            register, which can be used to set triggers that only fire in that
-            specific context.
-
-            An implementation may tie any number of high bits in this field to
-            0. It's recommended to implement no more than 16 bits on RV32, and
-            34 on RV64.
-        </field>
+    <register name="Machine Supervisor Context" short="mscontext" address="0x7aa">
+        This register is an alias for \RcsrScontext included for backward compatibility.
     </register>
 
     <register name="Match Control" short="mcontrol" address="0x7a1">
