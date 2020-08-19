@@ -35,7 +35,7 @@ How Debug Mode is implemented is not specified here.
 \item Almost all instructions that change the privilege level have undefined
     behavior.  This includes {\tt ecall}, {\tt mret}, {\tt sret},
     and {\tt uret}.  (To change the privilege level, the debugger can write
-    \FcsrDcsrPrv in \RcsrDcsr). The only exception is {\tt ebreak}, which ends
+    \FcsrDcsrPrv and \FcsrDcsrV in \RcsrDcsr). The only exception is {\tt ebreak}, which ends
     execution of the Program Buffer when executed.
 \item \label{fence} Completing Program Buffer execution is considered output for the purpose
     of {\tt fence} instructions.
@@ -139,8 +139,8 @@ executed.
 
 \begin{steps}{When a hart resumes:}
     \item \Rpc changes to the value stored in \RcsrDpc.
-    \item The current privilege mode is changed to that specified by
-        \FcsrDcsrPrv.
+    \item The current privilege mode and virtualization mode is changed to that specified by
+        \FcsrDcsrPrv and \FcsrDcsrV.
     \item If the new privilege mode is less privileged than M mode,
         \FcsrMcontrolMprv in \Rmstatus is cleared.
     \item The hart is no longer in debug mode.

@@ -129,17 +129,27 @@
         <field name="0" bits="2:0" access="R" reset="0" />
     </register>
 
+    <register name="Hypervisor Context" short="hcontext" address="0x6a8">
+      This is an alias for the \RcsrMcontext register which is writable in
+      HS mode, M mode, and Debug mode.
+
+      If the H extension is not supported then this CSR alias does not exist.
+    </register>
+
     <register name="Machine Context" short="mcontext" address="0x7a8">
         This optional register is only writable in M mode and Debug Mode.
 
         <field name="mcontext" bits="XLEN-1:0" access="WARL" reset="0">
-            Machine mode software can write a context number to this register,
+            Machine mode software (or HS-mode software via the hcontext alias)
+            can write a context number to this register,
             which can be used to set triggers that only fire in that specific
             context.
 
             An implementation may tie any number of upper bits in this field to
-            0. It's recommended to implement no more than 6 bits on RV32, and
-            13 on RV64.
+            0. If the H extension is not supported, it's recommended to implement
+            no more than 6 bits on RV32, and 13 on RV64.  If the H extension is
+            supported, it's recommended to implement no more than 7 bits on RV32
+            and 14 on RV64.
         </field>
     </register>
 
@@ -557,17 +567,27 @@
         tie any number of upper bits to 0. The $|select|$ bits may only support
         0 (ignore).
 
-        <field name="mvalue" bits="31:26" access="WARL" reset="0">
-            Data used together with \FcsrTextraThirtytwoMselect.
+        <field name="mhvalue" bits="31:26" access="WARL" reset="0">
+            Data used together with \FcsrTextraThirtytwoMhselect.
         </field>
-        <field name="mselect" bits="25" access="WARL" reset="0">
-            0: Ignore \FcsrTextraThirtytwoMvalue.
+        <field name="mhselect" bits="25:23" access="WARL" reset="0">
+            000: Ignore \FcsrTextraThirtytwoMhvalue.
 
-            1: This trigger will only match if the low bits of
-            \RcsrMcontext equal \FcsrTextraThirtytwoMvalue.
+            100: This trigger will only match if the low bits of
+            \RcsrMcontext/\RcsrHcontext equal \FcsrTextraThirtytwoMhvalue.
+
+            x01: This trigger will only match if the low bits of
+            \RcsrMcontext/\RcsrHcontext equal {\FcsrTextraThirtytwoMhvalue, mhselect[2]}.
+
+            x10: This trigger will only match if VMID in satp equals the lower VMIDMAX
+            (defined in the Privileged Spec) bits of {\FcsrTextraThirtytwoMhvalue, mhselect[2]}.
+
+            x11: Reserved.
+
+            If the H extension is not supported, the only legal values are 000 and 100.
         </field>
 
-        <field name="0" bits="24:18" access="R" reset="0" />
+        <field name="0" bits="22:18" access="R" reset="0" />
         <!-- This is space left open for H mode support. -->
 
         <field name="svalue" bits="17:2" access="WARL" reset="0">
@@ -594,7 +614,7 @@
         This is the layout of {\tt textra} if XLEN is 64. The fields are defined
         above, in \RcsrTextraThirtytwo.
 
-        <field name="mvalue" bits="63:51" access="WARL" reset="0">
+        <field name="mhvalue" bits="63:51" access="WARL" reset="0">
         </field>
         <field name="mselect" bits="50" access="WARL" reset="0">
         </field>
