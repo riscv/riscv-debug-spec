@@ -44,6 +44,11 @@
             5: The trigger is an exception trigger. The remaining bits
             in this register act as described in \RcsrEtrigger.
 
+            6: The trigger is an address/data match trigger. The remaining bits
+            in this register act as described in \RcsrMcontrolSix. This is similar
+            to a type 2 trigger, but provides additional functionality and
+            should be used instead of type 2 in newer implementations.
+
             12--14: These trigger types are available for non-standard use.
 
             15: This trigger exists (so enumeration shouldn't terminate), but
@@ -368,6 +373,245 @@
             12: Matches when \FcsrMcontrolMatch$=4$ would not match.
 
             13: Matches when \FcsrMcontrolMatch$=5$ would not match.
+
+            Other values are reserved for future use.
+        </field>
+        <field name="m" bits="6" access="WARL" reset="0">
+            When set, enable this trigger in M-mode.
+        </field>
+        <field name="0" bits="5" access="R" reset="0" />
+        <field name="s" bits="4" access="WARL" reset="0">
+            When set, enable this trigger in S-mode.
+        </field>
+        <field name="u" bits="3" access="WARL" reset="0">
+            When set, enable this trigger in U-mode.
+        </field>
+        <field name="execute" bits="2" access="WARL" reset="0">
+            When set, the trigger fires on the virtual address or opcode of an
+            instruction that is executed.
+        </field>
+        <field name="store" bits="1" access="WARL" reset="0">
+            When set, the trigger fires on the virtual address or data of any
+            store.
+        </field>
+        <field name="load" bits="0" access="WARL" reset="0">
+            When set, the trigger fires on the virtual address or data of any
+            load.
+        </field>
+    </register>
+
+    <register name="Match Control Type 6" short="mcontrol6" address="0x7a1">
+        This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 6.
+
+        This replaces mcontrol in newer implementations and serves to provide additional
+        functionality.
+
+        Address and data trigger implementation are heavily dependent on how
+        the processor core is implemented. To accommodate various
+        implementations, execute, load, and store address/data triggers may fire at
+        whatever point in time is most convenient for the implementation.
+        The debugger may request specific timings as described in \FcsrMcontrolSixTiming.
+        Table~\ref{tab:hwbp_timing6} suggests timings for the best user experience.
+
+        \begin{table}[H]
+        \centering
+        \caption{Suggested Trigger Timings}
+        \label{tab:hwbp_timing6}
+        \begin{tabular}{|r|l|}
+        \hline
+        Match Type                  &amp; Suggested Trigger Timing \\
+        \hline
+        Execute Address             &amp; Before \\
+        Execute Instruction         &amp; Before \\
+        Execute Address+Instruction &amp; Before \\
+        Load Address                &amp; Before \\
+        Load Data                   &amp; After \\
+        Load Address+Data           &amp; After \\
+        Store Address               &amp; Before \\
+        Store Data                  &amp; Before \\
+        Store Address+Data          &amp; Before \\
+        \hline
+        \end{tabular}
+        \end{table}
+
+        A chain of triggers that don't all have the same \FcsrMcontrolSixTiming
+        value will never fire. That means to implement the suggestions in
+        Table~\ref{tab:hwbp_timing6}, both timings should be supported on load
+        address triggers.
+
+        This trigger type may be limited to address comparisons (\FcsrMcontrolSixSelect is
+        always 0) only. If that is the case, then \RcsrTdataTwo must be able to
+        hold all valid virtual addresses but it need not be capable of holding
+        other values.
+
+        In implementations that support \FcsrMcontrolSixMatch mode 1 (NAPOT), not all
+        NAPOT ranges may be supported.  All NAPOT ranges between $2^{1}$ and $2^{maskmax6}$
+        are supported where maskmax6 $\geq$ 1.  The value of maskmax6 can be determined
+        by the debugger via the following sequence:
+        \begin{enumerate}
+        \item Set mcontrol6.match=1.
+        \item Read mcontrol6.match. If it is not 1 then NAPOT matching is not supported.
+        \item Write all ones to tdata2.
+        \item Read tdata2. The value of maskmax6 is the position of the most significant 0 bit.
+        \end{enumerate}
+
+        <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="2" />
+        <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
+        <field name="0" bits="XLEN-6:23" access="R" reset="0" />
+        <field name="sizehi" bits="22:21" access="WARL" reset="0">
+            It contains the 2 high bits of the access size. The low bits
+            come from \FcsrMcontrolSixSizelo. See \FcsrMcontrolSixSizelo for how this
+            is used.
+        </field>
+        <field name="hit" bits="20" access="WARL" reset="0">
+            If this bit is implemented, the hardware sets it when this
+            trigger matches. The trigger's user can set or clear it at any
+            time. It is used to determine which
+            trigger(s) matched.  If the bit is not implemented, it is always 0
+            and writing it has no effect.
+        </field>
+        <field name="select" bits="19" access="WARL" reset="0">
+            0: Perform a match on the lowest virtual address of the access.  In
+            addition, it is recommended that the trigger also fires if any of
+            the other accessed virtual addresses match.
+            (E.g. on a 32-bit read from 0x4000, the lowest address is 0x4000
+            and the other addresses are 0x4001, 0x4002, and 0x4003.)
+
+            1: Perform a match on the data value loaded or stored, or the
+            instruction executed.
+        </field>
+        <field name="timing" bits="18" access="WARL" reset="0">
+            0: The action for this trigger will be taken just before the
+            instruction that triggered it is executed, but after all preceding
+            instructions are committed. \Rmepc or \RcsrDpc (depending on
+            \FcsrMcontrolSixAction) must be set to the virtual address of the
+            instruction that matched.
+
+            If this is combined with \FcsrMcontrolSixLoad then a memory access will be
+            performed (including any side effects of performing such an access) even
+            though the load will not update its destination register. Debuggers
+            should consider this when setting such breakpoints on, for example,
+            memory-mapped I/O addresses.
+
+            1: The action for this trigger will be taken after the instruction
+            that triggered it is executed. It should be taken before the next
+            instruction is executed, but it is better to implement triggers imprecisely
+            than to not implement them at all.
+            \Rmepc or \RcsrDpc (depending on \FcsrMcontrolSixAction) must be set to
+            the virtual address of the next instruction that must be executed to
+            preserve the program flow.
+
+            Most hardware will only implement one timing or the other, possibly
+            dependent on \FcsrMcontrolSixSelect, \FcsrMcontrolSixExecute,
+            \FcsrMcontrolSixLoad, and \FcsrMcontrolSixStore. This bit
+            primarily exists for the hardware to communicate to the debugger
+            what will happen. Hardware may implement the bit fully writable, in
+            which case the debugger has a little more control.
+
+            Data load triggers with \FcsrMcontrolSixTiming of 0 will result in the same load
+            happening again when the debugger lets the hart run. For data load
+            triggers, debuggers must first attempt to set the breakpoint with
+            \FcsrMcontrolSixTiming of 1.
+
+            If a trigger with \FcsrMcontrolSixTiming of 0 matches, it is
+            implementation-dependent whether that prevents a trigger with
+            \FcsrMcontrolSixTiming of 1 matching as well.
+        </field>
+        <field name="sizelo" bits="17:16" access="WARL" reset="0">
+            This field contains the 2 low bits of the access size. The high bits come
+            from \FcsrMcontrolSixSizehi. The combined value is interpreted as follows:
+
+            0: The trigger will attempt to match against an access of any size.
+            The behavior is only well-defined if $|select|=0$, or if the access
+            size is XLEN.
+
+            1: The trigger will only match against 8-bit memory accesses.
+
+            2: The trigger will only match against 16-bit memory accesses or
+            execution of 16-bit instructions.
+
+            3: The trigger will only match against 32-bit memory accesses or
+            execution of 32-bit instructions.
+
+            4: The trigger will only match against execution of 48-bit instructions.
+
+            5: The trigger will only match against 64-bit memory accesses or
+            execution of 64-bit instructions.
+
+            6: The trigger will only match against execution of 80-bit instructions.
+
+            7: The trigger will only match against execution of 96-bit instructions.
+
+            8: The trigger will only match against execution of 112-bit instructions.
+
+            9: The trigger will only match against 128-bit memory accesses or
+            execution of 128-bit instructions.
+
+            An implementation must support the value of 0, but all other values
+            are optional. It is recommended to support triggers for every
+            access size the hart supports, as well as for every instruction
+            size the hart supports.
+        </field>
+        <field name="action" bits="15:12" access="WARL" reset="0">
+            The action to take when the trigger fires. The values are explained
+            in Table~\ref{tab:action}.
+        </field>
+        <field name="chain" bits="11" access="WARL" reset="0">
+            0: When this trigger matches, the configured action is taken.
+
+            1: While this trigger does not match, it prevents the trigger with
+            the next index from matching.
+
+            A trigger chain starts on the first trigger with $|chain|=1$ after
+            a trigger with $|chain|=0$, or simply on the first trigger if that
+            has $|chain|=1$. It ends on the first trigger after that which has
+            $|chain|=0$. This final trigger is part of the chain. The action
+            on all but the final trigger is ignored.  The action on that final
+            trigger will be taken if and only if all the triggers in the chain
+            match at the same time.
+
+            Because \FcsrMcontrolSixChain affects the next trigger, hardware must zero it in
+            writes to \RcsrMcontrolSix that set \FcsrTdataOneDmode to 0 if the next trigger has
+            \FcsrTdataOneDmode of 1.
+            In addition hardware should ignore writes to \RcsrMcontrolSix that set
+            \FcsrTdataOneDmode to 1 if the previous trigger has both \FcsrTdataOneDmode of 0 and
+            \FcsrMcontrolSixChain of 1. Debuggers must avoid the latter case by checking
+            \FcsrMcontrolSixChain on the previous trigger if they're writing \RcsrMcontrolSix.
+
+            Implementations that wish to limit the maximum length of a trigger
+            chain (eg. to meet timing requirements) may do so by zeroing
+            \FcsrMcontrolSixChain in writes to \RcsrMcontrolSix that would make the chain too long.
+        </field>
+        <field name="match" bits="10:7" access="WARL" reset="0">
+            0: Matches when the value equals \RcsrTdataTwo.
+
+            1: Matches when the top M bits of the value match the top M bits of
+            \RcsrTdataTwo. M is XLEN-1 minus the index of the least-significant
+            bit containing 0 in \RcsrTdataTwo. Debuggers should only write values
+            to \RcsrTdataTwo such that M + maskmax6 $\geq$ XLEN, otherwise it's
+            undefined on what conditions the trigger will fire. See above for
+            how to determine maskmax6.
+
+            2: Matches when the value is greater than (unsigned) or equal to
+            \RcsrTdataTwo.
+
+            3: Matches when the value is less than (unsigned) \RcsrTdataTwo.
+
+            4: Matches when the lower half of the value equals the lower half
+            of \RcsrTdataTwo after the lower half of the value is ANDed with the
+            upper half of \RcsrTdataTwo.
+
+            5: Matches when the upper half of the value equals the lower half
+            of \RcsrTdataTwo after the upper half of the value is ANDed with the
+            upper half of \RcsrTdataTwo.
+
+            8: Matches when \FcsrMcontrolSixMatch$=0$ would not match.
+
+            9: Matches when \FcsrMcontrolSixMatch$=1$ would not match.
+
+            12: Matches when \FcsrMcontrolSixMatch$=4$ would not match.
+
+            13: Matches when \FcsrMcontrolSixMatch$=5$ would not match.
 
             Other values are reserved for future use.
         </field>
