@@ -216,7 +216,7 @@ def write_cheader( fd, registers ):
     for r in registers.registers:
         name = toCIdentifier( r.short or r.label ).upper()
         prefname = registers.prefix + name
-        if r.define:
+        if r.define and not r.address is None:
             definitions.append((prefname, r.address))
         try:
             if r.width() <= 32:
@@ -238,14 +238,14 @@ def write_cheader( fd, registers ):
                     definitions.append(( mask,
                             "0x%x%s << %s" % ( ((1<<int(f.length()))-1), suffix, offset )))
                 except TypeError:
-                    definitions.append(( mask, "((1L<<%s)-1) << %s" % (f.length(), offset) ))
+                    definitions.append(( mask, "((1L << %s) - 1) << %s" % (f.length(), offset) ))
 
     counted = collections.Counter(name for name, value in definitions)
     for name, value in definitions:
         if name == "comment":
             fd.write( "/*\n" )
             for line in value.splitlines():
-                fd.write( (" * %s" % line.strip()).strip() + "\n" )
+                fd.write( (" * %s" % line.strip()) + "\n" )
             fd.write( " */\n" )
             continue
         if counted[name] == 1:
