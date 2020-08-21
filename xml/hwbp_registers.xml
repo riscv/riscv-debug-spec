@@ -452,10 +452,10 @@
         \item Set mcontrol6.match=1.
         \item Read mcontrol6.match. If it is not 1 then NAPOT matching is not supported.
         \item Write all ones to tdata2.
-        \item Read tdata2. The value of maskmax6 is the position of the most significant 0 bit.
+        \item Read tdata2. The value of maskmax6 is the index of the most significant 0 bit plus 1.
         \end{enumerate}
 
-        <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="2" />
+        <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="6" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
         <field name="0" bits="XLEN-6:23" access="R" reset="0" />
         <field name="sizehi" bits="22:21" access="WARL" reset="0">
@@ -587,9 +587,9 @@
 
             1: Matches when the top M bits of the value match the top M bits of
             \RcsrTdataTwo. M is XLEN-1 minus the index of the least-significant
-            bit containing 0 in \RcsrTdataTwo. Debuggers should only write values
-            to \RcsrTdataTwo such that M + maskmax6 $\geq$ XLEN, otherwise it's
-            undefined on what conditions the trigger will fire. See above for
+            bit containing 0 in \RcsrTdataTwo. \RcsrTdataTwo is WARL and bit maskmax6-1
+            will be set to 0 if no less significant bits are written with 0.  Legal values for
+            \RcsrTdataTwo require M + maskmax6 $\geq$ XLEN. See above for
             how to determine maskmax6.
 
             2: Matches when the value is greater than (unsigned) or equal to
