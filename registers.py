@@ -245,7 +245,7 @@ def write_cheader( fd, registers ):
         if name == "comment":
             fd.write( "/*\n" )
             for line in value.splitlines():
-                fd.write( (" * %s" % line.strip()) + "\n" )
+                fd.write( (" * %s" % line.strip()).rstrip() + "\n" )
             fd.write( " */\n" )
             continue
         if counted[name] == 1:
