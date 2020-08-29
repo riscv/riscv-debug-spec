@@ -13,6 +13,13 @@ sudo apt-get install git make python3 python3-sympy graphviz texlive-full
 make
 ```
 
+There are two other interesting make targets:
+
+1. `make debug_defines.h` creates a C header file containing constants for
+   addresses and fields of all the registers and abstract commands.
+2. `make chisel` creates scala files for DM registers and abstract commands
+   with the same information.
+
 Contributing
 ------------------
 
