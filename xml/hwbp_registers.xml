@@ -310,9 +310,21 @@
             execution of 128-bit instructions.
 
             An implementation must support the value of 0, but all other values
-            are optional. It is recommended to support triggers for every
-            access size the hart supports, as well as for every instruction
-            size the hart supports.
+            are optional. When an implementation supports address triggers
+            (\FcsrMcontrolSelect=0), it is recommended that those triggers
+            support every access size that the hart supports, as well as for
+            every instruction size that the hart supports.
+
+            Implementations such as RV32D or RV64V are able to perform loads
+            and stores that are wider than XLEN. Custom extensions may also
+            support instructions that are wider than XLEN. Because
+            \RcsrTdataTwo is of size XLEN, there is a known limitation that
+            data value triggers (\FcsrMcontrolSelect=1) can only be supported
+            for access sizes up to XLEN bits.  When an implementation supports
+            data value triggers (\FcsrMcontrolSelect=1), it is recommended
+            that those triggers support every access size up to XLEN that the
+            hart supports, as well as for every instruction length up to XLEN
+            that the hart supports.
         </field>
         <field name="action" bits="15:12" access="WARL" reset="0">
             The action to take when the trigger fires. The values are explained
@@ -548,9 +560,21 @@
             execution of 128-bit instructions.
 
             An implementation must support the value of 0, but all other values
-            are optional. It is recommended to support triggers for every
-            access size the hart supports, as well as for every instruction
-            size the hart supports.
+            are optional. When an implementation supports address triggers
+            (\FcsrMcontrolSelect=0), it is recommended that those triggers
+            support every access size that the hart supports, as well as for
+            every instruction size that the hart supports.
+
+            Implementations such as RV32D or RV64V are able to perform loads
+            and stores that are wider than XLEN. Custom extensions may also
+            support instructions that are wider than XLEN. Because
+            \RcsrTdataTwo is of size XLEN, there is a known limitation that
+            data value triggers (\FcsrMcontrolSelect=1) can only be supported
+            for access sizes up to XLEN bits.  When an implementation supports
+            data value triggers (\FcsrMcontrolSelect=1), it is recommended
+            that those triggers support every access size up to XLEN that the
+            hart supports, as well as for every instruction length up to XLEN
+            that the hart supports.
         </field>
         <field name="action" bits="15:12" access="WARL" reset="0">
             The action to take when the trigger fires. The values are explained
