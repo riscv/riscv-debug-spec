@@ -403,11 +403,11 @@
         programs. For that case it is not necessary to support \FcsrIcountCount greater
         than
         1. The only two combinations of the mode bits that are useful in those
-        scenarios are \FcsrMcontrolU by itself, or \FcsrMcontrolM, \FcsrMcontrolS, and \FcsrMcontrolU all set.
+        scenarios are \FcsrIcountU by itself, or \FcsrIcountM, \FcsrIcountS, and \FcsrIcountU all set.
 
         If the hardware limits \FcsrIcountCount to 1, and changes mode bits instead of
         decrementing \FcsrIcountCount, this register can be implemented with just 2
-        bits. One for \FcsrMcontrolU, and one for \FcsrMcontrolM and \FcsrMcontrolS tied together.  If
+        bits. One for \FcsrIcountU, and one for \FcsrIcountM and \FcsrIcountS tied together.  If
         only the external debugger or only a software monitor needs to be
         supported, a single bit is enough.
         \end{commentary}
@@ -426,7 +426,7 @@
         <field name="count" bits="23:10" access="WARL" reset="1">
             When count is decremented to 0, the trigger fires. Instead of
             changing \FcsrIcountCount from 1 to 0, it is also acceptable for hardware to
-            clear \FcsrMcontrolM, \FcsrMcontrolS, and \FcsrMcontrolU. This allows \FcsrIcountCount to be hard-wired
+            clear \FcsrIcountM, \FcsrIcountS, and \FcsrIcountU. This allows \FcsrIcountCount to be hard-wired
             to 1 if this register just exists for single step.
         </field>
 
@@ -528,7 +528,7 @@
         <field name="0" bits="XLEN-7:11" access="R" reset="0" />
         <field name="nmi" bits="10" access="WARL" reset="0">
             When set, non-maskable interrupts cause this
-            trigger to fire, regardless of the values of \FcsrMcontrolM, \FcsrMcontrolS, and \FcsrMcontrolU.
+            trigger to fire, regardless of the values of \FcsrEtriggerM, \FcsrEtriggerS, and \FcsrEtriggerU.
         </field>
         <field name="m" bits="9" access="WARL" reset="0">
             When set, enable this trigger for exceptions that are taken from M
