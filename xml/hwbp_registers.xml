@@ -555,10 +555,10 @@
     <register name="External Trigger" short="exttrigger" address="0x7a1">
         This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 7.
 
-        This trigger fires when a selected external debug trigger input
-        asserts (e.g. when a pulse is received).  One of up to 16 external
-        debug trigger inputs (coming from other blocks within the hart,
-        e.g. signaling an hpmcounter overflow) can be selected.  Hardware
+        This trigger fires when any selected external debug trigger input
+        signals.  Up to 16 external
+        debug trigger inputs coming from other blocks within the hart,
+        (e.g. signaling an hpmcounter overflow) can be selected.  Hardware
         may support none or just a few external debug trigger inputs
         (starting with external debug trigger input 0 and continuing
         sequentially).  Unsupported inputs are hardwired to be inactive.
@@ -572,10 +572,10 @@
             trigger(s) matched.  If the bit is not implemented, it is always 0
             and writing it has no effect.
         </field>
-        <field name="0" bits="XLEN-7:10" access="R" reset="0" />
-        <field name="select" bits="9:6" access="WARL" reset="0">
-            Selects one of up to 16 external debug trigger inputs that would
-            cause this trigger to fire.
+        <field name="0" bits="XLEN-7:22" access="R" reset="0" />
+        <field name="select" bits="21:6" access="WARL" reset="0">
+            Selects any combination of up to 16 external debug trigger inputs
+            that cause this trigger to fire.
         </field>
         <field name="action" bits="5:0" access="WARL" reset="0">
             The action to take when the trigger fires. The values are explained
