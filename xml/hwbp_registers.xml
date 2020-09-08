@@ -176,27 +176,6 @@
         The debugger may request specific timings as described in \FcsrMcontrolTiming.
         Table~\ref{tab:hwbp_timing} suggests timings for the best user experience.
 
-        \begin{table}[H]
-        \centering
-        \caption{Suggested Trigger Timings}
-        \label{tab:hwbp_timing}
-        \begin{tabular}{|r|l|}
-        \hline
-        Match Type                  &amp; Suggested Trigger Timing \\
-        \hline
-        Execute Address             &amp; Before \\
-        Execute Instruction         &amp; Before \\
-        Execute Address+Instruction &amp; Before \\
-        Load Address                &amp; Before \\
-        Load Data                   &amp; After \\
-        Load Address+Data           &amp; After \\
-        Store Address               &amp; Before \\
-        Store Data                  &amp; Before \\
-        Store Address+Data          &amp; Before \\
-        \hline
-        \end{tabular}
-        \end{table}
-
         A chain of triggers that don't all have the same \FcsrMcontrolTiming
         value will never fire. That means to implement the suggestions in
         Table~\ref{tab:hwbp_timing}, both timings should be supported on load
@@ -423,12 +402,12 @@
         implementations, execute, load, and store address/data triggers may fire at
         whatever point in time is most convenient for the implementation.
         The debugger may request specific timings as described in \FcsrMcontrolSixTiming.
-        Table~\ref{tab:hwbp_timing6} suggests timings for the best user experience.
+        Table~\ref{tab:hwbp_timing} suggests timings for the best user experience.
 
         \begin{table}[H]
         \centering
         \caption{Suggested Trigger Timings}
-        \label{tab:hwbp_timing6}
+        \label{tab:hwbp_timing}
         \begin{tabular}{|r|l|}
         \hline
         Match Type                  &amp; Suggested Trigger Timing \\
@@ -448,7 +427,7 @@
 
         A chain of triggers that don't all have the same \FcsrMcontrolSixTiming
         value will never fire. That means to implement the suggestions in
-        Table~\ref{tab:hwbp_timing6}, both timings should be supported on load
+        Table~\ref{tab:hwbp_timing}, both timings should be supported on load
         address triggers.
 
         This trigger type may be limited to address comparisons (\FcsrMcontrolSixSelect is
@@ -461,28 +440,23 @@
         are supported where maskmax6 $\geq$ 1.  The value of maskmax6 can be determined
         by the debugger via the following sequence:
         \begin{enumerate}
-        \item Set mcontrol6.match=1.
-        \item Read mcontrol6.match. If it is not 1 then NAPOT matching is not supported.
-        \item Write all ones to tdata2.
-        \item Read tdata2. The value of maskmax6 is the index of the most significant 0 bit plus 1.
+        \item Set \FcsrMcontrolSixMatch=1.
+        \item Read \FcsrMcontrolSixMatch. If it is not 1 then NAPOT matching is not supported.
+        \item Write all ones to \RcsrTdataTwo.
+        \item Read \RcsrTdataTwo. The value of maskmax6 is the index of the most significant 0 bit plus 1.
         \end{enumerate}
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="6" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
         <field name="0" bits="XLEN-6:23" access="R" reset="0" />
-        <field name="sizehi" bits="22:21" access="WARL" reset="0">
-            It contains the 2 high bits of the access size. The low bits
-            come from \FcsrMcontrolSixSizelo. See \FcsrMcontrolSixSizelo for how this
-            is used.
-        </field>
-        <field name="hit" bits="20" access="WARL" reset="0">
+        <field name="hit" bits="22" access="WARL" reset="0">
             If this bit is implemented, the hardware sets it when this
             trigger matches. The trigger's user can set or clear it at any
             time. It is used to determine which
             trigger(s) matched.  If the bit is not implemented, it is always 0
             and writing it has no effect.
         </field>
-        <field name="select" bits="19" access="WARL" reset="0">
+        <field name="select" bits="21" access="WARL" reset="0">
             0: Perform a match on the lowest virtual address of the access.  In
             addition, it is recommended that the trigger also fires if any of
             the other accessed virtual addresses match.
@@ -492,7 +466,7 @@
             1: Perform a match on the data value loaded or stored, or the
             instruction executed.
         </field>
-        <field name="timing" bits="18" access="WARL" reset="0">
+        <field name="timing" bits="20" access="WARL" reset="0">
             0: The action for this trigger will be taken just before the
             instruction that triggered it is executed, but after all preceding
             instructions are committed. \Rmepc or \RcsrDpc (depending on
@@ -529,10 +503,7 @@
             implementation-dependent whether that prevents a trigger with
             \FcsrMcontrolSixTiming of 1 matching as well.
         </field>
-        <field name="sizelo" bits="17:16" access="WARL" reset="0">
-            This field contains the 2 low bits of the access size. The high bits come
-            from \FcsrMcontrolSixSizehi. The combined value is interpreted as follows:
-
+        <field name="size" bits="19:16" access="WARL" reset="0">
             0: The trigger will attempt to match against an access of any size.
             The behavior is only well-defined if $|select|=0$, or if the access
             size is XLEN.
@@ -561,7 +532,7 @@
 
             An implementation must support the value of 0, but all other values
             are optional. When an implementation supports address triggers
-            (\FcsrMcontrolSelect=0), it is recommended that those triggers
+            (\FcsrMcontrolSixSelect=0), it is recommended that those triggers
             support every access size that the hart supports, as well as for
             every instruction size that the hart supports.
 
@@ -569,9 +540,9 @@
             and stores that are wider than XLEN. Custom extensions may also
             support instructions that are wider than XLEN. Because
             \RcsrTdataTwo is of size XLEN, there is a known limitation that
-            data value triggers (\FcsrMcontrolSelect=1) can only be supported
+            data value triggers (\FcsrMcontrolSixSelect=1) can only be supported
             for access sizes up to XLEN bits.  When an implementation supports
-            data value triggers (\FcsrMcontrolSelect=1), it is recommended
+            data value triggers (\FcsrMcontrolSixSelect=1), it is recommended
             that those triggers support every access size up to XLEN that the
             hart supports, as well as for every instruction length up to XLEN
             that the hart supports.
