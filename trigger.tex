@@ -101,26 +101,26 @@ in the chain.
   {\em Highest} &          3 & & etrigger \\
                 &          3 & & icount \\
                 &          3 & & itrigger \\
-                &          3 & & mcontrol after \\
+                &          3 & & mcontrol/mcontrol6 after \\
                 &            & & \hspace{2em}(on previous instruction) \\
                 \hline
-                &          3 & Instruction address breakpoint & mcontrol execute address before \\ \hline
+                &          3 & Instruction address breakpoint & mcontrol/mcontrol6 execute address before \\ \hline
                 &         12 & Instruction page fault & \\ \hline
                 &          1 & Instruction access fault & \\ \hline
-                &          3 & & mcontrol execute data before \\ \hline
+                &          3 & & mcontrol/mcontrol6 execute data before \\ \hline
                 &          2 & Illegal instruction & \\
                 &          0 & Instruction address misaligned & \\
                 &   8, 9, 11 & Environment call & \\
                 &          3 & Environment break & \\
-                &          3 & Load/Store/AMO address breakpoint & mcontrol load/store address before \\
-                &          3 & & mcontrol store data before \\ \hline
+                &          3 & Load/Store/AMO address breakpoint & mcontrol/mcontrol6 load/store address before \\
+                &          3 & & mcontrol/mcontrol6 store data before \\ \hline
                 &          6 & Store/AMO address misaligned & \\
                 &          4 & Load address misaligned & \\ \hline
                 &         15 & Store/AMO page fault & \\
                 &         13 & Load page fault & \\ \hline
                 &          7 & Store/AMO access fault & \\
                 &          5 & Load access fault & \\
-  {\em Lowest}  &          3 & & mcontrol load data before \\
+  {\em Lowest}  &          3 & & mcontrol/mcontrol6 load data before \\
   \hline
 \end{tabular}
 \caption{Synchronous exception priority in decreasing priority order.}
