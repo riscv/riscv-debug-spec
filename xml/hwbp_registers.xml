@@ -879,10 +879,10 @@
             \RcsrMcontext/\RcsrHcontext equal \FcsrTextraThirtytwoMhvalue.
 
             x01: This trigger will only match if the low bits of
-            \RcsrMcontext/\RcsrHcontext equal {\FcsrTextraThirtytwoMhvalue, mhselect[2]}.
+            \RcsrMcontext/\RcsrHcontext equal \{\FcsrTextraThirtytwoMhvalue, mhselect[2]\}.
 
             x10: This trigger will only match if VMID in satp equals the lower VMIDMAX
-            (defined in the Privileged Spec) bits of {\FcsrTextraThirtytwoMhvalue, mhselect[2]}.
+            (defined in the Privileged Spec) bits of \{\FcsrTextraThirtytwoMhvalue, mhselect[2]\}.
 
             x11: Reserved.
 
