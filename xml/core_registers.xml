@@ -24,7 +24,7 @@
 
           This bit is hardwired to 0 if the hart does not support virtualization mode.
         </field>
-        <field name="ebreakvs" bits="16" access="WARL" reset="0">
+        <field name="ebreakvu" bits="16" access="WARL" reset="0">
           0: {\tt ebreak} instructions in VU-mode behave as described in the
           Privileged Spec.
 
