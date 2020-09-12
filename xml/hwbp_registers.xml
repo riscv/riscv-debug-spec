@@ -890,7 +890,6 @@
         </field>
 
         <field name="0" bits="22:18" access="R" reset="0" />
-        <!-- This is space left open for H mode support. -->
 
         <field name="svalue" bits="17:2" access="WARL" reset="0">
             Data used together with \FcsrTextraThirtytwoSselect.
@@ -918,11 +917,10 @@
 
         <field name="mhvalue" bits="63:51" access="WARL" reset="0">
         </field>
-        <field name="mselect" bits="50" access="WARL" reset="0">
+        <field name="mhselect" bits="50:48" access="WARL" reset="0">
         </field>
 
-        <field name="0" bits="49:36" access="R" reset="0" />
-        <!-- This is space left open for H mode support. -->
+        <field name="0" bits="47:36" access="R" reset="0" />
 
         <field name="svalue" bits="35:2" access="WARL" reset="0">
         </field>
