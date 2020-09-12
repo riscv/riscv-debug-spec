@@ -194,7 +194,8 @@
     </register>
 
     <register name="Machine Supervisor Context" short="mscontext" address="0x7aa">
-        This register is an alias for \RcsrScontext included for backward compatibility.
+        This optional register is an alias for \RcsrScontext included for
+        backward compatibility (if desired).
     </register>
 
     <register name="Match Control" short="mcontrol" address="0x7a1">
