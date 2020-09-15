@@ -32,9 +32,9 @@ How Debug Mode is implemented is not specified here.
 \item If \FcsrDcsrStoptime is 0 then timers continue. If it is 1 then
     timers are stopped.
 \item The {\tt wfi} instruction acts as a {\tt nop}.
-\item Almost all instructions that change the privilege level have undefined
-    behavior.  This includes {\tt ecall}, {\tt mret}, {\tt sret},
-    and {\tt uret}.  (To change the privilege level, the debugger can write
+\item Almost all instructions that change the privilege level have \unspecified\ 
+    behavior.  This includes {\tt ecall}, {\tt mret}, {\tt sret}, {\tt uret},
+    and {\tt dret}.  (To change the privilege level, the debugger can write
     \FcsrDcsrPrv in \RcsrDcsr). The only exception is {\tt ebreak}, which ends
     execution of the Program Buffer when executed.
 \item \label{fence} Completing Program Buffer execution is considered output for the purpose
@@ -148,14 +148,12 @@ executed.
 
 \section{{\tt dret} Instruction} \label{dret}
 
-To return from Debug Mode, a new instruction is defined: {\tt dret}. It has an
-encoding of 0x7b200073. On harts which support this instruction,
-executing {\tt dret} in Debug Mode cause the hart to resume as described above.
+To assist with certain types of implementations (see \ref{execution_based}),
+a new instruction is defined: {\tt dret}. It has an encoding of 0x7b200073.
 
+Execution of this instruction in the program buffer causes \unspecified\ behavior.
 Executing {\tt dret} outside of Debug Mode causes an illegal instruction exception.
 
-It is not necessary for the debugger to know whether an implementation supports
-{\tt dret}, as the Debug Module will ensure that it is executed if necessary.
 It is defined in this specification only to reserve the opcode and
 allow for reusable Debug Module implementations.
 
