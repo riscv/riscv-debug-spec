@@ -77,7 +77,7 @@ can be used for either program execution or data transfer.
 As stated in section \ref{dmi} the details of the DMI are left to the system designer.
 It is quite often the case that only one DTM and one DM is implemented.
 In this case it might be useful to comply with the signals suggested in table \ref{tab:dmi_signals},
-which is the implementation used in the open-source \href{https://github.com/chipsalliance/rocket-chip/blob/master/src/main/scala/devices/debug/Debug.scala#L170}{rocket-chip} RISC-V core.
+which is the implementation used in the open-source \href{https://github.com/chipsalliance/rocket-chip/blob/375045a7db1bdc7b4f7851f1a59b3f10a2b922ff/src/main/scala/devices/debug/Debug.scala#L170}{rocket-chip} RISC-V core.
 
 The DTM can start a request when the DM sets REQ\_READY to 1.
 When this is the case REQ\_OP can be set to 1 for a read or 2 for a write request.
