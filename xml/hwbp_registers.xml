@@ -875,20 +875,20 @@
             Data used together with \FcsrTextraThirtytwoMhselect.
         </field>
         <field name="mhselect" bits="25:23" access="WARL" reset="0">
-            000: Ignore \FcsrTextraThirtytwoMhvalue.
+            0: Ignore \FcsrTextraThirtytwoMhvalue.
 
-            100: This trigger will only match if the low bits of
+            4: This trigger will only match if the low bits of
             \RcsrMcontext/\RcsrHcontext equal \FcsrTextraThirtytwoMhvalue.
 
-            x01: This trigger will only match if the low bits of
+            1, 5: This trigger will only match if the low bits of
             \RcsrMcontext/\RcsrHcontext equal \{\FcsrTextraThirtytwoMhvalue, mhselect[2]\}.
 
-            x10: This trigger will only match if VMID in satp equals the lower VMIDMAX
+            2, 6: This trigger will only match if VMID in hgatp equals the lower VMIDMAX
             (defined in the Privileged Spec) bits of \{\FcsrTextraThirtytwoMhvalue, mhselect[2]\}.
 
-            x11: Reserved.
+            3, 7: Reserved.
 
-            If the H extension is not supported, the only legal values are 000 and 100.
+            If the H extension is not supported, the only legal values are 0 and 4.
         </field>
 
         <field name="0" bits="22:18" access="R" reset="0" />
