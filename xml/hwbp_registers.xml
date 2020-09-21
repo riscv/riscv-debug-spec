@@ -262,7 +262,8 @@
             \FcsrMcontrolAction) must be set to the virtual address of the
             instruction that matched.
 
-            If this is combined with \FcsrMcontrolLoad then a memory access will be
+            If this is combined with \FcsrMcontrolLoad and
+            \FcsrMcontrolSelect=1 then a memory access will be
             performed (including any side effects of performing such an access) even
             though the load will not update its destination register. Debuggers
             should consider this when setting such breakpoints on, for example,
@@ -517,7 +518,8 @@
             \FcsrMcontrolSixAction) must be set to the virtual address of the
             instruction that matched.
 
-            If this is combined with \FcsrMcontrolSixLoad then a memory access will be
+            If this is combined with \FcsrMcontrolSixLoad and
+            \FcsrMcontrolSixSelect=1 then a memory access will be
             performed (including any side effects of performing such an access) even
             though the load will not update its destination register. Debuggers
             should consider this when setting such breakpoints on, for example,
