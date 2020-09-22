@@ -109,7 +109,7 @@
     </register>
 
     <register name="Trigger Control" short="tcontrol" address="0x7a5">
-        This optional register is only writable in M mode and Debug Mode and
+        This optional register is only accessible in M mode and Debug Mode and
         provides various control bits related to triggers.
 
         <field name="0" bits="XLEN-1:10" access="R" reset="0" />
@@ -155,7 +155,12 @@
     </register>
 
     <register name="Hypervisor Context" short="hcontext" address="0x6a8">
-        This optional register is only writable in HS mode, M mode and Debug Mode.
+        This optional register is only accessible in S/HS mode, M mode and
+        Debug Mode.
+
+        If the H extension is not implemented then this register is not
+        implemented, though the underlying state may be accessible via
+        the optional \RcsrMcontext alias.
 
         <field name="hcontext" bits="XLEN-1:0" access="WARL" reset="0">
             Hypervisor mode software can write a context number to this register,
@@ -163,13 +168,16 @@
             context.
 
             An implementation may tie any number of upper bits in this field to
-            0. It's recommended to implement no more than 6 bits on RV32, and
-            13 on RV64.
+            0. If the H extension is not supported, it's recommended to implement
+            no more than 6 bits on RV32, and 13 on RV64.  If the H extension is
+            supported, it's recommended to implement no more than 7 bits on RV32
+            and 14 on RV64.
         </field>
     </register>
 
     <register name="Supervisor Context" short="scontext" address="0x5a8">
-        This optional register is only writable in S mode, M mode and Debug Mode.
+        This optional register is only accessible in S/HS mode, VS mode,
+        M mode and Debug Mode.
 
         <field name="data" bits="XLEN-1:0" access="WARL" reset="0">
             Supervisor mode software can write a context number to this
@@ -183,11 +191,13 @@
     </register>
 
     <register name="Machine Context" short="mcontext" address="0x7a8">
-        This register is an alias for \RcsrHcontext.
+        This optional register is an alias for \RcsrHcontext and is only
+        accessible in M mode and Debug mode.
     </register>
 
     <register name="Machine Supervisor Context" short="mscontext" address="0x7aa">
-        This register is an alias for \RcsrScontext included for backward compatibility.
+        This optional register is an alias for \RcsrScontext included for
+        backward compatibility (if desired).
     </register>
 
     <register name="Match Control" short="mcontrol" address="0x7a1">
@@ -397,7 +407,7 @@
         </field>
         <field name="0" bits="5" access="R" reset="0" />
         <field name="s" bits="4" access="WARL" reset="0">
-            When set, enable this trigger in S-mode.
+            When set, enable this trigger in S/HS-mode.
         </field>
         <field name="u" bits="3" access="WARL" reset="0">
             When set, enable this trigger in U-mode.
@@ -473,7 +483,17 @@
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="6" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
-        <field name="0" bits="XLEN-6:23" access="R" reset="0" />
+        <field name="0" bits="XLEN-6:25" access="R" reset="0" />
+        <field name="vs" bits="24" access="WARL" reset="0">
+            When set, enable this trigger in VS-mode.
+            This bit is hard-wired to 0 if the hart does not support
+            virtualization mode.
+        </field>
+        <field name="vu" bits="23" access="WARL" reset="0">
+            When set, enable this trigger in VU-mode.
+            This bit is hard-wired to 0 if the hart does not support
+            virtualization mode.
+        </field>
         <field name="hit" bits="22" access="WARL" reset="0">
             If this bit is implemented, the hardware sets it when this
             trigger matches. The trigger's user can set or clear it at any
@@ -641,7 +661,7 @@
         </field>
         <field name="0" bits="5" access="R" reset="0" />
         <field name="s" bits="4" access="WARL" reset="0">
-            When set, enable this trigger in S-mode.
+            When set, enable this trigger in S/HS-mode.
         </field>
         <field name="u" bits="3" access="WARL" reset="0">
             When set, enable this trigger in U-mode.
@@ -679,8 +699,18 @@
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="3" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
-        <field name="0" bits="XLEN-6:25" access="R" reset="0" />
+        <field name="0" bits="XLEN-6:27" access="R" reset="0" />
 
+        <field name="vs" bits="26" access="WARL" reset="0">
+          When set, enable this trigger in VS-mode.
+          This bit is hard-wired to 0 if the hart does not support
+          virtualization mode.
+        </field>
+        <field name="vu" bits="25" access="WARL" reset="0">
+          When set, enable this trigger in VU-mode.
+          This bit is hard-wired to 0 if the hart does not support
+          virtualization mode.
+        </field>
         <field name="hit" bits="24" access="WARL" reset="0">
             If this bit is implemented, the hardware sets it when this
             trigger matches. The trigger's user can set or clear it at any
@@ -702,7 +732,7 @@
         <field name="0" bits="8" access="R" reset="0" />
         <field name="s" bits="7" access="WARL" reset="0">
             When set, every instruction completed in or trap taken from
-            S-mode decrements \FcsrIcountCount by 1.
+            S/HS-mode decrements \FcsrIcountCount by 1.
         </field>
         <field name="u" bits="6" access="WARL" reset="0">
             When set, every instruction completed in or trap taken from
@@ -744,14 +774,25 @@
             trigger(s) matched.  If the bit is not implemented, it is always 0
             and writing it has no effect.
         </field>
-        <field name="0" bits="XLEN-7:10" access="R" reset="0" />
+        <field name="0" bits="XLEN-7:13" access="R" reset="0" />
+        <field name="vs" bits="12" access="WARL" reset="0">
+          When set, enable this trigger in VS-mode.
+          This bit is hard-wired to 0 if the hart does not support
+          virtualization mode.
+        </field>
+        <field name="vu" bits="11" access="WARL" reset="0">
+          When set, enable this trigger in VU-mode.
+          This bit is hard-wired to 0 if the hart does not support
+          virtualization mode.
+        </field>
+        <field name="0" bits="10" access="R" reset="0" />
         <field name="m" bits="9" access="WARL" reset="0">
             When set, enable this trigger for interrupts that are taken from M
             mode.
         </field>
         <field name="0" bits="8" access="R" reset="0" />
         <field name="s" bits="7" access="WARL" reset="0">
-            When set, enable this trigger for interrupts that are taken from S
+            When set, enable this trigger for interrupts that are taken from S/HS
             mode.
         </field>
         <field name="u" bits="6" access="WARL" reset="0">
@@ -790,7 +831,17 @@
             trigger(s) matched.  If the bit is not implemented, it is always 0
             and writing it has no effect.
         </field>
-        <field name="0" bits="XLEN-7:11" access="R" reset="0" />
+        <field name="0" bits="XLEN-7:13" access="R" reset="0" />
+        <field name="vs" bits="12" access="WARL" reset="0">
+          When set, enable this trigger in VS-mode.
+          This bit is hard-wired to 0 if the hart does not support
+          virtualization mode.
+        </field>
+        <field name="vu" bits="11" access="WARL" reset="0">
+          When set, enable this trigger in VU-mode.
+          This bit is hard-wired to 0 if the hart does not support
+          virtualization mode.
+        </field>
         <field name="nmi" bits="10" access="WARL" reset="0">
             When set, non-maskable interrupts cause this
             trigger to fire, regardless of the values of \FcsrEtriggerM, \FcsrEtriggerS, and \FcsrEtriggerU.
@@ -801,7 +852,7 @@
         </field>
         <field name="0" bits="8" access="R" reset="0" />
         <field name="s" bits="7" access="WARL" reset="0">
-            When set, enable this trigger for exceptions that are taken from S
+            When set, enable this trigger for exceptions that are taken from S/HS
             mode.
         </field>
         <field name="u" bits="6" access="WARL" reset="0">
@@ -822,18 +873,27 @@
         tie any number of upper bits to 0. The $|select|$ bits may only support
         0 (ignore).
 
-        <field name="mvalue" bits="31:26" access="WARL" reset="0">
-            Data used together with \FcsrTextraThirtytwoMselect.
+        <field name="mhvalue" bits="31:26" access="WARL" reset="0">
+            Data used together with \FcsrTextraThirtytwoMhselect.
         </field>
-        <field name="mselect" bits="25" access="WARL" reset="0">
-            0: Ignore \FcsrTextraThirtytwoMvalue.
+        <field name="mhselect" bits="25:23" access="WARL" reset="0">
+            0: Ignore \FcsrTextraThirtytwoMhvalue.
 
-            1: This trigger will only match if the low bits of
-            \RcsrMcontext equal \FcsrTextraThirtytwoMvalue.
+            4: This trigger will only match if the low bits of
+            \RcsrMcontext/\RcsrHcontext equal \FcsrTextraThirtytwoMhvalue.
+
+            1, 5: This trigger will only match if the low bits of
+            \RcsrMcontext/\RcsrHcontext equal \{\FcsrTextraThirtytwoMhvalue, mhselect[2]\}.
+
+            2, 6: This trigger will only match if VMID in hgatp equals the lower VMIDMAX
+            (defined in the Privileged Spec) bits of \{\FcsrTextraThirtytwoMhvalue, mhselect[2]\}.
+
+            3, 7: Reserved.
+
+            If the H extension is not supported, the only legal values are 0 and 4.
         </field>
 
-        <field name="0" bits="24:18" access="R" reset="0" />
-        <!-- This is space left open for H mode support. -->
+        <field name="0" bits="22:18" access="R" reset="0" />
 
         <field name="svalue" bits="17:2" access="WARL" reset="0">
             Data used together with \FcsrTextraThirtytwoSselect.
@@ -859,13 +919,12 @@
         This is the layout of {\tt textra} if XLEN is 64. The fields are defined
         above, in \RcsrTextraThirtytwo.
 
-        <field name="mvalue" bits="63:51" access="WARL" reset="0">
+        <field name="mhvalue" bits="63:51" access="WARL" reset="0">
         </field>
-        <field name="mselect" bits="50" access="WARL" reset="0">
+        <field name="mhselect" bits="50:48" access="WARL" reset="0">
         </field>
 
-        <field name="0" bits="49:36" access="R" reset="0" />
-        <!-- This is space left open for H mode support. -->
+        <field name="0" bits="47:36" access="R" reset="0" />
 
         <field name="svalue" bits="35:2" access="WARL" reset="0">
         </field>

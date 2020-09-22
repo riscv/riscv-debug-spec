@@ -15,7 +15,23 @@
           15: There is external debug support, but it does not conform to any
           available version of this spec.
         </field>
-        <field name="0" bits="27:16" access="R" reset="0" />
+        <field name="0" bits="27:18" access="R" reset="0" />
+        <field name="ebreakvs" bits="17" access="WARL" reset="0">
+          0: {\tt ebreak} instructions in VS-mode behave as described in the
+          Privileged Spec.
+
+          1: {\tt ebreak} instructions in VS-mode enter Debug Mode.
+
+          This bit is hardwired to 0 if the hart does not support virtualization mode.
+        </field>
+        <field name="ebreakvu" bits="16" access="WARL" reset="0">
+          0: {\tt ebreak} instructions in VU-mode behave as described in the
+          Privileged Spec.
+
+          1: {\tt ebreak} instructions in VU-mode enter Debug Mode.
+
+          This bit is hardwired to 0 if the hart does not support virtualization mode.
+        </field>
         <field name="ebreakm" bits="15" access="R/W" reset="0">
             0: {\tt ebreak} instructions in M-mode behave as described in the
             Privileged Spec.
@@ -92,7 +108,14 @@
 
             Other values are reserved for future use.
         </field>
-        <field name="0" bits="5" access="R" reset="0" />
+        <field name="v" bits="5" access="WARL" reset="0">
+          Extends the prv field with the virtualization mode the hart was operating
+          in when Debug Mode was entered. The encoding is described in Table
+          \ref{tab:privlevel}.
+          A debugger can change this value to change the hart's virtualization mode
+          when exiting Debug Mode.
+          This bit is hardwired to 0 on harts that do not support virtualization mode.
+        </field>
         <field name="mprven" bits="4" access="WARL" reset="Preset">
             0: \FcsrMcontrolMprv in \Rmstatus is ignored in Debug Mode.
 
