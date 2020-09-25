@@ -40,10 +40,6 @@ How Debug Mode is implemented is not specified here.
 \item \label{fence} Completing Program Buffer execution is considered output for the purpose
     of {\tt fence} instructions.
 \item All control transfer instructions may act as illegal instructions if
-    their destination is in the Program Buffer. If one such instruction acts as
-    an illegal instruction, all such instructions must act as illegal
-    instructions.
-\item All control transfer instructions may act as illegal instructions if
     their destination is outside the Program Buffer. If one such instruction
     acts as an illegal instruction, all such instructions must act as
     illegal instructions.
