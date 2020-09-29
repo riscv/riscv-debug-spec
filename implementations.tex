@@ -72,6 +72,9 @@ For additional flexibility, \RdmProgbufZero, etc. are mapped into regular memory
 immediately preceding \RdmDataZero, in order to form a contiguous region of memory which
 can be used for either program execution or data transfer.
 
+Note that for debug to be possible, the PMP must allow M-mode fetches, loads, and stores
+to the address range associated with the Debug Module.
+
 \section{Debug Module Interface Signals} \label{dmi_signals}
 
 As stated in section \ref{dmi} the details of the DMI are left to the system designer.
