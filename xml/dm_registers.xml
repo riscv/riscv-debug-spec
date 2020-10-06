@@ -950,6 +950,76 @@
         version of the debug spec will not use this address.
     </register>
 
+    <register name="Custom Features 1" short="custom1" address="0x71">
+      This optional register may be used for non-standard features. Future
+      version of the debug spec will not use this address.
+    </register>
+
+    <register name="Custom Features 2" short="custom2" address="0x72">
+      This optional register may be used for non-standard features. Future
+      version of the debug spec will not use this address.
+    </register>
+
+    <register name="Custom Features 3" short="custom3" address="0x73">
+      This optional register may be used for non-standard features. Future
+      version of the debug spec will not use this address.
+    </register>
+
+    <register name="Custom Features 4" short="custom4" address="0x74">
+      This optional register may be used for non-standard features. Future
+      version of the debug spec will not use this address.
+    </register>
+
+    <register name="Custom Features 5" short="custom5" address="0x75">
+      This optional register may be used for non-standard features. Future
+      version of the debug spec will not use this address.
+    </register>
+
+    <register name="Custom Features 6" short="custom6" address="0x76">
+      This optional register may be used for non-standard features. Future
+      version of the debug spec will not use this address.
+    </register>
+
+    <register name="Custom Features 7" short="custom7" address="0x77">
+      This optional register may be used for non-standard features. Future
+      version of the debug spec will not use this address.
+    </register>
+
+    <register name="Custom Features 8" short="custom8" address="0x78">
+      This optional register may be used for non-standard features. Future
+      version of the debug spec will not use this address.
+    </register>
+
+    <register name="Custom Features 9" short="custom9" address="0x79">
+      This optional register may be used for non-standard features. Future
+      version of the debug spec will not use this address.
+    </register>
+
+    <register name="Custom Features 10" short="custom10" address="0x7a">
+      This optional register may be used for non-standard features. Future
+      version of the debug spec will not use this address.
+    </register>
+
+    <register name="Custom Features 11" short="custom11" address="0x7b">
+      This optional register may be used for non-standard features. Future
+      version of the debug spec will not use this address.
+    </register>
+
+    <register name="Custom Features 12" short="custom12" address="0x7c">
+      This optional register may be used for non-standard features. Future
+      version of the debug spec will not use this address.
+    </register>
+
+    <register name="Custom Features 13" short="custom13" address="0x7d">
+      This optional register may be used for non-standard features. Future
+      version of the debug spec will not use this address.
+    </register>
+
+    <register name="Custom Features 14" short="custom14" address="0x7e">
+      This optional register may be used for non-standard features. Future
+      version of the debug spec will not use this address.
+    </register>
+
     <register name="Custom Features 15" short="custom15" address="0x7f">
         This optional register may be used for non-standard features. Future
         version of the debug spec will not use this address.
