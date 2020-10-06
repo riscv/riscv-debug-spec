@@ -727,9 +727,9 @@
 
         <field name="m" bits="9" access="WARL" reset="0">
             When set, every instruction completed in or trap taken from
-            M-mode decrements \FcsrIcountCount by 1. But if tcontrol is
-            implemented, \FcsrTcontrolMte is 0, and \FcsrIcountAction is
-            0, no decrement occurs.
+            M-mode decrements \FcsrIcountCount by 1, unless \FcsrIcountAction
+            is 0 and M-mode breakpoints are disabled via one of the mechanisms
+            described in Section~\ref{sec:mmtrigger}.
         </field>
         <field name="0" bits="8" access="R" reset="0" />
         <field name="s" bits="7" access="WARL" reset="0">
