@@ -220,6 +220,18 @@
         hold all valid virtual addresses but it need not be capable of holding
         other values.
 
+        If the A extension is supported, then trigger behavior is as follows
+        for the load and store bits:
+        \begin{tightlist}
+        \item LR instructions are loads
+        \item successful SC instructions are stores
+        \item it is \unspecified\ whether failing SC instructions are stores or not
+        \item Each AMO instruction is both a load and a store
+        \end{tightlist}
+
+        If the destination register of any load or AMO is x0 then it is
+        \unspecified\ whether a load data trigger will match.  Whether store
+        data triggers match on AMOs is \unspecified.
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="2" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
         <field name="maskmax" bits="XLEN-6:XLEN-11" access="R" reset="Preset">
@@ -480,6 +492,19 @@
         \item Write all ones to \RcsrTdataTwo.
         \item Read \RcsrTdataTwo. The value of maskmax6 is the index of the most significant 0 bit plus 1.
         \end{enumerate}
+
+        If the A extension is supported, then trigger behavior is as follows
+        for the load and store bits:
+        \begin{tightlist}
+        \item LR instructions are loads
+        \item successful SC instructions are stores
+        \item it is \unspecified\ whether failing SC instructions are stores or not
+        \item Each AMO instruction is both a load and a store
+        \end{tightlist}
+
+        If the destination register of any load or AMO is x0 then it is
+        \unspecified\ whether a load data trigger will match.  Whether store
+        data triggers match on AMOs is \unspecified.
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="6" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
