@@ -49,8 +49,8 @@
             to a type 2 trigger, but provides additional functionality and
             should be used instead of type 2 in newer implementations.
 
-            7: The trigger is an external debug trigger. The remaining bits
-            in this register act as described in \RcsrExttrigger.
+            7: The trigger is a trigger source external to the TM.  The
+            remaining bits in this register act as described in \RcsrTmexttrigger.
 
             12--14: These trigger types are available for non-standard use.
 
@@ -868,15 +868,15 @@
         </field>
     </register>
 
-    <register name="External Trigger" short="exttrigger" address="0x7a1">
+    <register name="External Trigger" short="tmexttrigger" address="0x7a1">
         This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 7.
 
-        This trigger fires when any selected external debug trigger input
-        signals.  Up to 16 external
-        debug trigger inputs coming from other blocks within the hart,
+        This trigger fires when any selected TM external trigger input
+        signals.  Up to 16 TM external
+        trigger inputs coming from other blocks outside the TM,
         (e.g. signaling an hpmcounter overflow) can be selected.  Hardware
-        may support none or just a few external debug trigger inputs
-        (starting with external debug trigger input 0 and continuing
+        may support none or just a few TM external trigger inputs
+        (starting with TM external trigger input 0 and continuing
         sequentially).  Unsupported inputs are hardwired to be inactive.
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="4" />
