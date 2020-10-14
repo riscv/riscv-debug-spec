@@ -237,6 +237,12 @@
         </field>
         <field name="dmactive" bits="0" access="R/W" reset="0">
             This bit serves as a reset signal for the Debug Module itself.
+            After changing the value of this bit, the debugger must poll
+            \RdmDmcontrol until \FdmDmcontrolDmactive has taken the requested value
+            before performing any action that assumes the requested \FdmDmcontrolDmactive
+            state change has completed.  Hardware may
+            take an arbitrarily long time to complete activation or deactivation and will
+            indicate completion by setting \FdmDmcontrolDmactive to the requested value.
 
             0: The module's state, including authentication mechanism,
             takes its reset values (the \FdmDmcontrolDmactive bit is the only bit which can
@@ -244,16 +250,14 @@
             to the module may fail. Specifically, \FdmDmstatusVersion may not return
             correct data.
 
-            1: The module functions normally. After writing 1, the debugger should
-            poll \RdmDmcontrol until \FdmDmcontrolDmactive is high. Hardware may
-            take an arbitrarily long time to initialize and will indicate completion
-            by setting dmactive to 1.
+            1: The module functions normally.
 
             No other mechanism should exist that may result in resetting the
             Debug Module after power up.
 
-            A debugger may pulse this bit low to get the Debug Module into a
-            known state.
+            To place the Debug Module into a known state, a debugger may write 0 to \FdmDmcontrolDmactive,
+            poll until \FdmDmcontrolDmactive is observed 0, write 1 to \FdmDmcontrolDmactive, and
+            poll until \FdmDmcontrolDmactive is observed 1.
 
             Implementations may pay attention to this bit to further aid
             debugging, for example by preventing the Debug Module from being
