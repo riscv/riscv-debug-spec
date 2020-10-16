@@ -532,7 +532,7 @@ First, an implementation may allow some abstract commands to execute without hal
 Second, the Quick Access abstract command can be used to halt a hart, quickly
 execute the contents of the Program Buffer, and let the hart run again.
 Combined with instructions that allow Program Buffer code to access the
-{\tt data} registers, as described in \ref{hartinfo}, this can be used to quickly
+{\tt data} registers, as described in \RdmHartinfo, this can be used to quickly
 perform a memory or register access. For some systems this will be too
 intrusive, but many systems that can't be halted can bear an occasional hiccup
 of a hundred or less cycles.
