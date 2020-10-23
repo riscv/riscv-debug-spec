@@ -739,7 +739,7 @@
         </field>
         <field name="pending" bits="8" access="R/W" reset="0">
             This bit becomes set when \FcsrIcountCount is decremented from 1
-            to 0. It is cleared when the trigger fired.
+            to 0. It is cleared when the trigger fires.
         </field>
         <field name="s" bits="7" access="WARL" reset="0">
             When set, enable this trigger in S/HS-mode.
