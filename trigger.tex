@@ -10,7 +10,7 @@ Trigger Module is broken out as a piece that can be implemented separately.
 
 A hart can be compliant with this specification without implementing any
 trigger functionality at all, but if it is implemented then it must conform to
-this section. If triggers aren't implemented, the CSRs may not exist at all and
+this section. If triggers aren't implemented, the CSRs must not exist at all and
 accessing them results in an illegal instruction exception.
 
 Triggers do not fire while in Debug Mode.
@@ -179,7 +179,7 @@ configuration, the register will read back a value that is supported (which may
 simply be a disabled trigger).  This means that a debugger must always read
 back values it writes to {\tt tdata} registers, unless it already knows already
 what is
-supported.  Writes to one {\tt tdata} register may not modify the contents of
+supported.  Writes to one {\tt tdata} register must not modify the contents of
 other {\tt tdata} registers, nor the configuration of any trigger besides the
 one that is currently selected.
 
