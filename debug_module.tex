@@ -410,7 +410,7 @@ setting the \FacAccessregisterPostexec bit in \RdmCommand.
 The debugger can write whatever program it likes (including jumps out of the
 Program Buffer), but the program must end with
 {\tt ebreak} or {\tt c.ebreak}. An implementation may support
-an implied {\tt ebreak} that is executed when a hart runs off the end of the
+an implicit {\tt ebreak} that is executed when a hart runs off the end of the
 Program Buffer. This is indicated by \FdmDmstatusImpebreak. With this feature, a Program
 Buffer of just 2 32-bit words can offer efficient debugging.
 
