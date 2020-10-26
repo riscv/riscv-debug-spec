@@ -592,8 +592,8 @@
         If resume groups are not implemented, then \FdmDmcsTwoGrouptype will
         remain 0 even after 1 is written there.
 
-        The external triggers available to add to halt groups may
-        be distinct from the external triggers available to add to resume groups.
+        The external triggers available to add to halt groups may be the same as
+        or distinct from the external triggers available to add to resume groups.
 
         <field name="0" bits="31:12" access="R" reset="0" />
         <field name="grouptype" bits="11" access="WARL" reset="0">
