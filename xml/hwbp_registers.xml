@@ -868,8 +868,8 @@
     </register>
 
     <register name="Trigger Extra (RV32)" short="textra32" address="0x7a3">
-        This register is accessible as \RcsrTdataThree when \FcsrTdataOneType is 2, 3, 4, or
-        5.
+        This register is accessible as \RcsrTdataThree when \FcsrTdataOneType is 2, 3, 4,
+        5, or 6.
 
         All functionality in this register is optional. The $|value|$ bits may
         tie any number of upper bits to 0. The $|select|$ bits may only support
