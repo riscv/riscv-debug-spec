@@ -48,12 +48,14 @@
             this platform.
         </field>
         <field name="allunavail" bits="13" access="R" reset="-">
-            This field is 1 when all currently selected harts are unavailable,
-            or were unavailable without that being acknowledged.
+            This field is 1 when all currently selected harts are
+            unavailable, or (if \FdmDmstatusStickyunavail is 1) were
+            unavailable without that being acknowledged.
         </field>
         <field name="anyunavail" bits="12" access="R" reset="-">
             This field is 1 when any currently selected hart is unavailable,
-            or was unavailable without that being acknowledged.
+            or (if \FdmDmstatusStickyunavail is 1) was unavailable without
+            that being acknowledged.
         </field>
         <field name="allrunning" bits="11" access="R" reset="-">
             This field is 1 when all currently selected harts are running.
