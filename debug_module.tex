@@ -168,12 +168,17 @@ with indexes higher than the first nonexistent one.
 Harts are unavailable if they might exist/become available at a later time, or
 if there are other harts with higher indexes than this one. Harts may be
 unavailable for a variety of reasons including being reset, temporarily powered
-down, and not being plugged into the system.
+down, and not being plugged into the system. That means harts might become
+available or unavailable at any time, although these events should be rare
+in systems built to be easily debugged.
+There are no guarantees about the state of the hart when it becomes available.
+
 Systems with very large number of harts may
 permanently disable some during manufacturing, leaving holes in the otherwise
 continuous hart index space. In order to let the debugger discover all harts,
 they must show up as unavailable even if there is no chance of them ever
 becoming available.
+
 
 Harts are running when they are executing normally, as if no debugger was
 attached. This includes being in a low power mode or waiting for an interrupt,
