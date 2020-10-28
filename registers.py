@@ -334,21 +334,28 @@ def compare_address(a, b):
 
 def print_latex_index( registers ):
     print(registers.description)
+
+    columns = [
+        ("Address", "r"),
+        ("Name", "l")]
+    if any(r.sdesc for r in registers.registers):
+        columns.append(("Description", "l"))
+    columns.append(("Page", "l"))
+
     # Force this table HERE so that it doesn't get moved into the next section,
     # which will be the description of a register.
-    print("\\begin{table}[H]")
-    print("   \\begin{center}")
-    print("      \\caption{%s}" % registers.name)
-    print("      \\label{%s}" % toLatexIdentifier(registers.prefix, registers.label))
-    if any( r.sdesc for r in registers.registers ):
-        print("      \\begin{tabular}{|r|l|l|l|}")
-        print("      \\hline")
-        print("      Address & Name & Description & Page \\\\")
-    else:
-        print("      \\begin{tabular}{|r|l|l|}")
-        print("      \\hline")
-        print("      Address & Name & Page \\\\")
+    print("   \\begin{longtable}{|%s|}" % "|".join(b for a, b in columns))
+    print("      \\caption{%s \\label{%s}}\\\\" %
+            (registers.name, toLatexIdentifier(registers.prefix, registers.label)))
     print("      \\hline")
+    print("      %s \\\\" % (" & ".join(a for a, b in columns)))
+    print("      \\hline")
+    print("      \\endhead")
+
+    print("      \\multicolumn{%d}{r}{\\textit{Continued on next page}} \\\\" %
+            len(columns))
+    print("      \\endfoot")
+    print("      \\endlastfoot")
     for r in sorted( registers.registers,
             key=cmp_to_key(lambda a, b: compare_address(a.address, b.address))):
         if r.short and (r.fields or r.description):
@@ -364,9 +371,7 @@ def print_latex_index( registers ):
         else:
             print("%s & %s & %s \\\\" % ( r.address, name, page ))
     print("         \hline")
-    print("      \end{tabular}")
-    print("   \end{center}")
-    print("\end{table}")
+    print("   \end{longtable}")
 
 def print_latex_custom( registers ):
     sub = "sub" * registers.depth
@@ -459,7 +464,6 @@ def print_latex_custom( registers ):
         if any( f.description for f in r.fields ):
             print("\\tabletail{\\hline \\multicolumn{%d}{|r|}" % len(columns))
             print("   {{Continued on next page}} \\\\ \\hline}")
-            print("\\begin{center}")
             print("   \\begin{longtable}{|%s|}" % "|".join(c[0] for c in columns))
 
             print("   \\hline")
@@ -480,9 +484,7 @@ def print_latex_custom( registers ):
                     print("%s\\\\" % " & ".join(str(getattr(f, c[2])) for c in columns[1:]))
                     print("   \\hline")
 
-            #print "   \\end{tabulary}"
             print("   \\end{longtable}")
-            print("\\end{center}")
         print()
 
 def print_latex_register( registers ):
