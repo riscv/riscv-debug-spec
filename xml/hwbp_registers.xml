@@ -49,6 +49,9 @@
             to a type 2 trigger, but provides additional functionality and
             should be used instead of type 2 in newer implementations.
 
+            7: The trigger is a trigger source external to the TM.  The
+            remaining bits in this register act as described in \RcsrTmexttrigger.
+
             12--14: These trigger types are available for non-standard use.
 
             15: This trigger exists (so enumeration shouldn't terminate), but
@@ -860,6 +863,37 @@
         <field name="u" bits="6" access="WARL" reset="0">
             When set, enable this trigger for exceptions that are taken from U
             mode.
+        </field>
+        <field name="action" bits="5:0" access="WARL" reset="0">
+            The action to take when the trigger fires. The values are explained
+            in Table~\ref{tab:action}.
+        </field>
+    </register>
+
+    <register name="External Trigger" short="tmexttrigger" address="0x7a1">
+        This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 7.
+
+        This trigger fires when any selected TM external trigger input
+        signals.  Up to 16 TM external
+        trigger inputs coming from other blocks outside the TM,
+        (e.g. signaling an hpmcounter overflow) can be selected.  Hardware
+        may support none or just a few TM external trigger inputs
+        (starting with TM external trigger input 0 and continuing
+        sequentially).  Unsupported inputs are hardwired to be inactive.
+
+        <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="4" />
+        <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
+        <field name="hit" bits="XLEN-6" access="WARL" reset="0">
+            If this bit is implemented, the hardware sets it when this
+            trigger matches. The trigger's user can set or clear it at any
+            time. It is used to determine which
+            trigger(s) matched.  If the bit is not implemented, it is always 0
+            and writing it has no effect.
+        </field>
+        <field name="0" bits="XLEN-7:22" access="R" reset="0" />
+        <field name="select" bits="21:6" access="WARL" reset="0">
+            Selects any combination of up to 16 external debug trigger inputs
+            that cause this trigger to fire.
         </field>
         <field name="action" bits="5:0" access="WARL" reset="0">
             The action to take when the trigger fires. The values are explained
