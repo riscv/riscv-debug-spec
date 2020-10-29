@@ -7,7 +7,13 @@
         the currently selected harts, as defined in \FdmDmcontrolHasel.  Its address will
         not change in the future, because it contains \FdmDmstatusVersion.
 
-        <field name="0" bits="31:23" access="R" reset="0" />
+        <field name="0" bits="31:24" access="R" reset="0" />
+        <field name="stickyunavail" bits="23" access="R" reset="Preset">
+            0: The per-hart {\tt unavail} bits reflect the current state of the hart.
+
+            1: The per-hart {\tt unavail} bits are sticky. Once they are set, they will
+            not clear until the debugger acknowledges them using \FdmDmcontrolAckunavail.
+        </field>
         <field name="impebreak" bits="22" access="R" reset="Preset">
             If 1, then there is an implicit {\tt ebreak} instruction at the
             non-existent word immediately after the Program Buffer. This saves
@@ -42,10 +48,14 @@
             this platform.
         </field>
         <field name="allunavail" bits="13" access="R" reset="-">
-            This field is 1 when all currently selected harts are unavailable.
+            This field is 1 when all currently selected harts are
+            unavailable, or (if \FdmDmstatusStickyunavail is 1) were
+            unavailable without that being acknowledged.
         </field>
         <field name="anyunavail" bits="12" access="R" reset="-">
-            This field is 1 when any currently selected hart is unavailable.
+            This field is 1 when any currently selected hart is unavailable,
+            or (if \FdmDmstatusStickyunavail is 1) was unavailable without
+            that being acknowledged.
         </field>
         <field name="allrunning" bits="11" access="R" reset="-">
             This field is 1 when all currently selected harts are running.
@@ -183,7 +193,13 @@
 
             Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
         </field>
-        <field name="0" bits="27" access="R" reset="0" />
+        <field name="ackunavail" bits="27" access="W1" reset="-">
+            0: No effect.
+
+            1: Clears {\tt unavail} for any selected harts.
+
+            Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
+        </field>
         <field name="hasel" bits="26" access="R/W" reset="0">
             Selects the definition of currently selected harts.
 
@@ -237,6 +253,12 @@
         </field>
         <field name="dmactive" bits="0" access="R/W" reset="0">
             This bit serves as a reset signal for the Debug Module itself.
+            After changing the value of this bit, the debugger must poll
+            \RdmDmcontrol until \FdmDmcontrolDmactive has taken the requested value
+            before performing any action that assumes the requested \FdmDmcontrolDmactive
+            state change has completed.  Hardware may
+            take an arbitrarily long time to complete activation or deactivation and will
+            indicate completion by setting \FdmDmcontrolDmactive to the requested value.
 
             0: The module's state, including authentication mechanism,
             takes its reset values (the \FdmDmcontrolDmactive bit is the only bit which can
@@ -244,16 +266,14 @@
             to the module may fail. Specifically, \FdmDmstatusVersion may not return
             correct data.
 
-            1: The module functions normally. After writing 1, the debugger should
-            poll \RdmDmcontrol until \FdmDmcontrolDmactive is high. Hardware may
-            take an arbitrarily long time to initialize and will indicate completion
-            by setting dmactive to 1.
+            1: The module functions normally.
 
             No other mechanism should exist that may result in resetting the
             Debug Module after power up.
 
-            A debugger may pulse this bit low to get the Debug Module into a
-            known state.
+            To place the Debug Module into a known state, a debugger may write 0 to \FdmDmcontrolDmactive,
+            poll until \FdmDmcontrolDmactive is observed 0, write 1 to \FdmDmcontrolDmactive, and
+            poll until \FdmDmcontrolDmactive is observed 1.
 
             Implementations may pay attention to this bit to further aid
             debugging, for example by preventing the Debug Module from being

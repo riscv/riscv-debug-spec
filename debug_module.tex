@@ -168,12 +168,17 @@ with indexes higher than the first nonexistent one.
 Harts are unavailable if they might exist/become available at a later time, or
 if there are other harts with higher indexes than this one. Harts may be
 unavailable for a variety of reasons including being reset, temporarily powered
-down, and not being plugged into the system.
+down, and not being plugged into the system. That means harts might become
+available or unavailable at any time, although these events should be rare
+in systems built to be easily debugged.
+There are no guarantees about the state of the hart when it becomes available.
+
 Systems with very large number of harts may
 permanently disable some during manufacturing, leaving holes in the otherwise
 continuous hart index space. In order to let the debugger discover all harts,
 they must show up as unavailable even if there is no chance of them ever
 becoming available.
+
 
 Harts are running when they are executing normally, as if no debugger was
 attached. This includes being in a low power mode or waiting for an interrupt,
@@ -410,7 +415,7 @@ setting the \FacAccessregisterPostexec bit in \RdmCommand.
 The debugger can write whatever program it likes (including jumps out of the
 Program Buffer), but the program must end with
 {\tt ebreak} or {\tt c.ebreak}. An implementation may support
-an implied {\tt ebreak} that is executed when a hart runs off the end of the
+an implicit {\tt ebreak} that is executed when a hart runs off the end of the
 Program Buffer. This is indicated by \FdmDmstatusImpebreak. With this feature, a Program
 Buffer of just 2 32-bit words can offer efficient debugging.
 
@@ -435,13 +440,14 @@ Mode, and \FdmAbstractcsCmderr is set to 3 ({\tt exception error}).  If the debu
 executes a program that doesn't terminate with an {\tt ebreak} instruction, the
 hart will remain in Debug Mode and the debugger will lose control of the hart.
 
-Executing the Program Buffer may clobber \RcsrDpc. If that is the case, it must be
+Executing the Program Buffer may cause the value of \RcsrDpc to become \unspecified. If that is the case, it must be
 possible to read/write \RcsrDpc using an abstract command with \FacAccessregisterPostexec not set.
 The debugger must attempt to save \RcsrDpc between halting and
 executing a Program Buffer, and then restore \RcsrDpc before leaving Debug Mode.
 
 \begin{commentary}
-    Allowing Program Buffer execution to clobber \RcsrDpc allows for direct
+    Allowing \RcsrDpc to become \unspecified\ upon Program Buffer execution
+    allows for direct
     implementations that don't have a separate PC register, and do need to use
     the PC when executing the Program Buffer.
 \end{commentary}
@@ -531,7 +537,7 @@ First, an implementation may allow some abstract commands to execute without hal
 Second, the Quick Access abstract command can be used to halt a hart, quickly
 execute the contents of the Program Buffer, and let the hart run again.
 Combined with instructions that allow Program Buffer code to access the
-{\tt data} registers, as described in \ref{hartinfo}, this can be used to quickly
+{\tt data} registers, as described in \RdmHartinfo, this can be used to quickly
 perform a memory or register access. For some systems this will be too
 intrusive, but many systems that can't be halted can bear an occasional hiccup
 of a hundred or less cycles.
