@@ -145,15 +145,15 @@ the trace specification.
 \section{Native M-Mode Triggers}
 \label{sec:mmtrigger}
 
-Triggers can be used for native debugging. On a fully featured system triggers
+Triggers can be used for native debugging. On a fully featured hart, triggers
 will be set using \FcsrMcontrolU or \FcsrMcontrolS, and when firing they can cause a breakpoint exception
 to trap to a more privileged mode. It is possible to set triggers natively to
 fire in M mode as well. In that case there is no higher privilege mode to trap
 to. When such a trigger causes a breakpoint exception while already in a trap
-handler, this will leave the system unable to resume normal execution.
+handler, this will leave the hart unable to resume normal execution.
 
-On full-featured systems this is a remote corner case that can probably be
-ignored. On systems that only implement M mode, however, it is recommended to
+On full-featured harts this is a remote corner case that can probably be
+ignored. On harts that only implement M mode, however, it is recommended to
 implement one of two solutions to this problem. This way triggers can be useful
 for native debugging of even M mode code.
 
@@ -167,7 +167,7 @@ solution has the benefit that it only disables triggers during the trap
 handler.
 
 A user setting M mode triggers that cause breakpoint exceptions will have to be
-aware of any problems that might come up with the particular system they are
+aware of any problems that might come up with the particular hart they are
 working on.
 
 \section{Trigger Registers}
