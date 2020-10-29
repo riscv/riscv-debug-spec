@@ -222,14 +222,15 @@
 
         If the A extension is supported, then trigger behavior is as follows
         for the load and store bits:
+        \vspace{-0.2in}
         \begin{tightlist}
-        \item LR instructions are loads
-        \item successful SC instructions are stores
-        \item it is \unspecified\ whether failing SC instructions are stores or not
+        \item {\tt lr} instructions are loads
+        \item successful {\tt sc} instructions are stores
+        \item it is \unspecified\ whether failing {\tt sc} instructions are stores or not
         \item Each AMO instruction is both a load and a store
         \end{tightlist}
 
-        If the destination register of any load or AMO is x0 then it is
+        If the destination register of any load or AMO is \Rzero then it is
         \unspecified\ whether a load trigger with \FcsrMcontrolSelect=1 will
         match.  Whether store triggers with \FcsrMcontrolSelect=1 match on
         AMOs is \unspecified.
@@ -496,10 +497,11 @@
 
         If the A extension is supported, then trigger behavior is as follows
         for the load and store bits:
+        \vspace{-0.2in}
         \begin{tightlist}
-        \item LR instructions are loads
-        \item successful SC instructions are stores
-        \item it is \unspecified\ whether failing SC instructions are stores or not
+        \item {\tt lr} instructions are loads
+        \item successful {\tt sc} instructions are stores
+        \item it is \unspecified\ whether failing {\tt sc} instructions are stores or not
         \item Each AMO instruction is both a load and a store
         \end{tightlist}
 
