@@ -962,9 +962,9 @@
     </register>
 
     <register name="Custom Features 0" short="custom0" address="0x70">
-        The optional {\tt custom} registers may be used for non-standard
-        features. Future version of the debug spec will not use these
-        addresses.
+        The optional \RdmCustomZero through \RdmCustomFifteen registers may
+        be used for non-standard features. Future versions of the debug spec
+        will not use these addresses.
     </register>
     <register name="Custom Features 1" short="custom1" address="0x71" />
     <register name="Custom Features 2" short="custom2" address="0x72" />
