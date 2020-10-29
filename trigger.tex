@@ -1,4 +1,4 @@
-\chapter{Trigger Module}
+\chapter{Trigger Module (TM)}
 \label{sec:trigger}
 
 Triggers can cause a breakpoint exception, entry into Debug Mode, or a trace action
@@ -68,6 +68,8 @@ Value & Description \\
     new value of the action field would also be 1. \\
 \hline
 2 -- 5 & Reserved for use by the trace specification. \\
+\hline
+8 -- 9 & Signal the firing of the trigger to other blocks within the hart (e.g. as countable events to hpmcounters).  Use external debug trigger output 0 or 1 (respectively). \\
 \hline
 other & Reserved for future use. \\
 \hline

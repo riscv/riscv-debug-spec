@@ -7,7 +7,13 @@
         the currently selected harts, as defined in \FdmDmcontrolHasel.  Its address will
         not change in the future, because it contains \FdmDmstatusVersion.
 
-        <field name="0" bits="31:23" access="R" reset="0" />
+        <field name="0" bits="31:24" access="R" reset="0" />
+        <field name="stickyunavail" bits="23" access="R" reset="Preset">
+            0: The per-hart {\tt unavail} bits reflect the current state of the hart.
+
+            1: The per-hart {\tt unavail} bits are sticky. Once they are set, they will
+            not clear until the debugger acknowledges them using \FdmDmcontrolAckunavail.
+        </field>
         <field name="impebreak" bits="22" access="R" reset="Preset">
             If 1, then there is an implicit {\tt ebreak} instruction at the
             non-existent word immediately after the Program Buffer. This saves
@@ -42,10 +48,14 @@
             this platform.
         </field>
         <field name="allunavail" bits="13" access="R" reset="-">
-            This field is 1 when all currently selected harts are unavailable.
+            This field is 1 when all currently selected harts are
+            unavailable, or (if \FdmDmstatusStickyunavail is 1) were
+            unavailable without that being acknowledged.
         </field>
         <field name="anyunavail" bits="12" access="R" reset="-">
-            This field is 1 when any currently selected hart is unavailable.
+            This field is 1 when any currently selected hart is unavailable,
+            or (if \FdmDmstatusStickyunavail is 1) was unavailable without
+            that being acknowledged.
         </field>
         <field name="allrunning" bits="11" access="R" reset="-">
             This field is 1 when all currently selected harts are running.
@@ -183,7 +193,13 @@
 
             Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
         </field>
-        <field name="0" bits="27" access="R" reset="0" />
+        <field name="ackunavail" bits="27" access="W1" reset="-">
+            0: No effect.
+
+            1: Clears {\tt unavail} for any selected harts.
+
+            Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
+        </field>
         <field name="hasel" bits="26" access="R/W" reset="0">
             Selects the definition of currently selected harts.
 
@@ -592,8 +608,8 @@
         If resume groups are not implemented, then \FdmDmcsTwoGrouptype will
         remain 0 even after 1 is written there.
 
-        The external triggers available to add to halt groups may be the same as
-        or distinct from the external triggers available to add to resume groups.
+        The DM external triggers available to add to halt groups may be the same as
+        or distinct from the DM external triggers available to add to resume groups.
 
         <field name="0" bits="31:12" access="R" reset="0" />
         <field name="grouptype" bits="11" access="WARL" reset="0">
@@ -601,18 +617,18 @@
 
             1: The remaining fields in this register configure resume groups.
         </field>
-        <field name="exttrigger" bits="10:7" access="WARL" reset="0">
-            This field contains the currently selected external trigger.
+        <field name="dmexttrigger" bits="10:7" access="WARL" reset="0">
+            This field contains the currently selected DM external trigger.
 
             If a non-existent trigger value is written here, the hardware will
-            change it to a valid one or 0 if no external triggers exist.
+            change it to a valid one or 0 if no DM external triggers exist.
         </field>
         <field name="group" bits="6:2" access="WARL" reset="preset">
             When \FdmDmcsTwoHgselect is 0, contains the group of the hart
             specified by \Fhartsel.
 
-            When \FdmDmcsTwoHgselect is 1, contains the group of the external
-            trigger selected by \FdmDmcsTwoExttrigger.
+            When \FdmDmcsTwoHgselect is 1, contains the group of the DM external
+            trigger selected by \FdmDmcsTwoDmexttrigger.
 
             Writes only have an effect if \FdmDmcsTwoHgwrite is also written 1.
 
@@ -632,7 +648,7 @@
             if the hardware supports that group for that hart.
 
             When 1 is written and \FdmDmcsTwoHgselect is 1, the DM will change
-            the group of the external trigger selected by \FdmDmcsTwoExttrigger
+            the group of the DM external trigger selected by \FdmDmcsTwoDmexttrigger
             to the value written to \FdmDmcsTwoGroup, if the hardware supports
             that group for that trigger.
 
@@ -641,9 +657,9 @@
         <field name="hgselect" bits="0" access="WARL" reset="0">
             0: Operate on harts.
 
-            1: Operate on external triggers.
+            1: Operate on DM external triggers.
 
-            If there are no external triggers, this field must be tied to 0.
+            If there are no DM external triggers, this field must be tied to 0.
         </field>
     </register>
 
