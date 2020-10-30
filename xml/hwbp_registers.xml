@@ -223,6 +223,20 @@
         hold all valid virtual addresses but it need not be capable of holding
         other values.
 
+        If the A extension is supported, then trigger behavior is as follows
+        for the load and store bits:
+        \vspace{-0.2in}
+        \begin{tightlist}
+        \item {\tt lr} instructions are loads
+        \item successful {\tt sc} instructions are stores
+        \item it is \unspecified\ whether failing {\tt sc} instructions are stores or not
+        \item Each AMO instruction is both a load and a store
+        \end{tightlist}
+
+        If the destination register of any load or AMO is \Rzero then it is
+        \unspecified\ whether a load trigger with \FcsrMcontrolSelect=1 will
+        match.  Whether store triggers with \FcsrMcontrolSelect=1 match on
+        AMOs is \unspecified.
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="2" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
         <field name="maskmax" bits="XLEN-6:XLEN-11" access="R" reset="Preset">
@@ -484,6 +498,20 @@
         \item Read \RcsrTdataTwo. The value of maskmax6 is the index of the most significant 0 bit plus 1.
         \end{enumerate}
 
+        If the A extension is supported, then trigger behavior is as follows
+        for the load and store bits:
+        \vspace{-0.2in}
+        \begin{tightlist}
+        \item {\tt lr} instructions are loads
+        \item successful {\tt sc} instructions are stores
+        \item it is \unspecified\ whether failing {\tt sc} instructions are stores or not
+        \item Each AMO instruction is both a load and a store
+        \end{tightlist}
+
+        If the destination register of any load or AMO is x0 then it is
+        \unspecified\ whether a load trigger with \FcsrMcontrolSelect=1 will
+        match.  Whether store triggers with \FcsrMcontrolSelect=1 match on
+        AMOs is \unspecified.
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="6" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
         <field name="0" bits="XLEN-6:25" access="R" reset="0" />
