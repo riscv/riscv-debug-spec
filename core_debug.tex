@@ -54,14 +54,14 @@ How Debug Mode is implemented is not specified here.
 \end{steps}
 
 \begin{commentary}
-    When mprven=1, the external debugger can set MPRV and MPP appropriately to
+    When \FcsrDcsrMprven=1, the external debugger can set MPRV and MPP appropriately to
     have hardware perform memory accesses with the appropriate endianness, address
-    translation, permission checks, and PMP/PMA checks (subject to relaxedpriv).
+    translation, permission checks, and PMP/PMA checks (subject to \FdmAbstractcsRelaxedpriv).
     This is also the only way to access all of physical memory when 34-bit physical
-    addresses are supported on a Sv32 hart. If hardware ties mprven to 0 then the
+    addresses are supported on a Sv32 hart. If hardware ties \FcsrDcsrMprven to 0 then the
     external debugger is expected to simulate all the effects of MPRV, including
     any extensions that affect memory accesses.
-    For these reasons it is recommended to tie mprven to 1.
+    For these reasons it is recommended to tie \FcsrDcsrMprven to 1.
 \end{commentary}
 
 \section{Load-Reserved/Store-Conditional Instructions}
