@@ -693,9 +693,8 @@
 
         If \FcsrIcountCount is not 0, then every instruction completed or
         trap taken from a mode where the trigger is enabled decrements
-        \FcsrIcountCount by 1, unless \FcsrIcountAction is 0, the current
-        mode is M-mode, and M-mode breakpoints are disabled via one of the
-        mechanisms described in Section~\ref{sec:mmtrigger}. When
+        \FcsrIcountCount by 1.
+        When
         \FcsrIcountCount is decremented from 1 to 0 then \FcsrIcountPending
         becomes set. When \FcsrIcountPending is set, the trigger fires just
         before any further instructions are executed in a mode where the
