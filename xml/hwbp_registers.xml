@@ -930,8 +930,8 @@
     </register>
 
     <register name="Trigger Extra (RV32)" short="textra32" address="0x7a3">
-        This register is accessible as \RcsrTdataThree when \FcsrTdataOneType is 2, 3, 4, or
-        5.
+        This register is accessible as \RcsrTdataThree when \FcsrTdataOneType is 2, 3, 4,
+        5, or 6 and XLEN=32.
 
         All functionality in this register is optional. The $|value|$ bits may
         tie any number of upper bits to 0. The $|select|$ bits may only support
@@ -980,7 +980,8 @@
     </register>
 
     <register name="Trigger Extra (RV64)" short="textra64" address="0x7a3">
-        This is the layout of {\tt textra} if XLEN is 64. The fields are defined
+        This register is accessible as \RcsrTdataThree when \FcsrTdataOneType is 2, 3, 4,
+        5, or 6 and XLEN=64. The fields are defined
         above, in \RcsrTextraThirtytwo.
 
         <field name="mhvalue" bits="63:51" access="WARL" reset="0">
