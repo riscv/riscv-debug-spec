@@ -425,9 +425,13 @@
         <field name="0" bits="5" access="R" reset="0" />
         <field name="s" bits="4" access="WARL" reset="0">
             When set, enable this trigger in S/HS-mode.
+            This bit is hard-wired to 0 if the hart does not support
+            S-mode.
         </field>
         <field name="u" bits="3" access="WARL" reset="0">
             When set, enable this trigger in U-mode.
+            This bit is hard-wired to 0 if the hart does not support
+            U-mode.
         </field>
         <field name="execute" bits="2" access="WARL" reset="0">
             When set, the trigger fires on the virtual address or opcode of an
@@ -693,9 +697,13 @@
         <field name="0" bits="5" access="R" reset="0" />
         <field name="s" bits="4" access="WARL" reset="0">
             When set, enable this trigger in S/HS-mode.
+            This bit is hard-wired to 0 if the hart does not support
+            S-mode.
         </field>
         <field name="u" bits="3" access="WARL" reset="0">
             When set, enable this trigger in U-mode.
+            This bit is hard-wired to 0 if the hart does not support
+            U-mode.
         </field>
         <field name="execute" bits="2" access="WARL" reset="0">
             When set, the trigger fires on the virtual address or opcode of an
@@ -714,18 +722,30 @@
     <register name="Instruction Count" short="icount" address="0x7a1">
         This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 3.
 
-        \begin{commentary} This trigger type is intended to be used as a single
-        step that's useful both for external debuggers and for software monitor
-        programs. For that case it is not necessary to support \FcsrIcountCount greater
-        than
-        1. The only two combinations of the mode bits that are useful in those
-        scenarios are \FcsrIcountU by itself, or \FcsrIcountM, \FcsrIcountS, and \FcsrIcountU all set.
+        If \FcsrIcountCount is not 0, then every instruction completed or
+        trap taken from a mode where the trigger is enabled decrements
+        \FcsrIcountCount by 1.
+        When
+        \FcsrIcountCount is decremented from 1 to 0 then \FcsrIcountPending
+        becomes set. When \FcsrIcountPending is set, the trigger fires just
+        before any further instructions are executed in a mode where the
+        trigger is enabled. As the trigger fires, \FcsrIcountPending is
+        cleared.
 
-        If the hardware limits \FcsrIcountCount to 1, and changes mode bits instead of
-        decrementing \FcsrIcountCount, this register can be implemented with just 2
-        bits. One for \FcsrIcountU, and one for \FcsrIcountM and \FcsrIcountS tied together.  If
-        only the external debugger or only a software monitor needs to be
-        supported, a single bit is enough.
+        \begin{commentary}
+        The intent of this design is to cleanly handle the case where
+        \FcsrIcountAction is 0, \FcsrIcountM is 0, \FcsrIcountU is 1,
+        \FcsrIcountCount is 1, and the U-mode instruction being executed
+        causes a trap into M-mode. In that case we want the entire M-mode
+        handler to be executed, and the debug trap to be taken before the
+        next U-mode instruction.
+        \end{commentary}
+
+        \begin{commentary}
+        This trigger type is intended to be used as a single step that's
+        useful both for external debuggers and for software monitor programs.
+        For that case it is not necessary to support \FcsrIcountCount greater
+        than 1.
         \end{commentary}
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="3" />
@@ -733,14 +753,14 @@
         <field name="0" bits="XLEN-6:27" access="R" reset="0" />
 
         <field name="vs" bits="26" access="WARL" reset="0">
-          When set, enable this trigger in VS-mode.
-          This bit is hard-wired to 0 if the hart does not support
-          virtualization mode.
+            When set, enable this trigger in VS-mode.
+            This bit is hard-wired to 0 if the hart does not support
+            virtualization mode.
         </field>
         <field name="vu" bits="25" access="WARL" reset="0">
-          When set, enable this trigger in VU-mode.
-          This bit is hard-wired to 0 if the hart does not support
-          virtualization mode.
+            When set, enable this trigger in VU-mode.
+            This bit is hard-wired to 0 if the hart does not support
+            virtualization mode.
         </field>
         <field name="hit" bits="24" access="WARL" reset="0">
             If this bit is implemented, the hardware sets it when this
@@ -757,19 +777,21 @@
         </field>
 
         <field name="m" bits="9" access="WARL" reset="0">
-            When set, every instruction completed in or trap taken from
-            M-mode decrements \FcsrIcountCount by 1, unless \FcsrIcountAction
-            is 0 and M-mode breakpoints are disabled via one of the mechanisms
-            described in Section~\ref{sec:mmtrigger}.
+            When set, enable this trigger in M-mode.
         </field>
-        <field name="0" bits="8" access="R" reset="0" />
+        <field name="pending" bits="8" access="R/W" reset="0">
+            This bit becomes set when \FcsrIcountCount is decremented from 1
+            to 0. It is cleared when the trigger fires.
+        </field>
         <field name="s" bits="7" access="WARL" reset="0">
-            When set, every instruction completed in or trap taken from
-            S/HS-mode decrements \FcsrIcountCount by 1.
+            When set, enable this trigger in S/HS-mode.
+            This bit is hard-wired to 0 if the hart does not support
+            S-mode.
         </field>
         <field name="u" bits="6" access="WARL" reset="0">
-            When set, every instruction completed in or trap taken from
-            U-mode decrements \FcsrIcountCount by 1.
+            When set, enable this trigger in U-mode.
+            This bit is hard-wired to 0 if the hart does not support
+            U-mode.
         </field>
 
         <field name="action" bits="5:0" access="WARL" reset="0">
@@ -827,10 +849,14 @@
         <field name="s" bits="7" access="WARL" reset="0">
             When set, enable this trigger for interrupts that are taken from S/HS
             mode.
+            This bit is hard-wired to 0 if the hart does not support
+            S-mode.
         </field>
         <field name="u" bits="6" access="WARL" reset="0">
             When set, enable this trigger for interrupts that are taken from U
             mode.
+            This bit is hard-wired to 0 if the hart does not support
+            U-mode.
         </field>
         <field name="action" bits="5:0" access="WARL" reset="0">
             The action to take when the trigger fires. The values are explained
@@ -887,10 +913,14 @@
         <field name="s" bits="7" access="WARL" reset="0">
             When set, enable this trigger for exceptions that are taken from S/HS
             mode.
+            This bit is hard-wired to 0 if the hart does not support
+            S-mode.
         </field>
         <field name="u" bits="6" access="WARL" reset="0">
             When set, enable this trigger for exceptions that are taken from U
             mode.
+            This bit is hard-wired to 0 if the hart does not support
+            U-mode.
         </field>
         <field name="action" bits="5:0" access="WARL" reset="0">
             The action to take when the trigger fires. The values are explained
