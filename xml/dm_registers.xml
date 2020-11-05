@@ -22,7 +22,14 @@
 
             This must be 1 when \FdmAbstractcsProgbufsize is 1.
         </field>
-        <field name="0" bits="21:20" access="R" reset="0" />
+        <field name="allkeepalive" bits="21" access="R" reset="0">
+            This field is 1 when all currently selected harts have
+            \Fkeepalive set.
+        </field>
+        <field name="anykeepalive" bits="20" access="R" reset="0">
+            This field is 1 when at least one currently selected harts has
+            \Fkeepalive set.
+        </field>
         <field name="allhavereset" bits="19" access="R" reset="-">
             This field is 1 when all currently selected harts have been reset
             and reset has not been acknowledged for any of them.
@@ -149,6 +156,15 @@
         \Fresethaltreq is an optional internal bit of per-hart state that cannot be
         read, but can be written with \FdmDmcontrolSetresethaltreq and \FdmDmcontrolClrresethaltreq.
 
+\label{keepalive}
+\index{keepalive}
+        \Fkeepalive is an optional internal bit of per-hart state. When it is
+        set, hardware will attempt to keep the hart available for the
+        debugger, e.g. by keeping it from entering a low-power state. It is
+        read through \FdmDmstatusAllkeepalive and \FdmDmstatusAnykeepalive,
+        and written through \FdmDmcontrolSetkeepalive and
+        \FdmDmcontrolClrkeepalive.
+
         For forward compatibility, \FdmDmstatusVersion will always be readable when bit 1
         (\FdmDmcontrolNdmreset) is 0 and bit 0 (\FdmDmcontrolDmactive) is 1.
 
@@ -222,7 +238,19 @@
             The high 10 bits of \Fhartsel: the DM-specific index of the hart to
             select. This hart is always part of the currently selected harts.
         </field>
-        <field name="0" bits="5:4" access="R" reset="0" />
+        <field name="setkeepalive" bits="5" access="W1" reset="-">
+            This optional field writes \Fkeepalive for all currently selected
+            harts, unless \FdmDmcontrolClrkeepalive is simultaneously set to
+            1.
+
+            Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
+        </field>
+        <field name="clrkeepalive" bits="4" access="W1" reset="-">
+            This optional field clears \Fkeepalive for all currently selected
+            harts.
+
+            Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
+        </field>
         <field name="setresethaltreq" bits="3" access="W1" reset="-">
             This optional field writes the halt-on-reset request bit for all
             currently selected harts, unless \FdmDmcontrolClrresethaltreq is
