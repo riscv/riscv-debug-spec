@@ -974,6 +974,7 @@
         such as process ID and thread ID.  The user can then program byte compares of
         the trigger to include one or more of the contexts in the compare. For textra32
         there are two byte-compare mask bits; for textra64 there are 5 byte-compare mask bits.
+        Byte masking only applies to scontext comparison; i.e when sselect==1.
         
         <field name="mhvalue" bits="31:26" access="WARL" reset="0">
             Data used together with \FcsrTextraThirtytwoMhselect.
@@ -1001,11 +1002,13 @@
             0=compare, 1=don't compare byte, i.e. byte is masked out
             bit 18 = lower byte compare of svalue (bits [7:0])
             bit 19 = upper byte compare of svalue (bits [15:8])
+            
+            Byte masking of svalue only applies to scontext comparison; i.e.
+            when sselect==1.
         </field>
 
         <field name="svalue" bits="17:2" access="WARL" reset="0">
-            Data used together with \FcsrTextraThirtytwoSselect to compare with the scontext CSR
-            which is ANDed with all other trigger comparisons.
+            Data used together with \FcsrTextraThirtytwoSselect.
 
             This field should be tied to 0 when S-mode is not supported.
         </field>
@@ -1043,6 +1046,9 @@
             bit 38 = third byte compare of svalue (bits [23:16])
             bit 39 = fourth byte compare of svalue (bits [31:24])
             bit 40 = fifth byte compare of svalue (bits [33:32])
+            
+            Byte masking of svalue only applies to scontext comparison; i.e.
+            when sselect==1.
         </field>
         <field name="svalue" bits="35:2" access="WARL" reset="0">
         </field>
