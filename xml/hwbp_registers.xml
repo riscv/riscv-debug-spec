@@ -772,7 +772,8 @@
         <field name="count" bits="23:10" access="WARL" reset="1">
             When count is decremented to 0, the trigger fires. Instead of
             changing \FcsrIcountCount from 1 to 0, it is also acceptable for hardware to
-            clear \FcsrIcountM, \FcsrIcountS, and \FcsrIcountU. This allows \FcsrIcountCount to be hard-wired
+            clear \FcsrIcountM, \FcsrIcountS, \FcsrIcountU, \FcsrIcountVs, and
+            \FcsrIcountVu. This allows \FcsrIcountCount to be hard-wired
             to 1 if this register just exists for single step.
         </field>
 
