@@ -967,14 +967,14 @@
         tie any number of upper bits to 0. The $|select|$ bits may only support
         0 (ignore).
 
-        Byte-granular comparison of the scontext CSR to the trigger's svalue in
-        textra32 and textra64 registers allows scontext to be defined to include
-        more than one element of comparison.  For example, software instrumentation
-        can program the scontext value to be the concatenation of different ID contexts
-        such as process ID and thread ID.  The user can then program byte compares of
-        the trigger to include one or more of the contexts in the compare. For textra32
-        there are two byte-compare mask bits; for textra64 there are 5 byte-compare mask bits.
-        Byte masking only applies to scontext comparison; i.e when sselect==1.
+        Byte-granular comparison of the \RcsrScontext to \FcsrTextraThirtytwoSvalue
+        allows \RcsrScontext to be defined to include more than one element of comparison.
+        For example, software instrumentation can program the \RcsrScontext value to be
+        the concatenation of different ID contexts such as process ID and thread ID.
+        The user can then program byte compares to include one or more of the contexts
+        in the compare. For \RcsrTextraThirtytwo there are two byte-compare mask bits.
+        
+        Byte masking only applies to \RcsrScontext comparison; i.e when \FcsrTextraThirtytwoSselect is 1.
         
         <field name="mhvalue" bits="31:26" access="WARL" reset="0">
             Data used together with \FcsrTextraThirtytwoMhselect.
@@ -999,12 +999,10 @@
         <field name="0" bits="22:20" access="R" reset="0" />
         
         <field name="sbytemask" bits="19:18" access="WARL" reset="0">
-            0=compare, 1=don't compare byte, i.e. byte is masked out
-            bit 18 = lower byte compare of svalue (bits [7:0])
-            bit 19 = upper byte compare of svalue (bits [15:8])
-            
-            Byte masking of svalue only applies to scontext comparison; i.e.
-            when sselect==1.
+            When the least significant bit of this field is 1, it causes bits 7:0
+            in the comparison to be ignored, when \FcsrTextraThirtytwoSselect=1.
+            When the next most significant bit of this field is 1, it causes bits 15:8
+            to be ignored in the comparison, when \FcsrTextraThirtytwoSselect=1
         </field>
 
         <field name="svalue" bits="17:2" access="WARL" reset="0">
@@ -1032,6 +1030,16 @@
         5, or 6 and XLEN=64. The fields are defined
         above, in \RcsrTextraThirtytwo.
 
+        Byte-granular comparison of the \RcsrScontext to \FcsrTextraSixtyfourSvalue in
+        \RcsrTextraSixtyfour allows \RcsrScontext to be defined to include
+        more than one element of comparison.  For example, software instrumentation
+        can program the \RcsrScontext value to be the concatenation of different ID contexts
+        such as process ID and thread ID.  The user can then program byte compares
+        to include one or more of the contexts in the compare. For \RcsrTextraSixtyfour
+        there are 5 byte-compare mask bits.
+        
+        Byte masking only applies to \RcsrScontext comparison; i.e when \FcsrTextraSixtyfourSselect is 1.
+        
         <field name="mhvalue" bits="63:51" access="WARL" reset="0">
         </field>
         <field name="mhselect" bits="50:48" access="WARL" reset="0">
@@ -1040,15 +1048,16 @@
         <field name="0" bits="47:41" access="R" reset="0" />
 
         <field name="sbytemask" bits="40:36" access="WARL" reset="0">
-            0=compare, 1=don't compare, i.e byte compare is masked out
-            bit 36 = first (low) byte compare of svalue (bits [7:0])
-            bit 37 = second byte compare of svalue (bits [15:8])
-            bit 38 = third byte compare of svalue (bits [23:16])
-            bit 39 = fourth byte compare of svalue (bits [31:24])
-            bit 40 = fifth byte compare of svalue (bits [33:32])
-            
-            Byte masking of svalue only applies to scontext comparison; i.e.
-            when sselect==1.
+            When the least significant bit of this field is 1, it causes bits 7:0
+            in the comparison to be ignored, when \FcsrTextraSixtyfourSselect=1.
+            When the next most significant bit of this field is 1, it causes bits 15:8
+            to be ignored in the comparison, when \FcsrTextraSixtyfourSselect=1
+            When the next most significant bit of this field is 1, it causes bits 23:16
+            to be ignored in the comparison, when \FcsrTextraSixtyfourSselect=1
+            When the next most significant bit of this field is 1, it causes bits 31:24
+            to be ignored in the comparison, when \FcsrTextraSixtyfourSselect=1
+            When the next most significant bit of this field is 1, it causes bits 33:32
+            to be ignored in the comparison, when \FcsrTextraSixtyfourSselect=1
         </field>
         <field name="svalue" bits="35:2" access="WARL" reset="0">
         </field>
