@@ -967,12 +967,12 @@
         tie any number of upper bits to 0. The $|select|$ bits may only support
         0 (ignore).
 
-        Byte-granular comparison of the \RcsrScontext to \FcsrTextraThirtytwoSvalue
+        Byte-granular comparison of \RcsrScontext to \FcsrTextraThirtytwoSvalue
         allows \RcsrScontext to be defined to include more than one element of comparison.
         For example, software instrumentation can program the \RcsrScontext value to be
         the concatenation of different ID contexts such as process ID and thread ID.
-        The user can then program byte compares to include one or more of the contexts
-        in the compare. For \RcsrTextraThirtytwo there are two byte-compare mask bits.
+        The user can then program byte compares based on \FcsrTextraThritytwoSbytemask
+        to include one or more of the contexts in the compare.
         
         Byte masking only applies to \RcsrScontext comparison; i.e when \FcsrTextraThirtytwoSselect is 1.
         
@@ -1002,7 +1002,7 @@
             When the least significant bit of this field is 1, it causes bits 7:0
             in the comparison to be ignored, when \FcsrTextraThirtytwoSselect=1.
             When the next most significant bit of this field is 1, it causes bits 15:8
-            to be ignored in the comparison, when \FcsrTextraThirtytwoSselect=1
+            to be ignored in the comparison, when \FcsrTextraThirtytwoSselect=1.
         </field>
 
         <field name="svalue" bits="17:2" access="WARL" reset="0">
@@ -1030,13 +1030,12 @@
         5, or 6 and XLEN=64. The fields are defined
         above, in \RcsrTextraThirtytwo.
 
-        Byte-granular comparison of the \RcsrScontext to \FcsrTextraSixtyfourSvalue in
+        Byte-granular comparison of \RcsrScontext to \FcsrTextraSixtyfourSvalue in
         \RcsrTextraSixtyfour allows \RcsrScontext to be defined to include
         more than one element of comparison.  For example, software instrumentation
         can program the \RcsrScontext value to be the concatenation of different ID contexts
-        such as process ID and thread ID.  The user can then program byte compares
-        to include one or more of the contexts in the compare. For \RcsrTextraSixtyfour
-        there are 5 byte-compare mask bits.
+        such as process ID and thread ID.  The user can then program byte compares based on
+        \FcsrTextraSixtyfourSbytemask to include one or more of the contexts in the compare.
         
         Byte masking only applies to \RcsrScontext comparison; i.e when \FcsrTextraSixtyfourSselect is 1.
         
@@ -1050,14 +1049,10 @@
         <field name="sbytemask" bits="40:36" access="WARL" reset="0">
             When the least significant bit of this field is 1, it causes bits 7:0
             in the comparison to be ignored, when \FcsrTextraSixtyfourSselect=1.
-            When the next most significant bit of this field is 1, it causes bits 15:8
-            to be ignored in the comparison, when \FcsrTextraSixtyfourSselect=1
-            When the next most significant bit of this field is 1, it causes bits 23:16
-            to be ignored in the comparison, when \FcsrTextraSixtyfourSselect=1
-            When the next most significant bit of this field is 1, it causes bits 31:24
-            to be ignored in the comparison, when \FcsrTextraSixtyfourSselect=1
-            When the next most significant bit of this field is 1, it causes bits 33:32
-            to be ignored in the comparison, when \FcsrTextraSixtyfourSselect=1
+            Likewise, the second bit controls the comparison of bits 15:8,
+            third bit controls the comparison of bits 23:16,
+            fourth bit controls the comparison of bits 31:24, and
+            fifth bit controls the comparison of bits 33:32.
         </field>
         <field name="svalue" bits="35:2" access="WARL" reset="0">
         </field>
