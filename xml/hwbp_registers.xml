@@ -256,15 +256,16 @@
             is used.
         </field>
         <field name="hit" bits="20" access="WARL" reset="0">
-            If this bit is implemented, the hardware sets it when this
-            trigger matches. The trigger's user can set or clear it at any
+            If this bit is implemented then it must become set when this
+            trigger fires and may become set when this trigger matches.
+            The trigger's user can set or clear it at any
             time. It is used to determine which
             trigger(s) matched.  If the bit is not implemented, it is always 0
             and writing it has no effect.
         </field>
         <field name="select" bits="19" access="WARL" reset="0">
             0: Perform a match on the lowest virtual address of the access.  In
-            addition, it is recommended that the trigger also fires if any of
+            addition, it is recommended that the trigger also matches if any of
             the other accessed virtual addresses match.
             (E.g. on a 32-bit read from 0x4000, the lowest address is 0x4000
             and the other addresses are 0x4001, 0x4002, and 0x4003.)
@@ -394,7 +395,7 @@
             \RcsrTdataTwo. M is XLEN-1 minus the index of the least-significant
             bit containing 0 in \RcsrTdataTwo. Debuggers should only write values
             to \RcsrTdataTwo such that M + \FcsrMcontrolMaskmax $\geq$ XLEN, otherwise it's
-            undefined on what conditions the trigger will fire.
+            undefined on what conditions the trigger will match.
 
             2: Matches when the value is greater than (unsigned) or equal to
             \RcsrTdataTwo.
