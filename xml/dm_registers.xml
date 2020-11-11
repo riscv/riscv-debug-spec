@@ -232,7 +232,7 @@
             select. This hart is always part of the currently selected harts.
         </field>
         <field name="setkeepalive" bits="5" access="W1" reset="-">
-            This optional field writes \Fkeepalive for all currently selected
+            This optional field sets \Fkeepalive for all currently selected
             harts, unless \FdmDmcontrolClrkeepalive is simultaneously set to
             1.
 
