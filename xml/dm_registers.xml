@@ -154,9 +154,10 @@
         \Fkeepalive is an optional internal bit of per-hart state. When it is
         set, it suggests that the hardware should attempt to keep the hart
         available for the debugger, e.g. by keeping it from entering a
-        low-power state. Even if the bit is implemented, hardware might not
-        be able to keep a hart available. The bit is written through
-        \FdmDmcontrolSetkeepalive and \FdmDmcontrolClrkeepalive.
+        low-power state once powered on. Even if the bit is implemented,
+        hardware might not be able to keep a hart available. The bit is
+        written through \FdmDmcontrolSetkeepalive and
+        \FdmDmcontrolClrkeepalive.
 
         For forward compatibility, \FdmDmstatusVersion will always be readable when bit 1
         (\FdmDmcontrolNdmreset) is 0 and bit 0 (\FdmDmcontrolDmactive) is 1.
