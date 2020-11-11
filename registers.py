@@ -205,7 +205,7 @@ def write_definitions( fd, registers ):
             fd.write( "\\defregname{\\R%s}{\\hyperref[%s]{%s}}\n" % (
                 macroName, toLatexIdentifier( registers.prefix, r.label ), r.short or r.label ) )
         for f in r.fields:
-            if f.description and f.define:
+            if f.define:
                 fd.write( "\\deffieldname{\\F%s}{\\hyperref[%s]{%s}}\n" % (
                         toLatexIdentifier( registers.prefix, regid, f.name ),
                         toLatexIdentifier( registers.prefix, regid, f.name ),
