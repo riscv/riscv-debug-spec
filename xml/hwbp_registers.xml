@@ -971,7 +971,7 @@
         allows \RcsrScontext to be defined to include more than one element of comparison.
         For example, software instrumentation can program the \RcsrScontext value to be
         the concatenation of different ID contexts such as process ID and thread ID.
-        The user can then program byte compares based on \FcsrTextraThritytwoSbytemask
+        The user can then program byte compares based on \FcsrTextraThirtytwoSbytemask
         to include one or more of the contexts in the compare.
         
         Byte masking only applies to \RcsrScontext comparison; i.e when \FcsrTextraThirtytwoSselect is 1.
