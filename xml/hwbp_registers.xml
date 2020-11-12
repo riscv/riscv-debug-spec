@@ -376,9 +376,8 @@
             trigger will be taken if and only if all the triggers in the chain
             match at the same time.
 
-            It is allowed to terminate a chain with a trigger with
-            $|type| \neq 2$. In most situations this results in a
-            chain that can never match.
+            Debuggers should not terminate a chain with a trigger with a
+            different type. It is undefined when exactly such a chain fires.
 
             Because \FcsrMcontrolChain affects the next trigger, hardware must zero it in
             writes to \RcsrMcontrol that set \FcsrTdataOneDmode to 0 if the next trigger has
@@ -651,9 +650,8 @@
             trigger will be taken if and only if all the triggers in the chain
             match at the same time.
 
-            It is allowed to terminate a chain with a trigger with
-            $|type| \neq 6$. In most situations this results in a
-            chain that can never match.
+            Debuggers should not terminate a chain with a trigger with a
+            different type. It is undefined when exactly such a chain fires.
 
             Because \FcsrMcontrolSixChain affects the next trigger, hardware must zero it in
             writes to \RcsrMcontrolSix that set \FcsrTdataOneDmode to 0 if the next trigger has
