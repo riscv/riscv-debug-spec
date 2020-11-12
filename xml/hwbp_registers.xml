@@ -376,6 +376,10 @@
             trigger will be taken if and only if all the triggers in the chain
             match at the same time.
 
+            It is allowed to terminate a chain with a trigger with
+            $|type| \neq 2$. In most situations this results in a
+            chain that can never match.
+
             Because \FcsrMcontrolChain affects the next trigger, hardware must zero it in
             writes to \RcsrMcontrol that set \FcsrTdataOneDmode to 0 if the next trigger has
             \FcsrTdataOneDmode of 1.
@@ -646,6 +650,10 @@
             on all but the final trigger is ignored.  The action on that final
             trigger will be taken if and only if all the triggers in the chain
             match at the same time.
+
+            It is allowed to terminate a chain with a trigger with
+            $|type| \neq 6$. In most situations this results in a
+            chain that can never match.
 
             Because \FcsrMcontrolSixChain affects the next trigger, hardware must zero it in
             writes to \RcsrMcontrolSix that set \FcsrTdataOneDmode to 0 if the next trigger has
