@@ -508,13 +508,17 @@
         \item {\tt lr} instructions are loads
         \item successful {\tt sc} instructions are stores
         \item it is \unspecified\ whether failing {\tt sc} instructions are stores or not
-        \item Ideally each AMO instruction is a load for the read portion of
-        the operation and a store for the write part of the operation.
-        Implementations may choose to implement only the load part, only the
-        store part, or neither.
+        \item Each AMO instruction is a load for the read portion of the
+        operation. The address is always available to trigger on, although
+        the value loaded might not be, depending on the hardware
+        implementation.
+        \item Each AMO instruction is a store for the write portion of the
+        operation. The address is always available to trigger on, although
+        the value stored might not be, depending on the hardware
+        implementation.
         \end{steps}
 
-        If the destination register of any load or AMO is x0 then it is
+        If the destination register of any load or AMO is \Rzero then it is
         \unspecified\ whether a load trigger with \FcsrMcontrolSelect=1 will
         match.  Whether store triggers with \FcsrMcontrolSelect=1 match on
         AMOs is \unspecified.
