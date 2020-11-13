@@ -3,9 +3,13 @@
     and Debug Mode to prevent untrusted user code from causing entry into Debug
     Mode without the OS's permission.
 
-    In this section XLEN means MXLEN when in M-mode, and DXLEN when in Debug Mode.
-    Note that this makes several of the fields in \RcsrTdataOne move around based
-    on the current execution mode and value of MXLEN.
+    In this section XLEN means MXLEN when in M-mode, and DXLEN when in Debug
+    Mode. On systems where XLEN is writable, this is handled as follows.
+    Fields retain their values regardless of XLEN, which only affects where
+    in the register these fields appear (e.g. \FcsrTdataOneType). Some fields
+    are wider when XLEN is 64 than when it is 32 (e.g.
+    \FcsrTextraThirtytwoSvalue). The high bits in such fields retain their
+    value but are not accessible when XLEN is 32.
 
     <register name="Trigger Select" short="tselect" address="0x7a0">
         This register determines which trigger is accessible through the other
