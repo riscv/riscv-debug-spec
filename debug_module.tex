@@ -85,7 +85,7 @@ Otherwise, if the hart was initially running it will execute normally (running s
 and if the hart was initially halted it should now be running but may be halted.
 
 To determine when a requested \FdmDmcontrolNdmreset system reset has
-completed, the debugger can poll the \FdmDmstatusNdmresetpending bit,
+completed, the debugger can poll \FdmDmstatusNdmresetpending,
 if implemented.  To allow for detection of this optional feature,
 \FdmDmstatusNdmresetpending, if implemented, returns one on reads whenever
 \FdmDmcontrolNdmreset is one.  If implemented, it remains one after deassertion of
