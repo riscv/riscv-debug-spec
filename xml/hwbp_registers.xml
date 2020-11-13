@@ -223,15 +223,20 @@
         hold all valid virtual addresses but it need not be capable of holding
         other values.
 
-        If the A extension is supported, then trigger behavior is as follows
-        for the load and store bits:
-        \vspace{-0.2in}
-        \begin{tightlist}
+        \begin{steps}{If the A extension is supported, then trigger behavior is as follows
+        for the load and store bits:}
         \item {\tt lr} instructions are loads
         \item successful {\tt sc} instructions are stores
         \item it is \unspecified\ whether failing {\tt sc} instructions are stores or not
-        \item Each AMO instruction is both a load and a store
-        \end{tightlist}
+        \item Each AMO instruction is a load for the read portion of the
+        operation. The address is always available to trigger on, although
+        the value loaded might not be, depending on the hardware
+        implementation.
+        \item Each AMO instruction is a store for the write portion of the
+        operation. The address is always available to trigger on, although
+        the value stored might not be, depending on the hardware
+        implementation.
+        \end{steps}
 
         If the destination register of any load or AMO is \Rzero then it is
         \unspecified\ whether a load trigger with \FcsrMcontrolSelect=1 will
@@ -492,28 +497,32 @@
         hold all valid virtual addresses but it need not be capable of holding
         other values.
 
-        In implementations that support \FcsrMcontrolSixMatch mode 1 (NAPOT), not all
+        \begin{steps}{In implementations that support \FcsrMcontrolSixMatch mode 1 (NAPOT), not all
         NAPOT ranges may be supported.  All NAPOT ranges between $2^{1}$ and $2^{maskmax6}$
         are supported where maskmax6 $\geq$ 1.  The value of maskmax6 can be determined
-        by the debugger via the following sequence:
-        \begin{enumerate}
+        by the debugger via the following sequence:}
         \item Set \FcsrMcontrolSixMatch=1.
         \item Read \FcsrMcontrolSixMatch. If it is not 1 then NAPOT matching is not supported.
         \item Write all ones to \RcsrTdataTwo.
         \item Read \RcsrTdataTwo. The value of maskmax6 is the index of the most significant 0 bit plus 1.
-        \end{enumerate}
+        \end{steps}
 
-        If the A extension is supported, then trigger behavior is as follows
-        for the load and store bits:
-        \vspace{-0.2in}
-        \begin{tightlist}
+        \begin{steps}{If the A extension is supported, then trigger behavior is as follows
+        for the load and store bits:}
         \item {\tt lr} instructions are loads
         \item successful {\tt sc} instructions are stores
         \item it is \unspecified\ whether failing {\tt sc} instructions are stores or not
-        \item Each AMO instruction is both a load and a store
-        \end{tightlist}
+        \item Each AMO instruction is a load for the read portion of the
+        operation. The address is always available to trigger on, although
+        the value loaded might not be, depending on the hardware
+        implementation.
+        \item Each AMO instruction is a store for the write portion of the
+        operation. The address is always available to trigger on, although
+        the value stored might not be, depending on the hardware
+        implementation.
+        \end{steps}
 
-        If the destination register of any load or AMO is x0 then it is
+        If the destination register of any load or AMO is \Rzero then it is
         \unspecified\ whether a load trigger with \FcsrMcontrolSelect=1 will
         match.  Whether store triggers with \FcsrMcontrolSelect=1 match on
         AMOs is \unspecified.
