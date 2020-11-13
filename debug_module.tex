@@ -84,15 +84,6 @@ immediately enter Debug Mode (halted state).
 Otherwise, if the hart was initially running it will execute normally (running state)
 and if the hart was initially halted it should now be running but may be halted.
 
-To determine when a requested \FdmDmcontrolNdmreset system reset has
-completed, the debugger can poll \FdmDmstatusNdmresetpending,
-if implemented.  To allow for detection of this optional feature,
-\FdmDmstatusNdmresetpending, if implemented, returns one on reads whenever
-\FdmDmcontrolNdmreset is one.  If implemented, it remains one after deassertion of
-\FdmDmcontrolNdmreset until the requested system reset is complete,
-after which it is cleared by the Debug Module.  If this feature is not implemented, 
-\FdmDmstatusNdmresetpending always returns zero.
-
 \begin{commentary}
     There is no general, reliable way for the debugger to know when reset has
     actually begun.
