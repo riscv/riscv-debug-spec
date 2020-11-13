@@ -185,4 +185,19 @@ supported.  Writes to one {\tt tdata} register must not modify the contents of
 other {\tt tdata} registers, nor the configuration of any trigger besides the
 one that is currently selected.
 
+The combination of these rules means that a debugger cannot simply set a
+trigger by writing \RcsrTdataOne, then \RcsrTdataTwo, etc. The current value
+of \RcsrTdataTwo might not be legal with the new value of \RcsrTdataOne. To
+help with this situation, it is guaranteed that writing 0 to \RcsrTdataOne
+disables the trigger, and leaves it in a state where \RcsrTdataTwo and
+\RcsrTdataThree can be written with any value that makes sense for any
+trigger type supported by this trigger.
+
+\begin{steps}{As a result, a debugger can write any supported trigger as
+follows:}
+\item Write 0 to \RcsrTdataOne.
+\item Write desired values to \RcsrTdataTwo and \RcsrTdataThree.
+\item Write desired value ot \RcsrTdataOne.
+\end{steps}
+
 \input{hwbp_registers.tex}
