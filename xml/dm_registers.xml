@@ -149,6 +149,16 @@
         \Fresethaltreq is an optional internal bit of per-hart state that cannot be
         read, but can be written with \FdmDmcontrolSetresethaltreq and \FdmDmcontrolClrresethaltreq.
 
+\label{keepalive}
+\index{keepalive}
+        \Fkeepalive is an optional internal bit of per-hart state. When it is
+        set, it suggests that the hardware should attempt to keep the hart
+        available for the debugger, e.g. by keeping it from entering a
+        low-power state once powered on. Even if the bit is implemented,
+        hardware might not be able to keep a hart available. The bit is
+        written through \FdmDmcontrolSetkeepalive and
+        \FdmDmcontrolClrkeepalive.
+
         For forward compatibility, \FdmDmstatusVersion will always be readable when bit 1
         (\FdmDmcontrolNdmreset) is 0 and bit 0 (\FdmDmcontrolDmactive) is 1.
 
@@ -222,7 +232,19 @@
             The high 10 bits of \Fhartsel: the DM-specific index of the hart to
             select. This hart is always part of the currently selected harts.
         </field>
-        <field name="0" bits="5:4" access="R" reset="0" />
+        <field name="setkeepalive" bits="5" access="W1" reset="-">
+            This optional field sets \Fkeepalive for all currently selected
+            harts, unless \FdmDmcontrolClrkeepalive is simultaneously set to
+            1.
+
+            Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
+        </field>
+        <field name="clrkeepalive" bits="4" access="W1" reset="-">
+            This optional field clears \Fkeepalive for all currently selected
+            harts.
+
+            Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
+        </field>
         <field name="setresethaltreq" bits="3" access="W1" reset="-">
             This optional field writes the halt-on-reset request bit for all
             currently selected harts, unless \FdmDmcontrolClrresethaltreq is
