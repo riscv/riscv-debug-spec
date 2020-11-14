@@ -10,8 +10,9 @@
     in the register these fields appear (e.g. \FcsrTdataOneType). Some fields
     are wider when XLEN is 64 than when it is 32 (e.g.
     \FcsrTextraThirtytwoSvalue). The high bits in such fields retain their
-    value but are not readable when XLEN is 32. A write to a field when XLEN
-    is 32 clears any inaccessible bits in that field.
+    value but are not readable when XLEN is 32.
+    A modification of a register when XLEN is 32 clears any inaccessible bits
+    in that register.
 
     <register name="Trigger Select" short="tselect" address="0x7a0">
         This register determines which trigger is accessible through the other
