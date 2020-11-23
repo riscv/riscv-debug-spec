@@ -53,6 +53,87 @@ Version 0.14 was a working version that was never officially ratified.
 
 Version 1.0.0 is almost entirely forwards and backwards compatible with Version 0.13.
 
+\newcommand{\PR}[1]{\href{https://github.com/riscv/riscv-debug-spec/pull/#1}{\##1}}
+
+\subsubsection{Bugfixes from 0.13 to 1.0}
+
+\begin{steps}{Changes that fix a bug in the spec:}
+    \item Fix order of operations described in \RdmSbdataZero. \PR{392}
+    \item Resume ack is set after resume, in Section~\ref{runcontrol}. \PR{400}
+    \item \FcsrTextraThirtytwoSselect applies to \FcsrTextraThirtytwoSvalue. \PR{402}
+    \item \FcsrTcontrolMte only applies when action=0. \PR{411}
+    \item \FacAccessmemoryAamsize does not affect Argument Width. \PR{420}
+    \item Clarify that harts halt out of reset if \FdmDmcontrolHaltreq=1. \PR{419}
+\end{steps}
+
+\subsubsection{Incompatible Changes from 0.13 to 1.0}
+
+\begin{steps}{Changes that are not backwards-compatible. Debuggers or
+hardware implementations that implement 0.13 will have to change something in
+order to implement 1.0:}
+    \item Make haltsum0 optional if there is only one hart. \PR{505}
+    \item System bus autoincrement only happens if an access actually
+    takes place. (\RdmSbdataZero) \PR{507}
+    \item Bump \FdmDmstatusVersion to 3. \PR{512}
+    \item Require debugger to poll \FdmDmcontrolDmactive after lowering it. \PR{566}
+    \item Add \FcsrIcountPending to \RcsrIcount. \PR{574}
+\end{steps}
+
+\subsubsection{Minor Changes from 0.13 to 1.0}
+
+\begin{steps}{Changes that slightly modify defined behavior. Technically backwards
+incompatible, but unlikely to be noticeable:}
+    \item \FcsrDcsrStopcount only applies to hart-local counters. \PR{405}
+    \item \FdmDmstatusVersion may be invalid when \FdmDmcontrolDmactive=0. \PR{414}
+    \item Address triggers (\RcsrMcontrol) may fire on any accessed address. \PR{421}
+    \item All trigger registers (Section~\ref{csrTrigger}) are optional. \PR{431}
+    \item When extending IR, \RdtmBypass still is all ones. \PR{437}
+    \item \FcsrDcsrEbreaks and \FcsrDcsrEbreaku are WARL. \PR{458}
+    \item NMI are disabled by \FcsrDcsrStepie. \PR{465}
+    \item R/W1C fields should be cleared by writing every bit high. \PR{472}
+    \item Specify trigger priorities in Table~\ref{tab:priority} relative to exceptions. \PR{478}
+    \item Time may pass before \FdmDmcontrolDmactive becomes high. \PR{500}
+    \item Clear MPRV when resuming into lower privilege mode. \PR{503}
+    \item Halt state may not be preserved across reset. \PR{504}
+    \item Hardware should clear trigger action when \FcsrTdataOneDmode is
+        cleared and action is 1. \PR{501}
+    \item Change quick access exceptions to halt the target in
+    Section~\ref{acQuickaccess}. \PR{585}
+    \item Writing 0 to \RcsrTdataOne forces a state where \RcsrTdataTwo and
+        \RcsrTdataThree are writable. \PR{598}
+\end{steps}
+
+\subsubsection{New Features from 0.13 to 1.0}
+
+\begin{steps}{New backwards-compatible feature that did not exist before:}
+    \item Add halt groups and external triggers in Section~\ref{hrgroups}. \PR{404}
+    \item Reserve some DMI space for non-standard use. See \RdmCustom, and
+        \RdmCustomZero through \RdmCustomFifteen. \PR{406}
+    \item Reserve trigger \FcsrTdataOneType values for non-standard use. \PR{417}
+    \item Add \FcsrEtriggerNmi bit to \RcsrEtrigger. \PR{408}
+    \item Recommend matching on every accessed address. \PR{449}
+    \item Add resume groups in Section~\ref{hrgroups}. \PR{506}
+    \item Add \FdmAbstractcsRelaxedpriv. \PR{536}
+    \item Move \RcsrScontext, renaming original to \RcsrMscontext, and create
+        \RcsrHcontext. \PR{535}
+    \item Add \RcsrMcontrolSix, deprecating \RcsrMcontrol. \PR{538}
+    \item Add hypervisor support: \FcsrDcsrEbreakvs, \FcsrDcsrEbreakvu,
+        \FcsrDcsrV, \RcsrHcontext, \RcsrMcontrol, \RcsrMcontrolSix, and
+        \RvirtPriv. \PR{549}
+    \item Optionally make \FdmDmstatusAnyunavail and \FdmDmstatusAllunavail
+    sticky, controlled by \FdmDmstatusStickyunavail. \PR{520}
+    \item Add \RcsrTmexttrigger to support trigger module external trigger
+        inputs. \PR{543}
+    \item Describe \RcsrMcontrol and \RcsrMcontrolSix behavior with atomic instructions. \PR{561}
+    \item Trigger hit bits must be set on fire, may be set on match. \PR{593}
+    \item Add \FcsrTextraThirtytwoSbytemask and \FcsrTextraSixtyfourSbytemask
+        to \RcsrTextraThirtytwo and \RcsrTextraSixtyfour. \PR{588}
+    \item Allow debugger to request harts stay alive with keepalive bit in
+        Section~\ref{keepalive}. \PR{592}
+    \item Add \FdmDmstatusNdmresetpending to allow a debugger to determine
+        when ndmreset is complete. \PR{594}
+    \item Add \FcsrTmexttriggerIntctl to support triggers from an interrupt controller. \PR{599}
+\end{steps}
 \section{About This Document}
 
 \subsection{Structure}

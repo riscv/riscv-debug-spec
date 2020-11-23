@@ -1,4 +1,4 @@
-<registers name="Trigger Registers" prefix="CSR_">
+<registers name="Trigger Registers" prefix="CSR_" label="trigger">
     The trigger registers, except \RcsrScontext, are only accessible in machine
     and Debug Mode to prevent untrusted user code from causing entry into Debug
     Mode without the OS's permission.
