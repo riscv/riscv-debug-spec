@@ -52,9 +52,9 @@ otherwise the DM causes a {\tt ebreak} to execute immediately.
 When {\tt ebreak} is executed (indicating the end of the
 Program Buffer code) the hart returns to its park loop. If an exception is
 encountered, the hart jumps to a debug trap address within
-the Debug Module. The code at that address causes the hart to
-write to an address in the Debug Module which indicates exception.
-This address is considered I/O for {\tt fence} instructions (see \#\ref{fence}
+the Debug Module. The code there causes the hart to
+write to the Debug Module indicating an exception.
+This write is considered I/O for {\tt fence} instructions (see \#\ref{fence}
 on page \pageref{fence}).
 Then the hart jumps back to the park loop.
 The DM infers from the write that there was an exception, and sets \FdmAbstractcsCmderr appropriately.
