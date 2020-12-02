@@ -73,6 +73,8 @@
             0: Version described in spec version 0.11.
 
             1: Version described in spec version 0.13.
+            
+            2: Version described in spec version 1.0.
 
             15: Version not described in any available version of this spec.
         </field>
