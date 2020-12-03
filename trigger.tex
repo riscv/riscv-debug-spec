@@ -150,7 +150,7 @@ will be set using \FcsrMcontrolU or \FcsrMcontrolS, and when firing they can cau
 to trap to a more privileged mode. It is possible to set triggers natively to
 fire in M mode as well. In that case there is no higher privilege mode to trap
 to. When such a trigger causes a breakpoint exception while already in a trap
-handler, this will leave the hart unable to resume normal execution.
+handler, this might leave the hart unable to resume normal execution.
 
 On full-featured harts this is a remote corner case that can probably be
 ignored. On harts that only implement M mode, however, it is recommended to
