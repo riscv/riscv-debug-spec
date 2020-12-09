@@ -435,8 +435,9 @@
 
             Other values are reserved for future use.
 
-            When access size is N, a match only compares the low N bits of
-            the value to the low N bits of \RcsrTdataTwo.
+            When \FcsrMcontrolSelect=1 and access size is N, a match only
+            compares the low N bits of the value to the low N bits of
+            \RcsrTdataTwo.
         </field>
         <field name="m" bits="6" access="WARL" reset="0">
             When set, enable this trigger in M-mode.
@@ -717,8 +718,9 @@
 
             Other values are reserved for future use.
 
-            When access size is N, a match only compares the low N bits of
-            the value to the low N bits of \RcsrTdataTwo.
+            When \FcsrMcontrolSixSelect=1 and access size is N, a match is
+            limited to comparing the low N bits of the value to the low N
+            bits of \RcsrTdataTwo.
         </field>
         <field name="m" bits="6" access="WARL" reset="0">
             When set, enable this trigger in M-mode.
