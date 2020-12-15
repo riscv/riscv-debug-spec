@@ -276,21 +276,18 @@
             and writing it has no effect.
         </field>
         <field name="select" bits="19" access="WARL" reset="0">
-            This bit determines the contents of the XLEN-bit value to be
-            compared.
+            This bit determines the contents of the XLEN-bit compare values.
 
-            0: Perform a match on the lowest virtual address of the access.  In
-            addition, it is recommended that the trigger also matches if any of
-            the other accessed virtual addresses match.
+            0: There is at least one compare value and it contains the lowest
+            virtual address of the access.
+            In addition, it is recommended that there are additional compare
+            values for the other accessed virtual addresses match.
             (E.g. on a 32-bit read from 0x4000, the lowest address is 0x4000
             and the other addresses are 0x4001, 0x4002, and 0x4003.)
-            If the virtual address is smaller than DXLEN, the high bits
-            contain 0.
 
-            1: Perform a match on the data value loaded or stored, or the
-            instruction executed.
-            In the value to compare, any bits beyond the size of the data
-            access will contain 0.
+            1: There is exactly one compare value and it contains the data
+            value loaded or stored, or the instruction executed.
+            Any bits beyond the size of the data access will contain 0.
         </field>
         <field name="timing" bits="18" access="WARL" reset="0">
             0: The action for this trigger will be taken just before the
@@ -411,26 +408,30 @@
             \FcsrMcontrolChain in writes to \RcsrMcontrol that would make the chain too long.
         </field>
         <field name="match" bits="10:7" access="WARL" reset="0">
-            0: Matches when the value equals \RcsrTdataTwo.
+            0: Matches when any compare value equals \RcsrTdataTwo.
 
-            1: Matches when the top M bits of the value match the top M bits of
-            \RcsrTdataTwo. M is XLEN-1 minus the index of the least-significant
+            1: Matches when the top M bits of any compare value match the top
+            M bits of \RcsrTdataTwo.
+            M is XLEN-1 minus the index of the least-significant
             bit containing 0 in \RcsrTdataTwo. Debuggers should only write values
             to \RcsrTdataTwo such that M + \FcsrMcontrolMaskmax $\geq$ XLEN, otherwise it's
             undefined on what conditions the trigger will match.
 
-            2: Matches when the value is greater than (unsigned) or equal to
+            2: Matches when any compare value is greater than (unsigned) or
+            equal to \RcsrTdataTwo.
+
+            3: Matches when any compare value is less than (unsigned)
             \RcsrTdataTwo.
 
-            3: Matches when the value is less than (unsigned) \RcsrTdataTwo.
+            4: Matches when $\frac{|XLEN|}{2}-1$:$0$ of any compare value
+            equals $\frac{|XLEN|}{2}-1$:$0$ of \RcsrTdataTwo after
+            $\frac{|XLEN|}{2}-1$:$0$ of the compare value is ANDed with
+            $|XLEN|-1$:$\frac{|XLEN|}{2}$ of \RcsrTdataTwo.
 
-            4: Matches when the lower half of the value equals the lower half
-            of \RcsrTdataTwo after the lower half of the value is ANDed with the
-            upper half of \RcsrTdataTwo.
-
-            5: Matches when the upper half of the value equals the lower half
-            of \RcsrTdataTwo after the upper half of the value is ANDed with the
-            upper half of \RcsrTdataTwo.
+            5: Matches when $|XLEN|-1$:$\frac{|XLEN|}{2}$ of any compare
+            value equals $\frac{|XLEN|}{2}-1$:$0$ of \RcsrTdataTwo after
+            $|XLEN|-1$:$\frac{|XLEN|}{2}$ of the compare value is ANDed with
+            $|XLEN|-1$:$\frac{|XLEN|}{2}$ of \RcsrTdataTwo.
 
             8: Matches when \FcsrMcontrolMatch$=0$ would not match.
 
@@ -442,9 +443,11 @@
 
             Other values are reserved for future use.
 
-            When \FcsrMcontrolSelect=1 and access size is N, a match only
-            compares the low N bits of the value to the low N bits of
-            \RcsrTdataTwo.
+            All comparisons only look at the lower XLEN (in the current mode)
+            bits of the compare values and of \RcsrTdataTwo.
+            When \FcsrMcontrolSelect=1 and access size is N, this is further
+            reduced, and comparisons only look at the lower N bits of the
+            compare values and of \RcsrTdataTwo.
         </field>
         <field name="m" bits="6" access="WARL" reset="0">
             When set, enable this trigger in M-mode.
@@ -568,21 +571,18 @@
             and writing it has no effect.
         </field>
         <field name="select" bits="21" access="WARL" reset="0">
-            This bit determines the contents of the XLEN-bit value to be
-            compared.
+            This bit determines the contents of the XLEN-bit compare values.
 
-            0: Perform a match on the lowest virtual address of the access.  In
-            addition, it is recommended that the trigger also fires if any of
-            the other accessed virtual addresses match.
+            0: There is at least one compare value and it contains the lowest
+            virtual address of the access.
+            In addition, it is recommended that there are additional compare
+            values for the other accessed virtual addresses match.
             (E.g. on a 32-bit read from 0x4000, the lowest address is 0x4000
             and the other addresses are 0x4001, 0x4002, and 0x4003.)
-            If the virtual address is smaller than DXLEN, the high bits
-            contain 0.
 
-            1: Perform a match on the data value loaded or stored, or the
-            instruction executed.
-            In the value to compare, any bits beyond the size of the data
-            access will contain 0.
+            1: There is exactly one compare value and it contains the data
+            value loaded or stored, or the instruction executed.
+            Any bits beyond the size of the data access will contain 0.
         </field>
         <field name="timing" bits="20" access="WARL" reset="0">
             0: The action for this trigger will be taken just before the
@@ -700,27 +700,32 @@
             \FcsrMcontrolSixChain in writes to \RcsrMcontrolSix that would make the chain too long.
         </field>
         <field name="match" bits="10:7" access="WARL" reset="0">
-            0: Matches when the value equals \RcsrTdataTwo.
+            0: Matches when any compare value equals \RcsrTdataTwo.
 
-            1: Matches when the top M bits of the value match the top M bits of
-            \RcsrTdataTwo. M is XLEN-1 minus the index of the least-significant
-            bit containing 0 in \RcsrTdataTwo. \RcsrTdataTwo is WARL and bit maskmax6-1
-            will be set to 0 if no less significant bits are written with 0.  Legal values for
-            \RcsrTdataTwo require M + maskmax6 $\geq$ XLEN. See above for
-            how to determine maskmax6.
+            1: Matches when the top M bits of any compare value match the top
+            M bits of \RcsrTdataTwo.
+            M is XLEN-1 minus the index of the least-significant bit
+            containing 0 in \RcsrTdataTwo.
+            \RcsrTdataTwo is WARL and bit maskmax6-1 will be set to 0 if no
+            less significant bits are written with 0.
+            Legal values for \RcsrTdataTwo require M + maskmax6 $\geq$ XLEN.
+            See above for how to determine maskmax6.
 
-            2: Matches when the value is greater than (unsigned) or equal to
+            2: Matches when any compare value is greater than (unsigned) or
+            equal to \RcsrTdataTwo.
+
+            3: Matches when any compare value is less than (unsigned)
             \RcsrTdataTwo.
 
-            3: Matches when the value is less than (unsigned) \RcsrTdataTwo.
+            4: Matches when $\frac{|XLEN|}{2}-1$:$0$ of any compare value
+            equals $\frac{|XLEN|}{2}-1$:$0$ of \RcsrTdataTwo after
+            $\frac{|XLEN|}{2}-1$:$0$ of the compare value is ANDed with
+            $|XLEN|-1$:$\frac{|XLEN|}{2}$ of \RcsrTdataTwo.
 
-            4: Matches when the lower half of the value equals the lower half
-            of \RcsrTdataTwo after the lower half of the value is ANDed with the
-            upper half of \RcsrTdataTwo.
-
-            5: Matches when the upper half of the value equals the lower half
-            of \RcsrTdataTwo after the upper half of the value is ANDed with the
-            upper half of \RcsrTdataTwo.
+            5: Matches when $|XLEN|-1$:$\frac{|XLEN|}{2}$ of any compare
+            value equals $\frac{|XLEN|}{2}-1$:$0$ of \RcsrTdataTwo after
+            $|XLEN|-1$:$\frac{|XLEN|}{2}$ of the compare value is ANDed with
+            $|XLEN|-1$:$\frac{|XLEN|}{2}$ of \RcsrTdataTwo.
 
             8: Matches when \FcsrMcontrolSixMatch$=0$ would not match.
 
@@ -732,9 +737,11 @@
 
             Other values are reserved for future use.
 
-            When \FcsrMcontrolSixSelect=1 and access size is N, a match is
-            limited to comparing the low N bits of the value to the low N
-            bits of \RcsrTdataTwo.
+            All comparisons only look at the lower XLEN (in the current mode)
+            bits of the compare values and of \RcsrTdataTwo.
+            When \FcsrMcontrolSelect=1 and access size is N, this is further
+            reduced, and comparisons only look at the lower N bits of the
+            compare values and of \RcsrTdataTwo.
         </field>
         <field name="m" bits="6" access="WARL" reset="0">
             When set, enable this trigger in M-mode.
