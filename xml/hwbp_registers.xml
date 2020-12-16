@@ -280,8 +280,8 @@
 
             0: There is at least one compare value and it contains the lowest
             virtual address of the access.
-            In addition, it is recommended that there are additional compare
-            values for the other accessed virtual addresses match.
+            It is recommended that there are additional compare values for
+            the other accessed virtual addresses.
             (E.g. on a 32-bit read from 0x4000, the lowest address is 0x4000
             and the other addresses are 0x4001, 0x4002, and 0x4003.)
 
