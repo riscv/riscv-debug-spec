@@ -56,7 +56,9 @@ the Debug Module. The code there causes the hart to
 write to the Debug Module indicating an exception.
 Then the hart jumps back to the park loop.
 The DM infers from the write that there was an exception, and sets \FdmAbstractcsCmderr appropriately.
-Before entering the park loop, the hart will typically execute a {\tt fence} instruction, then write to the Debug Module indicating that the abstract command has finished.  The {\tt fence} ensures that any effects from the abstract command take effect before the DM returns \FdmAbstractcsBusy to 0.
+Typically the hart will execute a {\tt fence} instruction before entering the
+park loop, to ensure that any effects from the abstract command take effect
+before the DM returns \FdmAbstractcsBusy to 0.
 
 To resume execution, the debug module sets a flag which causes the hart to execute a {\tt dret}.
 When {\tt dret} is executed, \Rpc is restored from \RcsrDpc and normal execution resumes at the
