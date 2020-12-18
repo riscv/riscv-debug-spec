@@ -254,11 +254,10 @@
         <field name="maskmax" bits="XLEN-6:XLEN-11" access="R" reset="Preset">
             Specifies the largest naturally aligned powers-of-two (NAPOT) range
             supported by the hardware when \FcsrMcontrolMatch is 1. The value is the
-            logarithm base 2 of the
-            number of bytes in that range.  A value of 0 indicates that only
-            exact value matches are supported (one byte range). A value of 63
-            corresponds to the maximum NAPOT range, which is $2^{63}$ bytes in
-            size.
+            logarithm base 2 of the number of bytes in that range.
+            A value of 0 indicates \FcsrMcontrolMatch 1 is not supported.
+            A value of 63 corresponds to the maximum NAPOT range, which is
+            $2^{63}$ bytes in size.
         </field>
         <field name="0" bits="XLEN-12:23" access="R" reset="0" />
         <field name="sizehi" bits="22:21" access="WARL" reset="0">
@@ -406,11 +405,12 @@
         <field name="match" bits="10:7" access="WARL" reset="0">
             0: Matches when the value equals \RcsrTdataTwo.
 
-            1: Matches when the top M bits of the value match the top M bits of
-            \RcsrTdataTwo. M is XLEN-1 minus the index of the least-significant
+            1: Matches when the top $M$ bits of the value match the top $M$ bits of
+            \RcsrTdataTwo. $M$ is XLEN-1 minus the index of the least-significant
             bit containing 0 in \RcsrTdataTwo. Debuggers should only write values
-            to \RcsrTdataTwo such that M + \FcsrMcontrolMaskmax $\geq$ XLEN, otherwise it's
-            undefined on what conditions the trigger will match.
+            to \RcsrTdataTwo such that $M + $\FcsrMcontrolMaskmax$ \geq |XLEN|$
+            and $M\gt0$ , otherwise it's undefined on what conditions the
+            trigger will match.
 
             2: Matches when the value is greater than (unsigned) or equal to
             \RcsrTdataTwo.
@@ -684,12 +684,12 @@
         <field name="match" bits="10:7" access="WARL" reset="0">
             0: Matches when the value equals \RcsrTdataTwo.
 
-            1: Matches when the top M bits of the value match the top M bits of
-            \RcsrTdataTwo. M is XLEN-1 minus the index of the least-significant
-            bit containing 0 in \RcsrTdataTwo. \RcsrTdataTwo is WARL and bit maskmax6-1
+            1: Matches when the top $M$ bits of the value match the top $M$ bits of
+            \RcsrTdataTwo. $M$ is $|XLEN|-1$ minus the index of the least-significant
+            bit containing 0 in \RcsrTdataTwo. \RcsrTdataTwo is WARL and bit $|maskmax6|-1$
             will be set to 0 if no less significant bits are written with 0.  Legal values for
-            \RcsrTdataTwo require M + maskmax6 $\geq$ XLEN. See above for
-            how to determine maskmax6.
+            \RcsrTdataTwo require $M + |maskmax6| \geq |XLEN|$ and $M\gt0$.
+            See above for how to determine maskmax6.
 
             2: Matches when the value is greater than (unsigned) or equal to
             \RcsrTdataTwo.
