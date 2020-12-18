@@ -406,7 +406,7 @@
             0: Matches when the value equals \RcsrTdataTwo.
 
             1: Matches when the top $M$ bits of the value match the top $M$ bits of
-            \RcsrTdataTwo. $M$ is XLEN-1 minus the index of the least-significant
+            \RcsrTdataTwo. $M$ is $|XLEN|-1$ minus the index of the least-significant
             bit containing 0 in \RcsrTdataTwo. Debuggers should only write values
             to \RcsrTdataTwo such that $M + $\FcsrMcontrolMaskmax$ \geq |XLEN|$
             and $M\gt0$ , otherwise it's undefined on what conditions the
