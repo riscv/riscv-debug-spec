@@ -1,6 +1,7 @@
 CC=$(RISCV)/bin/riscv64-unknown-elf-gcc
 
 DRAFT=riscv-debug-draft
+STABLE=riscv-debug-stable
 RELEASE=riscv-debug-release
 NOTES=riscv-debug-workgroup-notes
 
@@ -32,9 +33,11 @@ INCLUDES_TEX += future.tex
 
 FIGURES = fig/*
 
-all:	draft $(NOTES).pdf
+all:	stable $(NOTES).pdf
 
 draft:	$(DRAFT).pdf
+
+stable:	$(STABLE).pdf
 
 release:	$(RELEASE).pdf
 
