@@ -23,8 +23,6 @@ functionality.
 \begin{description}[style=nextline]
     \item[AMO]
         Atomic Memory Operation.
-    \item[BIST]
-        Built-In Self Test.
     \item[BYPASS]
         JTAG instruction that selects a single bit data register, also called BYPASS.
     \item[component]
@@ -34,13 +32,13 @@ functionality.
     \item[CSR]
         Control and Status Register.
     \item[DM]
-        Debug Module.
+        Debug Module (see Section \ref{dm}).
     \item[DMI]
-        Debug Module Interface.
+        Debug Module Interface (see Section \ref{dmi}).
     \item[DR]
         JTAG Data Register.
     \item[DTM]
-        Debug Transport Module.
+        Debug Transport Module (see Section \ref{dtm}).
     \item[DXLEN]
         Debug XLEN, which is the widest XLEN a hart supports, ignoring the
         current value of \Fmxl in \Rmisa.
@@ -53,31 +51,19 @@ functionality.
     \item[IR]
         JTAG Instruction Register.
     \item[JTAG]
-        Joint Test Action Group.
-    \item[MIE]
-        Machine Interrupt Enable register; also a bit in mstatus.
+        Joint Test Action Group, referring to IEEE 1149.
     \item[NAPOT]
         Naturally Aligned Powers-Of-Two.
     \item[NMI]
         Non-Maskable Interrupt.
-    \item[OpenOCD]
-        Open On-Chip Debugger.
-    \item[PC]
-        Program Counter.
-    \item[platform]
+    \item[hardware platform]
         A single integrated circuit consisting of one or more \emph{components}.
     \item[physical address]
         An address that is directly usable on the system bus.
-    \item[RV32]
-        RISC-V core with XLEN of 32.
-    \item[RV64]
-        RISC-V core with XLEN of 64.
     \item[SBA]
-        System Bus Access.
+        System Bus Access (see Section \ref{systembusaccess}).
     \item[TAP]
-        Test Access Port.
-    \item[XLEN]
-        Width of a hart's integer register file.
+        Test Access Port, defined in IEEE 1149.1.
     \item[virtual address]
         An address as a hart sees it. If the hart is using address translation this
         may be different from the physical address. If there is no
@@ -305,7 +291,7 @@ The debug interface described in this specification supports the following featu
 \end{enumerate}
 
 This document does not suggest a strategy or implementation for hardware test,
-debugging or error detection techniqes. Scan, BIST, etc. are out of scope of
+debugging or error detection techniqes. Scan, built-in self test (BIST), etc. are out of scope of
 this specification, but this specification does not intend to limit their use
 in RISC-V systems.
 
