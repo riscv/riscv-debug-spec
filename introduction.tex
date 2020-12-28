@@ -20,22 +20,71 @@ functionality.
 
 \section{Terminology}
 
-A \emph{platform} is a single integrated circuit consisting of one or more
-\emph{components}. Some components may be RISC-V cores, while others may have a different
-function. Typically they will all be connected to a single system bus.
-A single RISC-V core contains one or more hardware threads, called
-\emph{harts}.
+\begin{description}[style=nextline]
+    \item[AMO]
+        Atomic Memory Operation.
+    \item[BIST]
+        Built-In Self Test.
+    \item[BYPASS]
+        JTAG instruction that selects a single bit data register, also called BYPASS.
+    \item[component]
+        A RISC-V core, or other part of a platform.
+        Typically all components will all be connected to a single system
+        bus.
+    \item[CSR]
+        Control Status Register.
+    \item[DM]
+        Debug Module.
+    \item[DMI]
+        Debug Module Interface.
+    \item[DR]
+        Data Register.
+    \item[DTM]
+        Debug Transport Module.
+    \item[DXLEN]
+        Debug XLEN, which is the widest XLEN a hart supports, ignoring the
+        current value of \Fmxl in \Rmisa.
+    \item[GPR]
+        General Purpose Register.
+    \item[hart]
+        A hardware thread in a RISC-V core.
+    \item[IDCODE]
+        32-bit Identification CODE, and a JTAG instruction that returns the IDCODE value.
+    \item[IR]
+        Instruction Register.
+    \item[JTAG]
+        Joint Test Action Group.
+    \item[MIE]
+        Machine Interrupt Enable register; also a bit in mstatus.
+    \item[NAPOT]
+        Naturally Aligned Powers-Of-Two.
+    \item[NMI]
+        Non-Maskable Interrupt.
+    \item[OpenOCD]
+        Open On-Chip Debugger.
+    \item[PC]
+        Program Counter.
+    \item[platform]
+        A single integrated circuit consisting of one or more \emph{components}.
+    \item[physical address]
+        An address that is directly usable on the system bus.
+    \item[RV32]
+        RISC-V core with XLEN of 32.
+    \item[RV64]
+        RISC-V core with XLEN of 64.
+    \item[SBA]
+        System Bus Access.
+    \item[TAP]
+        Test Access Port.
+    \item[XLEN]
+        Width of the core's integer register file.
+    \item[virtual address]
+        An address as a hart sees it. If there is address translation this
+        may be different from the physical address. If there is no
+        translation then it will be the same.
+\end{description}
 
-\emph{DXLEN} of a hart is its widest supported XLEN, ignoring the current value
-of \Fmxl in \Rmisa.
-
-A \emph{physical address} is directly usable on the system bus.
-
-A \emph{virtual address} is an address as a hart sees it. If there is address
-translation this may be different from the \emph{physical address}. If there is
-no translation then it will be the same.
-
-\subsection{Context}
+\section{Context}
 
 \begin{steps}{This document is written to work with:}
 \item The RISC-V Instruction Set Manual, Volume I: User-Level ISA, Document
