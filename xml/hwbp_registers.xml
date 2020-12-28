@@ -119,7 +119,7 @@
     </register>
 
     <register name="Trigger Control" short="tcontrol" address="0x7a5">
-        This optional register is only accessible in M mode and Debug Mode and
+        This optional register is only accessible in M-mode and Debug Mode and
         provides various control bits related to triggers.
 
         <field name="0" bits="XLEN-1:10" access="R" reset="0" />
@@ -165,7 +165,7 @@
     </register>
 
     <register name="Hypervisor Context" short="hcontext" address="0x6a8">
-        This optional register is only accessible in S/HS mode, M mode and
+        This optional register is only accessible in S/HS-mode, M-mode and
         Debug Mode.
 
         If the H extension is not implemented then this register is not
@@ -186,8 +186,8 @@
     </register>
 
     <register name="Supervisor Context" short="scontext" address="0x5a8">
-        This optional register is only accessible in S/HS mode, VS mode,
-        M mode and Debug Mode.
+        This optional register is only accessible in S/HS-mode, VS-mode,
+        M-mode and Debug Mode.
 
         <field name="data" bits="XLEN-1:0" access="WARL" reset="0">
             Supervisor mode software can write a context number to this
@@ -202,7 +202,7 @@
 
     <register name="Machine Context" short="mcontext" address="0x7a8">
         This optional register is an alias for \RcsrHcontext and is only
-        accessible in M mode and Debug mode.
+        accessible in M-mode and Debug mode.
     </register>
 
     <register name="Machine Supervisor Context" short="mscontext" address="0x7aa">
