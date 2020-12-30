@@ -9,10 +9,11 @@ When a robust OS is running on a core, software can handle many
 debugging tasks. However, in many scenarios, hardware support is essential.
 
 This document outlines a standard architecture for debug support
-on RISC-V platforms. This architecture allows a variety of implementations and
+on RISC-V hardware platforms. This architecture allows a variety of implementations and
 tradeoffs, which is complementary to the wide range of RISC-V implementations.
 At the same time, this specification defines common interfaces to
-allow debugging tools and components to target a variety of platforms based on the RISC-V ISA.
+allow debugging tools and components to target a variety of hardware
+platforms based on the RISC-V ISA.
 
 System designers may choose to add additional hardware debug support,
 but this specification defines a standard interface for common
@@ -26,7 +27,7 @@ functionality.
     \item[BYPASS]
         JTAG instruction that selects a single bit data register, also called BYPASS.
     \item[component]
-        A RISC-V core, or other part of a platform.
+        A RISC-V core, or other part of a hardware platform.
         Typically all components will all be connected to a single system
         bus.
     \item[CSR]
@@ -242,10 +243,10 @@ not be supported.
 
 \item Debugging issues in the OS itself.
 
-\item Bootstrapping a system to test, configure, and program components before
-  there is any executable code path in the system.
+\item Bootstrapping a hardware platform to test, configure, and program components before
+  there is any executable code path in the hardware platform.
 
-\item Accessing hardware on a system without a working CPU.
+\item Accessing hardware on a hardware platform without a working CPU.
 
 \end{itemize}
 
@@ -262,7 +263,7 @@ The debug interface described in this specification supports the following featu
    \item Memory can be accessed either from the hart's point of view, through
        the system bus directly, or both.
    \item RV32, RV64, and future RV128 are all supported.
-   \item Any hart in the platform can be independently debugged.
+   \item Any hart in the hardware platform can be independently debugged.
    \item A debugger can discover almost\footnote{Notable exceptions include
        information about the memory map and peripherals.} everything it needs
        to know itself, without user configuration.

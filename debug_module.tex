@@ -61,8 +61,8 @@ The Debug Module is controlled via register accesses to its DMI address space.
 \section{Reset Control} \label{reset}
 
 There are two methods that allow a debugger to reset harts.
-\FdmDmcontrolNdmreset resets all the harts in the system, as well as all other
-parts of the system except for the Debug Modules, Debug Transport Modules,
+\FdmDmcontrolNdmreset resets all the harts in the hardware platform, as well as all other
+parts of the hardware platform except for the Debug Modules, Debug Transport Modules,
 and Debug Module Interface.
 Exactly what is affected by this reset is implementation dependent, but it
 must be possible to debug programs from the first instruction executed.
@@ -97,7 +97,7 @@ DM.
 
 Due to clock and power domain crossing issues,
 it might not be possible to perform arbitrary DMI accesses across
-system reset.
+hardware platform reset.
 While \FdmDmcontrolNdmreset or any external reset is asserted, the only supported DM
 operations are reading and writing \RdmDmcontrol. The behavior of other accesses
 is undefined.
@@ -125,7 +125,7 @@ highest index (depending on {\tt HARTSELLEN}) is reached.
 
 The debugger can discover the mapping between hart indices and
 \Rmhartid by using the interface to read \Rmhartid, or by
-reading the system's configuration string.
+reading the hardware platform's configuration string.
 
 \subsection {Selecting a Single Hart}
 
@@ -160,20 +160,20 @@ the selected harts are in is reflected by \FdmDmstatusAllnonexistent,
 \FdmDmstatusAllrunning, \FdmDmstatusAnyrunning, \FdmDmstatusAllhalted, and
 \FdmDmstatusAnyhalted.
 
-Harts are nonexistent if they will never be part of this system, no matter how
-long a user waits. E.g.\ in a simple single-hart system only one hart exists,
-and all others are nonexistent. Debuggers may assume that a system has no harts
+Harts are nonexistent if they will never be part of this hardware platform, no matter how
+long a user waits. E.g.\ in a simple single-hart hardware platform only one hart exists,
+and all others are nonexistent. Debuggers may assume that a hardware platform has no harts
 with indexes higher than the first nonexistent one.
 
 Harts are unavailable if they might exist/become available at a later time, or
 if there are other harts with higher indexes than this one. Harts may be
 unavailable for a variety of reasons including being reset, temporarily powered
-down, and not being plugged into the system. That means harts might become
+down, and not being plugged into the hardware platform. That means harts might become
 available or unavailable at any time, although these events should be rare
-in systems built to be easily debugged.
+in hardware platforms built to be easily debugged.
 There are no guarantees about the state of the hart when it becomes available.
 
-Systems with very large number of harts may
+Hardware platforms with very large number of harts may
 permanently disable some during manufacturing, leaving holes in the otherwise
 continuous hart index space. In order to let the debugger discover all harts,
 they must show up as unavailable even if there is no chance of them ever
@@ -265,7 +265,7 @@ if other harts in the group are currently running.
 External triggers are abstract concepts that can signal the DM and/or receive
 signals from the DM. This configuration is done through \RdmDmcsTwo, where
 external triggers are referred to by a number. Commonly, external triggers
-are capable of sending a signal from the system into the DM, as well as
+are capable of sending a signal from the hardware platform into the DM, as well as
 receiving a signal from the DM to take their own action on. It is also
 allowable for an external trigger to be input-only or output-only. By
 convention external triggers 0--7 are bidirectional, triggers 8--11 are
@@ -273,7 +273,7 @@ input-only, and triggers 12--15 are output-only but this is not required.
 
 \begin{commentary}
     External triggers could be used to implement near simultaneous
-    halting/resuming of all cores in a system, when not all cores are RISC-V
+    halting/resuming of all cores in a hardware platform, when not all cores are RISC-V
     cores.
 \end{commentary}
 
@@ -302,7 +302,7 @@ set. If a command has unsupported options set or if bits that are defined as 0
 aren't 0, then the DM must set \FdmAbstractcsCmderr to 2 (not supported).
 
 \begin{commentary}
-    Example: Every system must support the Access Register command, but might not
+    Example: Every DM must support the Access Register command, but might not
     support accessing CSRs. If the debugger requests to read a CSR in that
     case, the command will return ``not supported.''
 \end{commentary}
@@ -405,7 +405,7 @@ determines the kind of command. Table~\ref{tab:cmdtype} lists all commands.
 
 To support executing arbitrary instructions on a halted hart,
 a Debug Module can include a Program Buffer that a debugger
-can write small programs to. Systems
+can write small programs to. DMs
 that support all necessary functionality using abstract commands
 only may choose to omit the Program Buffer.
 
@@ -468,7 +468,7 @@ by the different fields of \RdmDmcontrol, \RdmAbstractcs, \RdmAbstractauto, and
 \begin{figure}
    \centering
    \includegraphics[width=\textwidth]{fig/abstract_commands.pdf}
-   \caption[Run/Halt Debug State Machine]{Run/Halt Debug State Machine for single-hart systems.
+   \caption[Run/Halt Debug State Machine]{Run/Halt Debug State Machine for single-hart hardware platforms.
      As only a small amount of state is visibile to the debugger,
      the states and transitions are conceptual.}
    \label{fig:abstract_sm}
@@ -538,8 +538,8 @@ Second, the Quick Access abstract command can be used to halt a hart, quickly
 execute the contents of the Program Buffer, and let the hart run again.
 Combined with instructions that allow Program Buffer code to access the
 {\tt data} registers, as described in \RdmHartinfo, this can be used to quickly
-perform a memory or register access. For some systems this will be too
-intrusive, but many systems that can't be halted can bear an occasional hiccup
+perform a memory or register access. For some hardware platforms this will be too
+intrusive, but many hardware platforms that can't be halted can bear an occasional hiccup
 of a hundred or less cycles.
 
 Third, if the System Bus Access block is implemented, it can be used while a
@@ -556,7 +556,7 @@ specific, it is not further addressed in this spec.
 Another option is to allow the DM to be unlocked only by users who have an
 access key. Between \FdmDmstatusAuthenticated, \FdmDmstatusAuthbusy, and \RdmAuthdata arbitrarily
 complex authentication mechanism can be supported.  When \FdmDmstatusAuthenticated is
-clear, the DM must not interact with the rest of the platform, nor expose
+clear, the DM must not interact with the rest of the hardware platform, nor expose
 details about the harts connected to the DM. All DM registers should read 0,
 while writes should be ignored, with the following mandatory exceptions:
 \begin{steps}{}
@@ -587,7 +587,7 @@ should not implement that register.
         previous debugger from taking effect.
     \item \FdmDmcontrolResumereq is cleared, potentially preventing a resume request made
         by a previous debugger from taking effect.
-    \item \FdmDmcontrolNdmreset is deasserted, releasing the system from reset if a
+    \item \FdmDmcontrolNdmreset is deasserted, releasing the hardware platform from reset if a
         previous debugger had set it.
     \item \FdmDmcontrolDmactive is asserted, releasing the DM from reset. This in itself
         is not observable by any harts.
