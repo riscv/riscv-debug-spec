@@ -62,6 +62,9 @@ write to \RdmDataZero, take effect before the DM returns \FdmAbstractcsBusy
 to 0.
 
 To resume execution, the debug module sets a flag which causes the hart to execute a {\tt dret}.
+{\tt dret} is an instruction that only has meaning while in Debug Mode and
+not executing from the Program Buffer.
+Its recommended encoding is 0x7b200073.
 When {\tt dret} is executed, \Rpc is restored from \RcsrDpc and normal execution resumes at the
 privilege set by \FcsrDcsrPrv.
 
