@@ -47,11 +47,11 @@
         </field>
         <field name="allnonexistent" bits="15" access="R" reset="-">
             This field is 1 when all currently selected harts do not exist in
-            this platform.
+            this hardware platform.
         </field>
         <field name="anynonexistent" bits="14" access="R" reset="-">
             This field is 1 when any currently selected hart does not exist in
-            this platform.
+            this hardware platform.
         </field>
         <field name="allunavail" bits="13" access="R" reset="-">
             This field is 1 when all currently selected harts are
@@ -272,10 +272,10 @@
         <!-- Fields that apply to the entire DM. -->
         <field name="ndmreset" bits="1" access="R/W" reset="0">
             This bit controls the reset signal from the DM to the rest of the
-            system. The signal should reset every part of the system, including
+            hardware platform. The signal should reset every part of the hardware platform, including
             every hart, except for the DM and any logic required to access the
             DM.
-            To perform a system reset the debugger writes 1,
+            To perform a hardware platform reset the debugger writes 1,
             and then writes 0
             to deassert the reset.
         </field>
@@ -367,7 +367,7 @@
       <field name="0" bits="31:15" access="R/W" reset="0" />
       <field name="hawindowsel" bits="14:0" access="R/W" reset="0">
           The high bits of this field may be tied to 0, depending on how large
-          the array mask register is.  E.g.\ on a system with 48 harts only bit 0
+          the array mask register is.  E.g.\ on a hardware platform with 48 harts only bit 0
           of this field may actually be writable.
       </field>
     </register>

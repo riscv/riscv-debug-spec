@@ -9,10 +9,11 @@ When a robust OS is running on a core, software can handle many
 debugging tasks. However, in many scenarios, hardware support is essential.
 
 This document outlines a standard architecture for debug support
-on RISC-V platforms. This architecture allows a variety of implementations and
+on RISC-V hardware platforms. This architecture allows a variety of implementations and
 tradeoffs, which is complementary to the wide range of RISC-V implementations.
 At the same time, this specification defines common interfaces to
-allow debugging tools and components to target a variety of platforms based on the RISC-V ISA.
+allow debugging tools and components to target a variety of hardware
+platforms based on the RISC-V ISA.
 
 System designers may choose to add additional hardware debug support,
 but this specification defines a standard interface for common
@@ -20,22 +21,60 @@ functionality.
 
 \section{Terminology}
 
-A \emph{platform} is a single integrated circuit consisting of one or more
-\emph{components}. Some components may be RISC-V cores, while others may have a different
-function. Typically they will all be connected to a single system bus.
-A single RISC-V core contains one or more hardware threads, called
-\emph{harts}.
+\begin{description}[style=nextline]
+    \item[AMO]
+        Atomic Memory Operation.
+    \item[BYPASS]
+        JTAG instruction that selects a single bit data register, also called BYPASS.
+    \item[component]
+        A RISC-V core, or other part of a hardware platform.
+        Typically all components will be connected to a single system
+        bus.
+    \item[CSR]
+        Control and Status Register.
+    \item[DM]
+        Debug Module (see Section \ref{dm}).
+    \item[DMI]
+        Debug Module Interface (see Section \ref{dmi}).
+    \item[DR]
+        JTAG Data Register.
+    \item[DTM]
+        Debug Transport Module (see Section \ref{dtm}).
+    \item[DXLEN]
+        Debug XLEN, which is the widest XLEN a hart supports, ignoring the
+        current value of \Fmxl in \Rmisa.
+    \item[GPR]
+        General Purpose Register.
+    \item[hardware platform]
+        A single system consisting of one or more \emph{components}.
+    \item[hart]
+        A hardware thread in a RISC-V core.
+    \item[IDCODE]
+        32-bit Identification CODE, and a JTAG instruction that returns the IDCODE value.
+    \item[IR]
+        JTAG Instruction Register.
+    \item[JTAG]
+        Refers to work done by IEEE's Joint Test Action Group, described in
+        IEEE 1149.1.
+    \item[NAPOT]
+        Naturally Aligned Powers-Of-Two.
+    \item[NMI]
+        Non-Maskable Interrupt.
+    \item[physical address]
+        An address that is directly usable on the system bus.
+    \item[SBA]
+        System Bus Access (see Section \ref{systembusaccess}).
+    \item[TAP]
+        Test Access Port, defined in IEEE 1149.1.
+    \item[TM]
+        Trigger Module (see Section \ref{tm}).
+    \item[virtual address]
+        An address as a hart sees it. If the hart is using address translation this
+        may be different from the physical address. If there is no
+        translation then it will be the same.
+\end{description}
 
-\emph{DXLEN} of a hart is its widest supported XLEN, ignoring the current value
-of \Fmxl in \Rmisa.
-
-A \emph{physical address} is directly usable on the system bus.
-
-A \emph{virtual address} is an address as a hart sees it. If there is address
-translation this may be different from the \emph{physical address}. If there is
-no translation then it will be the same.
-
-\subsection{Context}
+\section{Context}
 
 \begin{steps}{This document is written to work with:}
 \item The RISC-V Instruction Set Manual, Volume I: User-Level ISA, Document
@@ -204,10 +243,10 @@ not be supported.
 
 \item Debugging issues in the OS itself.
 
-\item Bootstrapping a system to test, configure, and program components before
-  there is any executable code path in the system.
+\item Bootstrapping a hardware platform to test, configure, and program components before
+  there is any executable code path in the hardware platform.
 
-\item Accessing hardware on a system without a working CPU.
+\item Accessing hardware on a hardware platform without a working CPU.
 
 \end{itemize}
 
@@ -224,7 +263,7 @@ The debug interface described in this specification supports the following featu
    \item Memory can be accessed either from the hart's point of view, through
        the system bus directly, or both.
    \item RV32, RV64, and future RV128 are all supported.
-   \item Any hart in the platform can be independently debugged.
+   \item Any hart in the hardware platform can be independently debugged.
    \item A debugger can discover almost\footnote{Notable exceptions include
        information about the memory map and peripherals.} everything it needs
        to know itself, without user configuration.
@@ -256,7 +295,7 @@ The debug interface described in this specification supports the following featu
 \end{enumerate}
 
 This document does not suggest a strategy or implementation for hardware test,
-debugging or error detection techniqes. Scan, BIST, etc. are out of scope of
+debugging or error detection techniqes. Scan, built-in self test (BIST), etc. are out of scope of
 this specification, but this specification does not intend to limit their use
 in RISC-V systems.
 
