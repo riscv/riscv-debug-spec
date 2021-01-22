@@ -216,7 +216,7 @@
 
             Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
         </field>
-        <field name="hasel" bits="26" access="R/W" reset="0">
+        <field name="hasel" bits="26" access="WARL" reset="0">
             Selects the definition of currently selected harts.
 
             0: There is a single currently selected hart, that is selected by \Fhartsel.
@@ -230,11 +230,11 @@
             mask register feature should set this bit and read back to see if the functionality
             is supported.
         </field>
-        <field name="hartsello" bits="25:16" access="R/W" reset="0">
+        <field name="hartsello" bits="25:16" access="WARL" reset="0">
             The low 10 bits of \Fhartsel: the DM-specific index of the hart to
             select. This hart is always part of the currently selected harts.
         </field>
-        <field name="hartselhi" bits="15:6" access="R/W" reset="0">
+        <field name="hartselhi" bits="15:6" access="WARL" reset="0">
             The high 10 bits of \Fhartsel: the DM-specific index of the hart to
             select. This hart is always part of the currently selected harts.
         </field>
