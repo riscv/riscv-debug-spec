@@ -7,7 +7,13 @@
         the currently selected harts, as defined in \FdmDmcontrolHasel.  Its address will
         not change in the future, because it contains \FdmDmstatusVersion.
 
-        <field name="0" bits="31:24" access="R" reset="0" />
+        <field name="0" bits="31:25" access="R" reset="0" />
+        <field name="ndmresetpending" bits="24" access="R" reset="-">
+            0: Unimplemented, or \FdmDmcontrolNdmreset is zero and no ndmreset is currently 
+            in progress.
+
+            1: \FdmDmcontrolNdmreset is currently nonzero, or there is an ndmreset in progress.
+        </field>
         <field name="stickyunavail" bits="23" access="R" reset="Preset">
             0: The per-hart {\tt unavail} bits reflect the current state of the hart.
 
@@ -41,11 +47,11 @@
         </field>
         <field name="allnonexistent" bits="15" access="R" reset="-">
             This field is 1 when all currently selected harts do not exist in
-            this platform.
+            this hardware platform.
         </field>
         <field name="anynonexistent" bits="14" access="R" reset="-">
             This field is 1 when any currently selected hart does not exist in
-            this platform.
+            this hardware platform.
         </field>
         <field name="allunavail" bits="13" access="R" reset="-">
             This field is 1 when all currently selected harts are
@@ -110,7 +116,7 @@
             2: There is a Debug Module and it conforms to version 0.13 of this
             specification.
 
-            3: There is a Debug Module and it conforms to version 0.14 of this
+            3: There is a Debug Module and it conforms to version 1.0 of this
             specification.
 
             15: There is a Debug Module but it does not conform to any
@@ -148,6 +154,16 @@
 \index{resethaltreq}
         \Fresethaltreq is an optional internal bit of per-hart state that cannot be
         read, but can be written with \FdmDmcontrolSetresethaltreq and \FdmDmcontrolClrresethaltreq.
+
+\label{keepalive}
+\index{keepalive}
+        \Fkeepalive is an optional internal bit of per-hart state. When it is
+        set, it suggests that the hardware should attempt to keep the hart
+        available for the debugger, e.g. by keeping it from entering a
+        low-power state once powered on. Even if the bit is implemented,
+        hardware might not be able to keep a hart available. The bit is
+        written through \FdmDmcontrolSetkeepalive and
+        \FdmDmcontrolClrkeepalive.
 
         For forward compatibility, \FdmDmstatusVersion will always be readable when bit 1
         (\FdmDmcontrolNdmreset) is 0 and bit 0 (\FdmDmcontrolDmactive) is 1.
@@ -222,7 +238,19 @@
             The high 10 bits of \Fhartsel: the DM-specific index of the hart to
             select. This hart is always part of the currently selected harts.
         </field>
-        <field name="0" bits="5:4" access="R" reset="0" />
+        <field name="setkeepalive" bits="5" access="W1" reset="-">
+            This optional field sets \Fkeepalive for all currently selected
+            harts, unless \FdmDmcontrolClrkeepalive is simultaneously set to
+            1.
+
+            Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
+        </field>
+        <field name="clrkeepalive" bits="4" access="W1" reset="-">
+            This optional field clears \Fkeepalive for all currently selected
+            harts.
+
+            Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
+        </field>
         <field name="setresethaltreq" bits="3" access="W1" reset="-">
             This optional field writes the halt-on-reset request bit for all
             currently selected harts, unless \FdmDmcontrolClrresethaltreq is
@@ -244,10 +272,10 @@
         <!-- Fields that apply to the entire DM. -->
         <field name="ndmreset" bits="1" access="R/W" reset="0">
             This bit controls the reset signal from the DM to the rest of the
-            system. The signal should reset every part of the system, including
+            hardware platform. The signal should reset every part of the hardware platform, including
             every hart, except for the DM and any logic required to access the
             DM.
-            To perform a system reset the debugger writes 1,
+            To perform a hardware platform reset the debugger writes 1,
             and then writes 0
             to deassert the reset.
         </field>
@@ -339,7 +367,7 @@
       <field name="0" bits="31:15" access="R/W" reset="0" />
       <field name="hawindowsel" bits="14:0" access="R/W" reset="0">
           The high bits of this field may be tied to 0, depending on how large
-          the array mask register is.  E.g.\ on a system with 48 harts only bit 0
+          the array mask register is.  E.g.\ on a hardware platform with 48 harts only bit 0
           of this field may actually be writable.
       </field>
     </register>

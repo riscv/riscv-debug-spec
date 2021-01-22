@@ -52,14 +52,19 @@ otherwise the DM causes a {\tt ebreak} to execute immediately.
 When {\tt ebreak} is executed (indicating the end of the
 Program Buffer code) the hart returns to its park loop. If an exception is
 encountered, the hart jumps to a debug trap address within
-the Debug Module. The code at that address causes the hart to
-write to an address in the Debug Module which indicates exception.
-This address is considered I/O for {\tt fence} instructions (see \#\ref{fence}
-on page \pageref{fence}).
+the Debug Module. The code there causes the hart to
+write to the Debug Module indicating an exception.
 Then the hart jumps back to the park loop.
 The DM infers from the write that there was an exception, and sets \FdmAbstractcsCmderr appropriately.
+Typically the hart will execute a {\tt fence} instruction before entering the
+park loop, to ensure that any effects from the abstract command, such as a
+write to \RdmDataZero, take effect before the DM returns \FdmAbstractcsBusy
+to 0.
 
 To resume execution, the debug module sets a flag which causes the hart to execute a {\tt dret}.
+{\tt dret} is an instruction that only has meaning while in Debug Mode and
+not executing from the Program Buffer.
+Its recommended encoding is 0x7b200073.
 When {\tt dret} is executed, \Rpc is restored from \RcsrDpc and normal execution resumes at the
 privilege set by \FcsrDcsrPrv.
 
