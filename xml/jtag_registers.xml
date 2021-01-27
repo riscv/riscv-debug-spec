@@ -72,7 +72,7 @@
         <field name="version" bits="3:0" access="R" reset="1">
             0: Version described in spec version 0.11.
 
-            1: Version described in spec version 0.13.
+            1: Version described in spec versions 0.13 and 1.0.
 
             15: Version not described in any available version of this spec.
         </field>

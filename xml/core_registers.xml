@@ -45,7 +45,7 @@
 
             1: {\tt ebreak} instructions in S-mode enter Debug Mode.
 
-            This bit is hardwired to 0 if the hart does not support S mode.
+            This bit is hardwired to 0 if the hart does not support S-mode.
         </field>
         <field name="ebreaku" bits="12" access="WARL" reset="0">
             0: {\tt ebreak} instructions in U-mode behave as described in the
@@ -53,7 +53,7 @@
 
             1: {\tt ebreak} instructions in U-mode enter Debug Mode.
 
-            This bit is hardwired to 0 if the hart does not support U mode.
+            This bit is hardwired to 0 if the hart does not support U-mode.
         </field>
         <field name="stepie" bits="11" access="WARL" reset="0">
             0: Interrupts (including NMI) are disabled during single stepping.

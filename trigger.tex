@@ -148,17 +148,17 @@ the trace specification.
 Triggers can be used for native debugging. On a fully featured hart, triggers
 will be set using \FcsrMcontrolU or \FcsrMcontrolS, and when firing they can cause a breakpoint exception
 to trap to a more privileged mode. It is possible to set triggers natively to
-fire in M mode as well. In that case there is no higher privilege mode to trap
+fire in M-mode as well. In that case there is no higher privilege mode to trap
 to. When such a trigger causes a breakpoint exception while already in a trap
-handler, this will leave the hart unable to resume normal execution.
+handler, this might leave the hart unable to resume normal execution.
 
 On full-featured harts this is a remote corner case that can probably be
-ignored. On harts that only implement M mode, however, it is recommended to
+ignored. On harts that only implement M-mode, however, it is recommended to
 implement one of two solutions to this problem. This way triggers can be useful
-for native debugging of even M mode code.
+for native debugging of even M-mode code.
 
 The simple solution is to have the hardware prevent triggers with action=0 from
-firing while in M mode and while \FcsrMcontrolMie in \Rmstatus is 0. Its limitation is
+firing while in M-mode and while \FcsrMcontrolMie in \Rmstatus is 0. Its limitation is
 that interrupts might be disabled at other times when a user might want
 triggers to fire.
 
@@ -166,7 +166,7 @@ A more complex solution is to implement \FcsrTcontrolMte and \FcsrTcontrolMpte i
 solution has the benefit that it only disables triggers during the trap
 handler.
 
-A user setting M mode triggers that cause breakpoint exceptions will have to be
+A user setting M-mode triggers that cause breakpoint exceptions will have to be
 aware of any problems that might come up with the particular hart they are
 working on.
 
@@ -184,5 +184,20 @@ what is
 supported.  Writes to one {\tt tdata} register must not modify the contents of
 other {\tt tdata} registers, nor the configuration of any trigger besides the
 one that is currently selected.
+
+The combination of these rules means that a debugger cannot simply set a
+trigger by writing \RcsrTdataOne, then \RcsrTdataTwo, etc. The current value
+of \RcsrTdataTwo might not be legal with the new value of \RcsrTdataOne. To
+help with this situation, it is guaranteed that writing 0 to \RcsrTdataOne
+disables the trigger, and leaves it in a state where \RcsrTdataTwo and
+\RcsrTdataThree can be written with any value that makes sense for any
+trigger type supported by this trigger.
+
+\begin{steps}{As a result, a debugger can write any supported trigger as
+follows:}
+\item Write 0 to \RcsrTdataOne.
+\item Write desired values to \RcsrTdataTwo and \RcsrTdataThree.
+\item Write desired value to \RcsrTdataOne.
+\end{steps}
 
 \input{hwbp_registers.tex}

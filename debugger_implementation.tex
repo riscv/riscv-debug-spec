@@ -514,7 +514,7 @@ executed, to be used as an instruction breakpoint in ROM:
 Generally the debugger can avoid exceptions by being careful with the programs
 it writes. Sometimes they are unavoidable though, e.g.\ if the user asks to
 access memory or a CSR that is not implemented. A typical debugger will not
-know enough about the platform to know what's going to happen, and must attempt
+know enough about the hardware platform to know what's going to happen, and must attempt
 the access to determine the outcome.
 
 When an exception occurs while executing the Program Buffer, \FdmAbstractcsCmderr becomes

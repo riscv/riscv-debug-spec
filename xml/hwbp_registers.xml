@@ -1,11 +1,18 @@
-<registers name="Trigger Registers" prefix="CSR_">
+<registers name="Trigger Registers" prefix="CSR_" label="trigger">
     The trigger registers, except \RcsrScontext, are only accessible in machine
     and Debug Mode to prevent untrusted user code from causing entry into Debug
     Mode without the OS's permission.
 
-    In this section XLEN means MXLEN when in M-mode, and DXLEN when in Debug Mode.
-    Note that this makes several of the fields in \RcsrTdataOne move around based
-    on the current execution mode and value of MXLEN.
+    In this section XLEN means MXLEN when in M-mode, and DXLEN when in Debug
+    Mode. On systems where those values of XLEN can differ, this is handled
+    as follows.
+    Fields retain their values regardless of XLEN, which only affects where
+    in the register these fields appear (e.g. \FcsrTdataOneType). Some fields
+    are wider when XLEN is 64 than when it is 32 (e.g.
+    \FcsrTextraThirtytwoSvalue). The high bits in such fields retain their
+    value but are not readable when XLEN is 32.
+    A modification of a register when XLEN is 32 clears any inaccessible bits
+    in that register.
 
     <register name="Trigger Select" short="tselect" address="0x7a0">
         This register determines which trigger is accessible through the other
@@ -112,7 +119,7 @@
     </register>
 
     <register name="Trigger Control" short="tcontrol" address="0x7a5">
-        This optional register is only accessible in M mode and Debug Mode and
+        This optional register is only accessible in M-mode and Debug Mode and
         provides various control bits related to triggers.
 
         <field name="0" bits="XLEN-1:10" access="R" reset="0" />
@@ -158,7 +165,7 @@
     </register>
 
     <register name="Hypervisor Context" short="hcontext" address="0x6a8">
-        This optional register is only accessible in S/HS mode, M mode and
+        This optional register is only accessible in S/HS-mode, M-mode and
         Debug Mode.
 
         If the H extension is not implemented then this register is not
@@ -179,8 +186,8 @@
     </register>
 
     <register name="Supervisor Context" short="scontext" address="0x5a8">
-        This optional register is only accessible in S/HS mode, VS mode,
-        M mode and Debug Mode.
+        This optional register is only accessible in S/HS-mode, VS-mode,
+        M-mode and Debug Mode.
 
         <field name="data" bits="XLEN-1:0" access="WARL" reset="0">
             Supervisor mode software can write a context number to this
@@ -195,7 +202,7 @@
 
     <register name="Machine Context" short="mcontext" address="0x7a8">
         This optional register is an alias for \RcsrHcontext and is only
-        accessible in M mode and Debug mode.
+        accessible in M-mode and Debug mode.
     </register>
 
     <register name="Machine Supervisor Context" short="mscontext" address="0x7aa">
@@ -223,15 +230,20 @@
         hold all valid virtual addresses but it need not be capable of holding
         other values.
 
-        If the A extension is supported, then trigger behavior is as follows
-        for the load and store bits:
-        \vspace{-0.2in}
-        \begin{tightlist}
+        \begin{steps}{If the A extension is supported, then trigger behavior is as follows
+        for the load and store bits:}
         \item {\tt lr} instructions are loads
         \item successful {\tt sc} instructions are stores
         \item it is \unspecified\ whether failing {\tt sc} instructions are stores or not
-        \item Each AMO instruction is both a load and a store
-        \end{tightlist}
+        \item Each AMO instruction is a load for the read portion of the
+        operation. The address is always available to trigger on, although
+        the value loaded might not be, depending on the hardware
+        implementation.
+        \item Each AMO instruction is a store for the write portion of the
+        operation. The address is always available to trigger on, although
+        the value stored might not be, depending on the hardware
+        implementation.
+        \end{steps}
 
         If the destination register of any load or AMO is \Rzero then it is
         \unspecified\ whether a load trigger with \FcsrMcontrolSelect=1 will
@@ -242,11 +254,10 @@
         <field name="maskmax" bits="XLEN-6:XLEN-11" access="R" reset="Preset">
             Specifies the largest naturally aligned powers-of-two (NAPOT) range
             supported by the hardware when \FcsrMcontrolMatch is 1. The value is the
-            logarithm base 2 of the
-            number of bytes in that range.  A value of 0 indicates that only
-            exact value matches are supported (one byte range). A value of 63
-            corresponds to the maximum NAPOT range, which is $2^{63}$ bytes in
-            size.
+            logarithm base 2 of the number of bytes in that range.
+            A value of 0 indicates \FcsrMcontrolMatch 1 is not supported.
+            A value of 63 corresponds to the maximum NAPOT range, which is
+            $2^{63}$ bytes in size.
         </field>
         <field name="0" bits="XLEN-12:23" access="R" reset="0" />
         <field name="sizehi" bits="22:21" access="WARL" reset="0">
@@ -256,21 +267,26 @@
             is used.
         </field>
         <field name="hit" bits="20" access="WARL" reset="0">
-            If this bit is implemented, the hardware sets it when this
-            trigger matches. The trigger's user can set or clear it at any
+            If this bit is implemented then it must become set when this
+            trigger fires and may become set when this trigger matches.
+            The trigger's user can set or clear it at any
             time. It is used to determine which
             trigger(s) matched.  If the bit is not implemented, it is always 0
             and writing it has no effect.
         </field>
         <field name="select" bits="19" access="WARL" reset="0">
-            0: Perform a match on the lowest virtual address of the access.  In
-            addition, it is recommended that the trigger also fires if any of
-            the other accessed virtual addresses match.
+            This bit determines the contents of the XLEN-bit compare values.
+
+            0: There is at least one compare value and it contains the lowest
+            virtual address of the access.
+            It is recommended that there are additional compare values for
+            the other accessed virtual addresses.
             (E.g. on a 32-bit read from 0x4000, the lowest address is 0x4000
             and the other addresses are 0x4001, 0x4002, and 0x4003.)
 
-            1: Perform a match on the data value loaded or stored, or the
-            instruction executed.
+            1: There is exactly one compare value and it contains the data
+            value loaded or stored, or the instruction executed.
+            Any bits beyond the size of the data access will contain 0.
         </field>
         <field name="timing" bits="18" access="WARL" reset="0">
             0: The action for this trigger will be taken just before the
@@ -375,6 +391,9 @@
             trigger will be taken if and only if all the triggers in the chain
             match at the same time.
 
+            Debuggers should not terminate a chain with a trigger with a
+            different type. It is undefined when exactly such a chain fires.
+
             Because \FcsrMcontrolChain affects the next trigger, hardware must zero it in
             writes to \RcsrMcontrol that set \FcsrTdataOneDmode to 0 if the next trigger has
             \FcsrTdataOneDmode of 1.
@@ -388,26 +407,31 @@
             \FcsrMcontrolChain in writes to \RcsrMcontrol that would make the chain too long.
         </field>
         <field name="match" bits="10:7" access="WARL" reset="0">
-            0: Matches when the value equals \RcsrTdataTwo.
+            0: Matches when any compare value equals \RcsrTdataTwo.
 
-            1: Matches when the top M bits of the value match the top M bits of
-            \RcsrTdataTwo. M is XLEN-1 minus the index of the least-significant
+            1: Matches when the top $M$ bits of any compare value match the top
+            $M$ bits of \RcsrTdataTwo.
+            $M$ is $|XLEN|-1$ minus the index of the least-significant
             bit containing 0 in \RcsrTdataTwo. Debuggers should only write values
-            to \RcsrTdataTwo such that M + \FcsrMcontrolMaskmax $\geq$ XLEN, otherwise it's
-            undefined on what conditions the trigger will fire.
+            to \RcsrTdataTwo such that $M + $\FcsrMcontrolMaskmax$ \geq |XLEN|$
+            and $M\gt0$ , otherwise it's undefined on what conditions the
+            trigger will match.
 
-            2: Matches when the value is greater than (unsigned) or equal to
+            2: Matches when any compare value is greater than (unsigned) or
+            equal to \RcsrTdataTwo.
+
+            3: Matches when any compare value is less than (unsigned)
             \RcsrTdataTwo.
 
-            3: Matches when the value is less than (unsigned) \RcsrTdataTwo.
+            4: Matches when $\frac{|XLEN|}{2}-1$:$0$ of any compare value
+            equals $\frac{|XLEN|}{2}-1$:$0$ of \RcsrTdataTwo after
+            $\frac{|XLEN|}{2}-1$:$0$ of the compare value is ANDed with
+            $|XLEN|-1$:$\frac{|XLEN|}{2}$ of \RcsrTdataTwo.
 
-            4: Matches when the lower half of the value equals the lower half
-            of \RcsrTdataTwo after the lower half of the value is ANDed with the
-            upper half of \RcsrTdataTwo.
-
-            5: Matches when the upper half of the value equals the lower half
-            of \RcsrTdataTwo after the upper half of the value is ANDed with the
-            upper half of \RcsrTdataTwo.
+            5: Matches when $|XLEN|-1$:$\frac{|XLEN|}{2}$ of any compare
+            value equals $\frac{|XLEN|}{2}-1$:$0$ of \RcsrTdataTwo after
+            $|XLEN|-1$:$\frac{|XLEN|}{2}$ of the compare value is ANDed with
+            $|XLEN|-1$:$\frac{|XLEN|}{2}$ of \RcsrTdataTwo.
 
             8: Matches when \FcsrMcontrolMatch$=0$ would not match.
 
@@ -418,6 +442,12 @@
             13: Matches when \FcsrMcontrolMatch$=5$ would not match.
 
             Other values are reserved for future use.
+
+            All comparisons only look at the lower XLEN (in the current mode)
+            bits of the compare values and of \RcsrTdataTwo.
+            When \FcsrMcontrolSelect=1 and access size is N, this is further
+            reduced, and comparisons only look at the lower N bits of the
+            compare values and of \RcsrTdataTwo.
         </field>
         <field name="m" bits="6" access="WARL" reset="0">
             When set, enable this trigger in M-mode.
@@ -491,28 +521,32 @@
         hold all valid virtual addresses but it need not be capable of holding
         other values.
 
-        In implementations that support \FcsrMcontrolSixMatch mode 1 (NAPOT), not all
+        \begin{steps}{In implementations that support \FcsrMcontrolSixMatch mode 1 (NAPOT), not all
         NAPOT ranges may be supported.  All NAPOT ranges between $2^{1}$ and $2^{maskmax6}$
         are supported where maskmax6 $\geq$ 1.  The value of maskmax6 can be determined
-        by the debugger via the following sequence:
-        \begin{enumerate}
+        by the debugger via the following sequence:}
         \item Set \FcsrMcontrolSixMatch=1.
         \item Read \FcsrMcontrolSixMatch. If it is not 1 then NAPOT matching is not supported.
         \item Write all ones to \RcsrTdataTwo.
         \item Read \RcsrTdataTwo. The value of maskmax6 is the index of the most significant 0 bit plus 1.
-        \end{enumerate}
+        \end{steps}
 
-        If the A extension is supported, then trigger behavior is as follows
-        for the load and store bits:
-        \vspace{-0.2in}
-        \begin{tightlist}
+        \begin{steps}{If the A extension is supported, then trigger behavior is as follows
+        for the load and store bits:}
         \item {\tt lr} instructions are loads
         \item successful {\tt sc} instructions are stores
         \item it is \unspecified\ whether failing {\tt sc} instructions are stores or not
-        \item Each AMO instruction is both a load and a store
-        \end{tightlist}
+        \item Each AMO instruction is a load for the read portion of the
+        operation. The address is always available to trigger on, although
+        the value loaded might not be, depending on the hardware
+        implementation.
+        \item Each AMO instruction is a store for the write portion of the
+        operation. The address is always available to trigger on, although
+        the value stored might not be, depending on the hardware
+        implementation.
+        \end{steps}
 
-        If the destination register of any load or AMO is x0 then it is
+        If the destination register of any load or AMO is \Rzero then it is
         \unspecified\ whether a load trigger with \FcsrMcontrolSelect=1 will
         match.  Whether store triggers with \FcsrMcontrolSelect=1 match on
         AMOs is \unspecified.
@@ -537,14 +571,18 @@
             and writing it has no effect.
         </field>
         <field name="select" bits="21" access="WARL" reset="0">
-            0: Perform a match on the lowest virtual address of the access.  In
-            addition, it is recommended that the trigger also fires if any of
-            the other accessed virtual addresses match.
+            This bit determines the contents of the XLEN-bit compare values.
+
+            0: There is at least one compare value and it contains the lowest
+            virtual address of the access.
+            In addition, it is recommended that there are additional compare
+            values for the other accessed virtual addresses match.
             (E.g. on a 32-bit read from 0x4000, the lowest address is 0x4000
             and the other addresses are 0x4001, 0x4002, and 0x4003.)
 
-            1: Perform a match on the data value loaded or stored, or the
-            instruction executed.
+            1: There is exactly one compare value and it contains the data
+            value loaded or stored, or the instruction executed.
+            Any bits beyond the size of the data access will contain 0.
         </field>
         <field name="timing" bits="20" access="WARL" reset="0">
             0: The action for this trigger will be taken just before the
@@ -646,6 +684,9 @@
             trigger will be taken if and only if all the triggers in the chain
             match at the same time.
 
+            Debuggers should not terminate a chain with a trigger with a
+            different type. It is undefined when exactly such a chain fires.
+
             Because \FcsrMcontrolSixChain affects the next trigger, hardware must zero it in
             writes to \RcsrMcontrolSix that set \FcsrTdataOneDmode to 0 if the next trigger has
             \FcsrTdataOneDmode of 1.
@@ -659,27 +700,32 @@
             \FcsrMcontrolSixChain in writes to \RcsrMcontrolSix that would make the chain too long.
         </field>
         <field name="match" bits="10:7" access="WARL" reset="0">
-            0: Matches when the value equals \RcsrTdataTwo.
+            0: Matches when any compare value equals \RcsrTdataTwo.
 
-            1: Matches when the top M bits of the value match the top M bits of
-            \RcsrTdataTwo. M is XLEN-1 minus the index of the least-significant
-            bit containing 0 in \RcsrTdataTwo. \RcsrTdataTwo is WARL and bit maskmax6-1
-            will be set to 0 if no less significant bits are written with 0.  Legal values for
-            \RcsrTdataTwo require M + maskmax6 $\geq$ XLEN. See above for
-            how to determine maskmax6.
+            1: Matches when the top $M$ bits of any compare value match the top
+            $M$ bits of \RcsrTdataTwo.
+            $M$ is $|XLEN|-1$ minus the index of the least-significant bit
+            containing 0 in \RcsrTdataTwo.
+            \RcsrTdataTwo is WARL and bit $|maskmax6|-1$ will be set to 0 if no
+            less significant bits are written with 0.
+            Legal values for \RcsrTdataTwo require $M + |maskmax6| \geq |XLEN|$ and $M\gt0$.
+            See above for how to determine maskmax6.
 
-            2: Matches when the value is greater than (unsigned) or equal to
+            2: Matches when any compare value is greater than (unsigned) or
+            equal to \RcsrTdataTwo.
+
+            3: Matches when any compare value is less than (unsigned)
             \RcsrTdataTwo.
 
-            3: Matches when the value is less than (unsigned) \RcsrTdataTwo.
+            4: Matches when $\frac{|XLEN|}{2}-1$:$0$ of any compare value
+            equals $\frac{|XLEN|}{2}-1$:$0$ of \RcsrTdataTwo after
+            $\frac{|XLEN|}{2}-1$:$0$ of the compare value is ANDed with
+            $|XLEN|-1$:$\frac{|XLEN|}{2}$ of \RcsrTdataTwo.
 
-            4: Matches when the lower half of the value equals the lower half
-            of \RcsrTdataTwo after the lower half of the value is ANDed with the
-            upper half of \RcsrTdataTwo.
-
-            5: Matches when the upper half of the value equals the lower half
-            of \RcsrTdataTwo after the upper half of the value is ANDed with the
-            upper half of \RcsrTdataTwo.
+            5: Matches when $|XLEN|-1$:$\frac{|XLEN|}{2}$ of any compare
+            value equals $\frac{|XLEN|}{2}-1$:$0$ of \RcsrTdataTwo after
+            $|XLEN|-1$:$\frac{|XLEN|}{2}$ of the compare value is ANDed with
+            $|XLEN|-1$:$\frac{|XLEN|}{2}$ of \RcsrTdataTwo.
 
             8: Matches when \FcsrMcontrolSixMatch$=0$ would not match.
 
@@ -690,6 +736,12 @@
             13: Matches when \FcsrMcontrolSixMatch$=5$ would not match.
 
             Other values are reserved for future use.
+
+            All comparisons only look at the lower XLEN (in the current mode)
+            bits of the compare values and of \RcsrTdataTwo.
+            When \FcsrMcontrolSelect=1 and access size is N, this is further
+            reduced, and comparisons only look at the lower N bits of the
+            compare values and of \RcsrTdataTwo.
         </field>
         <field name="m" bits="6" access="WARL" reset="0">
             When set, enable this trigger in M-mode.
@@ -949,7 +1001,11 @@
             trigger(s) matched.  If the bit is not implemented, it is always 0
             and writing it has no effect.
         </field>
-        <field name="0" bits="XLEN-7:22" access="R" reset="0" />
+        <field name="0" bits="XLEN-7:23" access="R" reset="0" />
+        <field name="intctl" bits="22" access="WARL" reset="0">
+            This optional bit, when set, causes this trigger to fire whenever an attached
+            interrupt controller signals a trigger.
+        </field>
         <field name="select" bits="21:6" access="WARL" reset="0">
             Selects any combination of up to 16 external debug trigger inputs
             that cause this trigger to fire.
@@ -968,6 +1024,15 @@
         tie any number of upper bits to 0. The $|select|$ bits may only support
         0 (ignore).
 
+        Byte-granular comparison of \RcsrScontext to \FcsrTextraThirtytwoSvalue
+        allows \RcsrScontext to be defined to include more than one element of comparison.
+        For example, software instrumentation can program the \RcsrScontext value to be
+        the concatenation of different ID contexts such as process ID and thread ID.
+        The user can then program byte compares based on \FcsrTextraThirtytwoSbytemask
+        to include one or more of the contexts in the compare.
+        
+        Byte masking only applies to \RcsrScontext comparison; i.e when \FcsrTextraThirtytwoSselect is 1.
+        
         <field name="mhvalue" bits="31:26" access="WARL" reset="0">
             Data used together with \FcsrTextraThirtytwoMhselect.
         </field>
@@ -988,7 +1053,14 @@
             If the H extension is not supported, the only legal values are 0 and 4.
         </field>
 
-        <field name="0" bits="22:18" access="R" reset="0" />
+        <field name="0" bits="22:20" access="R" reset="0" />
+        
+        <field name="sbytemask" bits="19:18" access="WARL" reset="0">
+            When the least significant bit of this field is 1, it causes bits 7:0
+            in the comparison to be ignored, when \FcsrTextraThirtytwoSselect=1.
+            When the next most significant bit of this field is 1, it causes bits 15:8
+            to be ignored in the comparison, when \FcsrTextraThirtytwoSselect=1.
+        </field>
 
         <field name="svalue" bits="17:2" access="WARL" reset="0">
             Data used together with \FcsrTextraThirtytwoSselect.
@@ -1001,7 +1073,8 @@
             1: This trigger will only match if the low bits of
             \RcsrScontext equal \FcsrTextraThirtytwoSvalue.
 
-            2: This trigger will only match if \Fasid in \Rsatp
+            2: This trigger will only match if the currently active ASID
+            value, from either \Rsatp or \Rvsatp,
             equals the lower ASIDMAX (defined in the Privileged Spec) bits of
             \FcsrTextraThirtytwoSvalue.
 
@@ -1015,13 +1088,30 @@
         5, or 6 and XLEN=64. The fields are defined
         above, in \RcsrTextraThirtytwo.
 
+        Byte-granular comparison of \RcsrScontext to \FcsrTextraSixtyfourSvalue in
+        \RcsrTextraSixtyfour allows \RcsrScontext to be defined to include
+        more than one element of comparison.  For example, software instrumentation
+        can program the \RcsrScontext value to be the concatenation of different ID contexts
+        such as process ID and thread ID.  The user can then program byte compares based on
+        \FcsrTextraSixtyfourSbytemask to include one or more of the contexts in the compare.
+        
+        Byte masking only applies to \RcsrScontext comparison; i.e when \FcsrTextraSixtyfourSselect is 1.
+        
         <field name="mhvalue" bits="63:51" access="WARL" reset="0">
         </field>
         <field name="mhselect" bits="50:48" access="WARL" reset="0">
         </field>
 
-        <field name="0" bits="47:36" access="R" reset="0" />
+        <field name="0" bits="47:41" access="R" reset="0" />
 
+        <field name="sbytemask" bits="40:36" access="WARL" reset="0">
+            When the least significant bit of this field is 1, it causes bits 7:0
+            in the comparison to be ignored, when \FcsrTextraSixtyfourSselect=1.
+            Likewise, the second bit controls the comparison of bits 15:8,
+            third bit controls the comparison of bits 23:16,
+            fourth bit controls the comparison of bits 31:24, and
+            fifth bit controls the comparison of bits 33:32.
+        </field>
         <field name="svalue" bits="35:2" access="WARL" reset="0">
         </field>
         <field name="sselect" bits="1:0" access="WARL" reset="0">
