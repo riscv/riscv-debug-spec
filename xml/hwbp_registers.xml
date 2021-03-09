@@ -290,7 +290,7 @@
         </field>
         <field name="timing" bits="18" access="WARL" reset="0">
             0: The action for this trigger will be taken just before the
-            instruction that triggered it is executed, but after all preceding
+            instruction that triggered it is committed, but after all preceding
             instructions are committed. \Rmepc or \RcsrDpc (depending on
             \FcsrMcontrolAction) must be set to the virtual address of the
             instruction that matched.
@@ -303,8 +303,8 @@
             memory-mapped I/O addresses.
 
             1: The action for this trigger will be taken after the instruction
-            that triggered it is executed. It should be taken before the next
-            instruction is executed, but it is better to implement triggers imprecisely
+            that triggered it is committed. It should be taken before the next
+            instruction is committed, but it is better to implement triggers imprecisely
             than to not implement them at all.
             \Rmepc or \RcsrDpc (depending on \FcsrMcontrolAction) must be set to
             the virtual address of the next instruction that must be executed to
@@ -586,7 +586,7 @@
         </field>
         <field name="timing" bits="20" access="WARL" reset="0">
             0: The action for this trigger will be taken just before the
-            instruction that triggered it is executed, but after all preceding
+            instruction that triggered it is committed, but after all preceding
             instructions are committed. \Rmepc or \RcsrDpc (depending on
             \FcsrMcontrolSixAction) must be set to the virtual address of the
             instruction that matched.
@@ -599,8 +599,8 @@
             memory-mapped I/O addresses.
 
             1: The action for this trigger will be taken after the instruction
-            that triggered it is executed. It should be taken before the next
-            instruction is executed, but it is better to implement triggers imprecisely
+            that triggered it is committed. It should be taken before the next
+            instruction is committed, but it is better to implement triggers imprecisely
             than to not implement them at all.
             \Rmepc or \RcsrDpc (depending on \FcsrMcontrolSixAction) must be set to
             the virtual address of the next instruction that must be executed to
