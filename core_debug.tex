@@ -104,7 +104,7 @@ handler, and the appropriate {\tt tval} and {\tt cause} registers are updated.
 In this case none of the trap handler is executed, and if the cause was a
 pending interrupt no instructions might be executed at all.
 
-If executing or fetching the instruction causes a trigger to fire, Debug Mode
+If executing or fetching the instruction causes a trigger to fire with action=1, Debug Mode
 is re-entered immediately after that trigger has fired. In that case \FcsrDcsrCause is
 set to 2 (trigger) instead of 4 (single step).  Whether the instruction is
 executed or not depends on the specific configuration of the trigger.
