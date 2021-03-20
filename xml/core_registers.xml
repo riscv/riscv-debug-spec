@@ -170,8 +170,9 @@
         that don't change program flow, the destination PC on taken
         jumps/branches, etc. \\
         \hline
-        trigger module &amp; If \FcsrMcontrolTiming is 0, the address of the
-        instruction which caused the trigger to fire. If \FcsrMcontrolTiming is 1, the
+        trigger module &amp; If the trigger is \RcsrMcontrol or \RcsrMcontrolSix
+        and \FcsrMcontrolTiming is 0, the address of the
+        instruction which caused the trigger to fire. Otherwise, the
         address of the next instruction to be executed at the time that
         debug mode was entered. \\
         \hline
