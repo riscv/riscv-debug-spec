@@ -487,7 +487,7 @@
 
     <register name ="Abstract Command Autoexec" short="abstractauto" address="0x18">
         This register is optional. Including it allows more efficient burst
-        accesses.  A debugger can detect whether it is support by setting bits
+        accesses.  A debugger can detect whether it is supported by setting bits
         and reading them back.
 
         If this register is implemented then bits corresponding to implemented
