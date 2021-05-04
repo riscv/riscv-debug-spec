@@ -224,22 +224,24 @@ abstractcs.busy = 1<y:LabelModel><y:SmartNodeLabelModel distance="4.0"/></y:Labe
     <node id="n15">
       <data key="d6">
         <y:ShapeNode>
-          <y:Geometry height="201.0" width="313.0" x="737.0938029292985" y="641.5289532293987"/>
+          <y:Geometry height="219.92743491190345" width="396.1504435542986" x="641.0938029292985" y="641.5289532293987"/>
           <y:Fill hasColor="false" transparent="false"/>
           <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="185.59375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="299.2421875" x="6.87890625" xml:space="preserve" y="7.703125">*) Commands are issued by writing to command,
-or by accessing dataN when autoexecdataN
-is set, or by accessing progbufN when
-autoexecprogbufN is set.
+          <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="213.53125" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="381.84765625" x="7.151393652149295" xml:space="preserve" y="3.1980924559517234">*) Commands are issued by writing to command, or by 
+accessing dataN when autoexecdataN is set, or by accessing 
+progbufN when autoexecprogbufN is set.
 
-**) Commands are interrupted when command,
-abstractcs, or abstractauto are written, or
-when data or progbuf registers are accessed.
+**) Commands are interrupted when command, abstractcs, 
+or abstractauto are written, or when data or progbuf 
+registers are accessed.
 
-***) Quick Access Commands are not shown
-here in detail. They offer an alternate way
-to quickly go through the Halting/Halted/Halted
-Abstract Command/Halted/Resuming states.<y:LabelModel><y:SmartNodeLabelModel distance="4.0"/></y:LabelModel><y:ModelParameter><y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/></y:ModelParameter></y:NodeLabel>
+***) Quick Access Commands are not shown here in detail. 
+They offer an alternate way to quickly go through the 
+Halting/Halted/Halted Abstract Command/Halted/Resuming 
+states.
+
+This diagram shows states involved while debugging normally,
+but is not exhaustive.<y:LabelModel><y:SmartNodeLabelModel distance="4.0"/></y:LabelModel><y:ModelParameter><y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/></y:ModelParameter></y:NodeLabel>
           <y:Shape type="rectangle"/>
         </y:ShapeNode>
       </data>
