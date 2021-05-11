@@ -1,5 +1,5 @@
 <registers name="Trigger Registers" prefix="CSR_" label="trigger">
-    The trigger registers, except \RcsrScontext, are only accessible in machine
+    The trigger registers, except \RcsrScontext and \RcsrHcontext, are only accessible in machine
     and Debug Mode to prevent untrusted user code from causing entry into Debug
     Mode without the OS's permission.
 
@@ -884,12 +884,14 @@
         </field>
         <field name="0" bits="XLEN-7:13" access="R" reset="0" />
         <field name="vs" bits="12" access="WARL" reset="0">
-          When set, enable this trigger in VS-mode.
+          When set, enable this trigger for interrupts that are taken from VS
+          mode.
           This bit is hard-wired to 0 if the hart does not support
           virtualization mode.
         </field>
         <field name="vu" bits="11" access="WARL" reset="0">
-          When set, enable this trigger in VU-mode.
+          When set, enable this trigger for interrupts that are taken from VU
+          mode.
           This bit is hard-wired to 0 if the hart does not support
           virtualization mode.
         </field>
@@ -945,12 +947,14 @@
         </field>
         <field name="0" bits="XLEN-7:13" access="R" reset="0" />
         <field name="vs" bits="12" access="WARL" reset="0">
-          When set, enable this trigger in VS-mode.
+          When set, enable this trigger for exceptions that are taken from VS
+          mode.
           This bit is hard-wired to 0 if the hart does not support
           virtualization mode.
         </field>
         <field name="vu" bits="11" access="WARL" reset="0">
-          When set, enable this trigger in VU-mode.
+          When set, enable this trigger for exceptions that are taken from VU
+          mode.
           This bit is hard-wired to 0 if the hart does not support
           virtualization mode.
         </field>

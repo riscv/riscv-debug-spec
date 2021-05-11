@@ -2,8 +2,7 @@ RISC-V Debug Specification
 ==========================
 
 You may be looking for one of the following pre-built PDFs:
-* [Latest draft](https://github.com/riscv/riscv-debug-spec/blob/master/riscv-debug-draft.pdf) or
-  [stable](https://github.com/riscv/riscv-debug-spec/blob/master/riscv-debug-stable.pdf)
+* [Latest stable](https://github.com/riscv/riscv-debug-spec/blob/master/riscv-debug-stable.pdf)
 * [Latest release](https://github.com/riscv/riscv-debug-spec/blob/release/riscv-debug-release.pdf)
 
 Build Instructions
