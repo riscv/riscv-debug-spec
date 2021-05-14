@@ -76,7 +76,9 @@
             selected \RcsrTselect.  Writes from other modes are ignored.
 
             This bit is only writable from Debug Mode.
-            When clearing this bit, the debugger should also clear the action field
+            In ordinary use, external debuggers will always set this bit when
+            configuring a trigger.
+            When clearing this bit, debuggers should also clear the action field
             (whose location depends on \FcsrTdataOneType).
         </field>
         <field name="data" bits="XLEN-6:0" access="WARL" reset="Preset">
