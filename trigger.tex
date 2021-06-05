@@ -53,9 +53,9 @@ Table~\ref{tab:action} lists all options.
 \hline
 Value & Description \\
 \hline
-0 & Raise a breakpoint exception into M-Mode. (Used when software wants to
-    use the trigger module without an external debugger attached.)
-    \Rmepc must contain the virtual address of the next instruction that must
+0 & Raise a breakpoint exception. (Used when software wants to use the
+    trigger module without an external debugger attached.)  The exception PC
+    must contain the virtual address of the next instruction that must
     be executed to preserve the program flow. \\
 \hline
 1 & Enter Debug Mode.
