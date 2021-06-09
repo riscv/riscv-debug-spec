@@ -668,12 +668,12 @@
             If groups aren't implemented, then this entire field is 0.
         </field>
         <field name="hgwrite" bits="1" access="W1" reset="-">
-            When \FdmDmcsTwoHgselect is 0, writing 1 changes the group of all
-            selected harts to the value written to \FdmDmcsTwoGroup.
-
             When 1 is written and \FdmDmcsTwoHgselect is 0, for every selected
             hart the DM will change its group to the value written to \FdmDmcsTwoGroup,
             if the hardware supports that group for that hart.
+            Implementations may also change the group of a minimal set of
+            unselected harts in the same way, if that is necessary due to
+            a hardware limitation.
 
             When 1 is written and \FdmDmcsTwoHgselect is 1, the DM will change
             the group of the DM external trigger selected by \FdmDmcsTwoDmexttrigger
