@@ -672,8 +672,8 @@
             hart the DM will change its group to the value written to \FdmDmcsTwoGroup,
             if the hardware supports that group for that hart.
             Implementations may also change the group of a minimal set of
-            unselected harts in the same way, if that is necessary to work
-            around a hardware limitation.
+            unselected harts in the same way, if that is necessary due to
+            a hardware limitation.
 
             When 1 is written and \FdmDmcsTwoHgselect is 1, the DM will change
             the group of the DM external trigger selected by \FdmDmcsTwoDmexttrigger
