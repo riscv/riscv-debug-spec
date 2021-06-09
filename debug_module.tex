@@ -147,9 +147,8 @@ this feature is supported, multiple harts can be halted, resumed, and reset
 simultaneously. The state of the hart array mask register is not affected by
 setting or clearing \FdmDmcontrolHasel.
 
-Only the actions initiated by \RdmDmcontrol can apply to multiple harts
-at once, Abstract Commands apply only to the hart selected by
-\Fhartsel.
+Execution of Abstract Commands ignores this mechanism and only applies to the
+hart selected by \Fhartsel.
 
 \section{Hart DM States}
 
