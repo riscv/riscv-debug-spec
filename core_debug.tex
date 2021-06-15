@@ -19,7 +19,7 @@ How Debug Mode is implemented is not specified here.
 \begin{steps}{When executing code due to an abstract command, the hart stays in
     Debug Mode and the following apply:}
 \item All operations are executed at machine mode privilege level, except that
-    \FcsrMcontrolMprv in \Rmstatus may be ignored according to \FcsrDcsrMprven.
+    \FcsrMstatusMprv in \Rmstatus may be ignored according to \FcsrDcsrMprven.
     Full permission checks, or a relaxed set of permission checks, will apply
     according to \FdmAbstractcsRelaxedpriv.
 \item All interrupts (including NMI) are masked.
@@ -145,7 +145,7 @@ executed.
     \item The current privilege mode and virtualization mode are changed to that specified by
         \FcsrDcsrPrv and \FcsrDcsrV.
     \item If the new privilege mode is less privileged than M-mode,
-        \FcsrMcontrolMprv in \Rmstatus is cleared.
+        \FcsrMstatusMprv in \Rmstatus is cleared.
     \item The hart is no longer in debug mode.
 \end{steps}
 
