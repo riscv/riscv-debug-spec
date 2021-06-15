@@ -147,7 +147,7 @@
 
             \FcsrTcontrolMpte and \FcsrTcontrolMte provide one solution to a problem
             regarding triggers with action=0 firing in M-mode trap handlers. See
-            Section~\ref{sec:mmtrigger} for more details.
+            Section~\ref{sec:shtrigger} for more details.
 
             When a trap into M-mode is taken, \FcsrTcontrolMpte is set to the value of
             \FcsrTcontrolMte.

@@ -18,14 +18,20 @@
 \newcommand{\defregname}[2]{\providecommand{#1}{{\tt #2}\xspace}}
 \newcommand{\deffieldname}[2]{\providecommand{#1}{{$|#2|$}\xspace}}
 \deffieldname{\FcsrMstatusMprv}{MPRV}
-\deffieldname{\FcsrMcontrolMie}{MIE}
+\deffieldname{\FcsrMstatusMie}{MIE}
+\deffieldname{\FcsrSstatusSie}{SIE}
 \deffieldname{\Fmxl}{MXL}
 \defregname{\Rmisa}{misa}
 \defregname{\Rmstatus}{mstatus}
+\defregname{\Rsstatus}{sstatus}
+\defregname{\Rvsstatus}{vsstatus}
 \defregname{\Rmcause}{mcause}
+\defregname{\Rmepc}{mepc}
 \defregname{\Rmie}{mie}
 \defregname{\Rxepc}{xepc}
 \defregname{\Rmepc}{mepc}
+\defregname{\Rmedeleg}{medeleg}
+\defregname{\Rhedeleg}{hedeleg}
 
 \deffieldname{\Fasid}{ASID}
 \defregname{\Rsatp}{satp}
@@ -50,6 +56,7 @@
 \defregname{\Fone}{f1}
 \defregname{\Rpc}{pc}
 \defregname{\Rmhartid}{mhartid}
+\defregname{\Rmepc}{mepc}
 \defregname{\Rdataone}{data1}
 
 \input{hwbp_registers.tex.inc}

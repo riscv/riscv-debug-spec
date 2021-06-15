@@ -142,33 +142,81 @@ be set, giving a debugger an opportunity to handle this case. What happens with
 trace actions when triggers with different actions are also firing is left to
 the trace specification.
 
-\section{Native M-Mode Triggers}
-\label{sec:mmtrigger}
+\section{Self-hosted Triggers}
+\label{sec:shtrigger}
 
-Triggers can be used for native debugging. On a fully featured hart, triggers
-will be set using \FcsrMcontrolU or \FcsrMcontrolS, and when firing they can cause a breakpoint exception
-to trap to a more privileged mode. It is possible to set triggers natively to
-fire in M-mode as well. In that case there is no higher privilege mode to trap
-to. When such a trigger causes a breakpoint exception while already in a trap
-handler, this might leave the hart unable to resume normal execution.
+Triggers can be used for self-hosted debugging when \FcsrMcontrolSixAction=0.
+If supported by the hart and desired by the debugger, triggers will often be
+programmed to have \FcsrMcontrolSixM=0 so that when they fire they cause a
+breakpoint exception to trap to a more privileged mode. That breakpoint
+exception can either be taken in M-mode or it can be delegated to a less
+privileged mode. However, it is possible for triggers to fire in the same
+mode that the resulting exception will be handled in.
 
-On full-featured harts this is a remote corner case that can probably be
-ignored. On harts that only implement M-mode, however, it is recommended to
-implement one of two solutions to this problem. This way triggers can be useful
-for native debugging of even M-mode code.
+\begin{steps}{In particular, when \FcsrMcontrolSixAction=0:}
+\item mcontrol and mcontrol6 triggers with \FcsrMcontrolSixM=1 can cause a
+breakpoint exception that is taken from M-mode to M-mode (regardless of
+delegation).
+\item mcontrol and mcontrol6 triggers with \FcsrMcontrolSixS=1 can cause a
+breakpoint exception that is taken from S-mode to S-mode if \Rmedeleg[3]=1.
+\item mcontrol6 triggers with \FcsrMcontrolSixVs=1 can cause a
+breakpoint exception that is taken from VS-mode to VS-mode if \Rmedeleg[3]=1
+and \Rhedeleg[3]=1.
+\item icount triggers with \FcsrIcountM=1 can cause a
+breakpoint exception that is taken from M-mode to M-mode (regardless of
+delegation).
+\item icount triggers with \FcsrIcountS=1 can cause a
+breakpoint exception that is taken from S-mode to S-mode if \Rmedeleg[3]=1.
+\item icount triggers with \FcsrIcountVs=1 can cause a
+breakpoint exception that is taken from VS-mode to VS-mode if \Rmedeleg[3]=1
+and \Rhedeleg[3]=1.
+\item etrigger and itrigger triggers will always be taken from a trap handler
+before the first instruction of the handler.  If etrigger/itrigger is set to
+trigger on exception/interrupt X and if X is delegated to mode Y then the
+trigger will cause a breakpoint exception that is taken from mode Y to mode
+Y unless breakpoint exceptions are delegated to a more privileged mode than Y.
+\item tmexttrigger triggers are asynchronous and may occur in any mode and
+at any time.
+\end{steps}
 
-The simple solution is to have the hardware prevent triggers with action=0 from
-firing while in M-mode and while \FcsrMcontrolMie in \Rmstatus is 0. Its limitation is
-that interrupts might be disabled at other times when a user might want
-triggers to fire.
+In these cases such a trigger may cause a breakpoint exception while already
+in a trap handler. This might leave the hart unable to resume normal execution
+because state such as \Rmcause and \Rmepc would be overwritten.
 
-A more complex solution is to implement \FcsrTcontrolMte and \FcsrTcontrolMpte in \RcsrTcontrol. This
-solution has the benefit that it only disables triggers during the trap
-handler.
+\begin{steps}{If a hart supports a configuration such that any of the cases
+above may occur, one of the following two solutions must be implemented to
+solve this problem:}
+\item The hardware must prevent triggers with action=0 from firing while in
+M-mode and while \FcsrMstatusMie in \Rmstatus is 0.  If \Rmedeleg[3]=1 then
+it must prevent triggers with action=0 from firing while in S-mode and while
+\FcsrSstatusSie in \Rsstatus is 0.  If \Rmedeleg[3]=1 and \Rhedeleg[3]=1 then
+it must prevent triggers with action=0 from firing while in VS-mode and while
+\FcsrSstatusSie in \Rvsstatus is 0.
+\item \FcsrTcontrolMte and \FcsrTcontrolMpte in \RcsrTcontrol must be
+implemented.  \Rmedeleg[3] must be hard-wired to 0.
+\end{steps}
 
-A user setting M-mode triggers that cause breakpoint exceptions will have to be
-aware of any problems that might come up with the particular hart they are
-working on.
+\begin{commentary}
+The first option has the limitation that interrupts might be disabled at
+times when a user still might want triggers to fire.  It has the benefit
+that breakpoints are not required to be handled in M-mode.
+
+The second option has the benefit that it only disables triggers during
+the trap handler, though it requires specific software support for this debug
+feature in the M-mode trap handlers.  It can only work if breakpoints are not
+delegated to less privileged modes and therefore targets primarily
+implementations without S-mode.
+
+Because \RcsrTcontrol is not accessible to S-mode, the second option can
+not be extended to accommodate delegation without adding additional S-mode
+and VS-mode CSRs.
+
+Both options prevent etrigger and itrigger from having any effect on
+exceptions and interrupts that are handled in M-mode.  They also prevent
+triggering during some initial portion of each handler.  Debuggers should
+use other mechanisms to debug these cases, such as patching the handler
+or setting a breakpoint on the instruction after \FcsrMstatusMie is cleared.
+\end{commentary}
 
 \section{Trigger Registers}
 
