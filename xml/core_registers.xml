@@ -117,9 +117,9 @@
           This bit is hardwired to 0 on harts that do not support virtualization mode.
         </field>
         <field name="mprven" bits="4" access="WARL" reset="Preset">
-            0: \FcsrMcontrolMprv in \Rmstatus is ignored in Debug Mode.
+            0: \FcsrMstatusMprv in \Rmstatus is ignored in Debug Mode.
 
-            1: \FcsrMcontrolMprv in \Rmstatus takes effect in Debug Mode.
+            1: \FcsrMstatusMprv in \Rmstatus takes effect in Debug Mode.
 
             Implementing this bit is optional. It may be tied to either 0 or 1.
 	</field>

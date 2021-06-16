@@ -236,6 +236,11 @@ The hart's halt-on-reset request bit remains set
 until cleared by the debugger writing 1 to \FdmDmcontrolClrresethaltreq
 while the hart is selected, or by DM reset.
 
+If the DM is reset while a hart is halted, it is \unspecified\ whether
+that hart resumes.  Debuggers should use \FdmDmcontrolResumereq to
+explicitly resume harts before clearing \FdmDmcontrolDmactive and
+disconnecting.
+
 \section{Halt Groups, Resume Groups, and External Triggers} \label{hrgroups}
 
 An optional feature allows a debugger to place harts into two kinds of groups: halt
