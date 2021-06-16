@@ -194,7 +194,7 @@
             0: Addresses are physical (to the hart they are performed on).
 
             1: Addresses are virtual, and translated the way they would be from
-            M-mode, with \FcsrMcontrolMprv set.
+            M-mode, with \FcsrMstatusMprv set.
 
             Debug Modules on systems without address translation (i.e. virtual addresses equal physical)
             may optionally allow \FacAccessmemoryAamvirtual set to 1, which would produce the same result as
