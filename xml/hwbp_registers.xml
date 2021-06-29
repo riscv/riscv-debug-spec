@@ -180,9 +180,10 @@
             context.
 
             An implementation may tie any number of upper bits in this field to
-            0. If the H extension is not supported, it's recommended to implement
-            no more than 6 bits on RV32, and 13 on RV64.  If the H extension is
-            supported, it's recommended to implement no more than 7 bits on RV32
+            0. If the H extension is not implemented, it's recommended to implement
+            no more than 6 bits on RV32 and 13 on RV64 (as visible through the
+            \RcsrMcontext register).  If the H extension is implemented,
+            it's recommended to implement no more than 7 bits on RV32
             and 14 on RV64.
         </field>
     </register>
