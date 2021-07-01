@@ -1,4 +1,4 @@
-name: Build Document
+name: Verify Build
 on: [push]
 jobs:
     Build:
@@ -10,3 +10,4 @@ jobs:
                         texlive-latex-recommended texlive-latex-extra \
                         texlive-fonts-extra texlive-science
             - run: make
+            - run: make chisel
