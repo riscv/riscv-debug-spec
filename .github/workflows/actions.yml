@@ -5,5 +5,5 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v2
-            - run: sudo apt-get install python3-sympy
+            - run: sudo apt-get install python3-sympy texlive-latex-base
             - run: make
