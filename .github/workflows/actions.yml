@@ -7,5 +7,6 @@ jobs:
             - uses: actions/checkout@v2
             - run: >
                 sudo apt-get install python3-sympy texlive-latex-base \
-                        texlive-latex-recommended texlive-latex-extra
+                        texlive-latex-recommended texlive-latex-extra \
+                        texlive-fonts-extra
             - run: make
