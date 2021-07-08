@@ -12,7 +12,11 @@
             {\tt arg0} region of {\tt data} into the register specified by
             \FacAccessregisterRegno, and perform any side effects that occur when this register
             is written from M-mode.
-        \item If \FacAccessregisterAarpostincrement is set, increment \FacAccessregisterRegno.
+        \item If \FacAccessregisterAarpostincrement and
+            \FacAccessregisterTransfer are set, increment
+            \FacAccessregisterRegno. \FacAccessregisterRegno may also be
+            incremented if \FacAccessregisterAarpostincrement is set and
+            \FacAccessregisterTransfer is clear.
         \item Execute the Program Buffer, if \FacAccessregisterPostexec is set.
         \end{steps}
 
