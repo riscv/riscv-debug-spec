@@ -72,6 +72,9 @@ functionality.
         An address as a hart sees it. If the hart is using address translation this
         may be different from the physical address. If there is no
         translation then it will be the same.
+    \item[\Rxepc]
+        The exception program counter CSR (e.g. \Rmepc) that is appropriate for
+        the mode being trapped to.
 \end{description}
 
 \section{Context}
