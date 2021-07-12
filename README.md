@@ -28,7 +28,7 @@ Please note that pull requests will only be reviewed/accepted from RISC-V Founda
 
 1. Make a PR. This is the best way to deal with minor typos and edits.
 2. File an issue with something that you want to know or see.
-3. Discuss higher-level questions or ideas on the riscv-debug-group mailing list: https://groups.google.com/a/groups.riscv.org/forum/#!forum/debug
+3. Discuss higher-level questions or ideas on the riscv-debug-group mailing list: https://lists.riscv.org/g/tech-debug
 
 For More Information
 ------------------
