@@ -142,10 +142,11 @@ be set, giving a debugger an opportunity to handle this case. What happens with
 trace actions when triggers with different actions are also firing is left to
 the trace specification.
 
-\section{Self-hosted Triggers}
-\label{sec:shtrigger}
+\section{Native Triggers}
+\label{sec:nativetrigger}
 
-Triggers can be used for self-hosted debugging when \FcsrMcontrolSixAction=0.
+\begin{commentary}
+Triggers can be used for native debugging when \FcsrMcontrolSixAction=0.
 If supported by the hart and desired by the debugger, triggers will often be
 programmed to have \FcsrMcontrolSixM=0 so that when they fire they cause a
 breakpoint exception to trap to a more privileged mode. That breakpoint
@@ -182,15 +183,17 @@ at any time.
 In these cases such a trigger may cause a breakpoint exception while already
 in a trap handler. This might leave the hart unable to resume normal execution
 because state such as \Rmcause and \Rmepc would be overwritten.
+\end{commentary}
 
-\begin{steps}{If a hart supports a configuration such that any of the cases
-above may occur, one of the following two solutions must be implemented to
-solve this problem:}
-\item The hardware must prevent triggers with action=0 from firing while in
-M-mode and while \FcsrMstatusMie in \Rmstatus is 0.  If \Rmedeleg[3]=1 then
-it must prevent triggers with action=0 from firing while in S-mode and while
-\FcsrSstatusSie in \Rsstatus is 0.  If \Rmedeleg[3]=1 and \Rhedeleg[3]=1 then
-it must prevent triggers with action=0 from firing while in VS-mode and while
+\begin{steps}{Harts that support triggers with \FcsrMcontrolSixAction=0
+must implement one of the following two solutions to solve the problem of
+reentrancy:}
+\item The hardware must prevent triggers with \FcsrMcontrolSixAction=0 from
+firing while in M-mode and while \FcsrMstatusMie in \Rmstatus is 0.  If
+\Rmedeleg[3]=1 then it must prevent triggers with \FcsrMcontrolSixAction=0
+from firing while in S-mode and while \FcsrSstatusSie in \Rsstatus is 0.
+If \Rmedeleg[3]=1 and \Rhedeleg[3]=1 then it must prevent triggers with
+\FcsrMcontrolSixAction=0 from firing while in VS-mode and while
 \FcsrSstatusSie in \Rvsstatus is 0.
 \item \FcsrTcontrolMte and \FcsrTcontrolMpte in \RcsrTcontrol must be
 implemented.  \Rmedeleg[3] must be hard-wired to 0.
