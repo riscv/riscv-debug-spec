@@ -188,15 +188,15 @@ because state such as \Rmcause and \Rmepc would be overwritten.
 \begin{steps}{Harts that support triggers with \FcsrMcontrolSixAction=0
 should implement one of the following two solutions to solve the problem of
 reentrancy:}
-\item The hardware must prevent triggers with \FcsrMcontrolSixAction=0 from
+\item The hardware prevents triggers with \FcsrMcontrolSixAction=0 from
 firing while in M-mode and while \FcsrMstatusMie in \Rmstatus is 0.  If
-\Rmedeleg[3]=1 then it must prevent triggers with \FcsrMcontrolSixAction=0
+\Rmedeleg[3]=1 then it prevents triggers with \FcsrMcontrolSixAction=0
 from firing while in S-mode and while \FcsrSstatusSie in \Rsstatus is 0.
-If \Rmedeleg[3]=1 and \Rhedeleg[3]=1 then it must prevent triggers with
+If \Rmedeleg[3]=1 and \Rhedeleg[3]=1 then it prevents triggers with
 \FcsrMcontrolSixAction=0 from firing while in VS-mode and while
 \FcsrSstatusSie in \Rvsstatus is 0.
-\item \FcsrTcontrolMte and \FcsrTcontrolMpte in \RcsrTcontrol must be
-implemented.  \Rmedeleg[3] must be hard-wired to 0.
+\item \FcsrTcontrolMte and \FcsrTcontrolMpte in \RcsrTcontrol is
+implemented.  \Rmedeleg[3] is hard-wired to 0.
 \end{steps}
 
 \begin{commentary}
