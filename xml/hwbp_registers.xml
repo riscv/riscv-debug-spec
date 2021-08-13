@@ -777,18 +777,25 @@
     <register name="Instruction Count" short="icount" address="0x7a1">
         This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 3.
 
-        If \FcsrIcountCount is not 0, then every instruction completed or
+        When \FcsrIcountCount is greater than 1, every instruction completed or
         trap taken from a mode where the trigger is enabled decrements
         \FcsrIcountCount by 1.
-        When
-        \FcsrIcountCount is decremented from 1 to 0 then \FcsrIcountPending
-        becomes set. When \FcsrIcountPending is set, the trigger fires just
+
+        When \FcsrIcountCount is 1, and an instruction is completed or trap
+        taken from a mode where the trigger is enabled, then \FcsrIcountPending
+        becomes set. In addition \FcsrIcountCount may become 0 as well.
+
+        When \FcsrIcountCount is 0 it stays at 0.
+
+        When \FcsrIcountPending is set, the trigger fires just
         before any further instructions are executed in a mode where the
         trigger is enabled. As the trigger fires, \FcsrIcountPending is
+        cleared. In addition, if \FcsrIcountCount is 1 then \FcsrIcountM,
+        \FcsrIcountS, \FcsrIcountU, \FcsrIcountVs, and \FcsrIcountVu are all
         cleared.
 
         \begin{commentary}
-        The intent of this design is to cleanly handle the case where
+        The intent of \FcsrIcountPending is to cleanly handle the case where
         \FcsrIcountAction is 0, \FcsrIcountM is 0, \FcsrIcountU is 1,
         \FcsrIcountCount is 1, and the U-mode instruction being executed
         causes a trap into M-mode. In that case we want the entire M-mode
@@ -801,6 +808,11 @@
         useful both for external debuggers and for software monitor programs.
         For that case it is not necessary to support \FcsrIcountCount greater
         than 1.
+
+        If \RcsrIcount is only implemented for single step, then it can be done
+        using a single bit that ties \FcsrIcountM, \FcsrIcountS, \FcsrIcountU,
+        \FcsrIcountVs, and \FcsrIcountVu together while \FcsrIcountCount is
+        hard-wired to 1.
         \end{commentary}
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="3" />
@@ -825,11 +837,8 @@
             and writing it has no effect.
         </field>
         <field name="count" bits="23:10" access="WARL" reset="1">
-            When count is decremented to 0, the trigger fires. Instead of
-            changing \FcsrIcountCount from 1 to 0, it is also acceptable for hardware to
-            clear \FcsrIcountM, \FcsrIcountS, \FcsrIcountU, \FcsrIcountVs, and
-            \FcsrIcountVu. This allows \FcsrIcountCount to be hard-wired
-            to 1 if this register just exists for single step.
+            The trigger will generally fire after \FcsrIcountCount instructions
+            in enabled modes have been executed.
         </field>
 
         <field name="m" bits="9" access="WARL" reset="0">
@@ -837,7 +846,8 @@
         </field>
         <field name="pending" bits="8" access="R/W" reset="0">
             This bit becomes set when \FcsrIcountCount is decremented from 1
-            to 0. It is cleared when the trigger fires.
+            to 0. It is cleared when the trigger fires, which will happen just
+            before the next instruction in one of the enabled modes is executed.
         </field>
         <field name="s" bits="7" access="WARL" reset="0">
             When set, enable this trigger in S/HS-mode.
