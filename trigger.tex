@@ -251,4 +251,16 @@ follows:}
 \item Write desired value to \RcsrTdataOne.
 \end{steps}
 
+\begin{steps}{Some triggers rely on the effective mode.  The effective mode
+    is the mode that is used by a memory access for purposes of permission
+    checks.  Specifically:}
+\item For instruction fetches, the effective mode is the current mode.
+\item When \FcsrMstatusMprv=0, the effective mode for data accesses (other
+  than hypervisor load/store instructions) is the current mode.
+\item When \FcsrMstatusMprv=1, the effective mode for data accesses (other
+  than hypervisor load/store instructions) is the mode specified by
+  \FcsrMstatusMpp and \FcsrMstatusMpv.
+\item For the hypervisor load/store instructions, the effective mode for
+  data accesses is the mode specified by \FcsrHstatusSpvp.
+\end{steps}
 \input{hwbp_registers.tex}
