@@ -398,7 +398,14 @@ def print_latex_custom( registers ):
         print()
 
         if r.fields:
-            if all(f.access in ('R', '0') for f in r.fields):
+            if registers.prefix == "CSR_":
+                if int(r.address, 0) >= 0xc00:
+                    print("This CSR is read-only.")
+                elif all(f.access in ('R', '0') for f in r.fields):
+                    print("Writing this read/write CSR has no effect.")
+                else:
+                    print("This CSR is read/write.")
+            elif all(f.access in ('R', '0') for f in r.fields):
                 print("This entire register is read-only.")
 
             print("\\begin{center}")
