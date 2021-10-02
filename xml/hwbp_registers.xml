@@ -963,7 +963,8 @@
         </field>
         <field name="nmi" bits="10" access="WARL" reset="0">
             When set, non-maskable interrupts cause this
-            trigger to fire, regardless of the values of \FcsrEtriggerM, \FcsrEtriggerS, and \FcsrEtriggerU.
+            trigger to fire, regardless of the values of \FcsrEtriggerM,
+            \FcsrEtriggerS, \FcsrEtriggerU, \FcsrEtriggerVs, and \FcsrEtriggerVu.
         </field>
         <field name="m" bits="9" access="WARL" reset="0">
             When set, enable this trigger for exceptions that are taken from M
