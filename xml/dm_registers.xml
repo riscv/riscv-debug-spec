@@ -500,14 +500,14 @@
 
         <field name="autoexecprogbuf" bits="31:16" access="WARL" reset="0">
             When a bit in this field is 1, read or write accesses to the
-            corresponding {\tt progbuf} word cause the command in \RdmCommand to
-            be executed again.
+            corresponding {\tt progbuf} word cause the DM to act as if the
+            current value in \RdmCommand was written there again.
         </field>
         <field name="0" bits ="15:12" access="R" reset = "0"/>
         <field name="autoexecdata" bits="11:0" access="WARL" reset="0">
             When a bit in this field is 1, read or write accesses to the
-            corresponding {\tt data} word cause the command in \RdmCommand to be
-            executed again.
+            corresponding {\tt data} word cause the DM to act as if the current
+            value in \RdmCommand was written there again.
         </field>
     </register>
 
