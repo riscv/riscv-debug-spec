@@ -567,8 +567,9 @@
             virtualization mode.
         </field>
         <field name="hit" bits="22" access="WARL" reset="0">
-            If this bit is implemented, the hardware sets it when this
-            trigger matches. The trigger's user can set or clear it at any
+            If this bit is implemented then it must become set when this
+            trigger fires and may become set when this trigger matches.
+            The trigger's user can set or clear it at any
             time. It is used to determine which
             trigger(s) matched.  If the bit is not implemented, it is always 0
             and writing it has no effect.
