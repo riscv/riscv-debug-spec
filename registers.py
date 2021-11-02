@@ -34,13 +34,14 @@ def sympy_compare_lowBit( a, b ):
     return 0
 
 class Register( object ):
-    def __init__( self, name, short, description, address, sdesc, define ):
+    def __init__( self, name, short, description, address, sdesc, define, show_in_latex ):
         self.name = name
         self.short = short
         self.description = description
         self.address = address
         self.sdesc = sdesc
         self.define = define
+        self.show_in_latex = bool(show_in_latex)
         self.fields = []
 
         self.label = ( short or name ).lower() # TODO: replace spaces etc.
@@ -134,9 +135,14 @@ def parse_xml( path ):
             description = r.text.strip()
         else:
             description = ""
-        register = Register( name, short, description,
-                r.get( 'address' ), r.get( 'sdesc' ),
-                int( r.get( 'define', '1' ) ) )
+        register = Register(
+                name,
+                short,
+                description,
+                r.get( 'address' ),
+                r.get( 'sdesc' ),
+                int( r.get( 'define', '1' ) ),
+                int( r.get('show_in_latex', 1 ) ) )
 
         fields = r.findall( 'field' )
         for f in fields:
@@ -351,6 +357,8 @@ def print_latex_index( registers ):
     print("      \\hline")
     for r in sorted( registers.registers,
             key=cmp_to_key(lambda a, b: compare_address(a.address, b.address))):
+        if not r.show_in_latex:
+            continue
         if r.short and (r.fields or r.description):
             page = "\\pageref{%s}" % toLatexIdentifier(registers.prefix, r.short)
         else:
@@ -372,6 +380,8 @@ def print_latex_custom( registers ):
     sub = "sub" * registers.depth
     for r in registers.registers:
         if not r.fields and not r.description:
+            continue
+        if not r.show_in_latex:
             continue
 
         if r.short:
@@ -490,6 +500,8 @@ def print_latex_register( registers ):
     sub = "sub" * registers.depth
     for r in registers.registers:
         if not r.fields and not r.description:
+            continue
+        if not r.show_in_latex:
             continue
 
         if r.short:

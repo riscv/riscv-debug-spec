@@ -394,7 +394,7 @@
             4 (halt/resume): The abstract command couldn't execute because the
             hart wasn't in the required state (running/halted), or unavailable.
 
-            5 (bus): The abstract command failed due to a bus error (e.g.\ 
+            5 (bus): The abstract command failed due to a bus error (e.g.\
             alignment, access size, or timeout).
 
             6: Reserved for future use.
@@ -519,18 +519,20 @@
 
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
-    <!--
-    <register name="Abstract Data 1" short="data1" address="0x05" />
-    <register name="Abstract Data 2" short="data2" address="0x06" />
-    <register name="Abstract Data 3" short="data3" address="0x07" />
-    <register name="Abstract Data 4" short="data4" address="0x08" />
-    <register name="Abstract Data 5" short="data5" address="0x09" />
-    <register name="Abstract Data 6" short="data6" address="0x0a" />
-    <register name="Abstract Data 7" short="data7" address="0x0b" />
-    <register name="Abstract Data 8" short="data8" address="0x0c" />
-    <register name="Abstract Data 9" short="data9" address="0x0d" />
-    <register name="Abstract Data 10" short="data10" address="0x0e" />
-    -->
+
+    <!-- Generate register entries data1..data10 to code C and Scala code
+         but skip them in Latex doc -->
+    <register name="Abstract Data 1" short="data1" address="0x05" show_in_latex="0" />
+    <register name="Abstract Data 2" short="data2" address="0x06" show_in_latex="0" />
+    <register name="Abstract Data 3" short="data3" address="0x07" show_in_latex="0" />
+    <register name="Abstract Data 4" short="data4" address="0x08" show_in_latex="0" />
+    <register name="Abstract Data 5" short="data5" address="0x09" show_in_latex="0" />
+    <register name="Abstract Data 6" short="data6" address="0x0a" show_in_latex="0" />
+    <register name="Abstract Data 7" short="data7" address="0x0b" show_in_latex="0" />
+    <register name="Abstract Data 8" short="data8" address="0x0c" show_in_latex="0" />
+    <register name="Abstract Data 9" short="data9" address="0x0d" show_in_latex="0" />
+    <register name="Abstract Data 10" short="data10" address="0x0e" show_in_latex="0" />
+
     <register name="Abstract Data 11" short="data11" address="0x0f" />
 
     <!-- =============== Program Buffer =============== -->
@@ -547,24 +549,26 @@
 
         <field name="data" bits="31:0" access="R/W" reset="0" />
     </register>
-    <!--
-    <register name="Program Buffer 1" short="progbuf1" address="0x21" />
-    <register name="Program Buffer 2" short="progbuf2" address="0x22" />
-    <register name="Program Buffer 3" short="progbuf3" address="0x23" />
-    <register name="Program Buffer 4" short="progbuf4" address="0x24" />
-    <register name="Program Buffer 5" short="progbuf5" address="0x25" />
-    <register name="Program Buffer 6" short="progbuf6" address="0x26" />
-    <register name="Program Buffer 7" short="progbuf7" address="0x27" />
-    <register name="Program Buffer 8" short="progbuf8" address="0x28" />
-    <register name="Program Buffer 9" short="progbuf9" address="0x29" />
-    <register name="Program Buffer 10" short="progbuf10" address="0x2a" />
-    <register name="Program Buffer 11" short="progbuf11" address="0x2b" />
-    <register name="Program Buffer 12" short="progbuf12" address="0x2c" />
-    <register name="Program Buffer 13" short="progbuf13" address="0x2d" />
-    <register name="Program Buffer 14" short="progbuf14" address="0x2e" />
-    -->
+
+    <!-- Generate register entries progbuf1..progbuf14 to code C and Scala code
+         but skip them in Latex doc -->
+    <register name="Program Buffer 1" short="progbuf1" address="0x21" show_in_latex="0" />
+    <register name="Program Buffer 2" short="progbuf2" address="0x22" show_in_latex="0" />
+    <register name="Program Buffer 3" short="progbuf3" address="0x23" show_in_latex="0" />
+    <register name="Program Buffer 4" short="progbuf4" address="0x24" show_in_latex="0" />
+    <register name="Program Buffer 5" short="progbuf5" address="0x25" show_in_latex="0" />
+    <register name="Program Buffer 6" short="progbuf6" address="0x26" show_in_latex="0" />
+    <register name="Program Buffer 7" short="progbuf7" address="0x27" show_in_latex="0" />
+    <register name="Program Buffer 8" short="progbuf8" address="0x28" show_in_latex="0" />
+    <register name="Program Buffer 9" short="progbuf9" address="0x29" show_in_latex="0" />
+    <register name="Program Buffer 10" short="progbuf10" address="0x2a" show_in_latex="0" />
+    <register name="Program Buffer 11" short="progbuf11" address="0x2b" show_in_latex="0" />
+    <register name="Program Buffer 12" short="progbuf12" address="0x2c" show_in_latex="0" />
+    <register name="Program Buffer 13" short="progbuf13" address="0x2d" show_in_latex="0" />
+    <register name="Program Buffer 14" short="progbuf14" address="0x2e" show_in_latex="0" />
+
     <register name="Program Buffer 15" short="progbuf15" address="0x2f" />
- 
+
     <!-- =============== authentication =============== -->
 
     <register name="Authentication Data" short="authdata" address="0x30">
