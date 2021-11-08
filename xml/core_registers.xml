@@ -93,7 +93,7 @@
 
             1: An {\tt ebreak} instruction was executed. (priority 3)
 
-            2: A Trigger Module trigger fired with action=0. (priority 4)
+            2: A Trigger Module trigger fired with action=1. (priority 4)
 
             3: The debugger requested entry to Debug Mode using \FdmDmcontrolHaltreq.
             (priority 1)
