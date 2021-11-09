@@ -709,8 +709,8 @@
             $M$ bits of \RcsrTdataTwo.
             $M$ is $|XLEN|-1$ minus the index of the least-significant bit
             containing 0 in \RcsrTdataTwo.
-            \RcsrTdataTwo is WARL and if $|maskmax6|-1$:0 are written with all
-            ones then bit $|maskmax6|-1$ will be set to 0 and $|maskmax6|-2$:0
+            \RcsrTdataTwo is WARL and if bits $|maskmax6|-1$:0 are written with all
+            ones then bit $|maskmax6|-1$ will be set to 0 while the values of bits $|maskmax6|-2$:0
             are \unspecified.
             Legal values for \RcsrTdataTwo require $M + |maskmax6| \geq |XLEN|$ and $M\gt0$.
             See above for how to determine maskmax6.
