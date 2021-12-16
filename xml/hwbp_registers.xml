@@ -210,8 +210,16 @@
     </register>
 
     <register name="Machine Supervisor Context" short="mscontext" address="0x7aa">
-        This optional register is an alias for \RcsrScontext included for
-        backward compatibility (if desired).
+        This optional register is an alias for \RcsrScontext.  It is only
+        accessible in S/HS-mode, M-mode and Debug Mode.  It is included
+        for backward compatibility with version 0.13.
+
+        \begin{commentary}
+        The encoding of this CSR does not conform to the CSR Address Mapping
+        Convention in the Privileged Spec.  It is expected that new
+        implementations will not support this encoding and that new
+        debuggers will not use this CSR if scontext is available.
+        \end{commentary}
     </register>
 
     <register name="Match Control" short="mcontrol" address="0x7a1">
