@@ -234,6 +234,15 @@
         hold all valid virtual addresses but it need not be capable of holding
         other values.
 
+        The Privileged Spec says that breakpoint exceptions that occur on
+        instruction fetches, loads, or stores update the {\tt tval} CSR
+        with either zero or the faulting virtual address.  The faulting
+        virtual address for an mcontrol trigger with action=0 is the
+        address being accessed and which caused that trigger to fire.
+        If multiple mcontrol triggers are chained then the faulting
+        virtual address is the address which caused any of the chained
+        triggers to fire.
+
         \begin{steps}{If the A extension is supported, then trigger behavior is as follows
         for the load and store bits:}
         \item {\tt lr} instructions are loads
@@ -525,6 +534,15 @@
         hold all valid virtual addresses but it need not be capable of holding
         other values.
 
+        The Privileged Spec says that breakpoint exceptions that occur on
+        instruction fetches, loads, or stores update the {\tt tval} CSR
+        with either zero or the faulting virtual address.  The faulting
+        virtual address for an mcontrol6 trigger with action=0 is the
+        address being accessed and which caused that trigger to fire.
+        If multiple mcontrol6 triggers are chained then the faulting
+        virtual address is the address which caused any of the chained
+        triggers to fire.
+
         \begin{steps}{In implementations that support \FcsrMcontrolSixMatch mode 1 (NAPOT), not all
         NAPOT ranges may be supported.  All NAPOT ranges between $2^{1}$ and $2^{maskmax6}$
         are supported where maskmax6 $\geq$ 1.  The value of maskmax6 can be determined
@@ -789,6 +807,9 @@
         trigger is enabled. As the trigger fires, \FcsrIcountPending is
         cleared.
 
+        If the trigger fires with action=0 then zero is written to the
+        {\tt tval} CSR on the breakpoint trap.
+
         \begin{commentary}
         The intent of this design is to cleanly handle the case where
         \FcsrIcountAction is 0, \FcsrIcountM is 0, \FcsrIcountU is 1,
@@ -874,9 +895,11 @@
         interrupt. (E.g.\  it does not fire when a timer interrupt occurs but that
         interrupt is not enabled in \Rmie.)
 
-        When the trigger fires, all CSRs are updated as defined by the
+        When the trigger fires, all CSRs are updated for the interrupt trap as defined by the
         Privileged Spec, and the requested action is taken just before the
         first instruction of the trap handler is executed.
+        If the trigger fires with action=0 then zero is written to the
+        {\tt tval} CSR on the breakpoint trap (see ~\ref{sec:nativetrigger}).
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="4" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
@@ -937,9 +960,11 @@
         back \RcsrTdataTwo after writing it to confirm the requested functionality
         is actually supported.
 
-        When the trigger fires, all CSRs are updated as defined by the
+        When the trigger fires, all CSRs are updated for the exception as defined by the
         Privileged Spec, and the requested action is taken just before the
         first instruction of the trap handler is executed.
+        If the trigger fires with action=0 then then zero is written to the
+        {\tt tval} CSR on the breakpoint trap (see ~\ref{sec:nativetrigger}).
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="4" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
@@ -1002,6 +1027,8 @@
         (starting with TM external trigger input 0 and continuing
         sequentially).  Unsupported inputs are hardwired to be inactive.
 
+        If the trigger fires with action=0 then then zero is written to the
+        {\tt tval} CSR on the breakpoint trap.
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="4" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
         <field name="hit" bits="XLEN-6" access="WARL" reset="0">
