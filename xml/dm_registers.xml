@@ -494,8 +494,9 @@
         progbuf and data registers must be writable.  Other bits must be
         hard-wired to 0.
 
-        Writing this register while an abstract command is executing causes
-        \FdmAbstractcsCmderr to become 1 (busy) once the command completes
+        If this register is written while an abstract command is executing
+        then the write is ignored and
+        \FdmAbstractcsCmderr becomes 1 (busy) once the command completes
         (busy becomes 0).
 
         <field name="autoexecprogbuf" bits="31:16" access="WARL" reset="0">
