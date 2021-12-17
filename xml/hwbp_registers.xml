@@ -785,6 +785,11 @@
         taken from a mode where the trigger is enabled, then \FcsrIcountPending
         becomes set. In addition \FcsrIcountCount may become 0 as well.
 
+        The only exception to the above is when the instruction executed is a
+        write to the icount trigger. In that case \FcsrIcountPending may or may
+        not become set if \FcsrIcountCount was 1. Afterwards \FcsrIcountCount
+        contains the newly written value.
+
         When \FcsrIcountCount is 0 it stays at 0.
 
         When \FcsrIcountPending is set, the trigger fires just
