@@ -78,9 +78,9 @@
             An implementation may hardwire this bit to 0 or 1.
         </field>
         <field name="stoptime" bits="9" access="WARL" reset="Preset">
-            0: Increment timers as usual.
+            0: Increment the time CSR as usual.
 
-            1: Don't increment any hart-local timers while in Debug Mode.
+            1: Don't increment the time CSR while in Debug Mode.
 
             An implementation may hardwire this bit to 0 or 1.
         </field>
