@@ -131,7 +131,9 @@ in the chain.
 \end{table}
 
 When multiple triggers in the same priority fire at once, \FcsrMcontrolHit (if
-implemented) is set for all of them. If one of these triggers has
+implemented) is set for all of them.  If more than one of these triggers has
+\FcsrMcontrolSixAction=0 then {\tt tval} is updated in accordance with one of
+them (which one is \unspecified).  If one of these triggers has
 the ``enter Debug Mode'' action (1) and another
 trigger has the ``raise a breakpoint exception'' action (0),
 the preferred behavior is to have both actions take place.  It is
