@@ -21,7 +21,7 @@ How Debug Mode is implemented is not specified here.
 
 \begin{steps}{When executing code due to an abstract command, the hart stays in
     Debug Mode and the following apply:}
-\item All operations are executed at machine mode privilege level, except that
+\item All operations are executed with machine mode privilege, except that
     \FcsrMstatusMprv in \Rmstatus may be ignored according to \FcsrDcsrMprven.
     Full permission checks, or a relaxed set of permission checks, will apply
     according to \FdmAbstractcsRelaxedpriv.
@@ -35,9 +35,9 @@ How Debug Mode is implemented is not specified here.
 \item If \FcsrDcsrStoptime is 0 then timers continue. If it is 1 then
     timers are stopped.
 \item The {\tt wfi} instruction acts as a {\tt nop}.
-\item Almost all instructions that change the privilege level have \unspecified\ 
+\item Almost all instructions that change the privilege mode have \unspecified\
     behavior.  This includes {\tt ecall}, {\tt mret}, {\tt sret}, and {\tt uret}.
-    (To change the privilege level, the debugger can write
+    (To change the privilege mode, the debugger can write
     \FcsrDcsrPrv and \FcsrDcsrV in \RcsrDcsr). The only exception is {\tt ebreak}, which ends
     execution of the Program Buffer when executed.
 \item All control transfer instructions may act as illegal instructions if

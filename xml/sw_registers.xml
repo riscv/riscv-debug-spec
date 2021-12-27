@@ -6,10 +6,10 @@
     requiring them to carefully modify debug registers while the debugger is
     also accessing those same registers.
 
-     <register name="Privilege Level" short="priv" address="virtual">
-        Users can read this register to inspect the privilege level that
+     <register name="Privilege Mode" short="priv" address="virtual">
+        Users can read this register to inspect the privilege mode that
         the hart was running in when the hart halted.
-        Users can write this register to change the privilege level that
+        Users can write this register to change the privilege mode that
         the hart will run in when it resumes.
 
         This register contains \FcsrDcsrPrv and \FcsrDcsrV from \RcsrDcsr, but in a place that the user
@@ -18,8 +18,8 @@
 
         \begin{table}
         \centering
-        \caption{Privilege Level and Virtualization Mode Encoding}
-        \label{tab:privlevel}
+        \caption{Privilege Mode and Virtualization Mode Encoding}
+        \label{tab:privmode}
         \begin{tabular}{|c|c|c|l|l|}
         \hline
         H extension &amp; \multirow{2}{*}{v} &amp; \multirow{2}{*}{prv} &amp; \multirow{2}{*}{Abbreviation} &amp; \multirow{2}{*}{Name} \\
@@ -40,17 +40,17 @@
 
         <field name="v" bits="2" access="WARL" reset="0">
           Contains the virtualization mode the hart was operating in when Debug
-          Mode was entered. The encoding is described in Table \ref{tab:privlevel},
+          Mode was entered. The encoding is described in Table \ref{tab:privmode},
           and matches the virtualization mode encoding from the Privileged Spec.
           A user can write this value to change the hart's virtualization mode
           when exiting Debug Mode.
         </field>
         <field name="prv" bits="1:0" access="R/W" reset="0">
-            Contains the privilege level the hart was operating in when Debug
+            Contains the privilege mode the hart was operating in when Debug
             Mode was entered. The encoding is described in Table
-            \ref{tab:privlevel}, and matches the privilege level encoding from
+            \ref{tab:privmode}, and matches the privilege mode encoding from
             the Privileged Spec. A user can write this
-            value to change the hart's privilege level when exiting Debug Mode.
+            value to change the hart's privilege mode when exiting Debug Mode.
         </field>
     </register>
 </registers>
