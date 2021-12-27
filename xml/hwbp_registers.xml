@@ -125,24 +125,7 @@
         This optional register is only accessible in M-mode and Debug Mode and
         provides various control bits related to triggers.
 
-        <field name="0" bits="XLEN-1:10" access="R" reset="0" />
-        <field name="hcxe" bits="9" access="WARL" reset="0">
-            \RcsrHcontext enable.
-
-            0: \RcsrHcontext is set to 0 and writes are ignored.
-
-            1: \RcsrHcontext may be written and read.
-        </field>
-        <field name="scxe" bits="8" access="WARL" reset="0">
-            \RcsrScontext enable.
-
-            0: \RcsrScontext is set to 0 and writes are ignored.
-
-            1: \RcsrScontext may be written and read.
-
-            Enabling \RcsrScontext can be a security risk in a
-            virtualized system with a hypervisor that does not swap \RcsrScontext.
-        </field>
+        <field name="0" bits="XLEN-1:8" access="R" reset="0" />
         <field name="mpte" bits="7" access="WARL" reset="0">
             M-mode previous trigger enable field.
 
@@ -171,6 +154,9 @@
         This optional register is only accessible in S/HS-mode, M-mode and
         Debug Mode.
 
+        Accessibility of this CSR is controlled by \Rmstateenzero[57]
+        in the Smstateen extension.
+
         If the H extension is not implemented then this register is not
         implemented, though the underlying state may be accessible via
         the optional \RcsrMcontext alias.
@@ -193,6 +179,10 @@
         This optional register is only accessible in S/HS-mode, VS-mode,
         M-mode and Debug Mode.
 
+        Accessibility of this CSR is controlled by \Rmstateenzero[57] and
+        \Rhstateenzero[57] in the Smstateen extension.  Enabling \RcsrScontext
+        can be a security risk in a virtualized system with a hypervisor that
+        does not swap \RcsrScontext.
         <field name="data" bits="XLEN-1:0" access="WARL" reset="0">
             Supervisor mode software can write a context number to this
             register, which can be used to set triggers that only fire in that
