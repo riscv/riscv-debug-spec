@@ -32,8 +32,9 @@ How Debug Mode is implemented is not specified here.
 \item No action is taken if a trigger matches.
 \item If \FcsrDcsrStopcount is 0 then counters continue. If it is 1 then
     counters are stopped.
-\item If \FcsrDcsrStoptime is 0 then timers continue. If it is 1 then
-    timers are stopped.
+\item If \FcsrDcsrStoptime is 0 then the time CSR continues to update. If
+    it is 1 then the time CSR will not update. It will resynchronize with
+    mtime after leaving Debug Mode.
 \item The {\tt wfi} instruction acts as a {\tt nop}.
 \item Almost all instructions that change the privilege level have \unspecified\ 
     behavior.  This includes {\tt ecall}, {\tt mret}, {\tt sret}, and {\tt uret}.
