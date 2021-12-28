@@ -134,7 +134,7 @@ This mechanism cleanly supports a system which supports multiple privilege
 levels, where the OS or a debug stub runs in M-Mode while the program being
 debugged runs in a less privileged mode. When a step is required, the OS or
 debug stub writes \FcsrIcountCount=1, \FcsrIcountAction=0, \FcsrIcountM=0 before
-returning control to the lower user program with an \tt{eret} instruction.
+returning control to the lower user program with an \tt{mret} instruction.
 
 It also allows single step on tiny system which only supports M-Mode, but the
 code becomes tricky to get right. To single step, the debug stub would execute
