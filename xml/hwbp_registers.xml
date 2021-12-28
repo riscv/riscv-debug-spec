@@ -783,19 +783,20 @@
 
         When \FcsrIcountCount is 1, and an instruction is completed or trap
         taken from a mode where the trigger is enabled, then \FcsrIcountPending
-        becomes set. In addition \FcsrIcountCount may become 0 as well.
+        becomes set. In addition \FcsrIcountCount will become 0 unless it is
+        hard-wired to 1.
 
         The only exception to the above is when the instruction executed is a
-        write to the icount trigger. In that case \FcsrIcountPending may or may
+        write to the icount trigger. In that case \FcsrIcountPending might or might
         not become set if \FcsrIcountCount was 1. Afterwards \FcsrIcountCount
         contains the newly written value.
 
-        When \FcsrIcountCount is 0 it stays at 0.
+        When \FcsrIcountCount is 0 it stays at 0 until explicitly written.
 
         When \FcsrIcountPending is set, the trigger fires just
         before any further instructions are executed in a mode where the
         trigger is enabled. As the trigger fires, \FcsrIcountPending is
-        cleared. In addition, if \FcsrIcountCount is 1 then \FcsrIcountM,
+        cleared. In addition, if \FcsrIcountCount is hard-wired to 1 then \FcsrIcountM,
         \FcsrIcountS, \FcsrIcountU, \FcsrIcountVs, and \FcsrIcountVu are all
         cleared.
 
