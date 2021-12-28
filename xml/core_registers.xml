@@ -80,7 +80,9 @@
         <field name="stoptime" bits="9" access="WARL" reset="Preset">
             0: Increment the time CSR as usual.
 
-            1: Don't increment the time CSR while in Debug Mode.
+            1: Don't increment the time CSR while in Debug Mode.  If all harts
+            have \FcsrDcsrStoptime=1 and are in Debug Mode then the \Rmtime
+            register is also allowed to stop incrementing.
 
             An implementation may hardwire this bit to 0 or 1.
         </field>
