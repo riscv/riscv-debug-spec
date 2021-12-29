@@ -3,12 +3,12 @@
 
     <register name="Debug Control and Status" short="dcsr" address="0x7b0">
         Upon entry to Debug Mode, \FcsrDcsrV and \FcsrDcsrPrv are updated
-        with the privilege level the hart was previously in and \FcsrDcsrCause
+        with the privilege level the hart was previously in, and \FcsrDcsrCause
         is updated with the reason for Debug Mode entry.  Other than these
         fields and \FcsrDcsrNmip, the other fields of \RcsrDcsr are only
         writable by the external debugger.
 
-        The following table shows the priorities of reasons for entering
+        Table~\ref{tab:dcsrcausepriority} shows the priorities of reasons for entering
         Debug Mode.
 
         \begin{table}[H]
