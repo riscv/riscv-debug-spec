@@ -132,20 +132,9 @@ trigger by setting \FcsrIcountCount to 1.
 
 This mechanism cleanly supports a system which supports multiple privilege
 levels, where the OS or a debug stub runs in M-Mode while the program being
-debugged runs in a less privileged mode. When a step is required, the OS or
-debug stub writes \FcsrIcountCount=1, \FcsrIcountAction=0, \FcsrIcountM=0 before
-returning control to the lower user program with an \tt{mret} instruction.
-
-It also allows single step on tiny system which only supports M-Mode, but the
-code becomes tricky to get right. To single step, the debug stub would execute
-something like:
-\begin{verbatim}
-    li    t0, \FcsrIcountCount=4, \FcsrIcountAction=0, \FcsrIcountM=1
-    csrw  tdata1, t0    /* Write the trigger. */
-    lw    t0, 8(sp)     /* Restore t0, count decrements to 3 */
-    lw    sp, 0(sp)     /* Restore sp, count decrements to 2 */
-    ret                 /* Return to program being debugged. count decrements to 1 */
-\end{verbatim}
+debugged runs in a less privileged mode. Systems that only support M-Mode can
+use \RcsrIcount as well, but count must be able to count several instructions
+(depending on the software implementation). See Section \ref{nativestep}.
 
 \section{Reset}
 
