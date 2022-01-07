@@ -250,7 +250,8 @@ trigger type supported by this trigger.
 
 \begin{steps}{As a result, a debugger can write any supported trigger as
 follows:}
-\item Write 0 to \RcsrTdataOne.
+\item Write 0 to \RcsrTdataOne. (This will result in \RcsrTdataOne containing a
+    non-zero value, since the register is WARL.)
 \item Write desired values to \RcsrTdataTwo and \RcsrTdataThree.
 \item Write desired value to \RcsrTdataOne.
 \end{steps}
