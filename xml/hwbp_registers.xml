@@ -1,5 +1,5 @@
 <registers name="Trigger Registers" prefix="CSR_" label="trigger">
-    The trigger registers, except \RcsrScontext and \RcsrHcontext, are only accessible in machine
+    The trigger registers, except \RcsrMscontext, \RcsrScontext, and \RcsrHcontext, are only accessible in machine
     and Debug Mode to prevent untrusted user code from causing entry into Debug
     Mode without the OS's permission.
 
@@ -19,6 +19,7 @@
         trigger registers. It is optional if no triggers are implemented.  The
         set of accessible triggers must start at 0, and be contiguous.
 
+        This register is \warl.
         Writes of values greater than or equal to the number of supported
         triggers may result in a different value in this register than what was
         written. To verify that what they wrote is a valid index, debuggers can
