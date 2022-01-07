@@ -38,12 +38,12 @@
             reset and reset has not been acknowledged for that hart.
         </field>
         <field name="allresumeack" bits="17" access="R" reset="-">
-            This field is 1 when all currently selected harts have acknowledged
-            their last resume request.
+            This field is 1 when all currently selected harts have their
+            \index{resume ack bit} set.
         </field>
         <field name="anyresumeack" bits="16" access="R" reset="-">
-            This field is 1 when any currently selected hart has acknowledged
-            its last resume request.
+            This field is 1 when any currently selected hart has its
+            \index{resume ack bit} set.
         </field>
         <field name="allnonexistent" bits="15" access="R" reset="-">
             This field is 1 when all currently selected harts do not exist in
@@ -494,20 +494,23 @@
         progbuf and data registers must be writable.  Other bits must be
         hard-wired to 0.
 
-        Writing this register while an abstract command is executing causes
-        \FdmAbstractcsCmderr to become 1 (busy) once the command completes
+        If this register is written while an abstract command is executing
+        then the write is ignored and
+        \FdmAbstractcsCmderr becomes 1 (busy) once the command completes
         (busy becomes 0).
 
         <field name="autoexecprogbuf" bits="31:16" access="WARL" reset="0">
             When a bit in this field is 1, read or write accesses to the
-            corresponding {\tt progbuf} word cause the command in \RdmCommand to
-            be executed again.
+            corresponding {\tt progbuf} word cause the DM to act as if the
+            current value in \RdmCommand was written there again after the
+            access to {\tt progbuf} completes.
         </field>
         <field name="0" bits ="15:12" access="R" reset = "0"/>
         <field name="autoexecdata" bits="11:0" access="WARL" reset="0">
             When a bit in this field is 1, read or write accesses to the
-            corresponding {\tt data} word cause the command in \RdmCommand to be
-            executed again.
+            corresponding {\tt data} word cause the DM to act as if the current
+            value in \RdmCommand was written there again after the
+            access to {\tt data} completes.
         </field>
     </register>
 

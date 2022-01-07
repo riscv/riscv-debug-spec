@@ -93,7 +93,7 @@
 
             1: An {\tt ebreak} instruction was executed. (priority 3)
 
-            2: A Trigger Module trigger fired with action=0. (priority 4)
+            2: A Trigger Module trigger fired with action=1. (priority 4)
 
             3: The debugger requested entry to Debug Mode using \FdmDmcontrolHaltreq.
             (priority 1)
@@ -111,7 +111,7 @@
         <field name="v" bits="5" access="WARL" reset="0">
           Extends the prv field with the virtualization mode the hart was operating
           in when Debug Mode was entered. The encoding is described in Table
-          \ref{tab:privlevel}.
+          \ref{tab:privmode}.
           A debugger can change this value to change the hart's virtualization mode
           when exiting Debug Mode.
           This bit is hardwired to 0 on harts that do not support virtualization mode.
@@ -139,14 +139,14 @@
             is running.
         </field>
         <field name="prv" bits="1:0" access="WARL" reset="3">
-            Contains the privilege level the hart was operating in when Debug
+            Contains the privilege mode the hart was operating in when Debug
             Mode was entered. The encoding is described in Table
-            \ref{tab:privlevel}.  A debugger can change this value to change
-            the hart's privilege level when exiting Debug Mode.
+            \ref{tab:privmode}.  A debugger can change this value to change
+            the hart's privilege mode when exiting Debug Mode.
 
-            Not all privilege levels are supported on all harts. If the
+            Not all privilege modes are supported on all harts. If the
             encoding written is not supported or the debugger is not allowed to
-            change to it, the hart may change to any supported privilege level.
+            change to it, the hart may change to any supported privilege mode.
         </field>
     </register>
 

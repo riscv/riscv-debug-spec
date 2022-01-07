@@ -18,14 +18,21 @@
 \newcommand{\defregname}[2]{\providecommand{#1}{{\tt #2}\xspace}}
 \newcommand{\deffieldname}[2]{\providecommand{#1}{{$|#2|$}\xspace}}
 \deffieldname{\FcsrMstatusMprv}{MPRV}
-\deffieldname{\FcsrMcontrolMie}{MIE}
+\deffieldname{\FcsrMstatusMie}{MIE}
+\deffieldname{\FcsrSstatusSie}{SIE}
 \deffieldname{\Fmxl}{MXL}
 \defregname{\Rmisa}{misa}
 \defregname{\Rmstatus}{mstatus}
+\defregname{\Rsstatus}{sstatus}
+\defregname{\Rvsstatus}{vsstatus}
 \defregname{\Rmcause}{mcause}
 \defregname{\Rmie}{mie}
 \defregname{\Rxepc}{xepc}
 \defregname{\Rmepc}{mepc}
+\defregname{\Rmedeleg}{medeleg}
+\defregname{\Rhedeleg}{hedeleg}
+\defregname{\Rmstateenzero}{mstateen0}
+\defregname{\Rhstateenzero}{hstateen0}
 
 \deffieldname{\Fasid}{ASID}
 \defregname{\Rsatp}{satp}
@@ -150,8 +157,8 @@ and Bryan Wyatt.
 \input{introduction}
 \input{overview}
 \input{debug_module}
-\input{core_debug}
-\input{trigger}
+\input{Sdext}
+\input{Sdtrig}
 \input{dtm}
 
 \newpage

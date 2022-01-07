@@ -78,8 +78,9 @@
             This bit is only writable from Debug Mode.
             In ordinary use, external debuggers will always set this bit when
             configuring a trigger.
-            When clearing this bit, debuggers should also clear the action field
-            (whose location depends on \FcsrTdataOneType).
+            When clearing this bit, debuggers should also set the action field
+            (whose location depends on \FcsrTdataOneType) to something other
+            than 1.
         </field>
         <field name="data" bits="XLEN-6:0" access="WARL" reset="Preset">
             If \FcsrTdataOneType is 0, then this field is hard-wired to 0.
@@ -124,30 +125,13 @@
         This optional register is only accessible in M-mode and Debug Mode and
         provides various control bits related to triggers.
 
-        <field name="0" bits="XLEN-1:10" access="R" reset="0" />
-        <field name="hcxe" bits="9" access="WARL" reset="0">
-            \RcsrHcontext enable.
-
-            0: \RcsrHcontext is set to 0 and writes are ignored.
-
-            1: \RcsrHcontext may be written and read.
-        </field>
-        <field name="scxe" bits="8" access="WARL" reset="0">
-            \RcsrScontext enable.
-
-            0: \RcsrScontext is set to 0 and writes are ignored.
-
-            1: \RcsrScontext may be written and read.
-
-            Enabling \RcsrScontext can be a security risk in a
-            virtualized system with a hypervisor that does not swap \RcsrScontext.
-        </field>
+        <field name="0" bits="XLEN-1:8" access="R" reset="0" />
         <field name="mpte" bits="7" access="WARL" reset="0">
             M-mode previous trigger enable field.
 
             \FcsrTcontrolMpte and \FcsrTcontrolMte provide one solution to a problem
             regarding triggers with action=0 firing in M-mode trap handlers. See
-            Section~\ref{sec:mmtrigger} for more details.
+            Section~\ref{sec:nativetrigger} for more details.
 
             When a trap into M-mode is taken, \FcsrTcontrolMpte is set to the value of
             \FcsrTcontrolMte.
@@ -169,6 +153,9 @@
     <register name="Hypervisor Context" short="hcontext" address="0x6a8">
         This optional register is only accessible in S/HS-mode, M-mode and
         Debug Mode.
+
+        Accessibility of this CSR is controlled by \Rmstateenzero[57]
+        in the Smstateen extension.
 
         If the H extension is not implemented then this register is not
         implemented, though the underlying state may be accessible via
@@ -192,6 +179,10 @@
         This optional register is only accessible in S/HS-mode, VS-mode,
         M-mode and Debug Mode.
 
+        Accessibility of this CSR is controlled by \Rmstateenzero[57] and
+        \Rhstateenzero[57] in the Smstateen extension.  Enabling \RcsrScontext
+        can be a security risk in a virtualized system with a hypervisor that
+        does not swap \RcsrScontext.
         <field name="data" bits="XLEN-1:0" access="WARL" reset="0">
             Supervisor mode software can write a context number to this
             register, which can be used to set triggers that only fire in that
@@ -209,8 +200,16 @@
     </register>
 
     <register name="Machine Supervisor Context" short="mscontext" address="0x7aa">
-        This optional register is an alias for \RcsrScontext included for
-        backward compatibility (if desired).
+        This optional register is an alias for \RcsrScontext.  It is only
+        accessible in S/HS-mode, M-mode and Debug Mode.  It is included
+        for backward compatibility with version 0.13.
+
+        \begin{commentary}
+        The encoding of this CSR does not conform to the CSR Address Mapping
+        Convention in the Privileged Spec.  It is expected that new
+        implementations will not support this encoding and that new
+        debuggers will not use this CSR if scontext is available.
+        \end{commentary}
     </register>
 
     <register name="Match Control" short="mcontrol" address="0x7a1">
@@ -232,6 +231,15 @@
         always 0) only. If that is the case, then \RcsrTdataTwo must be able to
         hold all valid virtual addresses but it need not be capable of holding
         other values.
+
+        The Privileged Spec says that breakpoint exceptions that occur on
+        instruction fetches, loads, or stores update the {\tt tval} CSR
+        with either zero or the faulting virtual address.  The faulting
+        virtual address for an mcontrol trigger with action=0 is the
+        address being accessed and which caused that trigger to fire.
+        If multiple mcontrol triggers are chained then the faulting
+        virtual address is the address which caused any of the chained
+        triggers to fire.
 
         \begin{steps}{If the A extension is supported, then trigger behavior is as follows
         for the load and store bits:}
@@ -524,6 +532,15 @@
         hold all valid virtual addresses but it need not be capable of holding
         other values.
 
+        The Privileged Spec says that breakpoint exceptions that occur on
+        instruction fetches, loads, or stores update the {\tt tval} CSR
+        with either zero or the faulting virtual address.  The faulting
+        virtual address for an mcontrol6 trigger with action=0 is the
+        address being accessed and which caused that trigger to fire.
+        If multiple mcontrol6 triggers are chained then the faulting
+        virtual address is the address which caused any of the chained
+        triggers to fire.
+
         \begin{steps}{In implementations that support \FcsrMcontrolSixMatch mode 1 (NAPOT), not all
         NAPOT ranges may be supported.  All NAPOT ranges between $2^{1}$ and $2^{maskmax6}$
         are supported where maskmax6 $\geq$ 1.  The value of maskmax6 can be determined
@@ -567,8 +584,9 @@
             virtualization mode.
         </field>
         <field name="hit" bits="22" access="WARL" reset="0">
-            If this bit is implemented, the hardware sets it when this
-            trigger matches. The trigger's user can set or clear it at any
+            If this bit is implemented then it must become set when this
+            trigger fires and may become set when this trigger matches.
+            The trigger's user can set or clear it at any
             time. It is used to determine which
             trigger(s) matched.  If the bit is not implemented, it is always 0
             and writing it has no effect.
@@ -800,6 +818,9 @@
         \FcsrIcountS, \FcsrIcountU, \FcsrIcountVs, and \FcsrIcountVu are all
         cleared.
 
+        If the trigger fires with action=0 then zero is written to the
+        {\tt tval} CSR on the breakpoint trap.
+
         \begin{commentary}
         The intent of \FcsrIcountPending is to cleanly handle the case where
         \FcsrIcountAction is 0, \FcsrIcountM is 0, \FcsrIcountU is 1,
@@ -888,9 +909,11 @@
         interrupt. (E.g.\  it does not fire when a timer interrupt occurs but that
         interrupt is not enabled in \Rmie.)
 
-        When the trigger fires, all CSRs are updated as defined by the
+        When the trigger fires, all CSRs are updated for the interrupt trap as defined by the
         Privileged Spec, and the requested action is taken just before the
         first instruction of the trap handler is executed.
+        If the trigger fires with action=0 then zero is written to the
+        {\tt tval} CSR on the breakpoint trap (see ~\ref{sec:nativetrigger}).
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="4" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
@@ -951,9 +974,11 @@
         back \RcsrTdataTwo after writing it to confirm the requested functionality
         is actually supported.
 
-        When the trigger fires, all CSRs are updated as defined by the
+        When the trigger fires, all CSRs are updated for the exception as defined by the
         Privileged Spec, and the requested action is taken just before the
         first instruction of the trap handler is executed.
+        If the trigger fires with action=0 then zero is written to the
+        {\tt tval} CSR on the breakpoint trap (see ~\ref{sec:nativetrigger}).
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="4" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
@@ -979,7 +1004,8 @@
         </field>
         <field name="nmi" bits="10" access="WARL" reset="0">
             When set, non-maskable interrupts cause this
-            trigger to fire, regardless of the values of \FcsrEtriggerM, \FcsrEtriggerS, and \FcsrEtriggerU.
+            trigger to fire, regardless of the values of \FcsrEtriggerM,
+            \FcsrEtriggerS, \FcsrEtriggerU, \FcsrEtriggerVs, and \FcsrEtriggerVu.
         </field>
         <field name="m" bits="9" access="WARL" reset="0">
             When set, enable this trigger for exceptions that are taken from M
@@ -1015,6 +1041,8 @@
         (starting with TM external trigger input 0 and continuing
         sequentially).  Unsupported inputs are hardwired to be inactive.
 
+        If the trigger fires with action=0 then zero is written to the
+        {\tt tval} CSR on the breakpoint trap.
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="4" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
         <field name="hit" bits="XLEN-6" access="WARL" reset="0">
@@ -1055,6 +1083,13 @@
         to include one or more of the contexts in the compare.
         
         Byte masking only applies to \RcsrScontext comparison; i.e when \FcsrTextraThirtytwoSselect is 1.
+
+        \begin{commentary}
+        Note that sselect and mhselect filtering apply in all modes, including M-mode
+        and S-mode.  If desired, debuggers can use a trigger's mode filtering bits to
+        restrict the matching to modes where it considers ASID/VMID/scontext/hcontext
+        to be active.
+        \end{commentary}
         
         <field name="mhvalue" bits="31:26" access="WARL" reset="0">
             Data used together with \FcsrTextraThirtytwoMhselect.
@@ -1096,10 +1131,15 @@
             1: This trigger will only match if the low bits of
             \RcsrScontext equal \FcsrTextraThirtytwoSvalue.
 
-            2: This trigger will only match if the currently active ASID
-            value, from either \Rsatp or \Rvsatp,
-            equals the lower ASIDMAX (defined in the Privileged Spec) bits of
+            2: This trigger will only match if:
+            \begin{itemize}[noitemsep,nolistsep]
+            \item the mode is VS-mode or VU-mode and ASID in \Rvsatp
+            equals the lower ASIDMAX (defined in the Privileged Spec) bits
+            of \FcsrTextraThirtytwoSvalue.
+            \item in all other modes, ASID in \Rsatp equals the lower
+            ASIDMAX (defined in the Privileged Spec) bits of
             \FcsrTextraThirtytwoSvalue.
+            \end{itemize}
 
             This field should be tied to 0 when S-mode is not supported.
         </field>
