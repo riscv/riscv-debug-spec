@@ -591,13 +591,13 @@ section describes how some common tasks might be achieved.
 
 \section{Single Step} \label{nativestep}
 
-There is a good solution if the OS or a debug stub runs in M-Mode while the
+Single step is straightforward if the OS or a debug stub runs in M-Mode while the
 program being debugged runs in a less privileged mode. When a step is required,
 the OS or debug stub writes \FcsrIcountCount=1, \FcsrIcountAction=0,
 \FcsrIcountM=0 before returning control to the lower user program with an
 \tt{mret} instruction.
 
-On tiny system which only supports M-Mode single step is doable, but tricky to
+On tiny systems which only supports M-Mode single step is doable, but tricky to
 get right. To single step, the debug stub would execute something like:
 \begin{verbatim}
     li    t0, \FcsrIcountCount=4, \FcsrIcountAction=0, \FcsrIcountM=1
