@@ -796,11 +796,11 @@
         This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 3.
 
         When \FcsrIcountCount is greater than 1, every instruction completed or
-        trap taken from a mode where the trigger is enabled decrements
+        trap taken from a privilege mode where the trigger is enabled decrements
         \FcsrIcountCount by 1.
 
         When \FcsrIcountCount is 1, and an instruction is completed or trap
-        taken from a mode where the trigger is enabled, then \FcsrIcountPending
+        taken from a privilege mode where the trigger is enabled, then \FcsrIcountPending
         becomes set. In addition \FcsrIcountCount will become 0 unless it is
         hard-wired to 1.
 
@@ -831,15 +831,10 @@
         \end{commentary}
 
         \begin{commentary}
-        This trigger type is intended to be used as a single step that's
-        useful both for external debuggers and for software monitor programs.
-        For that case it is not necessary to support \FcsrIcountCount greater
-        than 1.
-
-        If \RcsrIcount is only implemented for single step, then it can be done
-        using a single bit that ties \FcsrIcountM, \FcsrIcountS, \FcsrIcountU,
-        \FcsrIcountVs, and \FcsrIcountVu together while \FcsrIcountCount is
-        hard-wired to 1.
+        This trigger type is intended to be used as a single step for software
+        monitor programs or native debug.  Systems that support multiple
+        privilege modes that want to debug software running in lower privilege
+        modes don't need to support \FcsrIcountCount greater than 1.
         \end{commentary}
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="3" />
