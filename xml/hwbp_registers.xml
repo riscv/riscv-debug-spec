@@ -235,7 +235,7 @@
         The Privileged Spec says that breakpoint exceptions that occur on
         instruction fetches, loads, or stores update the {\tt tval} CSR
         with either zero or the faulting virtual address.  The faulting
-        virtual address for an mcontrol trigger with action=0 is the
+        virtual address for an mcontrol trigger with \FcsrMcontrolAction=0 is the
         address being accessed and which caused that trigger to fire.
         If multiple mcontrol triggers are chained then the faulting
         virtual address is the address which caused any of the chained
@@ -535,7 +535,7 @@
         The Privileged Spec says that breakpoint exceptions that occur on
         instruction fetches, loads, or stores update the {\tt tval} CSR
         with either zero or the faulting virtual address.  The faulting
-        virtual address for an mcontrol6 trigger with action=0 is the
+        virtual address for an mcontrol6 trigger with \FcsrMcontrolSixAction=0 is the
         address being accessed and which caused that trigger to fire.
         If multiple mcontrol6 triggers are chained then the faulting
         virtual address is the address which caused any of the chained
@@ -797,7 +797,8 @@
 
         When \FcsrIcountCount is greater than 1, every instruction completed or
         trap taken from a privilege mode where the trigger is enabled decrements
-        \FcsrIcountCount by 1.
+        \FcsrIcountCount by 1. (This is true even if the action configured in
+        the trigger is inhibited for some reason.)
 
         When \FcsrIcountCount is 1, and an instruction is completed or trap
         taken from a privilege mode where the trigger is enabled, then \FcsrIcountPending
@@ -818,7 +819,7 @@
         \FcsrIcountS, \FcsrIcountU, \FcsrIcountVs, and \FcsrIcountVu are all
         cleared.
 
-        If the trigger fires with action=0 then zero is written to the
+        If the trigger fires with \FcsrIcountAction=0 then zero is written to the
         {\tt tval} CSR on the breakpoint trap.
 
         \begin{commentary}
@@ -907,7 +908,7 @@
         When the trigger fires, all CSRs are updated for the interrupt trap as defined by the
         Privileged Spec, and the requested action is taken just before the
         first instruction of the trap handler is executed.
-        If the trigger fires with action=0 then zero is written to the
+        If the trigger fires with \FcsrItriggerAction=0 then zero is written to the
         {\tt tval} CSR on the breakpoint trap (see ~\ref{sec:nativetrigger}).
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="4" />
@@ -972,7 +973,7 @@
         When the trigger fires, all CSRs are updated for the exception as defined by the
         Privileged Spec, and the requested action is taken just before the
         first instruction of the trap handler is executed.
-        If the trigger fires with action=0 then zero is written to the
+        If the trigger fires with \FcsrEtriggerAction=0 then zero is written to the
         {\tt tval} CSR on the breakpoint trap (see ~\ref{sec:nativetrigger}).
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="4" />
@@ -1036,7 +1037,7 @@
         (starting with TM external trigger input 0 and continuing
         sequentially).  Unsupported inputs are hardwired to be inactive.
 
-        If the trigger fires with action=0 then zero is written to the
+        If the trigger fires with \FcsrTmexttriggerAction=0 then zero is written to the
         {\tt tval} CSR on the breakpoint trap.
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="4" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
