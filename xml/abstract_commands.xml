@@ -84,6 +84,8 @@
             If \FacAccessregisterAarsize specifies a size larger than the register's actual size,
             then the access must fail. If a register is accessible, then reads of \FacAccessregisterAarsize
             less than or equal to the register's actual size must be supported.
+            Writing less than the full register may be supported, but what
+            happens to the high bits in that case is \unspecified.
 
             This field controls the Argument Width as referenced in
             Table~\ref{tab:datareg}.
