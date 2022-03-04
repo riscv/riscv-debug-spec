@@ -661,7 +661,8 @@
             When \FdmDmcsTwoHgselect is 1, contains the group of the DM external
             trigger selected by \FdmDmcsTwoDmexttrigger.
 
-            Writes only have an effect if \FdmDmcsTwoHgwrite is also written 1.
+            The value written to this field is ignored unless \FdmDmcsTwoHgwrite
+            is also written 1.
 
             Group numbers are contiguous starting at 0, with the highest number
             being implementation-dependent, and possibly different between
