@@ -212,7 +212,7 @@
         <field name="ackunavail" bits="27" access="W1" reset="-">
             0: No effect.
 
-            1: Clears {\tt unavail} for any selected harts.
+            1: Clears {\tt unavail} for any selected harts that are currently available.
 
             Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
         </field>
