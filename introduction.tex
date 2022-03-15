@@ -152,7 +152,7 @@ incompatible, but unlikely to be noticeable:}
     \item Reserve some DMI space for non-standard use. See \RdmCustom, and
         \RdmCustomZero through \RdmCustomFifteen. \PR{406}
     \item Reserve trigger \FcsrTdataOneType values for non-standard use. \PR{417}
-    \item Add \FcsrEtriggerNmi bit to \RcsrEtrigger. \PR{408}
+    \item Add \FcsrItriggerNmi bit to \RcsrItrigger. \PR{408}
     \item Recommend matching on every accessed address. \PR{449}
     \item Add resume groups in Section~\ref{hrgroups}. \PR{506}
     \item Add \FdmAbstractcsRelaxedpriv. \PR{536}
@@ -176,6 +176,14 @@ incompatible, but unlikely to be noticeable:}
         when ndmreset is complete. \PR{594}
     \item Add \FcsrTmexttriggerIntctl to support triggers from an interrupt controller. \PR{599}
 \end{steps}
+
+\subsubsection{Incompatible Changes During 1.0 Stable}
+
+\begin{steps}{Backwards-incompatible changes between two versions that are both
+called 1.0 stable.}
+\item \FcsrItriggerNmi was moved from \RcsrEtrigger to \RcsrItrigger.
+\end{steps}
+
 \section{About This Document}
 
 \subsection{Structure}
