@@ -131,7 +131,7 @@ incompatible, but unlikely to be noticeable:}
     \item All trigger registers (Section~\ref{csrTrigger}) are optional. \PR{431}
     \item When extending IR, \RdtmBypass still is all ones. \PR{437}
     \item \FcsrDcsrEbreaks and \FcsrDcsrEbreaku are WARL. \PR{458}
-    \item NMI are disabled by \FcsrDcsrStepie. \PR{465}
+    \item NMIs are disabled by \FcsrDcsrStepie. \PR{465}
     \item R/W1C fields should be cleared by writing every bit high. \PR{472}
     \item Specify trigger priorities in Table~\ref{tab:priority} relative to exceptions. \PR{478}
     \item Time may pass before \FdmDmcontrolDmactive becomes high. \PR{500}
@@ -181,7 +181,8 @@ incompatible, but unlikely to be noticeable:}
 
 \begin{steps}{Backwards-incompatible changes between two versions that are both
 called 1.0 stable.}
-\item \FcsrItriggerNmi was moved from \RcsrEtrigger to \RcsrItrigger.
+\item \FcsrItriggerNmi was moved from \RcsrEtrigger to \RcsrItrigger, and is now
+subject to the mode bits in that trigger.
 \end{steps}
 
 \section{About This Document}

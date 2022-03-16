@@ -881,7 +881,7 @@
         This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 4.
 
         This trigger may fire on any of the interrupts configurable in \Rmie
-        (described in the Privileged Spec). The interrupts to fire on are
+        (described in the Privileged Spec) or the NMI. The interrupts to fire on are
         configured by setting the same bit in \RcsrTdataTwo as would be set in
         \Rmie to enable the interrupt.
 
@@ -923,8 +923,7 @@
         </field>
         <field name="nmi" bits="10" access="WARL" reset="0">
             When set, non-maskable interrupts cause this
-            trigger to fire, regardless of the values of \FcsrItriggerM,
-            \FcsrItriggerS, \FcsrItriggerU, \FcsrItriggerVs, and \FcsrItriggerVu.
+            trigger to fire if the trigger is enabled for the current mode.
         </field>
         <field name="m" bits="9" access="WARL" reset="0">
             When set, enable this trigger for interrupts that are taken from M
