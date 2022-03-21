@@ -967,7 +967,7 @@
         If the trigger fires with action=0 then zero is written to the
         {\tt tval} CSR on the breakpoint trap (see ~\ref{sec:nativetrigger}).
 
-        <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="4" />
+        <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="5" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
         <field name="hit" bits="XLEN-6" access="WARL" reset="0">
             If this bit is implemented, the hardware sets it when this
