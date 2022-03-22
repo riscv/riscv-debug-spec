@@ -261,8 +261,9 @@
         match.  Whether store triggers with \FcsrMcontrolSelect=1 match on
         AMOs is \unspecified.
 
-        If \RcsrTextraThirtytwo or \RcsrTextraSixtyfour are implemented, this
-        trigger only matches when the conditions set there are satisfied.
+        If \RcsrTextraThirtytwo or \RcsrTextraSixtyfour are implemented for this
+        trigger, this trigger only matches when the conditions set there are
+        satisfied.
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="2" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
@@ -575,8 +576,9 @@
         match.  Whether store triggers with \FcsrMcontrolSelect=1 match on
         AMOs is \unspecified.
 
-        If \RcsrTextraThirtytwo or \RcsrTextraSixtyfour are implemented, this
-        trigger only matches when the conditions set there are satisfied.
+        If \RcsrTextraThirtytwo or \RcsrTextraSixtyfour are implemented for this
+        trigger, this trigger only matches when the conditions set there are
+        satisfied.
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="6" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
@@ -832,8 +834,9 @@
         than 1.
         \end{commentary}
 
-        If \RcsrTextraThirtytwo or \RcsrTextraSixtyfour are implemented, this
-        trigger only matches when the conditions set there are satisfied.
+        If \RcsrTextraThirtytwo or \RcsrTextraSixtyfour are implemented for this
+        trigger, this trigger only matches when the conditions set there are
+        satisfied.
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="3" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
@@ -910,8 +913,9 @@
         If the trigger fires with action=0 then zero is written to the
         {\tt tval} CSR on the breakpoint trap (see ~\ref{sec:nativetrigger}).
 
-        If \RcsrTextraThirtytwo or \RcsrTextraSixtyfour are implemented, this
-        trigger only matches when the conditions set there are satisfied.
+        If \RcsrTextraThirtytwo or \RcsrTextraSixtyfour are implemented for this
+        trigger, this trigger only matches when the conditions set there are
+        satisfied.
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="4" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
@@ -981,8 +985,9 @@
         If the trigger fires with action=0 then zero is written to the
         {\tt tval} CSR on the breakpoint trap (see ~\ref{sec:nativetrigger}).
 
-        If \RcsrTextraThirtytwo or \RcsrTextraSixtyfour are implemented, this
-        trigger only matches when the conditions set there are satisfied.
+        If \RcsrTextraThirtytwo or \RcsrTextraSixtyfour are implemented for this
+        trigger, this trigger only matches when the conditions set there are
+        satisfied.
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="5" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
