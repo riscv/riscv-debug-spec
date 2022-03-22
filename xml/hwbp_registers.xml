@@ -893,7 +893,7 @@
         This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 4.
 
         This trigger may fire on any of the interrupts configurable in \Rmie
-        (described in the Privileged Spec). The interrupts to fire on are
+        (described in the Privileged Spec) or the NMI. The interrupts to fire on are
         configured by setting the same bit in \RcsrTdataTwo as would be set in
         \Rmie to enable the interrupt.
 
@@ -933,7 +933,10 @@
           This bit is hard-wired to 0 if the hart does not support
           virtualization mode.
         </field>
-        <field name="0" bits="10" access="R" reset="0" />
+        <field name="nmi" bits="10" access="WARL" reset="0">
+            When set, non-maskable interrupts cause this
+            trigger to fire if the trigger is enabled for the current mode.
+        </field>
         <field name="m" bits="9" access="WARL" reset="0">
             When set, enable this trigger for interrupts that are taken from M
             mode.
@@ -976,7 +979,7 @@
         If the trigger fires with \FcsrEtriggerAction=0 then zero is written to the
         {\tt tval} CSR on the breakpoint trap (see ~\ref{sec:nativetrigger}).
 
-        <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="4" />
+        <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="5" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
         <field name="hit" bits="XLEN-6" access="WARL" reset="0">
             If this bit is implemented, the hardware sets it when this
@@ -998,11 +1001,7 @@
           This bit is hard-wired to 0 if the hart does not support
           virtualization mode.
         </field>
-        <field name="nmi" bits="10" access="WARL" reset="0">
-            When set, non-maskable interrupts cause this
-            trigger to fire, regardless of the values of \FcsrEtriggerM,
-            \FcsrEtriggerS, \FcsrEtriggerU, \FcsrEtriggerVs, and \FcsrEtriggerVu.
-        </field>
+        <field name="0" bits="10" access="R" reset="0" />
         <field name="m" bits="9" access="WARL" reset="0">
             When set, enable this trigger for exceptions that are taken from M
             mode.
@@ -1038,7 +1037,15 @@
         sequentially).  Unsupported inputs are hardwired to be inactive.
 
         If the trigger fires with \FcsrTmexttriggerAction=0 then zero is written to the
-        {\tt tval} CSR on the breakpoint trap.
+        {\tt tval} CSR on the breakpoint trap.  This trigger fires
+        asynchronously but it is subject to delegation by medeleg[3] like
+        the other triggers.
+
+        The external trigger input can signal when the trigger is prevented
+        from firing due to one of the mechanisms in section ~\ref{sec:nativetrigger}.
+        An implementation may either ignore the signal altogether when it cannot
+        fire (dropping the trigger event) or it may hold the action as pending
+        and fire the trigger once it is legal to do so.
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="4" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
         <field name="hit" bits="XLEN-6" access="WARL" reset="0">

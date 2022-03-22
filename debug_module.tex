@@ -214,7 +214,7 @@ Halted harts ignore their halt request bit.
 When a debugger writes 1 to \FdmDmcontrolResumereq, each selected hart's resume ack bit is
 cleared and each selected, halted hart is sent a resume request. Harts respond
 by resuming, clearing their halted signal, and asserting their running signal.
-At the end of this process the \index{resume ack bit} is set.  These
+At the end of this process the resume ack bit\index{resume ack bit} is set.  These
 status signals of all selected harts are reflected in \FdmDmstatusAllresumeack,
 \FdmDmstatusAnyresumeack, \FdmDmstatusAllrunning, and \FdmDmstatusAnyrunning. Resume requests are ignored by
 running harts.
@@ -261,7 +261,7 @@ other harts in the group are already halted.
 \item All the other harts in that group will quickly resume as soon as any
     currently executing abstract commands have completed, except for the harts
     that are in the process of halting.
-    Each hart in the group sets its \index{resume ack bit} as soon as it has resumed.
+    Each hart in the group sets its resume ack bit\index{resume ack bit} as soon as it has resumed.
 \item Any external triggers in that group are notified.
 \end{steps}
 Adding a hart to a resume group does not automatically resume that hart, even

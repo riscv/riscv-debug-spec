@@ -39,11 +39,11 @@
         </field>
         <field name="allresumeack" bits="17" access="R" reset="-">
             This field is 1 when all currently selected harts have their
-            \index{resume ack bit} set.
+            resume ack bit\index{resume ack bit} set.
         </field>
         <field name="anyresumeack" bits="16" access="R" reset="-">
             This field is 1 when any currently selected hart has its
-            \index{resume ack bit} set.
+            resume ack bit\index{resume ack bit} set.
         </field>
         <field name="allnonexistent" bits="15" access="R" reset="-">
             This field is 1 when all currently selected harts do not exist in
@@ -212,7 +212,7 @@
         <field name="ackunavail" bits="27" access="W1" reset="-">
             0: No effect.
 
-            1: Clears {\tt unavail} for any selected harts.
+            1: Clears {\tt unavail} for any selected harts that are currently available.
 
             Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
         </field>
