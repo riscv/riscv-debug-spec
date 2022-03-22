@@ -262,8 +262,7 @@
         AMOs is \unspecified.
 
         If \RcsrTextraThirtytwo or \RcsrTextraSixtyfour are implemented for this
-        trigger, this trigger only matches when the conditions set there are
-        satisfied.
+        trigger, it only matches when the conditions set there are satisfied.
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="2" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
@@ -577,8 +576,7 @@
         AMOs is \unspecified.
 
         If \RcsrTextraThirtytwo or \RcsrTextraSixtyfour are implemented for this
-        trigger, this trigger only matches when the conditions set there are
-        satisfied.
+        trigger, it only matches when the conditions set there are satisfied.
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="6" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
@@ -835,8 +833,7 @@
         \end{commentary}
 
         If \RcsrTextraThirtytwo or \RcsrTextraSixtyfour are implemented for this
-        trigger, this trigger only matches when the conditions set there are
-        satisfied.
+        trigger, it only matches when the conditions set there are satisfied.
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="3" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
@@ -914,8 +911,7 @@
         {\tt tval} CSR on the breakpoint trap (see ~\ref{sec:nativetrigger}).
 
         If \RcsrTextraThirtytwo or \RcsrTextraSixtyfour are implemented for this
-        trigger, this trigger only matches when the conditions set there are
-        satisfied.
+        trigger, it only matches when the conditions set there are satisfied.
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="4" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
@@ -986,8 +982,7 @@
         {\tt tval} CSR on the breakpoint trap (see ~\ref{sec:nativetrigger}).
 
         If \RcsrTextraThirtytwo or \RcsrTextraSixtyfour are implemented for this
-        trigger, this trigger only matches when the conditions set there are
-        satisfied.
+        trigger, it only matches when the conditions set there are satisfied.
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="5" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
