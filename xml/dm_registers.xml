@@ -364,8 +364,8 @@
       This register selects which of the 32-bit portion of the hart array mask
       register (see Section~\ref{hartarraymask}) is accessible in \RdmHawindow.
 
-      <field name="0" bits="31:15" access="R/W" reset="0" />
-      <field name="hawindowsel" bits="14:0" access="R/W" reset="0">
+      <field name="0" bits="31:15" access="R" reset="0" />
+      <field name="hawindowsel" bits="14:0" access="WARL" reset="0">
           The high bits of this field may be tied to 0, depending on how large
           the array mask register is.  E.g.\ on a hardware platform with 48 harts only bit 0
           of this field may actually be writable.
@@ -382,7 +382,7 @@
       Since some bits in the hart array mask register may be constant 0, some
       bits in this register may be constant 0, depending on the current value
       of \FdmHawindowselHawindowsel.
-      <field name="maskdata" bits="31:0" access="R/W" reset="0" />
+      <field name="maskdata" bits="31:0" access="WARL" reset="0" />
     </register>
 
     <!-- =============== abstract commands =============== -->
