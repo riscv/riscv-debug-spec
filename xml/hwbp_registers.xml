@@ -228,7 +228,8 @@
         address triggers.
 
         This trigger type may be limited to address comparisons (\FcsrMcontrolSelect is
-        always 0) only. If that is the case, then \RcsrTdataTwo must be able to
+        always 0) only. If that is the case and masking is not supported (match
+        values 4, 5, 12, 13), then \RcsrTdataTwo must be able to
         hold all valid virtual addresses but it need not be capable of holding
         other values.
 
@@ -528,7 +529,8 @@
         address triggers.
 
         This trigger type may be limited to address comparisons (\FcsrMcontrolSixSelect is
-        always 0) only. If that is the case, then \RcsrTdataTwo must be able to
+        always 0) only. If that is the case and masking is not supported (match
+        values 4, 5, 12, 13), then \RcsrTdataTwo must be able to
         hold all valid virtual addresses but it need not be capable of holding
         other values.
 
