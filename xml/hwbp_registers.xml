@@ -861,7 +861,7 @@
         </field>
         <field name="count" bits="23:10" access="WARL" reset="1">
             The trigger will generally fire after \FcsrIcountCount instructions
-            in enabled modes have been executed.
+            in enabled modes have been executed. See above for the precise behavior.
         </field>
 
         <field name="m" bits="9" access="WARL" reset="0">
