@@ -1,4 +1,4 @@
-\chapter{Debugger Implementation}
+\chapter{External Debugger Implementation}
 
 This section details how an external debugger might use the described debug
 interface to perform some common operations on RISC-V cores using the JTAG DTM
@@ -584,6 +584,25 @@ to configure the trigger that is being enabled here:
    \hline
 \end{tabular}
 
+\chapter{Native Debugger Implementation}
 
+The spec contains a few features to aid in writing a native debugger. This
+section describes how some common tasks might be achieved.
 
-\medskip
+\section{Single Step} \label{nativestep}
+
+Single step is straightforward if the OS or a debug stub runs in M-Mode while the
+program being debugged runs in a less privileged mode. When a step is required,
+the OS or debug stub writes \FcsrIcountCount=1, \FcsrIcountAction=0,
+\FcsrIcountM=0 before returning control to the lower user program with an
+\tt{mret} instruction.
+
+On tiny systems which only supports M-Mode single step is doable, but tricky to
+get right. To single step, the debug stub would execute something like:
+\begin{verbatim}
+    li    t0, \FcsrIcountCount=4, \FcsrIcountAction=0, \FcsrIcountM=1
+    csrw  tdata1, t0    /* Write the trigger. */
+    lw    t0, 8(sp)     /* Restore t0, count decrements to 3 */
+    lw    sp, 0(sp)     /* Restore sp, count decrements to 2 */
+    mret                /* Return to program being debugged. count decrements to 1 */
+\end{verbatim}

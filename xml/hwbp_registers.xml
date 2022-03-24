@@ -235,7 +235,7 @@
         The Privileged Spec says that breakpoint exceptions that occur on
         instruction fetches, loads, or stores update the {\tt tval} CSR
         with either zero or the faulting virtual address.  The faulting
-        virtual address for an mcontrol trigger with action=0 is the
+        virtual address for an mcontrol trigger with \FcsrMcontrolAction=0 is the
         address being accessed and which caused that trigger to fire.
         If multiple mcontrol triggers are chained then the faulting
         virtual address is the address which caused any of the chained
@@ -539,7 +539,7 @@
         The Privileged Spec says that breakpoint exceptions that occur on
         instruction fetches, loads, or stores update the {\tt tval} CSR
         with either zero or the faulting virtual address.  The faulting
-        virtual address for an mcontrol6 trigger with action=0 is the
+        virtual address for an mcontrol6 trigger with \FcsrMcontrolSixAction=0 is the
         address being accessed and which caused that trigger to fire.
         If multiple mcontrol6 triggers are chained then the faulting
         virtual address is the address which caused any of the chained
@@ -803,21 +803,35 @@
     <register name="Instruction Count" short="icount" address="0x7a1">
         This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 3.
 
-        If \FcsrIcountCount is not 0, then every instruction completed or
-        trap taken from a mode where the trigger is enabled decrements
-        \FcsrIcountCount by 1.
-        When
-        \FcsrIcountCount is decremented from 1 to 0 then \FcsrIcountPending
-        becomes set. When \FcsrIcountPending is set, the trigger fires just
+        When \FcsrIcountCount is greater than 1, every instruction completed or
+        trap taken from a privilege mode where the trigger is enabled decrements
+        \FcsrIcountCount by 1. (This is true even if the action configured in
+        the trigger is inhibited for some reason.)
+
+        When \FcsrIcountCount is 1, and an instruction is completed or trap
+        taken from a privilege mode where the trigger is enabled, then \FcsrIcountPending
+        becomes set. In addition \FcsrIcountCount will become 0 unless it is
+        hard-wired to 1.
+
+        The only exception to the above is when the instruction executed is a
+        write to the icount trigger. In that case \FcsrIcountPending might or might
+        not become set if \FcsrIcountCount was 1. Afterwards \FcsrIcountCount
+        contains the newly written value.
+
+        When \FcsrIcountCount is 0 it stays at 0 until explicitly written.
+
+        When \FcsrIcountPending is set, the trigger fires just
         before any further instructions are executed in a mode where the
         trigger is enabled. As the trigger fires, \FcsrIcountPending is
+        cleared. In addition, if \FcsrIcountCount is hard-wired to 1 then \FcsrIcountM,
+        \FcsrIcountS, \FcsrIcountU, \FcsrIcountVs, and \FcsrIcountVu are all
         cleared.
 
-        If the trigger fires with action=0 then zero is written to the
+        If the trigger fires with \FcsrIcountAction=0 then zero is written to the
         {\tt tval} CSR on the breakpoint trap.
 
         \begin{commentary}
-        The intent of this design is to cleanly handle the case where
+        The intent of \FcsrIcountPending is to cleanly handle the case where
         \FcsrIcountAction is 0, \FcsrIcountM is 0, \FcsrIcountU is 1,
         \FcsrIcountCount is 1, and the U-mode instruction being executed
         causes a trap into M-mode. In that case we want the entire M-mode
@@ -826,10 +840,10 @@
         \end{commentary}
 
         \begin{commentary}
-        This trigger type is intended to be used as a single step that's
-        useful both for external debuggers and for software monitor programs.
-        For that case it is not necessary to support \FcsrIcountCount greater
-        than 1.
+        This trigger type is intended to be used as a single step for software
+        monitor programs or native debug.  Systems that support multiple
+        privilege modes that want to debug software running in lower privilege
+        modes don't need to support \FcsrIcountCount greater than 1.
         \end{commentary}
 
         If \RcsrTextraThirtytwo or \RcsrTextraSixtyfour are implemented for this
@@ -857,11 +871,8 @@
             and writing it has no effect.
         </field>
         <field name="count" bits="23:10" access="WARL" reset="1">
-            When count is decremented to 0, the trigger fires. Instead of
-            changing \FcsrIcountCount from 1 to 0, it is also acceptable for hardware to
-            clear \FcsrIcountM, \FcsrIcountS, \FcsrIcountU, \FcsrIcountVs, and
-            \FcsrIcountVu. This allows \FcsrIcountCount to be hard-wired
-            to 1 if this register just exists for single step.
+            The trigger will generally fire after \FcsrIcountCount instructions
+            in enabled modes have been executed. See above for the precise behavior.
         </field>
 
         <field name="m" bits="9" access="WARL" reset="0">
@@ -869,7 +880,8 @@
         </field>
         <field name="pending" bits="8" access="R/W" reset="0">
             This bit becomes set when \FcsrIcountCount is decremented from 1
-            to 0. It is cleared when the trigger fires.
+            to 0. It is cleared when the trigger fires, which will happen just
+            before executing the next instruction in one of the enabled modes.
         </field>
         <field name="s" bits="7" access="WARL" reset="0">
             When set, enable this trigger in S/HS-mode.
@@ -907,7 +919,7 @@
         When the trigger fires, all CSRs are updated for the interrupt trap as defined by the
         Privileged Spec, and the requested action is taken just before the
         first instruction of the trap handler is executed.
-        If the trigger fires with action=0 then zero is written to the
+        If the trigger fires with \FcsrItriggerAction=0 then zero is written to the
         {\tt tval} CSR on the breakpoint trap (see ~\ref{sec:nativetrigger}).
 
         If \RcsrTextraThirtytwo or \RcsrTextraSixtyfour are implemented for this
@@ -978,7 +990,7 @@
         When the trigger fires, all CSRs are updated for the exception as defined by the
         Privileged Spec, and the requested action is taken just before the
         first instruction of the trap handler is executed.
-        If the trigger fires with action=0 then zero is written to the
+        If the trigger fires with \FcsrEtriggerAction=0 then zero is written to the
         {\tt tval} CSR on the breakpoint trap (see ~\ref{sec:nativetrigger}).
 
         If \RcsrTextraThirtytwo or \RcsrTextraSixtyfour are implemented for this
@@ -1041,7 +1053,7 @@
         (starting with TM external trigger input 0 and continuing
         sequentially).  Unsupported inputs are hardwired to be inactive.
 
-        If the trigger fires with action=0 then zero is written to the
+        If the trigger fires with \FcsrTmexttriggerAction=0 then zero is written to the
         {\tt tval} CSR on the breakpoint trap.  This trigger fires
         asynchronously but it is subject to delegation by medeleg[3] like
         the other triggers.

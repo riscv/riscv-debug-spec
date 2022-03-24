@@ -134,6 +134,12 @@ trigger by setting \FcsrIcountCount to 1.
         very long time to complete.
 \end{steps}
 
+This mechanism cleanly supports a system which supports multiple privilege
+levels, where the OS or a debug stub runs in M-Mode while the program being
+debugged runs in a less privileged mode. Systems that only support M-Mode can
+use \RcsrIcount as well, but count must be able to count several instructions
+(depending on the software implementation). See Section \ref{nativestep}.
+
 \section{Reset}
 
 If the halt signal (driven by the hart's halt request bit in the Debug Module)
