@@ -102,10 +102,10 @@
         </field>
         <field name="confstrptrvalid" bits="4" reset="Preset" access="R">
             0: \RdmConfstrptrZero--\RdmConfstrptrThree hold information which
-            is not relevant to the configuration string.
+            is not relevant to the configuration structure.
 
             1: \RdmConfstrptrZero--\RdmConfstrptrThree hold the address of the
-            configuration string.
+            configuration structure.
         </field>
         <field name="version" bits="3:0" reset="3" access="R">
             0: There is no Debug Module present.
@@ -514,36 +514,38 @@
         </field>
     </register>
 
-    <register name="Configuration String Pointer 0" short="confstrptr0" address="0x19">
+    <register name="Configuration Structure Pointer 0" short="confstrptr0" address="0x19">
       When \FdmDmstatusConfstrptrvalid is set, reading this register returns bits 31:0
-      of the configuration string pointer. Reading the other {\tt confstrptr}
+      of the configuration structure pointer. Reading the other {\tt confstrptr}
       registers returns the upper bits of the address.
 
       When system bus mastering is implemented, this must be an
       address that can be used with the System Bus Access module. Otherwise,
       this must be an address that can be used to access the
-      configuration string from the hart with ID 0.
+      configuration structure from the hart with ID 0.
 
       If \FdmDmstatusConfstrptrvalid is 0, then the {\tt confstrptr} registers
       hold identifier information which is not
       further specified in this document.
 
-      The configuration string itself is described in the Privileged Spec.
+      The configuration structure itself is a data structure of the same format
+      as the data structure pointed to by mconfigptr as described in the
+      Privileged Spec.
       <field name="addr" bits="31:0" access="R" reset="Preset"/>
     </register>
-    <register name="Configuration String Pointer 1" short="confstrptr1" address="0x1a">
+    <register name="Configuration Structure Pointer 1" short="confstrptr1" address="0x1a">
       When \FdmDmstatusConfstrptrvalid is set, reading this register returns bits 63:32
-      of the configuration string pointer. See \RdmConfstrptrZero for more details.
+      of the configuration structure pointer. See \RdmConfstrptrZero for more details.
       <field name="addr" bits="31:0" access="R" reset="Preset"/>
     </register>
-    <register name="Configuration String Pointer 2" short="confstrptr2" address="0x1b">
+    <register name="Configuration Structure Pointer 2" short="confstrptr2" address="0x1b">
       When \FdmDmstatusConfstrptrvalid is set, reading this register returns bits 95:64
-      of the configuration string pointer. See \RdmConfstrptrZero for more details.
+      of the configuration structure pointer. See \RdmConfstrptrZero for more details.
       <field name="addr" bits="31:0" access="R" reset="Preset"/>
     </register>
-    <register name="Configuration String Pointer 3" short="confstrptr3" address="0x1c">
+    <register name="Configuration Structure Pointer 3" short="confstrptr3" address="0x1c">
       When \FdmDmstatusConfstrptrvalid is set, reading this register returns bits 127:96
-      of the configuration string pointer. See \RdmConfstrptrZero for more details.
+      of the configuration structure pointer. See \RdmConfstrptrZero for more details.
       <field name="addr" bits="31:0" access="R" reset="Preset"/>
     </register>
 
