@@ -215,6 +215,16 @@ description, allowed accesses, and reset value. The allowed accesses are listed
 in Table~\ref{tab:access}. The reset value is either a constant or ``Preset.''
 The latter means it is an implementation-specific legal value.
 
+Parts of the register which are currently unused are labeled with the number 0.
+Software must only write 0 to those fields, and ignore their value while
+reading. Hardware must return 0 when those fields are read, and ignore the
+value written to them.
+
+\begin{commentary}
+This behavior enables us to use those fields later without having to increase
+the values in the version fields.
+\end{commentary}
+
 Names of registers and their fields are hyperlinks to their definition, and are
 also listed in the index on page \pageref{index}.
 
