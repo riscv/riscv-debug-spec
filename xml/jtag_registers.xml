@@ -57,14 +57,7 @@
             And so on.
         </field>
         <field name="dmistat" bits="11:10" access="R" reset="0">
-            0: No error.
-
-            1: Reserved. Interpret the same as 2.
-
-            2: An operation failed (resulted in \FdtmDmiOp of 2).
-
-            3: An operation was attempted while a DMI access was still in
-            progress (resulted in \FdtmDmiOp of 3).
+            Read-only alias of \FdtmDmiOp.
         </field>
         <field name="abits" bits="9:4" access="R" reset="Preset">
             The size of \FdmSbaddressZeroAddress in \RdtmDmi.
