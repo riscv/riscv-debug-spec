@@ -22,8 +22,10 @@
         This register is \warl.
         Writes of values greater than or equal to the number of supported
         triggers may result in a different value in this register than what was
-        written. To verify that what they wrote is a valid index, debuggers can
-        read back the value and check that \RcsrTselect holds what they wrote.
+        written or may point to a trigger where \FcsrTdataOneType=0.
+        To verify that what they wrote is a valid index, debuggers can
+        read back the value and check that \RcsrTselect holds what they wrote
+        and read \RcsrTdataOne to see that \FcsrTdataOneType is non-zero.
 
         Since triggers can be used both by Debug Mode and M-mode, the external
         debugger must restore this register if it modifies it.
