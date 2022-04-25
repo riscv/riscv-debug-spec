@@ -34,8 +34,8 @@
         This register is optional if no triggers are implemented.
 
         Writing 0 to this register must result in a trigger that is disabled.
-        If this trigger supports multiple types, then this should be done by
-        changing \FcsrTdataOneType to 8.
+        If this trigger supports multiple types, then the hardware should
+        disable it by changing \FcsrTdataOneType to 15.
 
         <field name="type" bits="XLEN-1:XLEN-4" access="WARL" reset="Preset">
             0: There is no trigger at this \RcsrTselect.
@@ -63,17 +63,13 @@
             7: The trigger is a trigger source external to the TM.  The
             remaining bits in this register act as described in \RcsrTmexttrigger.
 
-            8: This trigger was disabled. In this state, \RcsrTdataTwo and
-            \RcsrTdataThree can be written with any value that is supported for
-            any of the types this trigger implements. The remaining bits in this
-            register are ignored.
-
             12--14: These trigger types are available for non-standard use.
 
-            15: This trigger exists (so enumeration shouldn't terminate), but
-            is not currently available.
+            15: This trigger is disabled. In this state, \RcsrTdataTwo and
+            \RcsrTdataThree can be written with any value that is supported for
+            any of the types this trigger implements. The remaining bits in this
+            register are ignored. Other values are reserved for future use.
 
-            Other values are reserved for future use.
         </field>
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0">
             If \FcsrTdataOneType is 0, then this bit is hard-wired to 0.

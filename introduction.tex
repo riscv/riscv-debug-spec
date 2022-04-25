@@ -119,6 +119,9 @@ order to implement 1.0:}
     \item Bump \FdmDmstatusVersion to 3. \PR{512}
     \item Require debugger to poll \FdmDmcontrolDmactive after lowering it. \PR{566}
     \item Add \FcsrIcountPending to \RcsrIcount. \PR{574}
+    \item When a selected trigger is disabled, \RcsrTdataTwo and \RcsrTdataThree
+    can be written with any value supported by any of the types this trigger
+    supports. \PR{721}
 \end{steps}
 
 \subsubsection{Minor Changes from 0.13 to 1.0}
