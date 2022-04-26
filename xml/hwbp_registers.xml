@@ -822,17 +822,18 @@
     <register name="Instruction Count" short="icount" address="0x7a1">
         This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 3.
 
-        When \FcsrIcountCount is greater than 1, every instruction completed or
-        trap taken from a privilege mode where the trigger is enabled decrements
-        \FcsrIcountCount by 1. (This is true even if the action configured in
+        This trigger matches on every instruction completed or trap taken from a
+        privilege mode where the trigger is enabled.
+
+        When \FcsrIcountCount is greater than 1 and the trigger matches, then
+        \FcsrIcountCount is decremented by 1. (This is true even if the action configured in
         the trigger is inhibited for some reason.)
 
-        When \FcsrIcountCount is 1, and an instruction is completed or trap
-        taken from a privilege mode where the trigger is enabled, then \FcsrIcountPending
+        When \FcsrIcountCount is 1 and the trigger matches, then \FcsrIcountPending
         becomes set. In addition \FcsrIcountCount will become 0 unless it is
         hard-wired to 1.
 
-        The only exception to the above is when the instruction executed is a
+        The only exception to the above is when the instruction the trigger matched on is a
         write to the icount trigger. In that case \FcsrIcountPending might or might
         not become set if \FcsrIcountCount was 1. Afterwards \FcsrIcountCount
         contains the newly written value.
@@ -884,9 +885,9 @@
         </field>
         <field name="hit" bits="24" access="WARL" reset="0">
             If this bit is implemented, the hardware sets it when this
-            trigger matches. The trigger's user can set or clear it at any
+            trigger fires. The trigger's user can set or clear it at any
             time. It is used to determine which
-            trigger(s) matched.  If the bit is not implemented, it is always 0
+            trigger(s) fires.  If the bit is not implemented, it is always 0
             and writing it has no effect.
         </field>
         <field name="count" bits="23:10" access="WARL" reset="1">
