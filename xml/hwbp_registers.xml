@@ -68,7 +68,9 @@
             15: This trigger is disabled. In this state, \RcsrTdataTwo and
             \RcsrTdataThree can be written with any value that is supported for
             any of the types this trigger implements. The remaining bits in this
-            register are ignored. Other values are reserved for future use.
+            register are ignored.
+            
+            Other values are reserved for future use.
 
         </field>
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0">
