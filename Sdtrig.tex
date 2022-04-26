@@ -256,4 +256,9 @@ follows:}
 \item Write desired value to \RcsrTdataOne.
 \end{steps}
 
+Code that restores CSR context of triggers that might be configured to fire in
+the current privilege mode must use this same sequence to restore the triggers.
+This avoids the problem of a partially written trigger firing at a different
+time than is expected.
+
 \input{hwbp_registers.tex}

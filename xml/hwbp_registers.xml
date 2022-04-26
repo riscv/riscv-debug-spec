@@ -36,6 +36,10 @@
     <register name="Trigger Data 1" short="tdata1" address="0x7a1">
         This register is optional if no triggers are implemented.
 
+        Writing 0 to this register must result in a trigger that is disabled.
+        If this trigger supports multiple types, then the hardware should
+        disable it by changing \FcsrTdataOneType to 15.
+
         <field name="type" bits="XLEN-1:XLEN-4" access="WARL" reset="Preset">
             0: There is no trigger at this \RcsrTselect.
 
@@ -64,10 +68,13 @@
 
             12--14: These trigger types are available for non-standard use.
 
-            15: This trigger exists (so enumeration shouldn't terminate), but
-            is not currently available.
-
+            15: This trigger is disabled. In this state, \RcsrTdataTwo and
+            \RcsrTdataThree can be written with any value that is supported for
+            any of the types this trigger implements. The remaining bits in this
+            register are ignored.
+            
             Other values are reserved for future use.
+
         </field>
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0">
             If \FcsrTdataOneType is 0, then this bit is hard-wired to 0.
@@ -96,6 +103,9 @@
         Trigger-specific data. It is optional if no implemented triggers use
         it.
 
+        If the trigger is disabled, then this register can be written with any
+        value supported by any of the trigger types supported by this trigger.
+
         If XLEN is less than DXLEN, writes to this register are sign-extended.
         <field name="data" bits="XLEN-1:0" access="WARL" reset="Preset" />
     </register>
@@ -103,6 +113,9 @@
     <register name="Trigger Data 3" short="tdata3" address="0x7a3">
         Trigger-specific data. It is optional if no implemented triggers use
         it.
+
+        If the trigger is disabled, then this register can be written with any
+        value supported by any of the trigger types supported by this trigger.
 
         If XLEN is less than DXLEN, writes to this register are sign-extended.
         <field name="data" bits="XLEN-1:0" access="WARL" reset="Preset" />
