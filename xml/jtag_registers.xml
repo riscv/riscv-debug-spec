@@ -63,11 +63,17 @@
             The size of \FdmSbaddressZeroAddress in \RdtmDmi.
         </field>
         <field name="version" bits="3:0" access="R" reset="1">
-            0: Version described in spec version 0.11.
+            <value v="0" name="0.11">
+            Version described in spec version 0.11.
+            </value>
 
-            1: Version described in spec versions 0.13 and 1.0.
+            <value v="1" name="1.0">
+            Version described in spec versions 0.13 and 1.0.
+            </value>
 
-            15: Version not described in any available version of this spec.
+            <value v="15" name="undescribed">
+            Version not described in any available version of this spec.
+            </value>
         </field>
     </register>
 
@@ -104,26 +110,39 @@
         <field name="op" bits="1:0" access="R/W" reset="0">
             When the debugger writes this field, it has the following meaning:
 
-            0: Ignore \FdmSbdataZeroData and \FdmSbaddressZeroAddress. (nop)
+            <value v="0" name="nop">
+            Ignore \FdmSbdataZeroData and \FdmSbaddressZeroAddress.
 
             Don't send anything over the DMI during Update-DR.
             This operation should never result in a busy or error response.
             The address and data reported in the following Capture-DR
             are undefined.
+            </value>
 
-            1: Read from \FdmSbaddressZeroAddress. (read)
+            <value v="1" name="read">
+            Read from \FdmSbaddressZeroAddress.
+            </value>
 
-            2: Write \FdmSbdataZeroData to \FdmSbaddressZeroAddress. (write)
+            <value v="2" name="write">
+            Write \FdmSbdataZeroData to \FdmSbaddressZeroAddress.
+            </value>
 
-            3: Reserved.
+            <value v="3" name="reserved">
+            Reserved.
+            </value>
 
             When the debugger reads this field, it means the following:
 
-            0: The previous operation completed successfully.
+            <value v="0" name="success" duplicate="1">
+            The previous operation completed successfully.
+            </value>
 
-            1: Reserved.
+            <value v="1" name="reserved" duplicate="1">
+            Reserved.
+            </value>
 
-            2: A previous operation failed.  The data scanned into \RdtmDmi in
+            <value v="2" name="failed" duplicate="1">
+            A previous operation failed.  The data scanned into \RdtmDmi in
             this access will be ignored.  This status is sticky and can be
             cleared by writing \FdtmDtmcsDmireset in \RdtmDtmcs.
 
@@ -131,14 +150,17 @@
             There are no specified cases in which the DM would
             respond with an error, and DMI is not required to support
             returning errors.
+            </value>
 
-            3: An operation was attempted while a DMI request is still in
+            <value v="3" name="busy" duplicate="1">
+            An operation was attempted while a DMI request is still in
             progress. The data scanned into \RdtmDmi in this access will be
             ignored. This status is sticky and can be cleared by writing
             \FdtmDtmcsDmireset in \RdtmDtmcs. If a debugger sees this status, it
             needs to give the target more TCK edges between Update-DR and
             Capture-DR. The simplest way to do that is to add extra transitions
             in Run-Test/Idle.
+            </value>
         </field>
     </register>
 

@@ -8,57 +8,87 @@
         \end{commentary}
 
         <field name="debugver" bits="31:28" access="R" reset="Preset">
-          0: There is no debug support.
+            <value v="0" name="none">
+            There is no debug support.
+            </value>
 
-          4: Debug support exists as it is described in this document.
+            <value v="4" name="1.0">
+            Debug support exists as it is described in this document.
+            </value>
 
-          15: There is debug support, but it does not conform to any
-          available version of this spec.
+            <value v="15" name="custom">
+            There is debug support, but it does not conform to any
+            available version of this spec.
+            </value>
         </field>
         <field name="0" bits="27:18" access="R" reset="0" />
         <field name="ebreakvs" bits="17" access="WARL" reset="0">
-          0: {\tt ebreak} instructions in VS-mode behave as described in the
-          Privileged Spec.
+            <value v="0" name="exception">
+            {\tt ebreak} instructions in VS-mode behave as described in the
+            Privileged Spec.
+            </value>
 
-          1: {\tt ebreak} instructions in VS-mode enter Debug Mode.
+            <value v="1" name="debug mode">
+            {\tt ebreak} instructions in VS-mode enter Debug Mode.
+            </value>
 
-          This bit is hardwired to 0 if the hart does not support virtualization mode.
+            This bit is hardwired to 0 if the hart does not support virtualization mode.
         </field>
         <field name="ebreakvu" bits="16" access="WARL" reset="0">
-          0: {\tt ebreak} instructions in VU-mode behave as described in the
-          Privileged Spec.
+            <value v="0" name="exception">
+            {\tt ebreak} instructions in VU-mode behave as described in the
+            Privileged Spec.
+            </value>
 
-          1: {\tt ebreak} instructions in VU-mode enter Debug Mode.
+            <value v="1" name="debug mode">
+            {\tt ebreak} instructions in VU-mode enter Debug Mode.
+            </value>
 
-          This bit is hardwired to 0 if the hart does not support virtualization mode.
+            This bit is hardwired to 0 if the hart does not support virtualization mode.
         </field>
         <field name="ebreakm" bits="15" access="R/W" reset="0">
-            0: {\tt ebreak} instructions in M-mode behave as described in the
+            <value v="0" name="exception">
+            {\tt ebreak} instructions in M-mode behave as described in the
             Privileged Spec.
+            </value>
 
-            1: {\tt ebreak} instructions in M-mode enter Debug Mode.
+            <value v="1" name="debug mode">
+            {\tt ebreak} instructions in M-mode enter Debug Mode.
+            </value>
         </field>
         <field name="0" bits="14" access="R" reset="0" />
         <field name="ebreaks" bits="13" access="WARL" reset="0">
-            0: {\tt ebreak} instructions in S-mode behave as described in the
+            <value v="0" name="exception">
+            {\tt ebreak} instructions in S-mode behave as described in the
             Privileged Spec.
+            </value>
 
-            1: {\tt ebreak} instructions in S-mode enter Debug Mode.
+            <value v="1" name="debug mode">
+            {\tt ebreak} instructions in S-mode enter Debug Mode.
+            </value>
 
             This bit is hardwired to 0 if the hart does not support S-mode.
         </field>
         <field name="ebreaku" bits="12" access="WARL" reset="0">
-            0: {\tt ebreak} instructions in U-mode behave as described in the
+            <value v="0" name="exception">
+            {\tt ebreak} instructions in U-mode behave as described in the
             Privileged Spec.
+            </value>
 
-            1: {\tt ebreak} instructions in U-mode enter Debug Mode.
+            <value v="1" name="debug mode">
+            {\tt ebreak} instructions in U-mode enter Debug Mode.
+            </value>
 
             This bit is hardwired to 0 if the hart does not support U-mode.
         </field>
         <field name="stepie" bits="11" access="WARL" reset="0">
-            0: Interrupts (including NMI) are disabled during single stepping.
+            <value v="0" name="interrupts disabled">
+            Interrupts (including NMI) are disabled during single stepping.
+            </value>
 
-            1: Interrupts (including NMI) are enabled during single stepping.
+            <value v="1" name="interrupts enabled">
+            Interrupts (including NMI) are enabled during single stepping.
+            </value>
 
             Implementations may hard wire this bit to 0.
             In that case interrupt behavior can be emulated by the debugger.
@@ -67,22 +97,30 @@
             is running.
         </field>
         <field name="stopcount" bits="10" access="WARL" reset="Preset">
-            0: Increment counters as usual.
+            <value v="0" name="increment">
+            Increment counters as usual.
+            </value>
 
-            1: Don't increment any hart-local counters while in Debug Mode or
+            <value v="1" name="freeze">
+            Don't increment any hart-local counters while in Debug Mode or
             on {\tt ebreak} instructions that cause entry into Debug Mode.
             These counters include the {\tt instret} CSR. On single-hart cores
             {\tt cycle} should be stopped, but on multi-hart cores it must keep
             incrementing.
+            </value>
 
             An implementation may hardwire this bit to 0 or 1.
         </field>
         <field name="stoptime" bits="9" access="WARL" reset="Preset">
-            0: Increment \Rtime as usual.
+            <value v="0" name="ignore">
+            Increment \Rtime as usual.
+            </value>
 
-            1: Don't increment \Rtime while in Debug Mode.  If all harts
+            <value v="1" name="freeze">
+            Don't increment \Rtime while in Debug Mode.  If all harts
             have \FcsrDcsrStoptime=1 and are in Debug Mode then \Rmtime
             is also allowed to stop incrementing.
+            </value>
 
             An implementation may hardwire this bit to 0 or 1.
         </field>
@@ -93,20 +131,32 @@
             cycle, hardware should set \FcsrDcsrCause to the cause with the highest
             priority.
 
-            1: An {\tt ebreak} instruction was executed. (priority 3)
+            <value v="1" name="ebreak">
+            An {\tt ebreak} instruction was executed. (priority 3)
+            </value>
 
-            2: A Trigger Module trigger fired with action=1. (priority 4)
+            <value v="2" name="trigger">
+            A Trigger Module trigger fired with action=1. (priority 4)
+            </value>
 
-            3: The debugger requested entry to Debug Mode using \FdmDmcontrolHaltreq.
+            <value v="3" name="haltreq">
+            The debugger requested entry to Debug Mode using \FdmDmcontrolHaltreq.
             (priority 1)
+            </value>
 
-            4: The hart single stepped because \FcsrDcsrStep was set. (priority 0, lowest)
+            <value v="4" name="step">
+            The hart single stepped because \FcsrDcsrStep was set. (priority 0, lowest)
+            </value>
 
-            5: The hart halted directly out of reset due to \Fresethaltreq. It
+            <value v="5" name="reset">
+            The hart halted directly out of reset due to \Fresethaltreq. It
             is also acceptable to report 3 when this happens. (priority 2)
+            </value>
 
-            6: The hart halted because it's part of a halt group. (priority 5,
+            <value v="6" name="group">
+            The hart halted because it's part of a halt group. (priority 5,
             highest) Harts may report 3 for this cause instead.
+            </value>
 
             Other values are reserved for future use.
         </field>
@@ -119,9 +169,13 @@
           This bit is hardwired to 0 on harts that do not support virtualization mode.
         </field>
         <field name="mprven" bits="4" access="WARL" reset="Preset">
-            0: \FcsrMstatusMprv in \Rmstatus is ignored in Debug Mode.
+            <value v="0" name="disabled">
+            \FcsrMstatusMprv in \Rmstatus is ignored in Debug Mode.
+            </value>
 
-            1: \FcsrMstatusMprv in \Rmstatus takes effect in Debug Mode.
+            <value v="1" name="enabled">
+            \FcsrMstatusMprv in \Rmstatus takes effect in Debug Mode.
+            </value>
 
             Implementing this bit is optional. It may be tied to either 0 or 1.
 	</field>
