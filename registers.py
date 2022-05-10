@@ -233,12 +233,16 @@ def sympy_to_c(expression):
             return "0x%xULL" % expression
         elif (expression >= 2**31):
             return "0x%xU" % expression
-        elif (expression >= 8):
+        elif (expression >= 10):
             return "0x%x" % expression
-        elif (expression >= 0):
+        elif (expression > -10):
             return "%d" % expression
+        elif (expression > -2**31):
+            return "-0x%x" % -expression
+        elif (expression > -2**32):
+            return "-0x%xU" % -expression
         else:
-            return "-%d" % -expression
+            return "-0x%xULL" % -expression
     elif isinstance(expression, sympy.Symbol):
         return str(expression)
     elif isinstance(expression, sympy.Add):
