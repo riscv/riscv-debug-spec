@@ -146,6 +146,9 @@ incompatible, but unlikely to be noticeable:}
     Section~\ref{acQuickaccess}. \PR{585}
     \item Writing 0 to \RcsrTdataOne forces a state where \RcsrTdataTwo and
         \RcsrTdataThree are writable. \PR{598}
+    \item Solutions to deal with reentrancy in Section~\ref{sec:nativetrigger}
+        prevent triggers from {\em matching}, not merely {\em firing}. This primarily
+        affects \RcsrIcount behavior. \PR{722}
 \end{steps}
 
 \subsubsection{New Features from 0.13 to 1.0}
