@@ -113,9 +113,8 @@ when \FdmDmcontrolDmactive is low.
 
 \section{Selecting Harts} \label{selectingharts}
 
-Up to $2^{20}$ harts can be connected to a single DM. The debugger
-selects a hart, and then subsequent halt, resume, reset, and debugging
-commands are specific to that hart.
+Up to $2^{20}$ harts can be connected to a single DM. Commands issued to the DM
+only apply to the currently selected harts.
 
 To enumerate all the harts, a debugger must first determine {\tt HARTSELLEN}
 by writing  all ones to \Fhartsel (assuming the maximum size) and reading back
