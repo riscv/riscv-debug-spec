@@ -211,6 +211,50 @@ def write_definitions( fd, registers ):
                         toLatexIdentifier( registers.prefix, regid, f.name ),
                         f.name ) )
 
+class Macro:
+    def __init__(self, name, expressionText):
+        self.name = name
+        self.expression = sympy.simplify(expressionText)
+        self.atoms = self.expression.atoms(sympy.Symbol)
+
+    def prototype(self):
+        if self.atoms:
+            return "%s(%s)" % (self.name, ", ".join(str(a) for a in self.atoms))
+        else:
+            return self.name
+
+    def body(self):
+        return self.expression
+
+def sympy_to_c(expression):
+    """Implement our own string function, so we can replace 2** with 1<<."""
+    if isinstance(expression, sympy.Number):
+        if (expression >= 2**32):
+            return "0x%xULL" % expression
+        elif (expression >= 2**31):
+            return "0x%xU" % expression
+        elif (expression >= 10):
+            return "0x%x" % expression
+        elif (expression > -10):
+            return "%d" % expression
+        elif (expression > -2**31):
+            return "-0x%x" % -expression
+        elif (expression > -2**32):
+            return "-0x%xU" % -expression
+        else:
+            return "-0x%xULL" % -expression
+    elif isinstance(expression, sympy.Symbol):
+        return str(expression)
+    elif isinstance(expression, sympy.Add):
+        return "(" + " + ".join(sympy_to_c(t) for t in reversed(expression.args)) + ")"
+    elif isinstance(expression, sympy.Mul):
+        return "(" + " * ".join(sympy_to_c(t) for t in expression.args) + ")"
+    elif isinstance(expression, sympy.Pow):
+        base, exponent = expression.as_base_exp()
+        assert base == 2, "Power must have base of two, not %r" % base
+        return "(1ULL<<%s)" % sympy_to_c(exponent)
+    raise Exception("Unsupported sympy object %r of type %r" % (expression, type(expression)))
+
 def write_cheader( fd, registers ):
     definitions = []
     for r in registers.registers:
@@ -229,16 +273,23 @@ def write_cheader( fd, registers ):
             if f.define:
                 if f.description:
                     definitions.append(( "comment", f.description ))
-                offset = "%s_%s_OFFSET" % ( prefname, toCIdentifier( f.name ).upper() )
-                length = "%s_%s_LENGTH" % ( prefname, toCIdentifier( f.name ).upper() )
-                mask = "%s_%s" % ( prefname, toCIdentifier( f.name ).upper() )
-                definitions.append(( offset, f.lowBit ))
-                definitions.append(( length, f.length() ))
-                try:
-                    definitions.append(( mask,
-                            "0x%x%s << %s" % ( ((1<<int(f.length()))-1), suffix, offset )))
-                except TypeError:
-                    definitions.append(( mask, "((1L << %s) - 1) << %s" % (f.length(), offset) ))
+                offset = Macro(
+                    "%s_%s_OFFSET" % ( prefname, toCIdentifier( f.name ).upper() ),
+                    f.lowBit
+                )
+                definitions.append(( offset.prototype(), offset.body() ))
+                length = Macro(
+                    "%s_%s_LENGTH" % ( prefname, toCIdentifier( f.name ).upper() ),
+                    f.length()
+                )
+                definitions.append(( length.prototype(), length.body() ))
+                # sympy doesn't support a bit shift (<<) operator, so here we
+                # use power (**) instead.
+                mask = Macro(
+                    "%s_%s" % ( prefname, toCIdentifier( f.name ).upper() ),
+                    ((2 ** sympy.simplify(f.length())) - 1) * (2 ** sympy.simplify(f.lowBit))
+                )
+                definitions.append(( mask.prototype(), mask.body() ))
 
     counted = collections.Counter(name for name, value in definitions)
     for name, value in definitions:
@@ -249,8 +300,8 @@ def write_cheader( fd, registers ):
             fd.write( " */\n" )
             continue
         if counted[name] == 1:
-            if re.search(r"[\-\+<>]", str(value)):
-                value = "(%s)" % value
+            if not isinstance(value, str):
+                value = sympy_to_c(value)
             fd.write( "#define %-35s %s\n" % ( name, value ) )
 
 def write_chisel( fd, registers ):
