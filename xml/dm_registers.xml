@@ -345,7 +345,7 @@
             dedicated to shadowing the {\tt data} registers.
 
             If this value is non-zero, then the {tt data} registers must go
-            beyond being MRs and guarantee they store a single value, that is
+            beyond being MRs and guarantee they each store a single value, that is
             readable/writable by either side.
 
             Since there are at most 12 {\tt data} registers, the value in this
