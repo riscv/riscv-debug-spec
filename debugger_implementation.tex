@@ -595,7 +595,7 @@ Single step is straightforward if the OS or a debug stub runs in M-Mode while th
 program being debugged runs in a less privileged mode. When a step is required,
 the OS or debug stub writes \FcsrIcountCount=1, \FcsrIcountAction=0,
 \FcsrIcountM=0 before returning control to the lower user program with an
-\tt{mret} instruction.
+{\tt mret} instruction.
 
 On tiny systems which only supports M-Mode single step is doable, but tricky to
 get right. To single step, the debug stub would execute something like:
