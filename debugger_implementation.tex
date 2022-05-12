@@ -1,4 +1,13 @@
-\chapter{External Debugger Implementation}
+\chapter{Debugger Implementation}
+
+\section{debug\_defines.h}
+
+The source at \href{https://github.com/riscv/riscv-debug-spec}
+{https://github.com/riscv/riscv-debug-spec} can generate a C header file that
+defines macros for every field in every register/abstract command mentioned in
+this document. To generate this, run {\tt make debug\_defines.h}.
+
+\section{External Debugger Implementation}
 
 This section details how an external debugger might use the described debug
 interface to perform some common operations on RISC-V cores using the JTAG DTM
@@ -13,7 +22,7 @@ check the sticky error status bits after performing a sequence of actions. If
 it sees any that are set, then it should attempt the same actions again,
 possibly while adding in some delay, or explicit checks for status bits.
 
-\section{Debug Module Interface Access} \label{dmiaccess}
+\subsection{Debug Module Interface Access} \label{dmiaccess}
 
 To read an arbitrary Debug Module register, select \RdtmDmi, and scan in a value
 with \FdtmDmiOp set to 1, and \FdmSbaddressZeroAddress set to the desired register address. In
@@ -33,7 +42,7 @@ a read, except that a write is performed instead of the read.
 It should almost never be necessary to scan IR, avoiding a big part of the
 inefficiency in typical JTAG use.
 
-\section{Checking for Halted Harts}
+\subsection{Checking for Halted Harts}
 
 A user will want to know as quickly as possible when a hart is halted (e.g.\ due
 to a breakpoint).  To efficiently determine which harts are halted when there
@@ -43,13 +52,13 @@ there, it writes \Fhartsel, and checks \RdmHaltsumTwo. This process repeats
 through \RdmHaltsumOne and \RdmHaltsumZero. Depending on how many harts exist, the
 process should start at one of the lower {\tt haltsum} registers.
 
-\section{Halting} \label{deb:halt}
+\subsection{Halting} \label{deb:halt}
 
 To halt one or more harts, the debugger selects them, sets \FdmDmcontrolHaltreq, and then
 waits for \FdmDmstatusAllhalted to indicate the harts are halted. Then it can clear
 \FdmDmcontrolHaltreq to 0, or leave it high to catch a hart that resets while halted.
 
-\section{Running}
+\subsection{Running}
 
 First, the debugger should restore any registers that it has overwritten.
 Then it can let the selected harts run by setting \FdmDmcontrolResumereq. Once
@@ -58,7 +67,7 @@ clear \FdmDmcontrolResumereq. Harts might halt very quickly after resuming (e.g.
 by hitting a software breakpoint) so the debugger cannot use
 \FdmDmstatusAllhalted/\FdmDmstatusAnyhalted to check whether the hart resumed.
 
-\section{Single Step}
+\subsection{Single Step}
 
 Using the hardware single step feature is almost the same as regular running.
 The debugger just sets \FcsrDcsrStep in \RcsrDcsr before letting the hart run. The hart
@@ -66,9 +75,9 @@ behaves exactly as in the running case, except that interrupts may be disabled
 (depending on \FcsrDcsrStepie) and it only fetches and executes a single instruction
 before re-entering Debug Mode.
 
-\section{Accessing Registers}
+\subsection{Accessing Registers}
 
-\subsection{Using Abstract Command} \label{deb:abstractreg}
+\subsubsection{Using Abstract Command} \label{deb:abstractreg}
 
 \noindent Read \Szero using abstract command:
 
@@ -96,7 +105,7 @@ before re-entering Debug Mode.
 \end{tabular}
 \medskip
 
-\subsection{Using Program Buffer} \label{deb:regprogbuf}
+\subsubsection{Using Program Buffer} \label{deb:regprogbuf}
 
 Abstract commands are used to exchange data with GPRs. Using this mechanism, other
 registers can be accessed by moving their value into/out of GPRs.
@@ -138,9 +147,9 @@ registers can be accessed by moving their value into/out of GPRs.
 \end{tabular}
 \medskip
 
-\section{Reading Memory}
+\subsection{Reading Memory}
 
-\subsection{Using System Bus Access} \label{deb:mrsysbus}
+\subsubsection{Using System Bus Access} \label{deb:mrsysbus}
 
 With system bus access, addresses are physical system bus addresses.
 
@@ -183,7 +192,7 @@ With system bus access, addresses are physical system bus addresses.
 \end{tabular}
 \medskip
 
-\subsection{Using Program Buffer} \label{deb:mrprogbuf}
+\subsubsection{Using Program Buffer} \label{deb:mrprogbuf}
 
 Through the Program Buffer, the hart performs the memory accesses. Addresses
 are physical or virtual (depending on \FcsrDcsrMprven and other system
@@ -243,7 +252,7 @@ configuration).
 \end{tabular}
 \medskip
 
-\subsection{Using Abstract Memory Access} \label{deb:mrabstract}
+\subsubsection{Using Abstract Memory Access} \label{deb:mrabstract}
 
 Abstract memory accesses act as if they are performed by the hart, although the
 actual implementation may differ.
@@ -286,9 +295,9 @@ actual implementation may differ.
 \end{tabular}
 \medskip
 
-\section{Writing Memory} \label{writemem}
+\subsection{Writing Memory} \label{writemem}
 
-\subsection{Using System Bus Access} \label{deb:mrsysbus}
+\subsubsection{Using System Bus Access} \label{deb:mrsysbus}
 
 With system bus access, addresses are physical system bus addresses.
 
@@ -328,7 +337,7 @@ With system bus access, addresses are physical system bus addresses.
 \end{tabular}
 \medskip
 
-\subsection{Using Program Buffer} \label{deb:mrprogbuf}
+\subsubsection{Using Program Buffer} \label{deb:mrprogbuf}
 
 Through the Program Buffer, the hart performs the memory accesses. Addresses
 are physical or virtual (depending on \FcsrDcsrMprven and other system
@@ -388,7 +397,7 @@ configuration).
 \end{tabular}
 \medskip
 
-\subsection{Using Abstract Memory Access} \label{deb:mwabstract}
+\subsubsection{Using Abstract Memory Access} \label{deb:mwabstract}
 
 Abstract memory accesses act as if they are performed by the hart, although the
 actual implementation may differ.
@@ -435,7 +444,7 @@ actual implementation may differ.
 \end{tabular}
 \medskip
 
-\section{Triggers}
+\subsection{Triggers}
 
 A debugger can use hardware triggers to halt a hart when a certain event
 occurs.  Below are some examples, but as there is no requirement on the number
@@ -511,7 +520,7 @@ executed, to be used as an instruction breakpoint in ROM:
 \end{tabulary}
 \medskip
 
-\section{Handling Exceptions}
+\subsection{Handling Exceptions}
 
 Generally the debugger can avoid exceptions by being careful with the programs
 it writes. Sometimes they are unavoidable though, e.g.\ if the user asks to
@@ -524,7 +533,7 @@ set. The debugger can check this field to see whether a program encountered an
 exception.  If there was an exception, it's left to the debugger to know what
 must have caused it.
 
-\section{Quick Access} \label{quickaccess}
+\subsection{Quick Access} \label{quickaccess}
 
 There are a variety of instructions to transfer data between GPRs and the {\tt
 data} registers. They are either loads/stores or CSR reads/writes. The specific
@@ -584,12 +593,12 @@ to configure the trigger that is being enabled here:
    \hline
 \end{tabular}
 
-\chapter{Native Debugger Implementation}
+\section{Native Debugger Implementation}
 
 The spec contains a few features to aid in writing a native debugger. This
 section describes how some common tasks might be achieved.
 
-\section{Single Step} \label{nativestep}
+\subsection{Single Step} \label{nativestep}
 
 Single step is straightforward if the OS or a debug stub runs in M-Mode while the
 program being debugged runs in a less privileged mode. When a step is required,
