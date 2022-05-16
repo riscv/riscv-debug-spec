@@ -292,6 +292,27 @@ meaning it is never possible to halt or resume just a single hart. This is
 explicitly allowed. In that case it must be possible to discover the groups by
 using \RdmDmcsTwo even if it's not possible to change the configuration.
 
+\section{Message Registers}
+\label{sec:mr}
+
+Message Registers (MRs) are registers that are only used in a limited way,
+allowing for different implementations. They exist to let two sides communicate
+when the two sides already know who is the sender and who is the receiver.
+
+An MR implements read and write operations on two sides.  When one side reads an
+MR, and the last write was by the other side, then the result value of the read
+is the value last written by the other side.  When one side reads an MR, and the
+last write was by that same side, then the result value of the read is
+\unspecified.  Thus the MR can be used to exchange data with the other side, but
+not as storage to be accessed later.
+
+\begin{commentary}
+    A regular register can be used to implement an MR. In some FPGAs it is
+    cheaper to trade off storage for muxes, and in that case the storage can be
+    duplicated (one set of bits for sending and one for receiving) to avoid
+    having to implement muxes to read/write data from/to the correct side.
+\end{commentary}
+
 \section{Abstract Commands} \label{abstractcommands}
 
 The DM supports a set of abstract commands, most of which
@@ -321,12 +342,12 @@ successful or not. Commands may fail because a hart is not halted, not running,
 unavailable, or because they encounter an error during execution.
 
 If the command takes arguments, the debugger
-must write them to the {\tt data} registers before writing to \RdmCommand. If a
+must write them to the {\tt data} MRs before writing to \RdmCommand. If a
 command returns results, the Debug Module must ensure they are placed
-in the {\tt data} registers before \FdmAbstractcsBusy is cleared.
-Which {\tt data} registers are used for the arguments is
+in the {\tt data} MRs before \FdmAbstractcsBusy is cleared.
+Which {\tt data} MRs are used for the arguments is
 described in Table~\ref{tab:datareg}.  In all cases the least-significant word
-is placed in the lowest-numbered {\tt data} register. The argument width
+is placed in the lowest-numbered {\tt data} MR. The argument width
 depends on the command being executed, and is DXLEN where not explicitly
 specified.
 
