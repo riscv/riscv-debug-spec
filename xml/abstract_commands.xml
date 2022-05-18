@@ -265,8 +265,8 @@
         <field name="write" bits="16">
             <value v="0" name="arg">
             Copy data from the memory location specified in {\tt arg1} into
-            the low bits of {\tt arg0}. Any remaining bits of {\tt arg0} now
-            have an undefined value.
+            the low bits of {\tt arg0}. The value of the remaining bits of
+            {\tt arg0} are \unspecified.
             </value>
 
             <value v="1" name="memory">
