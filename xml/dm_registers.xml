@@ -879,23 +879,23 @@
         <field name="sbaccess" bits="19:17" access="R/W" reset="2">
             Select the access size to use for system bus accesses.
 
-            <value v="0" name="8">
+            <value v="0" name="8bit">
             8-bit
             </value>
 
-            <value v="1" name="16">
+            <value v="1" name="16bit">
             16-bit
             </value>
 
-            <value v="2" name="32">
+            <value v="2" name="32bit">
             32-bit
             </value>
 
-            <value v="3" name="64">
+            <value v="3" name="64bit">
             64-bit
             </value>
 
-            <value v="4" name="128">
+            <value v="4" name="128bit">
             128-bit
             </value>
 

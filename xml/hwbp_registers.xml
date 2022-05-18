@@ -404,42 +404,42 @@
             size is XLEN.
             </value>
 
-            <value v="1" name="8">
+            <value v="1" name="8bit">
             The trigger will only match against 8-bit memory accesses.
             </value>
 
-            <value v="2" name="16">
+            <value v="2" name="16bit">
             The trigger will only match against 16-bit memory accesses or
             execution of 16-bit instructions.
             </value>
 
-            <value v="3" name="32">
+            <value v="3" name="32bit">
             The trigger will only match against 32-bit memory accesses or
             execution of 32-bit instructions.
             </value>
 
-            <value v="4" name="48">
+            <value v="4" name="48bit">
             The trigger will only match against execution of 48-bit instructions.
             </value>
 
-            <value v="5" name="64">
+            <value v="5" name="64bit">
             The trigger will only match against 64-bit memory accesses or
             execution of 64-bit instructions.
             </value>
 
-            <value v="6" name="80">
+            <value v="6" name="80bit">
             The trigger will only match against execution of 80-bit instructions.
             </value>
 
-            <value v="7" name="96">
+            <value v="7" name="96bit">
             The trigger will only match against execution of 96-bit instructions.
             </value>
 
-            <value v="8" name="112">
+            <value v="8" name="112bit">
             The trigger will only match against execution of 112-bit instructions.
             </value>
 
-            <value v="9" name="128">
+            <value v="9" name="128bit">
             The trigger will only match against 128-bit memory accesses or
             execution of 128-bit instructions.
             </value>
@@ -764,42 +764,42 @@
             size is XLEN.
             </value>
 
-            <value v="1" name="8">
+            <value v="1" name="8bit">
             The trigger will only match against 8-bit memory accesses.
             </value>
 
-            <value v="2" name="16">
+            <value v="2" name="16bit">
             The trigger will only match against 16-bit memory accesses or
             execution of 16-bit instructions.
             </value>
 
-            <value v="3" name="32">
+            <value v="3" name="32bit">
             The trigger will only match against 32-bit memory accesses or
             execution of 32-bit instructions.
             </value>
 
-            <value v="4" name="48">
+            <value v="4" name="48bit">
             The trigger will only match against execution of 48-bit instructions.
             </value>
 
-            <value v="5" name="64">
+            <value v="5" name="64bit">
             The trigger will only match against 64-bit memory accesses or
             execution of 64-bit instructions.
             </value>
 
-            <value v="6" name="80">
+            <value v="6" name="80bit">
             The trigger will only match against execution of 80-bit instructions.
             </value>
 
-            <value v="7" name="96">
+            <value v="7" name="96bit">
             The trigger will only match against execution of 96-bit instructions.
             </value>
 
-            <value v="8" name="112">
+            <value v="8" name="112bit">
             The trigger will only match against execution of 112-bit instructions.
             </value>
 
-            <value v="9" name="128">
+            <value v="9" name="128bit">
             The trigger will only match against 128-bit memory accesses or
             execution of 128-bit instructions.
             </value>
