@@ -97,7 +97,7 @@
             is running.
         </field>
         <field name="stopcount" bits="10" access="WARL" reset="Preset">
-            <value v="0" name="increment">
+            <value v="0" name="normal">
             Increment counters as usual.
             </value>
 
@@ -112,7 +112,7 @@
             An implementation may hardwire this bit to 0 or 1.
         </field>
         <field name="stoptime" bits="9" access="WARL" reset="Preset">
-            <value v="0" name="ignore">
+            <value v="0" name="normal">
             Increment \Rtime as usual.
             </value>
 
