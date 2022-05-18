@@ -596,8 +596,12 @@
     <!-- =============== Program Buffer =============== -->
 
     <register name="Program Buffer 0" short="progbuf0" address="0x20">
-        \RdmProgbufZero through \RdmProgbufFifteen provide read/write access to the
-        optional program buffer. \FdmAbstractcsProgbufsize indicates how many of them are
+        \RdmProgbufZero through \RdmProgbufFifteen must provide write access to the
+        optional program buffer. It may also be possible for the debugger to
+        read from the program buffer through these registers. If reading
+        is not supported, then all reads return 0.
+
+        \FdmAbstractcsProgbufsize indicates how many {\tt progbuf} registers are
         implemented starting at \RdmProgbufZero, counting up.
 
         Accessing these registers while an abstract command is executing causes
