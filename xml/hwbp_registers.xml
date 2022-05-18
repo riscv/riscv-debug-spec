@@ -1271,18 +1271,18 @@
             Ignore \FcsrTextraThirtytwoMhvalue.
             </value>
 
-            <value v="4" name="equal">
+            <value v="4" name="mcontext">
             This trigger will only match if the low bits of
             \RcsrMcontext/\RcsrHcontext equal \FcsrTextraThirtytwoMhvalue.
             </value>
 
-            1, 5: This trigger will only match if the low bits of
+            1, 5 (mcontext\_select): This trigger will only match if the low bits of
             \RcsrMcontext/\RcsrHcontext equal \{\FcsrTextraThirtytwoMhvalue, mhselect[2]\}.
 
-            2, 6: This trigger will only match if VMID in hgatp equals the lower VMIDMAX
+            2, 6 (vmid\_select): This trigger will only match if VMID in hgatp equals the lower VMIDMAX
             (defined in the Privileged Spec) bits of \{\FcsrTextraThirtytwoMhvalue, mhselect[2]\}.
 
-            3, 7: Reserved.
+            3, 7 (reserved): Reserved.
 
             If the H extension is not supported, the only legal values are 0 and 4.
         </field>
@@ -1306,12 +1306,12 @@
             Ignore \FcsrTextraThirtytwoSvalue.
             </value>
 
-            <value v="1" name="equal">
+            <value v="1" name="scontext">
             This trigger will only match if the low bits of
             \RcsrScontext equal \FcsrTextraThirtytwoSvalue.
             </value>
 
-            <value v="2" name="vequal">
+            <value v="2" name="asid">
             This trigger will only match if:
             \begin{itemize}[noitemsep,nolistsep]
             \item the mode is VS-mode or VU-mode and ASID in \Rvsatp

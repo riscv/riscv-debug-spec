@@ -86,11 +86,11 @@
 
         <!-- Fields that apply to the entire DM. -->
         <field name="authenticated" bits="7" access="R" reset="Preset">
-            <value v="0" name="required">
+            <value v="0" name="false">
             Authentication is required before using the DM.
             </value>
 
-            <value v="1" name="passed">
+            <value v="1" name="true">
             The authentication check has passed.
             </value>
 
@@ -128,7 +128,7 @@
             </value>
         </field>
         <field name="version" bits="3:0" reset="3" access="R">
-            <value v="0" name="not present">
+            <value v="0" name="none">
             There is no Debug Module present.
             </value>
 
@@ -147,7 +147,7 @@
             specification.
             </value>
 
-            <value v="15" name="non-compliant">
+            <value v="15" name="custom">
             There is a Debug Module but it does not conform to any
             available version of this spec.
             </value>
@@ -453,6 +453,10 @@
         </field>
         <field name="0" bits="23:13" access="R" reset="0" />
         <field name="busy" bits="12" access="R" reset="0">
+            <value v="0" name="ready">
+            There is no abstract command currently being executed.
+            </value>
+
             <value v="1" name="busy">
             An abstract command is currently being executed.
             </value>
@@ -476,35 +480,35 @@
 
             This field only contains a valid value if \FdmAbstractcsBusy is 0.
 
-            <value v="0 " name="none">
+            <value v="0" name="none">
             No error.
             </value>
 
-            <value v="1 " name="busy">
+            <value v="1" name="busy">
             An abstract command was executing while \RdmCommand,
             \RdmAbstractcs, or \RdmAbstractauto was written, or when one
             of the {\tt data} or {\tt progbuf} registers was read or written.
             This status is only written if \FdmAbstractcsCmderr contains 0.
             </value>
 
-            <value v="2 " name="not supported">
+            <value v="2" name="not supported">
             The command in \RdmCommand is not supported.  It
             may be supported with different options set, but it will not be
             supported at a later time when the hart or system state are
             different.
             </value>
 
-            <value v="3 " name="exception">
+            <value v="3" name="exception">
             An exception occurred while executing the command
             (e.g.\ while executing the Program Buffer).
             </value>
 
-            <value v="4 " name="halt/resume">
+            <value v="4" name="halt/resume">
             The abstract command couldn't execute because the
             hart wasn't in the required state (running/halted), or unavailable.
             </value>
 
-            <value v="5 " name="bus">
+            <value v="5" name="bus">
             The abstract command failed due to a bus error (e.g.\ 
             alignment, access size, or timeout).
             </value>
@@ -837,7 +841,7 @@
 
     <register name="System Bus Access Control and Status" short="sbcs" address="0x38">
         <field name="sbversion" bits="31:29" access="R" reset="1">
-            <value v="0" name="old">
+            <value v="0" name="legacy">
             The System Bus interface conforms to mainline drafts of this
             spec older than 1 January, 2018.
             </value>

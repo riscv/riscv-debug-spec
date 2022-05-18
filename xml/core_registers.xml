@@ -148,7 +148,7 @@
             The hart single stepped because \FcsrDcsrStep was set. (priority 0, lowest)
             </value>
 
-            <value v="5" name="reset">
+            <value v="5" name="resethaltreq">
             The hart halted directly out of reset due to \Fresethaltreq. It
             is also acceptable to report 3 when this happens. (priority 2)
             </value>

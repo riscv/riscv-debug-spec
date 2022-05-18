@@ -71,7 +71,7 @@
             Version described in spec versions 0.13 and 1.0.
             </value>
 
-            <value v="15" name="undescribed">
+            <value v="15" name="custom">
             Version not described in any available version of this spec.
             </value>
         </field>
