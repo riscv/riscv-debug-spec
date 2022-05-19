@@ -75,11 +75,17 @@
         </field>
         <field name="0" bits="23" />
         <field name="aarsize" bits="22:20">
-            2: Access the lowest 32 bits of the register.
+            <value v="2" name="32bit">
+            Access the lowest 32 bits of the register.
+            </value>
 
-            3: Access the lowest 64 bits of the register.
+            <value v="3" name="64bit">
+            Access the lowest 64 bits of the register.
+            </value>
 
-            4: Access the lowest 128 bits of the register.
+            <value v="4" name="128bit">
+            Access the lowest 128 bits of the register.
+            </value>
 
             If \FacAccessregisterAarsize specifies a size larger than the register's actual size,
             then the access must fail. If a register is accessible, then reads of \FacAccessregisterAarsize
@@ -91,37 +97,53 @@
             Table~\ref{tab:datareg}.
         </field>
         <field name="aarpostincrement" bits="19">
-            0: No effect. This variant must be supported.
+            <value v="0" name="disabled">
+            No effect. This variant must be supported.
+            </value>
 
-            1: After a successful register access, \FacAccessregisterRegno is
+            <value v="1" name="enabled">
+            After a successful register access, \FacAccessregisterRegno is
             incremented. Incrementing past the highest supported value
             causes \FacAccessregisterRegno to become \unspecified.  Supporting
             this variant is optional. It is undefined whether the increment
             happens when \FacAccessregisterTransfer is 0.
+            </value>
         </field>
         <field name="postexec" bits="18">
-            0: No effect. This variant must be supported, and is the only
+            <value v="0" name="disabled">
+            No effect. This variant must be supported, and is the only
             supported one if \FdmAbstractcsProgbufsize is 0.
+            </value>
 
-            1: Execute the program in the Program Buffer exactly once after
+            <value v="1" name="enabled">
+            Execute the program in the Program Buffer exactly once after
             performing the transfer, if any. Supporting this variant is
             optional.
+            </value>
         </field>
         <field name="transfer" bits = "17">
-            0: Don't do the operation specified by \FacAccessregisterWrite.
+            <value v="0" name="disabled">
+            Don't do the operation specified by \FacAccessregisterWrite.
+            </value>
 
-            1: Do the operation specified by \FacAccessregisterWrite.
+            <value v="1" name="enabled">
+            Do the operation specified by \FacAccessregisterWrite.
+            </value>
 
             This bit can be used to just execute the Program Buffer without
             having to worry about placing valid values into \FacAccessregisterAarsize or \FacAccessregisterRegno.
         </field>
         <field name="write" bits="16">
             When \FacAccessregisterTransfer is set:
-            0: Copy data from the specified register into {\tt arg0} portion
+            <value v="0" name="arg0">
+            Copy data from the specified register into {\tt arg0} portion
                of {\tt data}.
+            </value>
 
-            1: Copy data from {\tt arg0} portion of {\tt data} into the
+            <value v="1" name="register">
+            Copy data from {\tt arg0} portion of {\tt data} into the
                specified register.
+            </value>
         </field>
         <field name="regno" bits="15:0">
           Number of the register to access, as described in
@@ -197,25 +219,39 @@
             physical accesses, but it must fail accesses that it doesn't
             support.
 
-            0: Addresses are physical (to the hart they are performed on).
+            <value v="0" name="physical">
+            Addresses are physical (to the hart they are performed on).
+            </value>
 
-            1: Addresses are virtual, and translated the way they would be from
+            <value v="1" name="virtual">
+            Addresses are virtual, and translated the way they would be from
             M-mode, with \FcsrMstatusMprv set.
+            </value>
 
             Debug Modules on systems without address translation (i.e. virtual addresses equal physical)
             may optionally allow \FacAccessmemoryAamvirtual set to 1, which would produce the same result as
             that same abstract command with \FacAccessmemoryAamvirtual cleared.
         </field>
         <field name="aamsize" bits="22:20">
-            0: Access the lowest 8 bits of the memory location.
+            <value v="0" name="8bit">
+            Access the lowest 8 bits of the memory location.
+            </value>
 
-            1: Access the lowest 16 bits of the memory location.
+            <value v="1" name="16bit">
+            Access the lowest 16 bits of the memory location.
+            </value>
 
-            2: Access the lowest 32 bits of the memory location.
+            <value v="2" name="32bit">
+            Access the lowest 32 bits of the memory location.
+            </value>
 
-            3: Access the lowest 64 bits of the memory location.
+            <value v="3" name="64bit">
+            Access the lowest 64 bits of the memory location.
+            </value>
 
-            4: Access the lowest 128 bits of the memory location.
+            <value v="4" name="128bit">
+            Access the lowest 128 bits of the memory location.
+            </value>
         </field>
         <field name="aampostincrement" bits="19">
             After a memory access has completed, if this bit is 1, increment
@@ -227,12 +263,16 @@
         </field>
         <field name="0" bits="18:17" />
         <field name="write" bits="16">
-            0: Copy data from the memory location specified in {\tt arg1} into
-            the low bits of {\tt arg0}. Any remaining bits of {\tt arg0} now
-            have an undefined value.
+            <value v="0" name="arg0">
+            Copy data from the memory location specified in {\tt arg1} into
+            the low bits of {\tt arg0}. The value of the remaining bits of
+            {\tt arg0} are \unspecified.
+            </value>
 
-            1: Copy data from the low bits of {\tt arg0} into the memory
+            <value v="1" name="memory">
+            Copy data from the low bits of {\tt arg0} into the memory
             location specified in {\tt arg1}.
+            </value>
         </field>
         <field name="target-specific" bits="15:14">
             These bits are reserved for target-specific uses.

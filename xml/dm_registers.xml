@@ -9,16 +9,24 @@
 
         <field name="0" bits="31:25" access="R" reset="0" />
         <field name="ndmresetpending" bits="24" access="R" reset="-">
-            0: Unimplemented, or \FdmDmcontrolNdmreset is zero and no ndmreset is currently 
+            <value v="0" name="false">
+            Unimplemented, or \FdmDmcontrolNdmreset is zero and no ndmreset is currently 
             in progress.
+            </value>
 
-            1: \FdmDmcontrolNdmreset is currently nonzero, or there is an ndmreset in progress.
+            <value v="1" name="true">
+            \FdmDmcontrolNdmreset is currently nonzero, or there is an ndmreset in progress.
+            </value>
         </field>
         <field name="stickyunavail" bits="23" access="R" reset="Preset">
-            0: The per-hart {\tt unavail} bits reflect the current state of the hart.
+            <value v="0" name="current">
+            The per-hart {\tt unavail} bits reflect the current state of the hart.
+            </value>
 
-            1: The per-hart {\tt unavail} bits are sticky. Once they are set, they will
+            <value v="1" name="sticky">
+            The per-hart {\tt unavail} bits are sticky. Once they are set, they will
             not clear until the debugger acknowledges them using \FdmDmcontrolAckunavail.
+            </value>
         </field>
         <field name="impebreak" bits="22" access="R" reset="Preset">
             If 1, then there is an implicit {\tt ebreak} instruction at the
@@ -78,19 +86,27 @@
 
         <!-- Fields that apply to the entire DM. -->
         <field name="authenticated" bits="7" access="R" reset="Preset">
-            0: Authentication is required before using the DM.
+            <value v="0" name="false">
+            Authentication is required before using the DM.
+            </value>
 
-            1: The authentication check has passed.
+            <value v="1" name="true">
+            The authentication check has passed.
+            </value>
 
             On components that don't implement authentication, this bit must be
             preset as 1.
         </field>
         <field name="authbusy" bits="6" access="R" reset="0">
-            0: The authentication module is ready to process the next
+            <value v="0" name="ready">
+            The authentication module is ready to process the next
             read/write to \RdmAuthdata.
+            </value>
 
-            1: The authentication module is busy. Accessing \RdmAuthdata results
+            <value v="1" name="busy">
+            The authentication module is busy. Accessing \RdmAuthdata results
             in unspecified behavior.
+            </value>
 
             \FdmDmstatusAuthbusy only becomes set in immediate response to an access to
             \RdmAuthdata.
@@ -101,26 +117,40 @@
             0 otherwise.
         </field>
         <field name="confstrptrvalid" bits="4" reset="Preset" access="R">
-            0: \RdmConfstrptrZero--\RdmConfstrptrThree hold information which
+            <value v="0" name="invalid">
+            \RdmConfstrptrZero--\RdmConfstrptrThree hold information which
             is not relevant to the configuration structure.
+            </value>
 
-            1: \RdmConfstrptrZero--\RdmConfstrptrThree hold the address of the
+            <value v="1" name="valid">
+            \RdmConfstrptrZero--\RdmConfstrptrThree hold the address of the
             configuration structure.
+            </value>
         </field>
         <field name="version" bits="3:0" reset="3" access="R">
-            0: There is no Debug Module present.
+            <value v="0" name="none">
+            There is no Debug Module present.
+            </value>
 
-            1: There is a Debug Module and it conforms to version 0.11 of this
+            <value v="1" name="0.11">
+            There is a Debug Module and it conforms to version 0.11 of this
             specification.
+            </value>
 
-            2: There is a Debug Module and it conforms to version 0.13 of this
+            <value v="2" name="0.13">
+            There is a Debug Module and it conforms to version 0.13 of this
             specification.
+            </value>
 
-            3: There is a Debug Module and it conforms to version 1.0 of this
+            <value v="3" name="1.0">
+            There is a Debug Module and it conforms to version 1.0 of this
             specification.
+            </value>
 
-            15: There is a Debug Module but it does not conform to any
+            <value v="15" name="custom">
+            There is a Debug Module but it does not conform to any
             available version of this spec.
+            </value>
         </field>
     </register>
 
@@ -203,27 +233,39 @@
             Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
         </field>
         <field name="ackhavereset" bits="28" access="W1" reset="-">
-            0: No effect.
+            <value v="0" name="nop">
+            No effect.
+            </value>
 
-            1: Clears {\tt havereset} for any selected harts.
+            <value v="1" name="ack">
+            Clears {\tt havereset} for any selected harts.
+            </value>
 
             Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
         </field>
         <field name="ackunavail" bits="27" access="W1" reset="-">
-            0: No effect.
+            <value v="0" name="nop">
+            No effect.
+            </value>
 
-            1: Clears {\tt unavail} for any selected harts that are currently available.
+            <value v="1" name="ack">
+            Clears {\tt unavail} for any selected harts that are currently available.
+            </value>
 
             Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
         </field>
         <field name="hasel" bits="26" access="WARL" reset="0">
             Selects the definition of currently selected harts.
 
-            0: There is a single currently selected hart, that is selected by \Fhartsel.
+            <value v="0" name="single">
+            There is a single currently selected hart, that is selected by \Fhartsel.
+            </value>
 
-            1: There may be multiple currently selected harts -- the hart
+            <value v="1" name="multiple">
+            There may be multiple currently selected harts -- the hart
             selected by \Fhartsel, plus those selected by the hart array mask
             register.
+            </value>
 
             An implementation which does not implement the hart array mask register
             must tie this field to 0. A debugger which wishes to use the hart array
@@ -288,13 +330,17 @@
             take an arbitrarily long time to complete activation or deactivation and will
             indicate completion by setting \FdmDmcontrolDmactive to the requested value.
 
-            0: The module's state, including authentication mechanism,
+            <value v="0" name="inactive">
+            The module's state, including authentication mechanism,
             takes its reset values (the \FdmDmcontrolDmactive bit is the only bit which can
             be written to something other than its reset value). Any accesses
             to the module may fail. Specifically, \FdmDmstatusVersion might not return
             correct data.
+            </value>
 
-            1: The module functions normally.
+            <value v="1" name="active">
+            The module functions normally.
+            </value>
 
             No other mechanism should exist that may result in resetting the
             Debug Module after power up.
@@ -330,12 +376,16 @@
         </field>
         <field name="0" bits="19:17" access="R" reset="0" />
         <field name="dataaccess" bits="16" access="R" reset="Preset">
-            0: The {\tt data} registers are shadowed in the hart by CSRs.
+            <value v="0" name="csr">
+            The {\tt data} registers are shadowed in the hart by CSRs.
             Each CSR is DXLEN bits in size, and corresponds
             to a single argument, per Table~\ref{tab:datareg}.
+            </value>
 
-            1: The {\tt data} registers are shadowed in the hart's memory map.
+            <value v="1" name="memory">
+            The {\tt data} registers are shadowed in the hart's memory map.
             Each register takes up 4 bytes in the memory map.
+            </value>
         </field>
         <field name="datasize" bits="15:12" access="R" reset="Preset">
             If \FdmHartinfoDataaccess is 0: Number of CSRs dedicated to
@@ -407,7 +457,13 @@
         </field>
         <field name="0" bits="23:13" access="R" reset="0" />
         <field name="busy" bits="12" access="R" reset="0">
-            1: An abstract command is currently being executed.
+            <value v="0" name="ready">
+            There is no abstract command currently being executed.
+            </value>
+
+            <value v="1" name="busy">
+            An abstract command is currently being executed.
+            </value>
 
             This bit is set as soon as \RdmCommand is written, and is
             not cleared until that command has completed.
@@ -428,30 +484,46 @@
 
             This field only contains a valid value if \FdmAbstractcsBusy is 0.
 
-            0 (none): No error.
+            <value v="0" name="none">
+            No error.
+            </value>
 
-            1 (busy): An abstract command was executing while \RdmCommand,
+            <value v="1" name="busy">
+            An abstract command was executing while \RdmCommand,
             \RdmAbstractcs, or \RdmAbstractauto was written, or when one
             of the {\tt data} or {\tt progbuf} registers was read or written.
             This status is only written if \FdmAbstractcsCmderr contains 0.
+            </value>
 
-            2 (not supported): The command in \RdmCommand is not supported.  It
+            <value v="2" name="not supported">
+            The command in \RdmCommand is not supported.  It
             may be supported with different options set, but it will not be
             supported at a later time when the hart or system state are
             different.
+            </value>
 
-            3 (exception): An exception occurred while executing the command
+            <value v="3" name="exception">
+            An exception occurred while executing the command
             (e.g.\ while executing the Program Buffer).
+            </value>
 
-            4 (halt/resume): The abstract command couldn't execute because the
+            <value v="4" name="halt/resume">
+            The abstract command couldn't execute because the
             hart wasn't in the required state (running/halted), or unavailable.
+            </value>
 
-            5 (bus): The abstract command failed due to a bus error (e.g.\ 
+            <value v="5" name="bus">
+            The abstract command failed due to a bus error (e.g.\ 
             alignment, access size, or timeout).
+            </value>
 
-            6: Reserved for future use.
+            <value v="6" name="reserved">
+            Reserved for future use.
+            </value>
 
-            7 (other): The command failed for another reason.
+            <value v="7" name="other">
+            The command failed for another reason.
+            </value>
         </field>
         <field name="0" bits="7:4" access="R" reset="0"/>
         <field name="datacount" bits="3:0" access="R" reset="Preset">
@@ -655,9 +727,13 @@
 
         <field name="0" bits="31:12" access="R" reset="0" />
         <field name="grouptype" bits="11" access="WARL" reset="0">
-            0: The remaining fields in this register configure halt groups.
+            <value v="0" name="halt">
+            The remaining fields in this register configure halt groups.
+            </value>
 
-            1: The remaining fields in this register configure resume groups.
+            <value v="1" name="resume">
+            The remaining fields in this register configure resume groups.
+            </value>
         </field>
         <field name="dmexttrigger" bits="10:7" access="WARL" reset="0">
             This field contains the currently selected DM external trigger.
@@ -698,9 +774,13 @@
             Writing 0 has no effect.
         </field>
         <field name="hgselect" bits="0" access="WARL" reset="0">
-            0: Operate on harts.
+            <value v="0" name="harts">
+            Operate on harts.
+            </value>
 
-            1: Operate on DM external triggers.
+            <value v="1" name="triggers">
+            Operate on DM external triggers.
+            </value>
 
             If there are no DM external triggers, this field must be tied to 0.
         </field>
@@ -770,10 +850,14 @@
 
     <register name="System Bus Access Control and Status" short="sbcs" address="0x38">
         <field name="sbversion" bits="31:29" access="R" reset="1">
-            0: The System Bus interface conforms to mainline drafts of this
+            <value v="0" name="legacy">
+            The System Bus interface conforms to mainline drafts of this
             spec older than 1 January, 2018.
+            </value>
 
-            1: The System Bus interface conforms to this version of the spec.
+            <value v="1" name="1.0">
+            The System Bus interface conforms to this version of the spec.
+            </value>
 
             Other values are reserved for future versions.
         </field>
@@ -804,15 +888,25 @@
         <field name="sbaccess" bits="19:17" access="R/W" reset="2">
             Select the access size to use for system bus accesses.
 
-            0: 8-bit
+            <value v="0" name="8bit">
+            8-bit
+            </value>
 
-            1: 16-bit
+            <value v="1" name="16bit">
+            16-bit
+            </value>
 
-            2: 32-bit
+            <value v="2" name="32bit">
+            32-bit
+            </value>
 
-            3: 64-bit
+            <value v="3" name="64bit">
+            64-bit
+            </value>
 
-            4: 128-bit
+            <value v="4" name="128bit">
+            128-bit
+            </value>
 
             If \FdmSbcsSbaccess has an unsupported value when the DM starts a bus
             access, the access is not performed and \FdmSbcsSberror is set to 4.
@@ -834,17 +928,29 @@
 
             An implementation may report ``Other'' (7) for any error condition.
 
-            0: There was no bus error.
+            <value v="0" name="none">
+            There was no bus error.
+            </value>
 
-            1: There was a timeout.
+            <value v="1" name="timeout">
+            There was a timeout.
+            </value>
 
-            2: A bad address was accessed.
+            <value v="2" name="address">
+            A bad address was accessed.
+            </value>
 
-            3: There was an alignment error.
+            <value v="3" name="alignment">
+            There was an alignment error.
+            </value>
 
-            4: An access of unsupported size was requested.
+            <value v="4" name="size">
+            An access of unsupported size was requested.
+            </value>
 
-            7: Other.
+            <value v="7" name="other">
+            Other.
+            </value>
         </field>
         <field name="sbasize" bits="11:5" access="R" reset="Preset">
             Width of system bus addresses in bits. (0 indicates there is no bus
