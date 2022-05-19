@@ -464,6 +464,14 @@
         <field name="action" bits="15:12" access="WARL" reset="0">
             The action to take when the trigger fires. The values are explained
             in Table~\ref{tab:action}.
+
+            <value v="0" name="breakpoint" />
+            <value v="1" name="debug mode" />
+            <value v="2" name="trace on" />
+            <value v="3" name="trace off" />
+            <value v="4" name="trace notify" />
+            <value v="8" name="external0" />
+            <value v="9" name="external1" />
         </field>
         <field name="chain" bits="11" access="WARL" reset="0">
             <value v="0" name="disabled">
@@ -824,6 +832,14 @@
         <field name="action" bits="15:12" access="WARL" reset="0">
             The action to take when the trigger fires. The values are explained
             in Table~\ref{tab:action}.
+
+            <value v="0" name="breakpoint" />
+            <value v="1" name="debug mode" />
+            <value v="2" name="trace on" />
+            <value v="3" name="trace off" />
+            <value v="4" name="trace notify" />
+            <value v="8" name="external0" />
+            <value v="9" name="external1" />
         </field>
         <field name="chain" bits="11" access="WARL" reset="0">
             <value v="0" name="disabled">
@@ -1049,6 +1065,14 @@
         <field name="action" bits="5:0" access="WARL" reset="0">
             The action to take when the trigger fires. The values are explained
             in Table~\ref{tab:action}.
+
+            <value v="0" name="breakpoint" />
+            <value v="1" name="debug mode" />
+            <value v="2" name="trace on" />
+            <value v="3" name="trace off" />
+            <value v="4" name="trace notify" />
+            <value v="8" name="external0" />
+            <value v="9" name="external1" />
         </field>
     </register>
 
@@ -1123,6 +1147,14 @@
         <field name="action" bits="5:0" access="WARL" reset="0">
             The action to take when the trigger fires. The values are explained
             in Table~\ref{tab:action}.
+
+            <value v="0" name="breakpoint" />
+            <value v="1" name="debug mode" />
+            <value v="2" name="trace on" />
+            <value v="3" name="trace off" />
+            <value v="4" name="trace notify" />
+            <value v="8" name="external0" />
+            <value v="9" name="external1" />
         </field>
     </register>
 
@@ -1191,6 +1223,14 @@
         <field name="action" bits="5:0" access="WARL" reset="0">
             The action to take when the trigger fires. The values are explained
             in Table~\ref{tab:action}.
+
+            <value v="0" name="breakpoint" />
+            <value v="1" name="debug mode" />
+            <value v="2" name="trace on" />
+            <value v="3" name="trace off" />
+            <value v="4" name="trace notify" />
+            <value v="8" name="external0" />
+            <value v="9" name="external1" />
         </field>
     </register>
 
@@ -1236,6 +1276,14 @@
         <field name="action" bits="5:0" access="WARL" reset="0">
             The action to take when the trigger fires. The values are explained
             in Table~\ref{tab:action}.
+
+            <value v="0" name="breakpoint" />
+            <value v="1" name="debug mode" />
+            <value v="2" name="trace on" />
+            <value v="3" name="trace off" />
+            <value v="4" name="trace notify" />
+            <value v="8" name="external0" />
+            <value v="9" name="external1" />
         </field>
     </register>
 
