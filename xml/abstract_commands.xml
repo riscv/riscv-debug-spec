@@ -75,15 +75,15 @@
         </field>
         <field name="0" bits="23" />
         <field name="aarsize" bits="22:20">
-            <value v="2" name="32">
+            <value v="2" name="32bit">
             Access the lowest 32 bits of the register.
             </value>
 
-            <value v="3" name="64">
+            <value v="3" name="64bit">
             Access the lowest 64 bits of the register.
             </value>
 
-            <value v="4" name="128">
+            <value v="4" name="128bit">
             Access the lowest 128 bits of the register.
             </value>
 
@@ -233,23 +233,23 @@
             that same abstract command with \FacAccessmemoryAamvirtual cleared.
         </field>
         <field name="aamsize" bits="22:20">
-            <value v="0" name="8">
+            <value v="0" name="8bit">
             Access the lowest 8 bits of the memory location.
             </value>
 
-            <value v="1" name="16">
+            <value v="1" name="16bit">
             Access the lowest 16 bits of the memory location.
             </value>
 
-            <value v="2" name="32">
+            <value v="2" name="32bit">
             Access the lowest 32 bits of the memory location.
             </value>
 
-            <value v="3" name="64">
+            <value v="3" name="64bit">
             Access the lowest 64 bits of the memory location.
             </value>
 
-            <value v="4" name="128">
+            <value v="4" name="128bit">
             Access the lowest 128 bits of the memory location.
             </value>
         </field>
