@@ -85,12 +85,14 @@ class Value( object ):
         self.range = element.get( 'range' )
         if self.range:
             self.low, self.high = self.range.split( ":" )
-        self.text = element.text.strip()
+        self.text = (element.text or "").strip()
         self.tail = element.tail.strip()
         self.name = element.get( "name" )
         self.duplicate = element.get( "duplicate" )
 
     def to_latex( self ):
+        if not self.text:
+            return ""
         result = []
         if self.range:
             result.append("%s--%s (%s): %s\n" % ( self.low, self.high, self.name, self.text ))
@@ -148,7 +150,9 @@ class Field( object ):
     def latex_description(self):
         result = [self.description]
         for value in self.values:
-            result.append(value.to_latex())
+            text = value.to_latex()
+            if text:
+                result.append(text)
         return "\n\n".join(result)
 
     def __str__( self ):
