@@ -69,7 +69,13 @@ Value & Description \\
     field whenever the action field is 1, \FcsrTdataOneDmode is cleared, and the
     new value of the action field would also be 1. \\
 \hline
-2 -- 5 & Reserved for use by the trace specification. \\
+2 & Trace on, described in the trace specification. \\
+\hline
+3 & Trace off, described in the trace specification. \\
+\hline
+4 & Trace notify, described in the trace specification. \\
+\hline
+5 & Reserved for use by the trace specification. \\
 \hline
 8 -- 9 & Signal the firing of the trigger to other blocks within the hart (e.g. as countable events to hpmcounters).  Use external debug trigger output 0 or 1 (respectively). \\
 \hline
