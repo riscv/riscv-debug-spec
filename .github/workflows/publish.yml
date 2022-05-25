@@ -1,0 +1,41 @@
+name: Rebuild and Publish PDF
+on:
+  push:
+    tags:
+      - 'v[0-9].[0-9]*-**'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Ubuntu packages
+        run: |
+          sudo apt-get install python3-sympy texlive-latex-base texlive-latex-recommended texlive-latex-extra texlive-fonts-extra texlive-science
+      - name: Build Stable
+        if: contains(github.ref, 'stable')
+        run: |
+          make stable
+      - name: Publish Stable
+        uses: softprops/action-gh-release@v1
+        if: contains(github.ref, 'stable')
+        with:
+          files: riscv-debug-stable.pdf
+      - name: Build Release
+        if: contains(github.ref, 'release')
+        run: |
+          make release
+      - name: Build Draft
+        if: contains(github.ref, 'draft')
+        run: |
+          make draft
+      - name: Publish Draft
+        uses: softprops/action-gh-release@v1
+        if: contains(github.ref, 'draft')
+        with:
+          files: riscv-debug-draft.pdf
+      - name: Publish Release
+        uses: softprops/action-gh-release@v1
+        if: contains(github.ref, 'release')
+        with:
+          files: riscv-debug-release.pdf
+
