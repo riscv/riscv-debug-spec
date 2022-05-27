@@ -25,7 +25,7 @@
         \hline
         3 &amp; haltreq \\
         \hline
-        2 &amp; trigger \\
+        2 &amp; trigger (See table~\ref{tab:priority} for detailed priority) \\
         \hline
         1 &amp; ebreak \\
         \hline
