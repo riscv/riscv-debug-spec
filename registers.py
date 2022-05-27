@@ -79,8 +79,45 @@ class Register( object ):
     def __str__( self ):
         return self.name
 
+class Value( object ):
+    def __init__( self, element ):
+        self.value = element.get( 'v' )
+        self.range = element.get( 'range' )
+        if self.range:
+            self.low, self.high = self.range.split( ":" )
+        self.text = (element.text or "").strip()
+        self.tail = element.tail.strip()
+        self.name = element.get( "name" )
+        self.duplicate = element.get( "duplicate" )
+
+    def to_latex( self ):
+        if not self.text:
+            return ""
+        result = []
+        if self.range:
+            result.append("%s--%s (%s): %s\n" % ( self.low, self.high, self.name, self.text ))
+        else:
+            result.append("%s (%s): %s\n" % ( self.value, self.name, self.text ))
+        if self.tail:
+            result.append( self.tail )
+        return "\n".join( result )
+
+    def to_c_definitions( self, prefix ):
+        result = []
+        name = "%s_%s" % ( prefix, toCIdentifier( self.name.upper() ))
+        result.append(( "comment", "%s: %s" % ( self.name, self.text )))
+        if self.range:
+            result.append(( "%s_LOW" % name, self.low ))
+            result.append(( "%s_HIGH" % name, self.high ))
+        else:
+            result.append(( name, self.value ))
+        if self.tail:
+            result.append(( "comment", self.tail ))
+        return result
+
 class Field( object ):
-    def __init__( self, name, lowBit, highBit, reset, access, description, sdesc, define ):
+    def __init__( self, name, lowBit, highBit, reset, access, description,
+            sdesc, define, values ):
         self.name = name
         self.lowBit = lowBit
         self.highBit = highBit
@@ -88,6 +125,15 @@ class Field( object ):
         self.access = access
         self.description = description
         self.define = define
+        self.values = values
+
+        name_counts = collections.Counter( v.name for v in values if not v.duplicate )
+        assert all( v == 1 for v in name_counts.values() ), \
+            "Duplicate field name in field %s" % self.name
+
+        value_counts = collections.Counter( v.value for v in values if not v.duplicate )
+        assert all( v == 1 for v in value_counts.values() ), \
+            "Duplicate field value in field %s" % self.name
 
     def length( self ):
         return sympy.simplify( "1 + (%s) - (%s)" % ( self.highBit, self.lowBit ) )
@@ -100,6 +146,14 @@ class Field( object ):
             # Fancier would be to assume XLEN is 32 or something.
             l = 20
         return max( l, len( self.name ), len( self.lowBit + self.highBit ) * 1.2 )
+
+    def latex_description(self):
+        result = [self.description]
+        for value in self.values:
+            text = value.to_latex()
+            if text:
+                result.append(text)
+        return "\n\n".join(result)
 
     def __str__( self ):
         return self.name
@@ -149,9 +203,10 @@ def parse_xml( path ):
                 define = int( f.get( 'define', '0' ) )
             else:
                 define = int( f.get( 'define', '1' ) )
+            values = [ Value( v ) for v in f.findall( 'value' ) ]
             field = Field( f.get( 'name' ), lowBit, highBit, f.get( 'reset' ),
                     f.get( 'access' ), description, f.get( 'sdesc' ),
-                    define )
+                    define, values )
             register.add_field( field )
 
         register.check()
@@ -211,6 +266,50 @@ def write_definitions( fd, registers ):
                         toLatexIdentifier( registers.prefix, regid, f.name ),
                         f.name ) )
 
+class Macro:
+    def __init__(self, name, expressionText):
+        self.name = name
+        self.expression = sympy.simplify(expressionText)
+        self.atoms = self.expression.atoms(sympy.Symbol)
+
+    def prototype(self):
+        if self.atoms:
+            return "%s(%s)" % (self.name, ", ".join(str(a) for a in self.atoms))
+        else:
+            return self.name
+
+    def body(self):
+        return self.expression
+
+def sympy_to_c(expression):
+    """Implement our own string function, so we can replace 2** with 1<<."""
+    if isinstance(expression, sympy.Number):
+        if (expression >= 2**32):
+            return "0x%xULL" % expression
+        elif (expression >= 2**31):
+            return "0x%xU" % expression
+        elif (expression >= 10):
+            return "0x%x" % expression
+        elif (expression > -10):
+            return "%d" % expression
+        elif (expression > -2**31):
+            return "-0x%x" % -expression
+        elif (expression > -2**32):
+            return "-0x%xU" % -expression
+        else:
+            return "-0x%xULL" % -expression
+    elif isinstance(expression, sympy.Symbol):
+        return str(expression)
+    elif isinstance(expression, sympy.Add):
+        return "(" + " + ".join(sympy_to_c(t) for t in reversed(expression.args)) + ")"
+    elif isinstance(expression, sympy.Mul):
+        return "(" + " * ".join(sympy_to_c(t) for t in expression.args) + ")"
+    elif isinstance(expression, sympy.Pow):
+        base, exponent = expression.as_base_exp()
+        assert base == 2, "Power must have base of two, not %r" % base
+        return "(1ULL<<%s)" % sympy_to_c(exponent)
+    raise Exception("Unsupported sympy object %r of type %r" % (expression, type(expression)))
+
 def write_cheader( fd, registers ):
     definitions = []
     for r in registers.registers:
@@ -229,16 +328,27 @@ def write_cheader( fd, registers ):
             if f.define:
                 if f.description:
                     definitions.append(( "comment", f.description ))
-                offset = "%s_%s_OFFSET" % ( prefname, toCIdentifier( f.name ).upper() )
-                length = "%s_%s_LENGTH" % ( prefname, toCIdentifier( f.name ).upper() )
-                mask = "%s_%s" % ( prefname, toCIdentifier( f.name ).upper() )
-                definitions.append(( offset, f.lowBit ))
-                definitions.append(( length, f.length() ))
-                try:
-                    definitions.append(( mask,
-                            "0x%x%s << %s" % ( ((1<<int(f.length()))-1), suffix, offset )))
-                except TypeError:
-                    definitions.append(( mask, "((1L << %s) - 1) << %s" % (f.length(), offset) ))
+                prefix = "%s_%s" % ( prefname, toCIdentifier( f.name ).upper() )
+                offset = Macro(
+                    "%s_OFFSET" % prefix,
+                    f.lowBit
+                )
+                definitions.append(( offset.prototype(), offset.body() ))
+                length = Macro(
+                    "%s_LENGTH" % prefix,
+                    f.length()
+                )
+                definitions.append(( length.prototype(), length.body() ))
+                # sympy doesn't support a bit shift (<<) operator, so here we
+                # use power (**) instead.
+                mask = Macro(
+                    prefix,
+                    ((2 ** sympy.simplify(f.length())) - 1) * (2 ** sympy.simplify(f.lowBit))
+                )
+                definitions.append(( mask.prototype(), mask.body() ))
+
+                for v in f.values:
+                    definitions += v.to_c_definitions(prefix)
 
     counted = collections.Counter(name for name, value in definitions)
     for name, value in definitions:
@@ -249,8 +359,8 @@ def write_cheader( fd, registers ):
             fd.write( " */\n" )
             continue
         if counted[name] == 1:
-            if re.search(r"[\-\+<>]", str(value)):
-                value = "(%s)" % value
+            if not isinstance(value, str):
+                value = sympy_to_c(value)
             fd.write( "#define %-35s %s\n" % ( name, value ) )
 
 def write_chisel( fd, registers ):
@@ -461,12 +571,12 @@ def print_latex_custom( registers ):
 
             print("\\end{center}")
 
-        columns = [("l", "Field", "name")]
-        columns += [("p{0.5\\textwidth}", "Description", "description")]
+        columns = [("l", "Field", lambda f: f.name)]
+        columns += [("p{0.5\\textwidth}", "Description", lambda f: f.latex_description())]
         if not registers.skip_access:
-            columns += [("c", "Access", "access")]
+            columns += [("c", "Access", lambda f: f.access)]
         if not registers.skip_reset:
-            columns += [("l", "Reset", "reset")]
+            columns += [("l", "Reset", lambda f: f.reset)]
 
         if any( f.description for f in r.fields ):
             print("\\tabletail{\\hline \\multicolumn{%d}{|r|}" % len(columns))
@@ -484,11 +594,11 @@ def print_latex_custom( registers ):
             print("   \\endlastfoot")
 
             for f in r.fields:
-                if f.description:
+                if f.description or f.values:
                     print("\\label{%s}" % toLatexIdentifier(registers.prefix, r.short or r.label, f.name))
                     print("\\index{%s}" % f.name)
-                    print("   |%s| &" % str(getattr(f, columns[0][2])), end=' ')
-                    print("%s\\\\" % " & ".join(str(getattr(f, c[2])) for c in columns[1:]))
+                    print("   |%s| &" % str(columns[0][2](f)), end=' ')
+                    print("%s\\\\" % " & ".join(str(c[2](f)) for c in columns[1:]))
                     print("   \\hline")
 
             print("   \\end{longtable}")
@@ -557,6 +667,7 @@ def main():
     if not registers.skip_index:
         print_latex_index( registers )
     if parsed.register:
+        assert(0)
         print_latex_register( registers )
     if parsed.custom:
         print_latex_custom( registers )

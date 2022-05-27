@@ -56,6 +56,8 @@ functionality.
     \item[JTAG]
         Refers to work done by IEEE's Joint Test Action Group, described in
         IEEE 1149.1.
+    \item[MR]
+        Message Register, described in Section~\ref{sec:mr}.
     \item[NAPOT]
         Naturally Aligned Powers-Of-Two.
     \item[NMI]
@@ -119,6 +121,10 @@ order to implement 1.0:}
     \item Bump \FdmDmstatusVersion to 3. \PR{512}
     \item Require debugger to poll \FdmDmcontrolDmactive after lowering it. \PR{566}
     \item Add \FcsrIcountPending to \RcsrIcount. \PR{574}
+    \item When a selected trigger is disabled, \RcsrTdataTwo and \RcsrTdataThree
+    can be written with any value supported by any of the types this trigger
+    supports. \PR{721}
+    \item \RcsrTcontrol fields only apply to breakpoint traps, not any trap. \PR{723}
 \end{steps}
 
 \subsubsection{Minor Changes from 0.13 to 1.0}
@@ -131,7 +137,7 @@ incompatible, but unlikely to be noticeable:}
     \item All trigger registers (Section~\ref{csrTrigger}) are optional. \PR{431}
     \item When extending IR, \RdtmBypass still is all ones. \PR{437}
     \item \FcsrDcsrEbreaks and \FcsrDcsrEbreaku are WARL. \PR{458}
-    \item NMI are disabled by \FcsrDcsrStepie. \PR{465}
+    \item NMIs are disabled by \FcsrDcsrStepie. \PR{465}
     \item R/W1C fields should be cleared by writing every bit high. \PR{472}
     \item Specify trigger priorities in Table~\ref{tab:priority} relative to exceptions. \PR{478}
     \item Time may pass before \FdmDmcontrolDmactive becomes high. \PR{500}
@@ -143,6 +149,9 @@ incompatible, but unlikely to be noticeable:}
     Section~\ref{acQuickaccess}. \PR{585}
     \item Writing 0 to \RcsrTdataOne forces a state where \RcsrTdataTwo and
         \RcsrTdataThree are writable. \PR{598}
+    \item Solutions to deal with reentrancy in Section~\ref{sec:nativetrigger}
+        prevent triggers from {\em matching}, not merely {\em firing}. This primarily
+        affects \RcsrIcount behavior. \PR{722}
 \end{steps}
 
 \subsubsection{New Features from 0.13 to 1.0}
@@ -152,7 +161,7 @@ incompatible, but unlikely to be noticeable:}
     \item Reserve some DMI space for non-standard use. See \RdmCustom, and
         \RdmCustomZero through \RdmCustomFifteen. \PR{406}
     \item Reserve trigger \FcsrTdataOneType values for non-standard use. \PR{417}
-    \item Add \FcsrEtriggerNmi bit to \RcsrEtrigger. \PR{408}
+    \item Add \FcsrItriggerNmi bit to \RcsrItrigger. \PR{408} and \PR{709}
     \item Recommend matching on every accessed address. \PR{449}
     \item Add resume groups in Section~\ref{hrgroups}. \PR{506}
     \item Add \FdmAbstractcsRelaxedpriv. \PR{536}
@@ -176,6 +185,21 @@ incompatible, but unlikely to be noticeable:}
         when ndmreset is complete. \PR{594}
     \item Add \FcsrTmexttriggerIntctl to support triggers from an interrupt controller. \PR{599}
 \end{steps}
+
+\subsubsection{Incompatible Changes During 1.0 Stable}
+
+\begin{steps}{Backwards-incompatible changes between two versions that are both
+called 1.0 stable.}
+\item \FcsrItriggerNmi was moved from \RcsrEtrigger to \RcsrItrigger, and is now
+subject to the mode bits in that trigger.
+\item DM {\tt data} registers are now Message Registers (see
+Section~\ref{sec:mr}). Debuggers must not assume they can read back the same
+value that they wrote, and must not assume that the result of the last abstract
+command is available as argument to the next abstract command. \PR{728}
+\item It may not be possible to read the contents of the Program Buffer using
+the {\tt progbuf} registers. \PR{731}
+\end{steps}
+
 \section{About This Document}
 
 \subsection{Structure}
@@ -205,6 +229,16 @@ After the graphic follows a table which for each field lists its name,
 description, allowed accesses, and reset value. The allowed accesses are listed
 in Table~\ref{tab:access}. The reset value is either a constant or ``Preset.''
 The latter means it is an implementation-specific legal value.
+
+Parts of the register which are currently unused are labeled with the number 0.
+Software must only write 0 to those fields, and ignore their value while
+reading. Hardware must return 0 when those fields are read, and ignore the
+value written to them.
+
+\begin{commentary}
+This behavior enables us to use those fields later without having to increase
+the values in the version fields.
+\end{commentary}
 
 Names of registers and their fields are hyperlinks to their definition, and are
 also listed in the index on page \pageref{index}.

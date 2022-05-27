@@ -69,7 +69,13 @@ Value & Description \\
     field whenever the action field is 1, \FcsrTdataOneDmode is cleared, and the
     new value of the action field would also be 1. \\
 \hline
-2 -- 5 & Reserved for use by the trace specification. \\
+2 & Trace on, described in the trace specification. \\
+\hline
+3 & Trace off, described in the trace specification. \\
+\hline
+4 & Trace notify, described in the trace specification. \\
+\hline
+5 & Reserved for use by the trace specification. \\
 \hline
 8 -- 9 & Signal the firing of the trigger to other blocks within the hart (e.g. as countable events to hpmcounters).  Use external debug trigger output 0 or 1 (respectively). \\
 \hline
@@ -131,7 +137,9 @@ in the chain.
 \end{table}
 
 When multiple triggers in the same priority fire at once, \FcsrMcontrolHit (if
-implemented) is set for all of them. If one of these triggers has
+implemented) is set for all of them.  If more than one of these triggers has
+\FcsrMcontrolSixAction=0 then {\tt tval} is updated in accordance with one of
+them, but which one is \unspecified.  If one of these triggers has
 the ``enter Debug Mode'' action (1) and another
 trigger has the ``raise a breakpoint exception'' action (0),
 the preferred behavior is to have both actions take place.  It is
@@ -191,11 +199,11 @@ because state such as \Rmcause and \Rmepc would be overwritten.
 should implement one of the following two solutions to solve the problem of
 reentrancy:}
 \item The hardware prevents triggers with \FcsrMcontrolSixAction=0 from
-firing while in M-mode and while \FcsrMstatusMie in \Rmstatus is 0.  If
+matching while in M-mode and while \FcsrMstatusMie in \Rmstatus is 0.  If
 \Rmedeleg[3]=1 then it prevents triggers with \FcsrMcontrolSixAction=0
-from firing while in S-mode and while \FcsrSstatusSie in \Rsstatus is 0.
+from matching while in S-mode and while \FcsrSstatusSie in \Rsstatus is 0.
 If \Rmedeleg[3]=1 and \Rhedeleg[3]=1 then it prevents triggers with
-\FcsrMcontrolSixAction=0 from firing while in VS-mode and while
+\FcsrMcontrolSixAction=0 from matching while in VS-mode and while
 \FcsrSstatusSie in \Rvsstatus is 0.
 \item \FcsrTcontrolMte and \FcsrTcontrolMpte in \RcsrTcontrol is
 implemented.  \Rmedeleg[3] is hard-wired to 0.
@@ -248,9 +256,15 @@ trigger type supported by this trigger.
 
 \begin{steps}{As a result, a debugger can write any supported trigger as
 follows:}
-\item Write 0 to \RcsrTdataOne.
+\item Write 0 to \RcsrTdataOne. (This will result in \RcsrTdataOne containing a
+    non-zero value, since the register is \warl.)
 \item Write desired values to \RcsrTdataTwo and \RcsrTdataThree.
 \item Write desired value to \RcsrTdataOne.
 \end{steps}
+
+Code that restores CSR context of triggers that might be configured to fire in
+the current privilege mode must use this same sequence to restore the triggers.
+This avoids the problem of a partially written trigger firing at a different
+time than is expected.
 
 \input{hwbp_registers.tex}
