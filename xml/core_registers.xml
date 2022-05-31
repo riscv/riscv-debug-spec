@@ -2,7 +2,7 @@
     These registers are only accessible from Debug Mode.
 
     <register name="Debug Control and Status" short="dcsr" address="0x7b0">
-        Upon entry to Debug Mode, \FcsrDcsrV and \FcsrDcsrPrv are updated
+        Upon entry into Debug Mode, \FcsrDcsrV and \FcsrDcsrPrv are updated
         with the privilege level the hart was previously in, and \FcsrDcsrCause
         is updated with the reason for Debug Mode entry.  Other than these
         fields and \FcsrDcsrNmip, the other fields of \RcsrDcsr are only
