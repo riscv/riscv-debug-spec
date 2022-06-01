@@ -8,8 +8,13 @@
         fields and \FcsrDcsrNmip, the other fields of \RcsrDcsr are only
         writable by the external debugger.
 
-        Table~\ref{tab:dcsrcausepriority} shows the priorities of reasons for entering
-        Debug Mode.
+        \begin{steps}{Table~\ref{tab:dcsrcausepriority} shows the priorities of
+        reasons for entering Debug Mode.  Implementations should implement
+        priorities as shown in the table.  resethaltreq and haltreq are
+        allowed to be at different positions than shown as long as:}
+        \item resethaltreq is higher priority than haltreq
+        \item the relative order of the other four causes is maintained
+        \end{steps}
 
         \begin{table}[H]
         \centering
