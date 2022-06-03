@@ -10,7 +10,7 @@
 
         \begin{steps}{Table~\ref{tab:dcsrcausepriority} shows the priorities of
         reasons for entering Debug Mode.  Implementations should implement
-        priorities as shown in the table.  resethaltreq and haltreq are
+        priorities as shown in the table. For compatibility with old versions of this spec, resethaltreq and haltreq are
         allowed to be at different positions than shown as long as:}
         \item resethaltreq is higher priority than haltreq
         \item the relative order of the other four causes is maintained
