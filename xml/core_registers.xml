@@ -2,9 +2,52 @@
     These registers are only accessible from Debug Mode.
 
     <register name="Debug Control and Status" short="dcsr" address="0x7b0">
+        Upon entry into Debug Mode, \FcsrDcsrV and \FcsrDcsrPrv are updated
+        with the privilege level the hart was previously in, and \FcsrDcsrCause
+        is updated with the reason for Debug Mode entry.  Other than these
+        fields and \FcsrDcsrNmip, the other fields of \RcsrDcsr are only
+        writable by the external debugger.
+
+        \begin{steps}{Table~\ref{tab:dcsrcausepriority} shows the priorities of
+        reasons for entering Debug Mode.  Implementations should implement
+        priorities as shown in the table. For compatibility with old versions of this spec, resethaltreq and haltreq are
+        allowed to be at different positions than shown as long as:}
+        \item resethaltreq is higher priority than haltreq
+        \item the relative order of the other four causes is maintained
+        \end{steps}
+
+        \begin{table}[H]
+        \centering
+        \caption{Priority of reasons for entering Debug Mode from highest to lowest.}
+        \label{tab:dcsrcausepriority}
+        \begin{tabular}{|c|c|}
+        \hline
+        \FcsrDcsrCause encoding &amp; Cause \\
+        \hline
+        5 &amp; resethaltreq \\
+        \hline
+        6 &amp; halt group \\
+        \hline
+        3 &amp; haltreq \\
+        \hline
+        2 &amp; trigger (See table~\ref{tab:priority} for detailed priority) \\
+        \hline
+        1 &amp; ebreak \\
+        \hline
+        4 &amp; step \\
+        \hline
+        \end{tabular}
+        \end{table}
+
         \begin{commentary}
-            \FcsrDcsrCause priorities are assigned such that the least predictable
-            events have the highest priority.
+        Note that mcontrol/mcontrol6 triggers with timing=after are considered
+        to be high priority causes on the subsequent instruction.  Therefore,
+        an execute trigger with timing=after on an ebreak instruction is lower
+        priority than the ebreak itself because the trigger will fire after the
+        ebreak instruction.  For the same reason, if a single instruction is
+        stepped with both icount and \FcsrDcsrStep then the \FcsrDcsrStep has
+        priority.  See table~\ref{tab:priority} for the relative priorities of
+        triggers with respect to the ebreak instruction.
         \end{commentary}
 
         <field name="debugver" bits="31:28" access="R" reset="Preset">
@@ -129,33 +172,32 @@
 
             When there are multiple reasons to enter Debug Mode in a single
             cycle, hardware should set \FcsrDcsrCause to the cause with the highest
-            priority.
+            priority.  See table~\ref{tab:dcsrcausepriority} for priorities.
 
             <value v="1" name="ebreak">
-            An {\tt ebreak} instruction was executed. (priority 3)
+            An {\tt ebreak} instruction was executed.
             </value>
 
             <value v="2" name="trigger">
-            A Trigger Module trigger fired with action=1. (priority 4)
+            A Trigger Module trigger fired with action=1.
             </value>
 
             <value v="3" name="haltreq">
             The debugger requested entry to Debug Mode using \FdmDmcontrolHaltreq.
-            (priority 1)
             </value>
 
             <value v="4" name="step">
-            The hart single stepped because \FcsrDcsrStep was set. (priority 0, lowest)
+            The hart single stepped because \FcsrDcsrStep was set.
             </value>
 
             <value v="5" name="resethaltreq">
             The hart halted directly out of reset due to \Fresethaltreq. It
-            is also acceptable to report 3 when this happens. (priority 2)
+            is also acceptable to report 3 when this happens.
             </value>
 
             <value v="6" name="group">
-            The hart halted because it's part of a halt group. (priority 5,
-            highest) Harts may report 3 for this cause instead.
+            The hart halted because it's part of a halt group.
+            Harts may report 3 for this cause instead.
             </value>
 
             Other values are reserved for future use.
