@@ -31,8 +31,8 @@ captured into \FdmSbdataZeroData.  If the operation didn't complete in time, \Fd
 and the value in \FdmSbdataZeroData must be ignored. The busy condition must be cleared by
 writing \FdtmDtmcsDmireset in \RdtmDtmcs, and then the second scan scan must be performed again.
 This process must be repeated until \FdtmDmiOp returns 0.
-In later operations the debugger should allow for more time between Capture-DR and
-Update-DR.
+In later operations the debugger should allow for more time between Update-DR and
+Capture-DR.
 
 To write an arbitrary Debug Bus register, select \RdtmDmi, and scan in a value
 with \FdtmDmiOp set to 2, and \FdmSbaddressZeroAddress and \FdmSbdataZeroData set to the desired register
