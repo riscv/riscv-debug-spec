@@ -600,14 +600,20 @@ should not implement that register.
 \begin{steps}{To detect the version of the Debug Module with a minimum of side
     effects, use the following procedure:}
     \item Read \RdmDmcontrol.
-    \item Write \RdmDmcontrol, preserving \FdmDmcontrolHartreset, \FdmDmcontrolHasel, \FdmDmcontrolHartsello, and
-        \FdmDmcontrolHartselhi from the value that was read, setting \FdmDmcontrolDmactive, and
-        clearing all the other bits.
-    \item Read \RdmDmcontrol until \FdmDmcontrolDmactive is high.
+    \item
+        If \FdmDmcontrolDmactive is 0 or \FdmDmcontrolNdmreset is 1:
+        \begin{enumerate}[nolistsep]
+            \item Write \RdmDmcontrol, preserving \FdmDmcontrolHartreset,
+            \FdmDmcontrolHasel, \FdmDmcontrolHartsello, and
+            \FdmDmcontrolHartselhi from the value that was read, setting
+            \FdmDmcontrolDmactive, and clearing all the other bits.
+            \item Read \RdmDmcontrol until \FdmDmcontrolDmactive is high.
+        \end{enumerate}
     \item Read \RdmDmstatus, which contains \FdmDmstatusVersion.
 \end{steps}
 
-\begin{steps}{This has the following unavoidable side effects:}
+\begin{steps}{If it was necessary to clear \FdmDmcontrolNdmreset, this might
+        have the following unavoidable side effects:}
     \item \FdmDmcontrolHaltreq is cleared, potentially preventing a halt request made by a
         previous debugger from taking effect.
     \item \FdmDmcontrolResumereq is cleared, potentially preventing a resume request made
