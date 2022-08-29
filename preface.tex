@@ -1,8 +1,14 @@
-\ifrelease
-\else
-    \chapter{Preface}
-
+\chapter{Preface}
+\ifdefstring{\releasename}{STABLE}{
+    {\bf This stable specification might change before being accepted as
+    standard. We're trying to only make backwards-compatible changes, but
+    sometimes it's unavoidable to change a corner case. If you implement
+    this document, please keep an eye on
+    \href{https://github.com/riscv/riscv-debug-spec}{the github repository} for
+    changes that might affect your implementation.}
+}{}
+\ifdefstring{\releasename}{DRAFT}{
     {\bf Warning! This draft specification will change before being accepted as
     standard, so implementations made to this draft specification will likely not
     conform to the future standard.}
-\fi
+}{}
