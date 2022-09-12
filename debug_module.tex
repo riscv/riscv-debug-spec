@@ -252,7 +252,7 @@ halt and resume groups.
     cause of the halt.
 \item All the other harts in the halt group will quickly halt, even if they are
     currently in the process of resuming. \FcsrDcsrCause for those harts should
-    be set to 6.
+    be set to 6, but may be set to 3.
 \item Any external triggers in that group are notified.
 \end{steps}
 Adding a hart to a halt group does not automatically halt that hart, even if
