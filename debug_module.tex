@@ -248,8 +248,11 @@ halt and resume groups.
 
 \begin{steps}{When any hart in a halt group halts, or an external trigger
     that's a member of the halt group fires:}
-\item All the harts in that group will quickly halt, even if they are currently
-    in the process of resuming.
+\item That hart halts normally, with \FcsrDcsrCause reflecting the original
+    cause of the halt.
+\item All the other harts in the halt group will quickly halt, even if they are
+    currently in the process of resuming. \FcsrDcsrCause for those harts should
+    be set to 6, but may be set to 3.
 \item Any external triggers in that group are notified.
 \end{steps}
 Adding a hart to a halt group does not automatically halt that hart, even if
