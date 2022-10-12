@@ -117,14 +117,24 @@
             This operation should never result in a busy or error response.
             The address and data reported in the following Capture-DR
             are undefined.
+
+            This operation leaves the values in \FdtmDmiAddress and \FdtmDmiData
+            \unspecified.
             </value>
 
             <value v="1" name="read">
-            Read from \FdmSbaddressZeroAddress.
+            Read from \FdtmDmiAddress.
+
+            When this operation succeeds, \FdtmDmiAddress contains the address
+            that was read from, and \FdtmDmiData contains the value that was
+            read.
             </value>
 
             <value v="2" name="write">
-            Write \FdmSbdataZeroData to \FdmSbaddressZeroAddress.
+            Write \FdtmDmiData to \FdtmDmiAddress.
+
+            This operation leaves the values in \FdtmDmiAddress and \FdtmDmiData
+            \unspecified.
             </value>
 
             <value v="3" name="reserved">
