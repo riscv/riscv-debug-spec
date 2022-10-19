@@ -252,12 +252,21 @@
         The encoding of this CSR does not conform to the CSR Address Mapping
         Convention in the Privileged Spec.  It is expected that new
         implementations will not support this encoding and that new
-        debuggers will not use this CSR if scontext is available.
+        debuggers will not use this CSR if \RcsrScontext is available.
         \end{commentary}
     </register>
 
     <register name="Match Control" short="mcontrol" address="0x7a1">
         This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 2.
+        This trigger type is deprecated.  It is included for backward compatibility
+        with version 0.13.
+
+        \begin{commentary}
+        This trigger type only supports a subset of features of the newer
+        \RcsrMcontrolSix.  It is expected that new implementations will not
+        support this trigger type and that new debuggers will not use it if
+        \RcsrMcontrolSix is available.
+        \end{commentary}
 
         Address and data trigger implementation are heavily dependent on how
         the processor core is implemented. To accommodate various
