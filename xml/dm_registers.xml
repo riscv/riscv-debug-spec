@@ -476,8 +476,13 @@
            permission checks (e.g. PMP restrictions are ignored).  The
            details of the latter are implementation-specific.
 
-           When set to 0, full permission checks apply. When set to 1,
-           relaxed permission checks apply.
+           <value v="0" name="full checks">
+           Full permission checks apply.
+           </value>
+           
+           <value v="1" name="relaxed checks">
+           Relaxed permission checks apply.
+           </value>
         </field>
         <field name="cmderr" bits="10:8" access="R/W1C" reset="0">
             Gets set if an abstract command fails. The bits in this field remain set until
