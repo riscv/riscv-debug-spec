@@ -33,7 +33,7 @@ functionality.
     \item[CSR]
         Control and Status Register.
     \item[DM]
-        Debug Module (see Section \ref{dm}).
+        Debug Module (see Chapter \ref{chap:dm}).
     \item[DMI]
         Debug Module Interface (see Section \ref{dmi}).
     \item[DR]
@@ -56,10 +56,13 @@ functionality.
     \item[JTAG]
         Refers to work done by IEEE's Joint Test Action Group, described in
         IEEE 1149.1.
+    \item[Minimal RISC-V Debug Specification]
+        A subset of the full Debug Specification that allows for very small
+        implementations. See Chapter~\ref{chap:dm}.
     \item[MR]
         Message Register, described in Section~\ref{sec:mr}.
     \item[NAPOT]
-        Naturally Aligned Powers-Of-Two.
+        Naturally Aligned Power-Of-Two.
     \item[NMI]
         Non-Maskable Interrupt.
     \item[physical address]
@@ -81,12 +84,8 @@ functionality.
 
 \section{Context}
 
-\begin{steps}{This document is written to work with:}
-\item The RISC-V Instruction Set Manual, Volume I: User-Level ISA, Document
-    Version 2.2 (the ISA Spec)
-\item The RISC-V Instruction Set Manual, Volume II: Privileged Architecture,
-    Version 1.12 (the Privileged Spec)
-\end{steps}
+This document is written to work with all RISC-V ISA extensions ratified
+through 2021.
 
 \subsection{Versions}
 
@@ -95,7 +94,7 @@ Versions 0.13.$x$ are bug fix releases to that ratified specification.
 
 Version 0.14 was a working version that was never officially ratified.
 
-Version 1.0.0 is almost entirely forwards and backwards compatible with Version 0.13.
+Version 1.0 is almost entirely forwards and backwards compatible with Version 0.13.
 
 \newcommand{\PR}[1]{\href{https://github.com/riscv/riscv-debug-spec/pull/#1}{\##1}}
 
@@ -213,7 +212,7 @@ not part of the actual specification.
 \subsection{ISA vs. non-ISA}
 
 This specification contains both ISA and non-ISA parts. The ISA parts define
-self-contained ISA extensions. The remainder of the document describes the
+self-contained ISA extensions. The other parts of the document describe the
 non-ISA external debug extension.
 Chapters whose contents are solely one or the other are labeled as such in their
 title. Chapters without such a label apply to both ISA and non-ISA.

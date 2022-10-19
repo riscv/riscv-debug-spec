@@ -6,6 +6,8 @@
 \input{glyphtounicode.tex}
 \pdfgentounicode=1 %
 
+\usepackage{etoolbox}
+
 \input{preamble}
 
 % All registers are named here. That way when we rename one we'll get errors if
@@ -77,71 +79,22 @@
 
 \input{vc.tex}
 
-\newcommand{\versionnum}{1.0.0\ifrelease\else-\releasename\fi}
+\newcommand{\versionnum}{1.0\ifrelease\else-\releasename\fi}
 
 \begin{document}
 
-\title{RISC-V Debug Support\\
+\title{RISC-V Debug Specification\\
 Version \versionnum\\
 \GITHash
 }
 \author{Editors: \\
-Ernie Edgar \textless ernie.edgar@sifive.com\textgreater, SiFive, Inc. \\
+Paul Donahue \textless pdonahue@ventanamicro.com\textgreater, Ventana Micro Systems \\
 Tim Newsome \textless tim@sifive.com\textgreater, SiFive, Inc.}
 \date{\GITAuthorDate}
 \maketitle
 
-Contributors to all versions of the spec in alphabetical order (please contact
-editors to suggest corrections):
-Bruce Ableidinger,
-Krste Asanovi\'{c},
-Peter Ashenden,
-Allen Baum,
-Mark Beal,
-Alex Bradbury,
-Chuanhua Chang,
-Zhong-Ho Chen,
-Monte Dalrymple,
-Paul Donahue,
-Vyacheslav Dyachenko,
-Peter Egold,
-Marc Gauthier,
-Markus Goehrle,
-Robert Golla,
-John Hauser,
-Richard Herveille,
-Yung-ching Hsiao,
-Po-wei Huang,
-Scott Johnson,
-L. J. Madar,
-Grigorios Magklis,
-Jan Matyas,
-Kai Meinhard,
-Jean-Luc Nagel,
-Aram Nahidipour,
-Rishiyur Nikhil,
-Gajinder Panesar,
-Deepak Panwar,
-Antony Pavlov,
-Klaus Kruse Pedersen,
-Ken Pettit,
-Darius Rad,
-Joe Rahmeh,
-Gavin Stark,
-Ben Staveley,
-Wesley Terpstra,
-Megan Wachs,
-Jan-Willem van de Waerdt,
-Philipp Wagner,
-Stefan Wallentowitz,
-Ray Van De Walker,
-Andrew Waterman,
-Thomas Wicki,
-Andy Wright,
-and Bryan Wyatt.
-
-\markboth{RISC-V Debug Support Version \versionnum}
-{RISC-V Debug Support Version \versionnum}
+\markboth{RISC-V Debug Specification Version \versionnum}
+{RISC-V Debug Specification Version \versionnum}
 \thispagestyle{empty}
 
 \frontmatter
