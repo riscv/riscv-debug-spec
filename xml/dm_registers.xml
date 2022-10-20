@@ -474,8 +474,15 @@
            permission checks that apply based on the current architectural
            state of the hart performing the access, or with a relaxed set of
            permission checks (e.g. PMP restrictions are ignored).  The
-           details of the latter are implementation-specific.  When set to 0,
-           full permissions apply; when set to 1, relaxed permissions apply.
+           details of the latter are implementation-specific.
+
+           <value v="0" name="full checks">
+           Full permission checks apply.
+           </value>
+           
+           <value v="1" name="relaxed checks">
+           Relaxed permission checks apply.
+           </value>
         </field>
         <field name="cmderr" bits="10:8" access="R/W1C" reset="0">
             Gets set if an abstract command fails. The bits in this field remain set until
