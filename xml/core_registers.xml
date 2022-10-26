@@ -156,13 +156,16 @@
         </field>
         <field name="stoptime" bits="9" access="WARL" reset="Preset">
             <value v="0" name="normal">
-            Increment \Rtime as usual.
+            \Rtime continues to reflect \Rmtime.
             </value>
 
             <value v="1" name="freeze">
-            Don't increment \Rtime while in Debug Mode.  If all harts
-            have \FcsrDcsrStoptime=1 and are in Debug Mode then \Rmtime
-            is also allowed to stop incrementing.
+            \Rtime is frozen at the time that Debug Mode was entered. When
+            leaving Debug Mode, \Rtime will snap forward to reflect the latest
+            value of \Rmtime again.
+
+            While all harts have \FcsrDcsrStoptime=1 and are in Debug Mode,
+            \Rmtime is allowed to stop incrementing.
             </value>
 
             An implementation may hardwire this bit to 0 or 1.
