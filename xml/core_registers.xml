@@ -48,6 +48,10 @@
         stepped with both icount and \FcsrDcsrStep then the \FcsrDcsrStep has
         priority.  See table~\ref{tab:priority} for the relative priorities of
         triggers with respect to the ebreak instruction.
+
+        Most multi-hart implementations will probably hardwire \FcsrDcsrStoptime
+        to 0, as the implementation can get complicated and the benefit is
+        small.
         \end{commentary}
 
         <field name="debugver" bits="31:28" access="R" reset="Preset">
