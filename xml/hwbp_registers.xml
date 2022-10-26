@@ -89,8 +89,9 @@
             <value v="15" name="disabled">
             This trigger is disabled. In this state, \RcsrTdataTwo and
             \RcsrTdataThree can be written with any value that is supported for
-            any of the types this trigger implements. The remaining bits in this
-            register are ignored.
+            any of the types this trigger implements.
+            The remaining bits in this register, except for \FcsrTdataOneDmode,
+            are ignored.
             </value>
             
             Other values are reserved for future use.
