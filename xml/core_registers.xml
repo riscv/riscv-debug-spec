@@ -161,7 +161,7 @@
 
             <value v="1" name="freeze">
             \Rtime is frozen at the time that Debug Mode was entered. When
-            leaving Debug Mode, \Rtime will snap forward to reflect the latest
+            leaving Debug Mode, \Rtime will reflect the latest
             value of \Rmtime again.
 
             While all harts have \FcsrDcsrStoptime=1 and are in Debug Mode,
