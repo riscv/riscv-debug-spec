@@ -155,7 +155,6 @@ the trace specification.
 \section{Native Triggers}
 \label{sec:nativetrigger}
 
-\begin{commentary}
 Triggers can be used for native debugging when \FcsrMcontrolSixAction=0.
 If supported by the hart and desired by the debugger, triggers will often be
 programmed to have \FcsrMcontrolSixM=0 so that when they fire they cause a
@@ -164,6 +163,11 @@ exception can either be taken in M-mode or it can be delegated to a less
 privileged mode. However, it is possible for triggers to fire in the same
 mode that the resulting exception will be handled in.
 
+In these cases such a trigger may cause a breakpoint exception while already
+in a trap handler. This might leave the hart unable to resume normal execution
+because state such as \Rmcause and \Rmepc would be overwritten.
+
+\begin{commentary}
 \begin{steps}{In particular, when \FcsrMcontrolSixAction=0:}
 \item mcontrol and mcontrol6 triggers with \FcsrMcontrolSixM=1 can cause a
 breakpoint exception that is taken from M-mode to M-mode (regardless of
@@ -189,10 +193,6 @@ Y unless breakpoint exceptions are delegated to a more privileged mode than Y.
 \item tmexttrigger triggers are asynchronous and may occur in any mode and
 at any time.
 \end{steps}
-
-In these cases such a trigger may cause a breakpoint exception while already
-in a trap handler. This might leave the hart unable to resume normal execution
-because state such as \Rmcause and \Rmepc would be overwritten.
 \end{commentary}
 
 \begin{steps}{Harts that support triggers with \FcsrMcontrolSixAction=0
