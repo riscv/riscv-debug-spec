@@ -287,6 +287,11 @@
         \end{tabular}
         \end{table}
 
+        The writability of \RcsrDpc follows the same rules as \Rmepc as defined
+        in the Privileged Spec.  In particular, \RcsrDpc must be able to hold
+        all valid virtual addresses and the writability of the low bits depends
+        on IALIGN.
+
         When resuming, the hart's PC is updated to the virtual address stored in
         \RcsrDpc. A debugger may write \RcsrDpc to change where the hart resumes.
         <field name="dpc" bits="DXLEN-1:0" access="R/W" reset="0" />
