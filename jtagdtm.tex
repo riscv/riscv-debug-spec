@@ -111,8 +111,10 @@ is described in Table~\ref{tab:pinout}.
         adapter. Same function as nTRST, but with pull-down resistor on target.
         \\
       \hline
-      nTRST & Test reset (optional), driven by the debug adapter.  Used to
-        reset the JTAG TAP Controller. \\
+      nTRST & Test reset (optional), driven by the debug adapter. Asserting
+        nTRST initializes the JTAG DTM asynchronously. It is used in systems
+        where the JTAG DTM is not ready to be used after a normal power up. This
+        signal is sometimes called TRST*. \\
       \hline
       TRIGIN & Not used by this specification, to be driven by debug
         adapter.  (Can be used for extended functions like UART or boot mode
