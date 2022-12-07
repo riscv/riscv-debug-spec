@@ -92,7 +92,10 @@ is described in Table~\ref{tab:pinout}.
       \hline
       TDI & JTAG TDI signal, driven by the debug adapter. \\
       \hline
-      nRESET & Active-low reset signal, driven by the debug adapter.
+      nRESET & Open drain active low reset signal, usually driven by the debug
+        adapter.  The signal may be used bi-directional to drive or sense the
+        target reset signal.
+
         Asserting reset should reset any RISC-V cores as well as any other
         peripherals on the PCB. It should not reset the debug logic.  This pin
         is optional but strongly encouraged.
