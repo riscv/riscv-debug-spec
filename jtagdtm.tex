@@ -135,7 +135,10 @@ the nTRST signal, resulting in a MIPI 10-pin JTAG + nTRST connector.
 
 The MIPI-10 connector should provide plenty of signals for all modern hardware.
 If a design does need legacy JTAG signals, then the
-MIPI-20 connector should be used. Its physical connector is virtually identical
+MIPI-20 connector should be used. Pins whose functionality isn't needed may be
+left unconnected.
+
+Its physical connector is virtually identical
 to MIPI-10, except that it's twice as long, supporting twice as many pins. Its
 pinout is shown in Table~\ref{tab:mipitwenty}. The function of each pin
 is described in Table~\ref{tab:pinout}.
@@ -156,15 +159,15 @@ is described in Table~\ref{tab:pinout}.
         \hline
         GND & 9 & 10 & nRESET \\
         \hline
-        GND & 11 & 12 & RTCK \\
+        GND & 11 & 12 & RTCK or NC \\
         \hline
-        GND & 13 & 14 & nTRST\_PD \\
+        GND & 13 & 14 & nTRST\_PD or NC \\
         \hline
-        GND & 15 & 16 & nTRST \\
+        GND & 15 & 16 & nTRST or NC \\
         \hline
-        GND & 17 & 18 & TRIGIN \\
+        GND & 17 & 18 & TRIGIN or NC \\
         \hline
-        GND & 19 & 20 & TRIGOUT \\
+        GND & 19 & 20 & TRIGOUT or NC \\
         \hline
     \end{tabular}
 \end{table}
@@ -175,7 +178,10 @@ This spec does not have specific recommendations on how to use the cJTAG
 protocol.
 
 When implementing cJTAG access to a JTAG DTM, the MIPI 10-pin Narrow JTAG
-connector should be used. Viewing the male header from above (the pins pointing
+connector should be used. Pins whose functionality isn't needed may be left
+unconnected.
+
+Viewing the male header from above (the pins pointing
 at your eye), a target's connector looks as it does in
 Table~\ref{tab:mipicjtag}.
 
@@ -189,9 +195,9 @@ Table~\ref{tab:mipicjtag}.
         \hline
         GND & 3 & 4 & TCKC \\
         \hline
-        GND & 5 & 6 & EXT \\
+        GND & 5 & 6 & EXT or NC \\
         \hline
-        GND or KEY & 7 & 8 & nTRST\_PD \\
+        GND or KEY & 7 & 8 & nTRST\_PD or NC \\
         \hline
         GND & 9 & 10 & nRESET \\
         \hline
