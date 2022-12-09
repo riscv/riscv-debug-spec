@@ -26,9 +26,9 @@ How Debug Mode is implemented is not specified here.
     Full permission checks, or a relaxed set of permission checks, will apply
     according to \FdmAbstractcsRelaxedpriv.
 \item All interrupts (including NMI) are masked.
-\item Exceptions don't update any registers.  That includes {\tt cause}, {\tt
-    epc}, {\tt tval}, {\tt dpc}, and \Rmstatus. They do end execution of the
-    Program Buffer.
+\item When an exception occurs, {\tt pc} may be updated, while all other registers
+    must not be changed. That includes {\tt cause}, {\tt epc}, {\tt tval}, {\tt dpc},
+    and \Rmstatus. Exceptions do end execution of the Program Buffer.
 \item No action is taken if a trigger matches.
 \item If \FcsrDcsrStopcount is 0 then counters continue. If it is 1 then
     counters are stopped.
