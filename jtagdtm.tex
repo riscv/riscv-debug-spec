@@ -71,28 +71,21 @@ is described in Table~\ref{tab:pinout}.
     \centering
     \caption{JTAG Connector Pin Functions}
     \label{tab:pinout}
-    \begin{tabulary}{\textwidth}{|c|L|}
+    \begin{tabulary}{\textwidth}{|l|c|L|}
       \hline
-      VREF DEBUG & Reference voltage for logic high. \\
+      Essential & GND & Connected to ground. \\
+      \cline{2-3}
+      & TCK & JTAG TCK signal, driven by the debug adapter. \\
+      \cline{2-3}
+      & TDI & JTAG TDI signal, driven by the debug adapter. \\
+      \cline{2-3}
+      & TDO & JTAG TDO signal, driven by the target. \\
+      \cline{2-3}
+      & TMS & JTAG TMS signal, driven by the debug adapter. \\
+      \cline{2-3}
+      & VREF DEBUG & Reference voltage for logic high. \\
       \hline
-      GND & Connected to ground. \\
-      \hline
-      TMS & JTAG TMS signal, driven by the debug adapter. \\
-      \hline
-      TCK & JTAG TCK signal, driven by the debug adapter. \\
-      \hline
-      TDO & JTAG TDO signal, driven by the target. \\
-      \hline
-      GND or KEY &
-        This pin may be cut on the male and plugged on the female header to
-        ensure the header is always plugged in correctly. It is, however,
-        recommended to use this pin as an additional ground, to allow for
-        fastest TCK speeds. A shrouded connector should be used to prevent the
-        cable from being plugged in incorrectly. \\
-      \hline
-      TDI & JTAG TDI signal, driven by the debug adapter. \\
-      \hline
-      nRESET & Open drain active low reset signal, usually driven by the debug
+      Recommended & nRESET & Open drain active low reset signal, usually driven by the debug
         adapter.  The signal may be used bi-directional to drive or sense the
         target reset signal.
 
@@ -100,32 +93,44 @@ is described in Table~\ref{tab:pinout}.
         peripherals on the PCB. It should not reset the debug logic.  This pin
         is optional but strongly encouraged.
 
-        If necessary, this pin could be used as nTRST instead.
-
         nRESET should never be connected to the TAP reset, otherwise the
         debugger might not be able to debug through a reset to discover the
         cause of a crash or to maintain execution control after the reset. \\
+      \cline{2-3}
+      & KEY &
+        This pin may be cut on the male and plugged on the female header to
+        ensure the header is always plugged in correctly. It is, however,
+        recommended to use this pin as an additional ground, to allow for
+        fastest TCK speeds. A shrouded connector should be used to prevent the
+        cable from being plugged in incorrectly. \\
       \hline
-      RTCK & Return test clock, driven by the target. A target may relay
-        the TCK signal here once it has processed it, allowing a debugger to
-        adjust its TCK frequency in response. \\
+      Advanced & EXT & Reserved for custom use. Could be an input or an output. \\
+      \cline{2-3}
+      & TRIGIN & Not used by this specification, to be driven by debug
+        adapter.  (Can be used for extended functions like UART or boot mode
+        selection by some debug adapters). \\
+      \cline{2-3}
+      & TRIGOUT & Not used by this specification, driven by the target. \\
       \hline
-      nTRST\_PD & Test reset pull-down (optional), driven by the debug
-        adapter. Same function as nTRST, but with pull-down resistor on target.
-        \\
-      \hline
-      nTRST & Test reset (optional), driven by the debug adapter. Asserting
+      Specialized & nTRST & Test reset, driven by the debug adapter. Asserting
         nTRST initializes the JTAG DTM asynchronously. It is used in systems
         where the JTAG DTM is not ready to be used after a normal power up. This
         signal is sometimes called TRST*. \\
       \hline
-      TRIGIN & Not used by this specification, to be driven by debug
-        adapter.  (Can be used for extended functions like UART or boot mode
-        selection by some debug adapters). \\
-      \hline
-      TRIGOUT & Not used by this specification, driven by the target. \\
-      \hline
-      EXT & Reserved for custom use. Could be an input or an output. \\
+      Legacy & RTCK & Return test clock, driven by the target. A target may relay
+        the TCK signal here once it has processed it, allowing a debugger to
+        adjust its TCK frequency in response.
+
+        This signal should only be used to support legacy components that rely
+        on this functionality.
+        \\
+      \cline{2-3}
+      & nTRST\_PD & Test reset pull-down, driven by the debug
+        adapter. Same function as nTRST, but with pull-down resistor on target.
+
+        This signal should only be used to support legacy components that rely
+        on this functionality.
+        \\
       \hline
     \end{tabulary}
 \end{table}
@@ -161,9 +166,9 @@ is described in Table~\ref{tab:pinout}.
         \hline
         GND & 9 & 10 & nRESET \\
         \hline
-        GND & 11 & 12 & RTCK or GND \\
+        GND & 11 & 12 & GND or RTCK \\
         \hline
-        GND & 13 & 14 & nTRST\_PD or NC \\
+        GND & 13 & 14 & NC or nTRST\_PD \\
         \hline
         GND & 15 & 16 & nTRST or NC \\
         \hline
@@ -199,7 +204,7 @@ Table~\ref{tab:mipicjtag}.
         \hline
         GND & 5 & 6 & EXT or NC \\
         \hline
-        GND or KEY & 7 & 8 & nTRST\_PD or NC \\
+        GND or KEY & 7 & 8 & NC or nTRST\_PD \\
         \hline
         GND & 9 & 10 & nRESET \\
         \hline

@@ -22,6 +22,9 @@ functionality.
 \section{Terminology}
 
 \begin{description}[style=nextline]
+    \item[advanced feature]
+        An advanced feature for advanced users. Most users will not be able to
+        take advantage of it.
     \item[AMO]
         Atomic Memory Operation.
     \item[BYPASS]
@@ -43,6 +46,8 @@ functionality.
     \item[DXLEN]
         Debug XLEN, which is the widest XLEN a hart supports, ignoring the
         current value of \Fmxl in \Rmisa.
+    \item[essential feature]
+        An essential feature must be present in order for debug to work correctly.
     \item[GPR]
         General Purpose Register.
     \item[hardware platform]
@@ -56,6 +61,9 @@ functionality.
     \item[JTAG]
         Refers to work done by IEEE's Joint Test Action Group, described in
         IEEE 1149.1.
+    \item[legacy feature]
+        A legacy feature should only be implemented to support legacy hardware
+        that is present in a system.
     \item[Minimal RISC-V Debug Specification]
         A subset of the full Debug Specification that allows for very small
         implementations. See Chapter~\ref{chap:dm}.
@@ -67,8 +75,14 @@ functionality.
         Non-Maskable Interrupt.
     \item[physical address]
         An address that is directly usable on the system bus.
+    \item[recommended feature]
+        A recommended feature is not required for debug to work correctly, but
+        it is so useful that it should not be omitted without good reason.
     \item[SBA]
         System Bus Access (see Section \ref{systembusaccess}).
+    \item[specialized feature]
+        A specialized feature, that only makes sense in the context of some
+        specific hardware.
     \item[TAP]
         Test Access Port, defined in IEEE 1149.1.
     \item[TM]
