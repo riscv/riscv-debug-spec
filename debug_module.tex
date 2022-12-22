@@ -250,9 +250,10 @@ halt and resume groups.
     that's a member of the halt group fires:}
 \item That hart halts normally, with \FcsrDcsrCause reflecting the original
     cause of the halt.
-\item All the other harts in the halt group will quickly halt, even if they are
-    currently in the process of resuming. \FcsrDcsrCause for those harts should
-    be set to 6, but may be set to 3.
+\item All the other harts in the halt group that are running will quickly halt.
+    \FcsrDcsrCause for those harts should be set to 6, but may be set to 3.
+    Other harts in the halt group that are halted but have started the process
+    of resuming must also quickly become halted, even if they do resume briefly.
 \item Any external triggers in that group are notified.
 \end{steps}
 Adding a hart to a halt group does not automatically halt that hart, even if
@@ -260,10 +261,11 @@ other harts in the group are already halted.
 
 \begin{steps}{When any hart in a resume group resumes, or an external trigger
     that's a member of the resume group fires:}
-\item All the other harts in that group will quickly resume as soon as any
-    currently executing abstract commands have completed, except for the harts
-    that are in the process of halting.
+\item All the other harts in that group that are halted will quickly resume as
+    soon as any currently executing abstract commands have completed.
     Each hart in the group sets its resume ack bit\index{resume ack bit} as soon as it has resumed.
+    Harts that are in the process of halting should complete that process and stay
+    halted.
 \item Any external triggers in that group are notified.
 \end{steps}
 Adding a hart to a resume group does not automatically resume that hart, even
