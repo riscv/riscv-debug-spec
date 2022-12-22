@@ -182,11 +182,11 @@
             M-mode trigger enable field.
 
             <value v="0" name="disabled">
-                Triggers with action=0 do not match/fire while the hart is in M-mode.
+                Triggers with action=0 do not match while the hart is in M-mode.
             </value>
 
             <value v="1" name="enabled">
-                Triggers do match/fire while the hart is in M-mode.
+                Triggers do match while the hart is in M-mode.
             </value>
 
             When a breakpoint trap into M-mode is taken, \FcsrTcontrolMte is set to 0. When {\tt
