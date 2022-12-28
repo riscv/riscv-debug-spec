@@ -172,6 +172,9 @@ The supported Core Debug Registers must be implemented for each hart that can
 be debugged. They are CSRs, accessible using the RISC-V {\tt csr} opcodes and
 optionally also using abstract debug commands.
 
+Attempts to access a non-existent Core Debug Register raise an illegal
+instruction exception.
+
 \input{core_registers.tex}
 
 \section{Virtual Debug Registers} \label{virtreg}
