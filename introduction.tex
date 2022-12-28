@@ -169,6 +169,8 @@ incompatible, but unlikely to be noticeable:}
     \item Solutions to deal with reentrancy in Section~\ref{sec:nativetrigger}
         prevent triggers from {\em matching}, not merely {\em firing}. This primarily
         affects \RcsrIcount behavior. \PR{722}
+    \item Attempts to access a non-existent CSR raise an illegal instruction
+        exception. \PR{791}
 \end{steps}
 
 \subsubsection{New Features from 0.13 to 1.0}

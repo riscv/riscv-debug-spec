@@ -12,8 +12,11 @@ a given memory address, or on the address/data in loads/stores.
 
 A hart can be compatible with this specification without implementing any
 trigger functionality at all, but if it is implemented then it must conform to
-this section. If triggers aren't implemented, the CSRs might not exist at all and
-accessing them results in an illegal instruction exception.
+this section.
+Accessing trigger CSRs that are not used by any of the implemented triggers must
+result in an illegal instruction exception. M-Mode and Debug Mode accesses to
+trigger CSRs that are used by any of the implemented triggers must succeed,
+regardless of the current type of the currently selected trigger.
 
 A trigger matches when the conditions that it specifies (e.g. a load from a
 specific address) are met. A trigger fires when a trigger that matches performs
@@ -298,5 +301,8 @@ Code that restores CSR context of triggers that might be configured to fire in
 the current privilege mode must use this same sequence to restore the triggers.
 This avoids the problem of a partially written trigger firing at a different
 time than is expected.
+
+Attempts to access a non-existent Trigger Register raise an illegal instruction
+exception.
 
 \input{hwbp_registers.tex}
