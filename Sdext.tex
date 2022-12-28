@@ -22,6 +22,7 @@ How Debug Mode is implemented is not specified here.
 \begin{steps}{When executing code due to an abstract command, the hart stays in
     Debug Mode and the following apply:}
 \item All operations are executed with machine mode privilege, except that
+    additional Debug Mode CSRs are accessible and
     \FcsrMstatusMprv in \Rmstatus may be ignored according to \FcsrDcsrMprven.
     Full permission checks, or a relaxed set of permission checks, will apply
     according to \FdmAbstractcsRelaxedpriv.
@@ -170,9 +171,6 @@ communicate this to the user.
 The supported Core Debug Registers must be implemented for each hart that can
 be debugged. They are CSRs, accessible using the RISC-V {\tt csr} opcodes and
 optionally also using abstract debug commands.
-
-Attempts to access a non-existent Core Debug Register raise an illegal
-instruction exception.
 
 \input{core_registers.tex}
 
