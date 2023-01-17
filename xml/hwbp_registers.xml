@@ -298,9 +298,9 @@
 
         \begin{steps}{If the A extension is supported, then trigger behavior is as follows
         for the load and store bits:}
-        \item {\tt lr} instructions are loads
-        \item successful {\tt sc} instructions are stores
-        \item it is \unspecified\ whether failing {\tt sc} instructions are stores or not
+        \item {\tt lr} instructions are loads.
+        \item Successful {\tt sc} instructions are stores.
+        \item It is \unspecified\ whether failing {\tt sc} instructions are stores or not.
         \item Each AMO instruction is a load for the read portion of the
         operation. The address is always available to trigger on, although
         the value loaded might not be, depending on the hardware
