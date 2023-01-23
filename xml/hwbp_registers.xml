@@ -696,7 +696,9 @@
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="6" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
-        <field name="0" bits="XLEN-6:25" access="R" reset="0" />
+        <field name="0" bits="XLEN-6:26" access="R" reset="0" />
+        <field name="hit1" bits="25" access="WARL" reset="0">
+        </field>
         <field name="vs" bits="24" access="WARL" reset="0">
             When set, enable this trigger in VS-mode.
             This bit is hard-wired to 0 if the hart does not support
@@ -707,13 +709,45 @@
             This bit is hard-wired to 0 if the hart does not support
             virtualization mode.
         </field>
-        <field name="hit" bits="22" access="WARL" reset="0">
-            If this bit is implemented then it must become set when this
-            trigger fires and may become set when this trigger matches.
-            The trigger's user can set or clear it at any
-            time. It is used to determine which
-            trigger(s) matched.  If the bit is not implemented, it is always 0
-            and writing it has no effect.
+        <field name="hit0" bits="22" access="WARL" reset="0">
+            It they are implemented, \FcsrMcontrolSixHitOne (MSB) and
+            \FcsrMcontrolSixHitZero (LSB) combine into a single 2-bit field that
+            indicates if and when the trigger was hit.
+
+            If either of the bits is not implemented, the unimplemented bits
+            will be wired to 0.
+
+            <value v="0" name="false">
+            The trigger did not fire.
+            </value>
+
+            <value v="1" name="before">
+            The trigger fired just before the instruction that triggered it was
+            committed, but after all preceding instructions are committed.
+            \Rxepc or \RcsrDpc (depending on \FcsrMcontrolSixAction) must be set
+            to the virtual address of the instruction that matched.
+
+            If \FcsrMcontrolSixLoad is set and \FcsrMcontrolSixSelect=1 then a
+            memory access has been performed (including any side effects of
+            performing such an access) even though the load has not updated its
+            destination register.
+            </value>
+
+            <value v="2" name="after">
+            The trigger fired after the instruction that triggered and at least
+            one additional instruction were committed.
+            \Rxepc or \RcsrDpc (depending on \FcsrMcontrolSixAction) must be set
+            to the virtual address of the next instruction that must be executed
+            to preserve the program flow.
+            </value>
+
+            <value v="3" name="immediately after">
+            The trigger fired just after the instruction that triggered it was
+            committed, but before any subsequent instructions were executed.
+            \Rxepc or \RcsrDpc (depending on \FcsrMcontrolSixAction) must be set
+            to the virtual address of the next instruction that must be executed
+            to preserve the program flow.
+            </value>
         </field>
         <field name="select" bits="21" access="WARL" reset="0">
             This bit determines the contents of the XLEN-bit compare values.

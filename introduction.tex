@@ -124,6 +124,10 @@ order to implement 1.0:}
     can be written with any value supported by any of the types this trigger
     supports. \PR{721}
     \item \RcsrTcontrol fields only apply to breakpoint traps, not any trap. \PR{723}
+    \item \FcsrMcontrolSixHitZero (previously called $|hit|$) now contains 0 when a
+        trigger fires more than one instruction after the instruction that
+        matched.  (This information is now reflected in \FcsrMcontrolSixHitOne.)
+        \PR{795}
 \end{steps}
 
 \subsubsection{Minor Changes from 0.13 to 1.0}
