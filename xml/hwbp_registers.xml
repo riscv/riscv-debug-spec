@@ -980,8 +980,16 @@
     <register name="Instruction Count" short="icount" address="0x7a1">
         This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 3.
 
-        This trigger matches on every instruction completed or trap taken from a
-        privilege mode where the trigger is enabled.
+        \begin{steps}{This trigger matches when:}
+            \item
+                An instruction retires after having been fetched in a privilege
+                mode where the trigger is enabled.
+                This explicitly includes {\em x}\/RET instructions.
+            \item A trap is taken from a privilege mode where the trigger is enabled.
+        \end{steps}
+
+        If more than one of the above events occur during a single instruction
+        execution, the trigger still only matches once for that instruction.
 
         When \FcsrIcountCount is greater than 1 and the trigger matches, then
         \FcsrIcountCount is decremented by 1. (This is true even if the action configured in
