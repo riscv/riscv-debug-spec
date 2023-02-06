@@ -700,9 +700,36 @@
         If \RcsrTextraThirtytwo or \RcsrTextraSixtyfour are implemented for this
         trigger, it only matches when the conditions set there are satisfied.
 
+        \begin{commentary}
+        \FcsrMcontrolSixUncertain and \FcsrMcontrolSixUncertainen exist to
+        accommodate systems where not every memory access is fully observed by
+        the Trigger Module. Possible examples include data values in far AMOs,
+        and the address/data/size of accesses by instructions that perform
+        multiple memory accesses, such as vector, push, and pop instructions.
+
+        While the uncertain mechanism exists to deal with these situations, it
+        can lead to an unusable number of false positives. Users will get a much
+        better debug experience if the TM does have perfect visibility into the
+        details of every memory access.
+        \end{commentary}
+
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="6" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
-        <field name="0" bits="XLEN-6:26" access="R" reset="0" />
+        <field name="0" bits="XLEN-6:27" access="R" reset="0" />
+        <field name="uncertain" bits="26" access="WARL" reset="0">
+            This bit should be updated every time that \FcsrMcontrolSixHitZero
+            or \FcsrMcontrolSixHitOne is updated.
+
+            <value v="0" name="certain">
+                The trigger that fired satisfied the configured conditions, or
+                this bit is not implemented.
+            </value>
+            <value v="1" name="uncertain">
+                The trigger that fired might not have perfectly satisfied the
+                configured conditions. Due to the implementation the hardware
+                cannot be certain.
+            </value>
+        </field>
         <field name="hit1" bits="25" access="WARL" reset="0">
         </field>
         <field name="vs" bits="24" access="WARL" reset="0">
@@ -992,7 +1019,17 @@
         <field name="m" bits="6" access="WARL" reset="0">
             When set, enable this trigger in M-mode.
         </field>
-        <field name="0" bits="5" access="R" reset="0" />
+        <field name="uncertainen" bits="5" access="WARL" reset="0">
+            <value v="0" name="disabled">
+                This trigger will only match if the hardware can perfectly
+                evaluate it.
+            </value>
+            <value v="1" name="enabled">
+                This trigger will match if it's possible that it would match if
+                the Trigger Module had perfect information about the operations
+                being performed.
+            </value>
+        </field>
         <field name="s" bits="4" access="WARL" reset="0">
             When set, enable this trigger in S/HS-mode.
             This bit is hard-wired to 0 if the hart does not support
