@@ -772,6 +772,10 @@
         </field>
         <field name="0" bits="20" access="WARL" reset="0">
             This used to be used for timing, but is currently read only 0.
+
+            Debuggers should accept this bit reading back 1 when trying to set a
+            trigger. It indicates the target implemented an older version of the
+            spec. The trigger will still be hit.
         </field>
         <field name="size" bits="19:16" access="WARL" reset="0">
             <value v="0" name="any">
