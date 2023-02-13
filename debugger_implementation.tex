@@ -606,7 +606,7 @@ the OS or debug stub writes \FcsrIcountCount=1, \FcsrIcountAction=0,
 \FcsrIcountM=0 before returning control to the lower user program with an
 {\tt mret} instruction.
 
-On tiny systems which only supports M-Mode single step is doable, but tricky to
+On tiny systems which only support M-Mode single step is doable, but tricky to
 get right. To single step, the debug stub would execute something like:
 \begin{verbatim}
     li    t0, \FcsrIcountCount=4, \FcsrIcountAction=0, \FcsrIcountM=1
@@ -615,3 +615,30 @@ get right. To single step, the debug stub would execute something like:
     lw    sp, 0(sp)     /* Restore sp, count decrements to 2 */
     mret                /* Return to program being debugged. count decrements to 1 */
 \end{verbatim}
+
+There is an additional problem with using \RcsrIcount to single step.  An
+instruction may cause an exception into a more privileged mode where the trigger
+is not enabled.  The exception handler might address the cause of the exception,
+and then restart the instruction.  Examples of this include page faults, FPU
+instructions when the FPU is not yet enabled, and interrupts.
+When a user is single stepping
+through such code, they will have to step twice to get past the restarted
+instruction. The first time the exception handler runs, and the second time the
+instruction actually executes. That is confusing and usually undesirable.
+
+To help users out, debuggers should detect when a single step restarted an
+instruction, and then step again. This way the users see the expected behavior
+of stepping over the instruction. Ideally the debugger would notify the user
+that an exception handler executed the first time.
+
+The debugger should perform this extra step when the PC doesn't change during a
+regular step.
+
+\begin{commentary}
+    It is safe to perform an extra step when the PC changes, because every
+    RISC-V instruction either changes the PC or has side effects when repeated,
+    but never both.
+\end{commentary}
+
+To avoid an infinite loop if the exception handler does not address the cause of
+the exception, the debugger must execute no more than a single extra step.
