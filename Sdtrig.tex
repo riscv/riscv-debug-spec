@@ -115,8 +115,9 @@ in the chain.
                 &          3 & & icount \\
                 &          3 & & itrigger \\
                 &          3 & & mcontrol/mcontrol6 after \\
-                &            & & \hspace{2em}(on previous instruction) \\
-                \hline
+                &            & & \hspace{2em}(on previous instruction) \\ \hline
+                &            & Asynchronous interrupt enabled by & \\
+                &            & \hspace{2em}xRET or explicit CSR write & \\ \hline
                 &          3 & Instruction address breakpoint & mcontrol/mcontrol6 execute address before \\ \hline
                 &         12 & Instruction page fault & \\ \hline
                 &          1 & Instruction access fault & \\ \hline
@@ -155,6 +156,12 @@ exception. In the latter case, \FcsrMcontrolHit of the trigger whose action is 0
 be set, giving a debugger an opportunity to handle this case. What happens with
 trace actions when triggers with different actions are also firing is left to
 the trace specification.
+
+\begin{commentary}
+Note that asynchronous interrupts are included in the priority table because, when
+enabled by xRET or explicit CSR write instructions, these interrupts must be treated
+as high priority events on the next instruction.
+\end{commentary}
 
 \section{Native Triggers}
 \label{sec:nativetrigger}
