@@ -244,7 +244,11 @@ disconnecting.
 
 An optional feature allows a debugger to place harts into two kinds of groups: halt
 groups and resume groups.  It is also possible to add external triggers to a
-halt and resume groups.
+halt and resume groups. At any given time, each hart and each trigger is a
+member of exactly one halt group and exactly one resume group.
+
+In both halt and resume groups, group 0 is special. Harts in group 0
+halt/resume as if groups aren't implemented at all.
 
 \begin{steps}{When any hart in a halt group halts, or an external trigger
     that's a member of the halt group fires:}
@@ -285,9 +289,6 @@ input-only, and triggers 12--15 are output-only but this is not required.
     halting/resuming of all cores in a hardware platform, when not all cores are RISC-V
     cores.
 \end{commentary}
-
-In both halt and resume groups, group 0 is special. Harts in group 0
-halt/resume as if groups aren't implemented at all.
 
 When the DM is reset, all harts must be placed in the lowest-numbered halt and
 resume groups that they can be in. (This will usually be group 0.)
