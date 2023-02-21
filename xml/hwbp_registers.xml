@@ -164,6 +164,8 @@
                     \FcsrMcontrolTiming
                 \item \FcsrMcontrolSixHitZero behaves just as \FcsrMcontrolHit.
                 \item \FcsrMcontrolSixHitOne is read-only 0.
+                \item Encodings for \FcsrMcontrolSixSize for access sizes larger
+                than 64 bits are different.
                 \end{steps}
             </value>
             <value v="1" name="1">
@@ -755,8 +757,8 @@
             Any bits beyond the size of the data access will contain 0.
             </value>
         </field>
-        <field name="0" bits="20" access="R" reset="0" />
-        <field name="size" bits="19:16" access="WARL" reset="0">
+        <field name="0" bits="20:19" access="R" reset="0" />
+        <field name="size" bits="18:16" access="WARL" reset="0">
             <value v="0" name="any">
             The trigger will attempt to match against an access of any size.
             The behavior is only well-defined if $|select|=0$, or if the access
@@ -786,19 +788,7 @@
             execution of 64-bit instructions.
             </value>
 
-            <value v="6" name="80bit">
-            The trigger will only match against execution of 80-bit instructions.
-            </value>
-
-            <value v="7" name="96bit">
-            The trigger will only match against execution of 96-bit instructions.
-            </value>
-
-            <value v="8" name="112bit">
-            The trigger will only match against execution of 112-bit instructions.
-            </value>
-
-            <value v="9" name="128bit">
+            <value v="6" name="128bit">
             The trigger will only match against 128-bit memory accesses or
             execution of 128-bit instructions.
             </value>

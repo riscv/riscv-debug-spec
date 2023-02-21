@@ -145,6 +145,8 @@ order to implement 1.0:}
     \item If \FcsrTinfoVersion is greater than 0, then bit 20 of
         \RcsrMcontrolSix is no longer used for timing information. (Previously
         the bit was called \RcsrMcontrolSix.$|timing|$.) \PR{807}
+    \item If \FcsrTinfoVersion is greater than 0, then the encodings of
+        \FcsrMcontrolSixSize for sizes greater than 64 bit have changed. \PR{807}
 \end{steps}
 
 \subsubsection{Minor Changes from 0.13 to 1.0}
