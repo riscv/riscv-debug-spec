@@ -296,26 +296,6 @@
         virtual address is the address which caused any of the chained
         triggers to fire.
 
-        \begin{steps}{If the A extension is supported, then trigger behavior is as follows
-        for the load and store bits:}
-        \item {\tt lr} instructions are loads.
-        \item Successful {\tt sc} instructions are stores.
-        \item It is \unspecified\ whether failing {\tt sc} instructions are stores or not.
-        \item Each AMO instruction is a load for the read portion of the
-        operation. The address is always available to trigger on, although
-        the value loaded might not be, depending on the hardware
-        implementation.
-        \item Each AMO instruction is a store for the write portion of the
-        operation. The address is always available to trigger on, although
-        the value stored might not be, depending on the hardware
-        implementation.
-        \end{steps}
-
-        If the destination register of any load or AMO is \Rzero then it is
-        \unspecified\ whether a load trigger with \FcsrMcontrolSelect=1 will
-        match.  Whether store triggers with \FcsrMcontrolSelect=1 match on
-        AMOs is \unspecified.
-
         If \RcsrTextraThirtytwo or \RcsrTextraSixtyfour are implemented for this
         trigger, it only matches when the conditions set there are satisfied.
 
@@ -676,26 +656,6 @@
         \item Write all ones to \RcsrTdataTwo.
         \item Read \RcsrTdataTwo. The value of maskmax6 is the index of the most significant 0 bit plus 1.
         \end{steps}
-
-        \begin{steps}{If the A extension is supported, then trigger behavior is as follows
-        for the load and store bits:}
-        \item {\tt lr} instructions are loads
-        \item successful {\tt sc} instructions are stores
-        \item it is \unspecified\ whether failing {\tt sc} instructions are stores or not
-        \item Each AMO instruction is a load for the read portion of the
-        operation. The address is always available to trigger on, although
-        the value loaded might not be, depending on the hardware
-        implementation.
-        \item Each AMO instruction is a store for the write portion of the
-        operation. The address is always available to trigger on, although
-        the value stored might not be, depending on the hardware
-        implementation.
-        \end{steps}
-
-        If the destination register of any load or AMO is \Rzero then it is
-        \unspecified\ whether a load trigger with \FcsrMcontrolSelect=1 will
-        match.  Whether store triggers with \FcsrMcontrolSelect=1 match on
-        AMOs is \unspecified.
 
         If \RcsrTextraThirtytwo or \RcsrTextraSixtyfour are implemented for this
         trigger, it only matches when the conditions set there are satisfied.
