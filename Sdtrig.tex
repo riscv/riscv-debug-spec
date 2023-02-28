@@ -71,7 +71,9 @@ Value & Description \\
     This action is only legal when the trigger's \FcsrTdataOneDmode is 1.
     Since the {\tt tdata} registers are WARL, hardware should clear the action
     field whenever the action field is 1, the new value of \FcsrTdataOneDmode would be 0, and the
-    new value of the action field would be 1. \\
+    new value of the action field would be 1.
+
+    This action can only be supported if Sdext is implemented on the hart.\\
 \hline
 2 & Trace on, described in the trace specification. \\
 \hline
