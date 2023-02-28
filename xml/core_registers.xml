@@ -131,6 +131,7 @@
         <field name="stepie" bits="11" access="WARL" reset="0">
             <value v="0" name="interrupts disabled">
             Interrupts (including NMI) are disabled during single stepping.
+            This value should be supported.
             </value>
 
             <value v="1" name="interrupts enabled">
