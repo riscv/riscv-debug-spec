@@ -147,11 +147,33 @@
     </register>
 
     <register name="Trigger Info" short="tinfo" address="0x7a4">
-        This register is optional if no triggers are implemented, or if \FcsrTdataOneType
-        is not writable. In this case the debugger can read the only supported
-        type from \RcsrTdataOne.
+        This register is optional if no triggers are implemented, or if
+        \FcsrTdataOneType is not writable and \FcsrTinfoVersion would be 0. In
+        this case the debugger can read the only supported type from
+        \RcsrTdataOne.
 
-        <field name="0" bits="XLEN-1:16" access="R" reset="0" />
+        <field name="0" bits="XLEN-1:32" access="R" reset="0" />
+        <field name="version" bits="31:24" access="R" reset="Preset">
+            Contains the version of the Sdtrig extension implemented.
+            <value v="0" name="0">
+                Supports triggers as described in this spec at commit 5a5c078,
+                made on February 2, 2023.
+
+                \begin{steps}{In these older versions:}
+                \item \RcsrMcontrolSix has a timing bit identical to
+                    \FcsrMcontrolTiming
+                \item \FcsrMcontrolSixHitZero behaves just as \FcsrMcontrolHit.
+                \item \FcsrMcontrolSixHitOne is read-only 0.
+                \item Encodings for \FcsrMcontrolSixSize for access sizes larger
+                than 64 bits are different.
+                \end{steps}
+            </value>
+            <value v="1" name="1">
+                Supports triggers as described in the ratified version 1.0 of
+                this document.
+            </value>
+        </field>
+        <field name="0" bits="23:16" access="R" reset="0" />
         <field name="info" bits="15:0" access="R" reset="Preset">
             One bit for each possible \FcsrTdataOneType enumerated in \RcsrTdataOne. Bit N
             corresponds to type N. If the bit is set, then that type is
@@ -590,6 +612,10 @@
     <register name="Match Control Type 6" short="mcontrol6" address="0x7a1">
         This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 6.
 
+        Implementing this trigger as described here requires that
+        \FcsrTinfoVersion is 1 or higher, which in turn means \RcsrTinfo must
+        be implemented.
+
         This replaces mcontrol in newer implementations and serves to provide additional
         functionality.
 
@@ -597,7 +623,7 @@
         the processor core is implemented. To accommodate various
         implementations, execute, load, and store address/data triggers may fire at
         whatever point in time is most convenient for the implementation.
-        The debugger may request specific timings as described in \FcsrMcontrolSixTiming.
+
         Table~\ref{tab:hwbp_timing} suggests timings for the best user experience.
         The underlying principle is that firing just before the instruction
         gives a user more insight, so is preferable. However, depending on the
@@ -627,10 +653,8 @@
         \end{tabular}
         \end{table}
 
-        A chain of triggers that don't all have the same \FcsrMcontrolSixTiming
-        value will never fire. That means to implement the suggestions in
-        Table~\ref{tab:hwbp_timing}, both timings should be supported on load
-        address triggers.
+        A chain of triggers must only fire if every trigger in the chain was
+        matched by the same instruction.
 
         This trigger type may be limited to address comparisons (\FcsrMcontrolSixSelect is
         always 0) only. If that is the case and masking is not supported (match
@@ -693,7 +717,7 @@
             \Rxepc or \RcsrDpc (depending on \FcsrMcontrolSixAction) must be set
             to the virtual address of the instruction that matched.
 
-            If \FcsrMcontrolSixLoad is set and \FcsrMcontrolSixSelect=1 then a
+            If a load operation matched and \FcsrMcontrolSixSelect=1 then a
             memory access has been performed (including any side effects of
             performing such an access) even though the load has not updated its
             destination register.
@@ -733,49 +757,8 @@
             Any bits beyond the size of the data access will contain 0.
             </value>
         </field>
-        <field name="timing" bits="20" access="WARL" reset="0">
-            <value v="0" name="before">
-            The action for this trigger will be taken just before the
-            instruction that triggered it is committed, but after all preceding
-            instructions are committed. \Rxepc or \RcsrDpc (depending
-            on \FcsrMcontrolSixAction) must be set to the virtual address of the
-            instruction that matched.
-
-            If this is combined with \FcsrMcontrolSixLoad and
-            \FcsrMcontrolSixSelect=1 then a memory access will be
-            performed (including any side effects of performing such an access) even
-            though the load will not update its destination register. Debuggers
-            should consider this when setting such breakpoints on, for example,
-            memory-mapped I/O addresses.
-            </value>
-
-            <value v="1" name="after">
-            The action for this trigger will be taken after the instruction
-            that triggered it is committed. It should be taken before the next
-            instruction is committed, but it is better to implement triggers imprecisely
-            than to not implement them at all.  \Rxepc or
-            \RcsrDpc (depending on \FcsrMcontrolSixAction) must be set to
-            the virtual address of the next instruction that must be executed to
-            preserve the program flow.
-            </value>
-
-            Most hardware will only implement one timing or the other, possibly
-            dependent on \FcsrMcontrolSixSelect, \FcsrMcontrolSixExecute,
-            \FcsrMcontrolSixLoad, and \FcsrMcontrolSixStore. This bit
-            primarily exists for the hardware to communicate to the debugger
-            what will happen. Hardware may implement the bit fully writable, in
-            which case the debugger has a little more control.
-
-            Data load triggers with \FcsrMcontrolSixTiming of 0 will result in the same load
-            happening again when the debugger lets the hart run. For data load
-            triggers, debuggers must first attempt to set the breakpoint with
-            \FcsrMcontrolSixTiming of 1.
-
-            If a trigger with \FcsrMcontrolSixTiming of 0 matches, it is
-            implementation-dependent whether that prevents a trigger with
-            \FcsrMcontrolSixTiming of 1 matching as well.
-        </field>
-        <field name="size" bits="19:16" access="WARL" reset="0">
+        <field name="0" bits="20:19" access="R" reset="0" />
+        <field name="size" bits="18:16" access="WARL" reset="0">
             <value v="0" name="any">
             The trigger will attempt to match against an access of any size.
             The behavior is only well-defined if $|select|=0$, or if the access
@@ -805,19 +788,7 @@
             execution of 64-bit instructions.
             </value>
 
-            <value v="6" name="80bit">
-            The trigger will only match against execution of 80-bit instructions.
-            </value>
-
-            <value v="7" name="96bit">
-            The trigger will only match against execution of 96-bit instructions.
-            </value>
-
-            <value v="8" name="112bit">
-            The trigger will only match against execution of 112-bit instructions.
-            </value>
-
-            <value v="9" name="128bit">
+            <value v="6" name="128bit">
             The trigger will only match against 128-bit memory accesses or
             execution of 128-bit instructions.
             </value>
