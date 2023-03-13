@@ -266,6 +266,15 @@ If the destination register of any load or AMO is \Rzero then it is
 \unspecified\ whether a data load trigger will match.  Whether data store
 triggers match on AMOs is \unspecified.
 
+\subsection{Combined Accesses}
+
+Some instructions lead a hart to perform multiple memory accesses. This includes
+vector loads and stores, as well as {\tt cm.push} and {\tt cm.pop} instructions.
+The Trigger Module should match such accesses as if they all happened
+individually. E.g. a vector load should be treated as if it performed multiple
+loads of size SEW (selected element width), and {\tt cm.push} should be treated
+as if it performed multiple stores of size XLEN.
+
 \section{Trigger Registers}
 
 These registers are CSRs, accessible using the RISC-V {\tt csr} opcodes and
