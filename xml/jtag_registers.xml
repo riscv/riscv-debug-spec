@@ -102,6 +102,8 @@
         <field name="address" bits="abits+33:34" access="R/W" reset="0">
             Address used for DMI access. In Update-DR this value is used
             to access the DM over the DMI.
+            \FdtmDmiOp defines what this register contains after every possible
+            operation.
         </field>
         <field name="data" bits="33:2" access="R/W" reset="0">
             The data to send to the DM over the DMI during Update-DR, and
