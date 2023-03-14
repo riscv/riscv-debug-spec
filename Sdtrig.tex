@@ -275,6 +275,28 @@ individually. E.g. a vector load should be treated as if it performed multiple
 loads of size SEW (selected element width), and {\tt cm.push} should be treated
 as if it performed multiple stores of size XLEN.
 
+\subsection{Cache Operations}
+
+Cache operations are unusual events, and code that uses them can have
+hard-to-find bugs. To help debug such code, cache operations that affect
+consistency between memory and caches should be treated as if they are stores to
+all the addresses that are affected by the operation.  Operations that store to
+valid cache lines should also match as if they are stores.
+
+The access size for such operations is unknown to the TM, so only triggers with
+\FcsrMcontrolSixSize=0 will match.
+
+\begin{commentary}
+    \begin{steps}{For RISC-V Base Cache Management Operation ISA Extensions
+            1.0.1, this means the following:}
+        \item \inst{cbo.clean}, \inst{cbo.flush}, and \inst{cbo.inval} match as
+            if they are stores because they affect consistency.
+        \item \inst{cbo.zero} matches as if it is a store because it stores to
+            valid cache lines.
+        \item The prefetch instructions don't match at all.
+    \end{steps}
+\end{commentary}
+
 \section{Trigger Registers}
 
 These registers are CSRs, accessible using the RISC-V {\tt csr} opcodes and
