@@ -149,6 +149,21 @@ enter Debug Mode before executing any instructions, but after performing any
 initialization that would usually happen before the first instruction is
 executed.
 
+\section{Halt}
+
+\begin{steps}{When a hart halts:}
+    \item \FcsrDcsrCause is updated.
+    \item \FcsrDcsrPrv and \FcsrDcsrV are set to reflect current privilege mode.
+    \item \RcsrDpc is set to the next instruction that should be executed.
+    \item If the current instruction can be partially executed and should be
+        restarted to complete, then the relevant state for that is updated. E.g.
+        if a halt occurs during a partially executed vector instruction, then
+        {\tt vstart} is updated, and \RcsrDpc is updated to the address of the
+        partially executed instruction. This is analogous to how vector
+        instructions behave for exceptions.
+    \item The hart enters Debug Mode.
+\end{steps}
+
 \section{Resume}
 
 \begin{steps}{When a hart resumes:}
