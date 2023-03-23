@@ -1346,14 +1346,16 @@
             </value>
 
             <value v="4" name="mcontext">
-            This trigger will only match if the low bits of
+            This trigger will only match or fire if the low bits of
             \RcsrMcontext/\RcsrHcontext equal \FcsrTextraThirtytwoMhvalue.
             </value>
 
-            1, 5 (mcontext\_select): This trigger will only match if the low bits of
+            1, 5 (mcontext\_select): This trigger will only match or fire if the
+            low bits of
             \RcsrMcontext/\RcsrHcontext equal \{\FcsrTextraThirtytwoMhvalue, mhselect[2]\}.
 
-            2, 6 (vmid\_select): This trigger will only match if VMID in hgatp equals the lower VMIDMAX
+            2, 6 (vmid\_select): This trigger will only match or fire if VMID in
+            hgatp equals the lower VMIDMAX
             (defined in the Privileged Spec) bits of \{\FcsrTextraThirtytwoMhvalue, mhselect[2]\}.
 
             3, 7 (reserved): Reserved.
@@ -1381,12 +1383,12 @@
             </value>
 
             <value v="1" name="scontext">
-            This trigger will only match if the low bits of
+            This trigger will only match or fire if the low bits of
             \RcsrScontext equal \FcsrTextraThirtytwoSvalue.
             </value>
 
             <value v="2" name="asid">
-            This trigger will only match if:
+            This trigger will only match or fire if:
             \begin{itemize}[noitemsep,nolistsep]
             \item the mode is VS-mode or VU-mode and ASID in \Rvsatp
             equals the lower ASIDMAX (defined in the Privileged Spec) bits
