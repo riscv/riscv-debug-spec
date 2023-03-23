@@ -288,6 +288,20 @@
         \end{tabular}
         \end{table}
 
+        Executing the Program Buffer may cause the value of \RcsrDpc to become
+        \unspecified. If that is the case, it must be possible to read/write
+        \RcsrDpc using an abstract command with \FacAccessregisterPostexec not
+        set.  The debugger must attempt to save \RcsrDpc between halting and
+        executing a Program Buffer, and then restore \RcsrDpc before leaving
+        Debug Mode.
+
+        \begin{commentary}
+            Allowing \RcsrDpc to become \unspecified\ upon Program Buffer
+            execution allows for direct implementations that don't have a
+            separate PC register, and do need to use the PC when executing the
+            Program Buffer.
+        \end{commentary}
+
         The writability of \RcsrDpc follows the same rules as \Rmepc as defined
         in the Privileged Spec.  In particular, \RcsrDpc must be able to hold
         all valid virtual addresses and the writability of the low bits depends
