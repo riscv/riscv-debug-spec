@@ -302,6 +302,14 @@
             Program Buffer.
         \end{commentary}
 
+        If the Access Register abstract command supports reading \RcsrDpc while
+        the hart is running, then the value read should be the address of a
+        recently executed instruction.
+
+        If the Access Register abstract command supports writing \RcsrDpc while
+        the hart is running, then the executing program should jump to the
+        written address shortly after the write occurs.
+
         The writability of \RcsrDpc follows the same rules as \Rmepc as defined
         in the Privileged Spec.  In particular, \RcsrDpc must be able to hold
         all valid virtual addresses and the writability of the low bits depends
