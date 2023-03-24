@@ -471,18 +471,6 @@ Mode, and \FdmAbstractcsCmderr is set to 3 ({\tt exception error}).  If the debu
 executes a program that doesn't terminate with an {\tt ebreak} instruction, the
 hart will remain in Debug Mode and the debugger will lose control of the hart.
 
-Executing the Program Buffer may cause the value of \RcsrDpc to become \unspecified. If that is the case, it must be
-possible to read/write \RcsrDpc using an abstract command with \FacAccessregisterPostexec not set.
-The debugger must attempt to save \RcsrDpc between halting and
-executing a Program Buffer, and then restore \RcsrDpc before leaving Debug Mode.
-
-\begin{commentary}
-    Allowing \RcsrDpc to become \unspecified\ upon Program Buffer execution
-    allows for direct
-    implementations that don't have a separate PC register, and do need to use
-    the PC when executing the Program Buffer.
-\end{commentary}
-
 The Program Buffer may be implemented as RAM which is accessible to the
 hart. A debugger can determine if this is the case by executing small
 programs that attempt to write and read back relative to \Rpc while executing
