@@ -1000,8 +1000,7 @@
         execution, the trigger still only matches once for that instruction.
 
         When \FcsrIcountCount is greater than 1 and the trigger matches, then
-        \FcsrIcountCount is decremented by 1. (This is true even if the action configured in
-        the trigger is inhibited for some reason.)
+        \FcsrIcountCount is decremented by 1.
 
         When \FcsrIcountCount is 1 and the trigger matches, then \FcsrIcountPending
         becomes set. In addition \FcsrIcountCount will become 0 unless it is
