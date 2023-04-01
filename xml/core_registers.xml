@@ -40,7 +40,8 @@
         \end{table}
 
         \begin{commentary}
-        Note that mcontrol/mcontrol6 triggers with timing=after are considered
+        Note that mcontrol/mcontrol6 triggers which fire after the
+        instruction which hit the trigger are considered
         to be high priority causes on the subsequent instruction.  Therefore,
         an execute trigger with timing=after on an ebreak instruction is lower
         priority than the ebreak itself because the trigger will fire after the
@@ -278,7 +279,8 @@
         \hline
         trigger module &amp; The address of the next instruction to be
         executed at the time that debug mode was entered. If the trigger is
-        \RcsrMcontrol or \RcsrMcontrolSix and \FcsrMcontrolTiming is 0, this
+        \RcsrMcontrol and \FcsrMcontrolTiming is 0 or if the trigger is
+        \RcsrMcontrolSix and \FcsrMcontrolSixHitOne is 0, this
         corresponds to the address of the instruction which caused the trigger
         to fire. \\
         \hline

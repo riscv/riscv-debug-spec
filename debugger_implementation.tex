@@ -451,69 +451,75 @@ occurs.  Below are some examples, but as there is no requirement on the number
 of features of the triggers implemented by a hart, these examples might not be
 applicable to all implementations.  When a debugger wants to set a trigger, it
 writes the desired configuration, and then reads back to see if that
-configuration is supported.
+configuration is supported.  All examples assume XLEN=32.
 
-\noindent Enter Debug Mode just before the instruction at 0x80001234 is
+\noindent Enter Debug Mode when the instruction at 0x80001234 is
 executed, to be used as an instruction breakpoint in ROM:
 
 \begin{tabulary}{\textwidth}{|r|r|L|}
     \hline
-    \RcsrTdataOne & 0x105c & action=1, match=0, m=1, s=1, u=1, execute=1 \\
+    \RcsrTdataOne & 0x6980105c & type=6, dmode=1, action=1, select=0, match=0, m=1, s=1, u=1, vs=1, vu=1, execute=1 \\
     \hline
     \RcsrTdataTwo & 0x80001234 & address \\
     \hline
 \end{tabulary}
 \medskip
 
-\noindent Enter Debug Mode right after the value at 0x80007f80 is read:
+\noindent Enter Debug Mode when performing a load at address 0x80007f80 in
+M-mode or S-mode or U-mode:
 
 \begin{tabulary}{\textwidth}{|r|r|L|}
     \hline
-    \RcsrTdataOne & 0x4159 & timing=1, action=1, match=0, m=1, s=1, u=1, load=1 \\
+    \RcsrTdataOne & 0x68005159 & type=6, dmode=1, action=1, select=0, match=0, m=1, s=1, u=1, load=1 \\
     \hline
     \RcsrTdataTwo & 0x80007f80 & address \\
     \hline
 \end{tabulary}
 \medskip
 
-\noindent Enter Debug Mode right before a write to an address between
-0x80007c80 and 0x80007cef (inclusive):
+\noindent Enter Debug Mode when storing to an address between
+0x80007c80 and 0x80007cef (inclusive) in VS-mode or VU-mode
+when hgatp.VMID=1:
 
 \begin{tabulary}{\textwidth}{|r|r|L|}
     \hline
-    \RcsrTdataOne 0 & 0x195a & action=1, chain=1, match=2, m=1, s=1, u=1, store=1 \\
+    \RcsrTdataOne 0 & 0x69801902 & type=6, dmode=1, action=1, chain=1, select=0, match=2, vs=1, vu=1, store=1 \\
     \hline
     \RcsrTdataTwo 0 & 0x80007c80 & start address (inclusive) \\
     \hline
-    \RcsrTdataOne 1 & 0x11da & action=1, match=3, m=1, s=1, u=1, store=1 \\
+    \RcsrTdataTwo 0 & 0x03000000 & mhselect=6, mhvalue=0 \\
+    \hline
+    \RcsrTdataOne 1 & 0x69801182 & type=6, dmode=1, action=1, select=0, match=3, vs=1, vu=1, store=1 \\
     \hline
     \RcsrTdataTwo 1 & 0x80007cf0 & end address (exclusive) \\
+    \hline
+    \RcsrTdataTwo 1 & 0x03000000 & mhselect=6, mhvalue=0 \\
     \hline
 \end{tabulary}
 \medskip
 
-\noindent Enter Debug Mode right before a write to an address between
+\noindent Enter Debug Mode when storing to an address between
 0x81230000 and 0x8123ffff (inclusive):
 
 \begin{tabulary}{\textwidth}{|r|r|L|}
     \hline
-    \RcsrTdataOne & 0x10da & action=1, match=1, m=1, s=1, u=1, store=1 \\
+    \RcsrTdataOne & 0x698010da & type=6, dmode=1, action=1, select=0, match=1, m=1, s=1, u=1, vs=1, vu=1, store=1 \\
     \hline
-    \RcsrTdataTwo & 0x81237fff & 16 bits to match exactly, then 0, then all ones. \\
+    \RcsrTdataTwo & 0x81237fff & 16 upper bits to match exactly, then 0, then all ones. \\
     \hline
 \end{tabulary}
 \medskip
 
-\noindent Enter Debug Mode right after a read from an address between
+\noindent Enter Debug Mode when loading from an address between
 0x86753090 and 0x8675309f or between 0x96753090 and 0x9675309f (inclusive):
 
 \begin{tabulary}{\textwidth}{|r|r|L|}
     \hline
-    \RcsrTdataOne 0 & 0x41a59 & timing=1, action=1, chain=1, match=4, m=1, s=1, u=1, load=1 \\
+    \RcsrTdataOne 0 & 0x69801a59 & type=6, dmode=1, action=1, chain=1, match=4, m=1, s=1, u=1, vs=1, vu=1, load=1 \\
     \hline
     \RcsrTdataTwo 0 & 0xfff03090 & Mask for low half, then match for low half \\
     \hline
-    \RcsrTdataOne 1 & 0x412d9 & timing=1, action=1, match=5, m=1, s=1, u=1, load=1 \\
+    \RcsrTdataOne 1 & 0x698012d9 & type=6, dmode=1, action=1, match=5, m=1, s=1, u=1, vs=1, vu=1, load=1 \\
     \hline
     \RcsrTdataTwo 1 & 0xefff8675 & Mask for high half, then match for high half \\
     \hline
