@@ -606,7 +606,19 @@ the OS or debug stub writes \FcsrIcountCount=1, \FcsrIcountAction=0,
 \FcsrIcountM=0 before returning control to the lower user program with an
 {\tt mret} instruction.
 
-On tiny systems which only support M-Mode single step is doable, but tricky to
+Stepping code running in the same privilege mode as the debugger is more
+complicated, depending on what other debug features are implemented.
+
+If hardware implements \FcsrTcontrolMpte and \FcsrTcontrolMte, then stepping
+through non-trap code which doesn't allow for nested interrupts is also
+straightforward.
+
+If hardware automatically prevents \FcsrMcontrolSixAction=0 triggers from
+matching when entering a trap handler as described in
+Section~\ref{sec:nativetrigger}, then a carefully written trap handler can
+ensure that interrupts are disabled whenever the icount trigger must not match.
+
+If neither of these features exist, then single step is doable, but tricky to
 get right. To single step, the debug stub would execute something like:
 \begin{verbatim}
     li    t0, \FcsrIcountCount=4, \FcsrIcountAction=0, \FcsrIcountM=1
