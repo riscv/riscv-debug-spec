@@ -86,12 +86,17 @@ Value & Description \\
 \hline
 5 & Reserved for use by the trace specification. \\
 \hline
-8 -- 9 & Signal the firing of the trigger to other blocks within the hart (e.g. as countable events to hpmcounters).  Use external debug trigger output 0 or 1 (respectively). \\
+8 -- 9 & Send a signal to TM external trigger output 0 or 1 (respectively). \\
 \hline
 other & Reserved for future use. \\
 \hline
 \end{tabular}
 \end{table}
+
+\begin{commentary}
+    Actions 8 and 9 are intended to increment custom event counters, but these
+    signals could also be brought to outputs for use by external logic.
+\end{commentary}
 
 \section{Priority}
 
