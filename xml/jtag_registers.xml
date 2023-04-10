@@ -27,7 +27,7 @@
         The size of this register will remain constant in future versions so
         that a debugger can always determine the version of the DTM.
         <field name="0" bits="31:18" access="R" reset="0" />
-        <field name="dmihardreset" bits="17" access="W1" reset="-">
+        <field name="dtmhardreset" bits="17" access="W1" reset="-">
           Writing 1 to this bit does a hard reset of the DTM,
           causing the DTM to forget about any outstanding DMI transactions, and
           returning all registers and internal state to their reset value.
