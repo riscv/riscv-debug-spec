@@ -1275,7 +1275,7 @@
         asynchronously but it is subject to delegation by medeleg[3] like
         the other triggers.
 
-        The external trigger input can signal when the trigger is prevented
+        The TM external trigger input can signal when the trigger is prevented
         from firing due to one of the mechanisms in section ~\ref{sec:nativetrigger}.
         An implementation may either ignore the signal altogether when it cannot
         fire (dropping the trigger event) or it may hold the action as pending
@@ -1295,7 +1295,7 @@
             interrupt controller signals a trigger.
         </field>
         <field name="select" bits="21:6" access="WARL" reset="0">
-            Selects any combination of up to 16 external debug trigger inputs
+            Selects any combination of up to 16 TM external trigger inputs
             that cause this trigger to fire.
         </field>
         <field name="action" bits="5:0" access="WARL" reset="0">
