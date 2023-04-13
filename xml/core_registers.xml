@@ -130,12 +130,14 @@
         </field>
         <field name="stepie" bits="11" access="WARL" reset="0">
             <value v="0" name="interrupts disabled">
-            Interrupts (including NMI) are disabled during single stepping.
+            Interrupts (including NMI) are disabled during single stepping
+            with \FcsrDcsrStep set.
             This value should be supported.
             </value>
 
             <value v="1" name="interrupts enabled">
-            Interrupts (including NMI) are enabled during single stepping.
+            Interrupts (including NMI) are enabled during single stepping
+            with \FcsrDcsrStep set.
             </value>
 
             Implementations may hard wire this bit to 0.
