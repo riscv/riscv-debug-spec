@@ -280,13 +280,17 @@ as if it performed multiple stores of size XLEN.
 \begin{steps}{
 Cache operations are infrequently performed, and code that uses them can have
 hard-to-find bugs. For the purposes of debug triggers, two classes of cache
-operations match as stores against any of the affected addresses:}
+operations must match as stores:}
 \item Cache operations that enable software to maintain coherence between
 otherwise non-coherent implicit and explicit memory accesses.
 \item Cache operations that perform block writes of constant data.
 \end{steps}
-The access size for such operations is unknown to the TM, so only triggers with
-\FcsrMcontrolSixSize=0 will match.
+
+Only triggers with \FcsrMcontrolSixSize=0 and \FcsrMcontrolSixSelect=0 will
+match. These triggers must at least be compared against the lowest virtual
+address of all affected cache lines, or the virtual address that is the argument
+to the instruction. Comparing against both of these is better, and best of all
+is to match against the virtual address covered by all affected cache lines.
 
 Cache operations encoded as HINTs do not match debug triggers.
 
