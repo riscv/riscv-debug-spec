@@ -17,8 +17,11 @@
 \makeindex
 
 \usepackage{xspace}
-\newcommand{\defregname}[2]{\providecommand{#1}{{\tt #2}\xspace}}
-\newcommand{\deffieldname}[2]{\providecommand{#1}{{$|#2|$}\xspace}}
+\newcommand{\inst}[1]{{\tt #1}\xspace}
+\newcommand{\reg}[1]{{\tt #1}\xspace}
+\newcommand{\field}[1]{{$|#1|$}\xspace}
+\newcommand{\defregname}[2]{\providecommand{#1}{\reg{#2}}}
+\newcommand{\deffieldname}[2]{\providecommand{#1}{\field{#2}}}
 \deffieldname{\FcsrMstatusMprv}{MPRV}
 \deffieldname{\FcsrMstatusMie}{MIE}
 \deffieldname{\FcsrSstatusSie}{SIE}

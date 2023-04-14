@@ -280,6 +280,47 @@ individually. E.g. a vector load should be treated as if it performed multiple
 loads of size SEW (selected element width), and {\tt cm.push} should be treated
 as if it performed multiple stores of size XLEN.
 
+\subsection{Cache Operations}
+
+\begin{steps}{
+Cache operations are infrequently performed, and code that uses them can have
+hard-to-find bugs. For the purposes of debug triggers, two classes of cache
+operations must match as stores:}
+\item Cache operations that enable software to maintain coherence between
+otherwise non-coherent implicit and explicit memory accesses.
+\item Cache operations that perform block writes of constant data.
+\end{steps}
+
+\begin{steps}{Only triggers with \FcsrMcontrolSixSize=0 and
+\FcsrMcontrolSixSelect=0 will match. Since cache operations affect multiple
+addresses, there are multiple possible values to compare against.
+Implementations must implement one of the following options.  From most
+desirable to least desirable, they are:}
+\item Every address from the effective address rounded down to the
+    nearest cache block boundary (inclusive) to the effective address rounded up to
+    the nearest cache block boundary (exclusive) is a compare value.
+\item The effective address rounded down to the nearest cache block boundary is a
+    compare value.
+\item The effective address of the instruction is a compare value.
+\end{steps}
+
+Cache operations encoded as HINTs do not match debug triggers.
+
+\begin{commentary}
+    The above language intends to capture the trigger behavior with respect to
+    the cache operations to be introduced in a forthcoming I/D consistency
+    extension.
+
+    \begin{steps}{For RISC-V Base Cache Management Operation ISA Extensions
+            1.0.1, this means the following:}
+        \item \inst{cbo.clean}, \inst{cbo.flush}, and \inst{cbo.inval} match as
+            if they are stores because they affect consistency.
+        \item \inst{cbo.zero} matches as if it is a store because it performs a
+            block write of constant data.
+        \item The prefetch instructions don't match at all.
+    \end{steps}
+\end{commentary}
+
 \section{Trigger Registers}
 
 These registers are CSRs, accessible using the RISC-V {\tt csr} opcodes and
