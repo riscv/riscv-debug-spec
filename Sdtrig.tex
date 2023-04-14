@@ -286,13 +286,18 @@ otherwise non-coherent implicit and explicit memory accesses.
 \item Cache operations that perform block writes of constant data.
 \end{steps}
 
-Only triggers with \FcsrMcontrolSixSize=0 and \FcsrMcontrolSixSelect=0 will
-match. These triggers must at least be compared against the lowest virtual
-address covered by any of the affected cache lines, or the virtual address that
-is the argument
-to the instruction. Comparing against both of these is better, and best of all
-is to match against any virtual address covered by any of the affected cache
-lines.
+\begin{steps}{Only triggers with \FcsrMcontrolSixSize=0 and
+\FcsrMcontrolSixSelect=0 will match. Since cache operations affect multiple
+addresses, there are multiple possible values to compare against.
+Implementations must implement one of the following options.  From most
+desirable to least desirable, they are:}
+\item Every virtual address that is affected by the cache operation is a compare
+    value.
+\item The lowest virtual address that is affected by the cache operation is a
+    compare value.
+\item The virtual address that is the argument to the instruction is a compare
+    value.
+\end{steps}
 
 Cache operations encoded as HINTs do not match debug triggers.
 
