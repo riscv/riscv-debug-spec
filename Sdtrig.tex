@@ -291,11 +291,7 @@ otherwise non-coherent implicit and explicit memory accesses.
 addresses, there are multiple possible values to compare against.
 Implementations must implement one of the following options.  From most
 desirable to least desirable, they are:}
-\item Every virtual address that is affected by the cache operation is a compare
-    value. (This is hard to implement if caches are physically tagged and
-    address translation means a single cache block might correspond to multiple
-    virtual addresses.)
-\item Every virtual address from the effective address rounded down to the
+\item Every address from the effective address rounded down to the
     nearest cache block boundary (inclusive) to the effective address rounded up to
     the nearest cache block boundary (exclusive) is a compare value.
 \item The effective address rounded down to the nearest cache block boundary is a
