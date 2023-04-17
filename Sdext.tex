@@ -91,6 +91,12 @@ If halt is requested while {\tt wfi} is executing, then the hart must leave the
 stalled state, completing this instruction's execution, and then enter Debug
 Mode.
 
+\section{Wait-on-Reservation-Set Instructions}
+
+If halt is requested while {\tt wrs.sto} or {\tt wrs.nto} is executing, then the
+hart must leave the stalled state, completing this instruction's execution, and
+then enter Debug Mode.
+
 \section{Single Step}
 
 \subsection{Step Bit In Dcsr} \label{stepBit}
