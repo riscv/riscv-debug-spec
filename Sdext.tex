@@ -36,7 +36,7 @@ How Debug Mode is implemented is not specified here.
 \item If \FcsrDcsrStoptime is 0 then \Rtime continues to update. If
     it is 1 then \Rtime will not update. It will resynchronize with
     \Rmtime after leaving Debug Mode.
-\item The {\tt wfi} instruction acts as a {\tt nop}.
+\item The {\tt wfi}, {\tt wrs.sto}, {\tt wrs.nto} instructions act as a {\tt nop}.
 \item Almost all instructions that change the privilege mode have \unspecified\
     behavior.  This includes {\tt ecall}, {\tt mret}, {\tt sret}, and {\tt uret}.
     (To change the privilege mode, the debugger can write
