@@ -727,9 +727,11 @@
             virtualization mode.
         </field>
         <field name="hit0" bits="22" access="WARL" reset="0">
-            It they are implemented, \FcsrMcontrolSixHitOne (MSB) and
-            \FcsrMcontrolSixHitZero (LSB) combine into a single 2-bit field that
-            indicates if and when the trigger was hit.
+            If they are implemented, \FcsrMcontrolSixHitOne (MSB) and
+            \FcsrMcontrolSixHitZero (LSB) combine into a single 2-bit field.
+            The TM updates this field when the trigger fires. After the debugger
+            has seen the update, it will normally write 0 to this field to so it
+            can see future changes.
 
             If either of the bits is not implemented, the unimplemented bits
             will be read-only 0.
