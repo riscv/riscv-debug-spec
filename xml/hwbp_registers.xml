@@ -994,6 +994,7 @@
                 mode where the trigger is enabled.
                 This explicitly includes {\em x}\/RET instructions.
             \item A trap is taken from a privilege mode where the trigger is enabled.
+                This explicitly includes traps taken due to interrupts.
         \end{steps}
 
         If more than one of the above events occur during a single instruction
