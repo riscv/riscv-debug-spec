@@ -43,9 +43,9 @@ A single DM can debug up to $2^{20}$ harts.
 
 \section{Debug Module Interface (DMI)} \label{dmi}
 
-Debug Modules are slaves to a bus called the Debug Module Interface (DMI). The
-master of the bus is the Debug Transport Module(s).
-The Debug Module Interface can be a trivial bus with one master and one slave (see \ref{dmi_signals}),
+Debug Modules are subordinate devices on a bus called the Debug Module Interface (DMI). The
+coordinator of the bus is the Debug Transport Module(s).
+The Debug Module Interface can be a trivial bus with one coordinator and one subordinate device (see \ref{dmi_signals}),
 or use a more full-featured bus like TileLink or the AMBA Advanced Peripheral
 Bus. The details are left to the system designer.
 
