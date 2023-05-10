@@ -602,7 +602,7 @@
       of the configuration structure pointer. Reading the other {\tt confstrptr}
       registers returns the upper bits of the address.
 
-      When system bus mastering is implemented, this must be an
+      When system bus access is implemented, this must be an
       address that can be used with the System Bus Access module. Otherwise,
       this must be an address that can be used to access the
       configuration structure from the hart with ID 0.
@@ -853,7 +853,7 @@
         <field name="haltsum3" bits="31:0" access="R" reset="0" />
     </register>
 
-    <!-- =============== system bus mastering =============== -->
+    <!-- =============== system bus access =============== -->
 
     <register name="System Bus Access Control and Status" short="sbcs" address="0x38">
         <field name="sbversion" bits="31:29" access="R" reset="1">
@@ -879,7 +879,7 @@
             initiated by the Debug Module.
         </field>
         <field name="sbbusy" bits="21" access="R" reset="0">
-            When 1, indicates the system bus master is busy. (Whether the
+            When 1, indicates the system bus coordinator is busy. (Whether the
             system bus itself is busy is related, but not the same thing.) This
             bit goes high immediately when a read or write is requested for any
             reason, and does not go low until the access is fully completed.
@@ -928,7 +928,7 @@
         </field>
         <field name="sberror" bits="14:12" access="R/W1C" reset="0">
             When the Debug Module's system bus
-            master encounters an error, this field gets set. The bits in this
+            coordinator encounters an error, this field gets set. The bits in this
             field remain set until they are cleared by writing 1 to them.
             While this field is non-zero, no more system bus accesses can be
             initiated by the Debug Module.
@@ -983,7 +983,7 @@
     <register name="System Bus Address 31:0" short="sbaddress0" address="0x39">
         If \FdmSbcsSbasize is 0, then this register is not present.
 
-        When the system bus master is busy, writes to this register will set
+        When the system bus coordinator is busy, writes to this register will set
         \FdmSbcsSbbusyerror and don't do anything else.
 
         \begin{steps}{If \FdmSbcsSberror is 0, \FdmSbcsSbbusyerror is 0, and \FdmSbcsSbreadonaddr
@@ -1003,7 +1003,7 @@
     <register name="System Bus Address 63:32" short="sbaddress1" address="0x3a">
         If \FdmSbcsSbasize is less than 33, then this register is not present.
 
-        When the system bus master is busy, writes to this register will set
+        When the system bus coordinator is busy, writes to this register will set
         \FdmSbcsSbbusyerror and don't do anything else.
 
         <field name="address" bits="31:0" access="R/W" reset="0">
@@ -1015,7 +1015,7 @@
     <register name="System Bus Address 95:64" short="sbaddress2" address="0x3b">
         If \FdmSbcsSbasize is less than 65, then this register is not present.
 
-        When the system bus master is busy, writes to this register will set
+        When the system bus coordinator is busy, writes to this register will set
         \FdmSbcsSbbusyerror and don't do anything else.
 
         <field name="address" bits="31:0" access="R/W" reset="0">
@@ -1027,7 +1027,7 @@
     <register name="System Bus Address 127:96" short="sbaddress3" address="0x37">
         If \FdmSbcsSbasize is less than 97, then this register is not present.
 
-        When the system bus master is busy, writes to this register will set
+        When the system bus coordinator is busy, writes to this register will set
         \FdmSbcsSbbusyerror and don't do anything else.
 
         <field name="address" bits="31:0" access="R/W" reset="0">
@@ -1046,7 +1046,7 @@
 
         If either \FdmSbcsSberror or \FdmSbcsSbbusyerror isn't 0 then accesses do nothing.
 
-        If the bus master is busy then accesses set \FdmSbcsSbbusyerror, and don't do
+        If the bus coordinator is busy then accesses set \FdmSbcsSbbusyerror, and don't do
         anything else.
 
         \begin{steps}{Writes to this register start the following:}
@@ -1083,7 +1083,7 @@
         If \FdmSbcsSbaccessSixtyfour and \FdmSbcsSbaccessOneTwentyeight are 0, then this
         register is not present.
 
-        If the bus master is busy then accesses set \FdmSbcsSbbusyerror, and don't do
+        If the bus coordinator is busy then accesses set \FdmSbcsSbbusyerror, and don't do
         anything else.
 
         <field name="data" bits="31:0" access="R/W" reset="0">
@@ -1095,7 +1095,7 @@
     <register name="System Bus Data 95:64" short="sbdata2" address="0x3e">
         This register only exists if \FdmSbcsSbaccessOneTwentyeight is 1.
 
-        If the bus master is busy then accesses set \FdmSbcsSbbusyerror, and don't do
+        If the bus coordinator is busy then accesses set \FdmSbcsSbbusyerror, and don't do
         anything else.
 
         <field name="data" bits="31:0" access="R/W" reset="0">
@@ -1107,7 +1107,7 @@
     <register name="System Bus Data 127:96" short="sbdata3" address="0x3f">
         This register only exists if \FdmSbcsSbaccessOneTwentyeight is 1.
 
-        If the bus master is busy then accesses set \FdmSbcsSbbusyerror, and don't do
+        If the bus coordinator is busy then accesses set \FdmSbcsSbbusyerror, and don't do
         anything else.
 
         <field name="data" bits="31:0" access="R/W" reset="0">
