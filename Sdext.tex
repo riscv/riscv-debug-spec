@@ -28,7 +28,7 @@ How Debug Mode is implemented is not specified here.
     according to \FdmAbstractcsRelaxedpriv.
 \item All interrupts (including NMI) are masked.
 \item Exceptions don't update any registers.  That includes {\tt cause}, {\tt
-    epc}, {\tt tval}, {\tt dpc}, and \Rmstatus. They do end execution of the
+    epc}, {\tt tval}, and \Rmstatus. They do end execution of the
     Program Buffer.
 \item No action is taken if a trigger matches.
 \item If \FcsrDcsrStopcount is 0 then counters continue. If it is 1 then
