@@ -126,9 +126,9 @@ an instruction fetch causes an exception, that exception does not occur until
 the next time the hart is resumed. Similarly, a trigger at the new address does
 not fire until the hart actually attempts to execute that instruction.
 
-If the instruction being stepped over is {\tt wfi}, {\tt wrs.sto}, or {\tt wrs.nto}
-and would normally stall the hart, then instead the instruction is treated as
-{\tt nop}.
+If the instruction being stepped over would normally stall the hart, then
+instead the instruction is treated as a {\tt nop}. This includes {\tt wfi},
+{\tt wrs.sto}, and {\tt wrs.nto}.
 
 \subsection{Icount Trigger}
 
