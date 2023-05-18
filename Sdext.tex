@@ -21,15 +21,23 @@ How Debug Mode is implemented is not specified here.
 
 \begin{steps}{When executing code due to an abstract command, the hart stays in
     Debug Mode and the following apply:}
+\item All implemented instructions operate just as they do in M-mode, unless
+    an exception is mentioned in this section.
 \item All operations are executed with machine mode privilege, except that
     additional Debug Mode CSRs are accessible and
     \FcsrMstatusMprv in \Rmstatus may be ignored according to \FcsrDcsrMprven.
     Full permission checks, or a relaxed set of permission checks, will apply
     according to \FdmAbstractcsRelaxedpriv.
 \item All interrupts (including NMI) are masked.
-\item Exceptions don't update any registers.  That includes {\tt cause}, {\tt
-    epc}, {\tt tval}, and \Rmstatus. They do end execution of the
-    Program Buffer.
+\item Traps don't take place. Instead, they end execution of the program buffer
+    and the hart remains in Debug Mode. Because they do not trap to M-mode, they
+    do not update registers such as \Rmstatus, {\tt mepc}, {\tt mcause}, {\tt
+    mtval}, {\tt mtval2}, and {\tt mtinst}.  The same is true for the equivalent
+    privileged registers that are updated when trapping to other modes.
+    Registers that may be updated as part of execution before the exception are
+    allowed to be updated.  For example, vector load/store instructions which
+    raise exceptions may partially update the destination register and set
+    {\tt vstart} appropriately.
 \item No action is taken if a trigger matches.
 \item If \FcsrDcsrStopcount is 0 then counters continue. If it is 1 then
     counters are stopped.
