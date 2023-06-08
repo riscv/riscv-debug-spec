@@ -26,7 +26,37 @@
         sdesc="For Debugging" define="1">
         The size of this register will remain constant in future versions so
         that a debugger can always determine the version of the DTM.
-        <field name="0" bits="31:18" access="R" reset="0" />
+        <field name="0" bits="31:21" access="R" reset="0" />
+        <field name="errinfo" bits="20:18" access="R" reset="4">
+            This optional field may provide additional detail about an error
+            that occurred when communicating with a DM. It is updated whenever
+            \FdtmDmiOp is updated by the hardware or when 1 is written to
+            \FdtmDtmcsDmireset.
+
+            <value v="0" name="not implemented">
+                This field is not implemented.
+            </value>
+
+            <value v="1" name="dmi error">
+                There was an error between the DTM and DMI.
+            </value>
+
+            <value v="2" name="communication error">
+                There was an error between the DMI and a DMI subordinate device.
+            </value>
+
+            <value v="3" name="device error">
+                The DMI subordinate device reported an error, e.g. because a
+                non-existent register was accessed.
+            </value>
+
+            <value v="4" name="unknown">
+                There is no error to report, or no further information available
+                about the error. This is the reset value if the field is implemented.
+            </value>
+
+            Other values are reserved for future use by this specification.
+        </field>
         <field name="dtmhardreset" bits="17" access="W1" reset="-">
           Writing 1 to this bit does a hard reset of the DTM,
           causing the DTM to forget about any outstanding DMI transactions, and
@@ -37,8 +67,8 @@
           be cancelled).
         </field>
         <field name="dmireset" bits="16" access="W1" reset="-">
-            Writing 1 to this bit clears the sticky error state, but does
-            not affect outstanding DMI transactions.
+            Writing 1 to this bit clears the sticky error state and resets
+            \FdtmDtmcsErrinfo, but does not affect outstanding DMI transactions.
         </field>
         <field name="0" bits="15" access="R" reset="0" />
         <field name="idle" bits="14:12" access="R" reset="Preset">
@@ -158,10 +188,13 @@
             this access will be ignored.  This status is sticky and can be
             cleared by writing \FdtmDtmcsDmireset in \RdtmDtmcs.
 
-            This indicates that the DM itself responded with an error.
+            This indicates that the DM itself or the DMI responded with an error.
             There are no specified cases in which the DM would
             respond with an error, and DMI is not required to support
             returning errors.
+
+            If a debugger sees this status, there might be additional
+            information in \FdtmDtmcsErrinfo.
             </value>
 
             <value v="3" name="busy" duplicate="1">
