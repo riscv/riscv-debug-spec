@@ -250,8 +250,7 @@ member of exactly one halt group and exactly one resume group.
 In both halt and resume groups, group 0 is special. Harts in group 0
 halt/resume as if groups aren't implemented at all.
 
-\begin{steps}{When any hart in a halt group halts, or an external trigger
-    that's a member of the halt group fires:}
+\begin{steps}{When any hart in a halt group halts:}
 \item That hart halts normally, with \FcsrDcsrCause reflecting the original
     cause of the halt.
 \item All the other harts in the halt group that are running will quickly halt.
@@ -263,8 +262,14 @@ halt/resume as if groups aren't implemented at all.
 Adding a hart to a halt group does not automatically halt that hart, even if
 other harts in the group are already halted.
 
-\begin{steps}{When any hart in a resume group resumes, or an external trigger
-    that's a member of the resume group fires:}
+\begin{steps}{When an external trigger that's a member of the halt group fires:}
+\item All the harts in the halt group that are running will quickly halt.
+    \FcsrDcsrCause for those harts should be set to 6, but may be set to 3.
+    Other harts in the halt group that are halted but have started the process
+    of resuming must also quickly become halted, even if they do resume briefly.
+\end{steps}
+
+\begin{steps}{When any hart in a resume group resumes:}
 \item All the other harts in that group that are halted will quickly resume as
     soon as any currently executing abstract commands have completed.
     Each hart in the group sets its resume ack bit\index{resume ack bit} as soon as it has resumed.
@@ -274,6 +279,14 @@ other harts in the group are already halted.
 \end{steps}
 Adding a hart to a resume group does not automatically resume that hart, even
 if other harts in the group are currently running.
+
+\begin{steps}{When an external trigger that's a member of the resume group fires:}
+\item All the harts in that group that are halted will quickly resume as
+    soon as any currently executing abstract commands have completed.
+    Each hart in the group sets its resume ack bit\index{resume ack bit} as soon as it has resumed.
+    Harts that are in the process of halting should complete that process and stay
+    halted.
+\end{steps}
 
 External triggers are abstract concepts that can signal the DM and/or receive
 signals from the DM. This configuration is done through \RdmDmcsTwo, where
