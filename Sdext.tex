@@ -44,7 +44,8 @@ How Debug Mode is implemented is not specified here.
 \item If \FcsrDcsrStoptime is 0 then \Rtime continues to update. If
     it is 1 then \Rtime will not update. It will resynchronize with
     \Rmtime after leaving Debug Mode.
-\item The {\tt wfi} instruction acts as a {\tt nop}.
+\item Instructions that place the hart into a stalled state act as a {\tt nop}.
+    This includes {\tt wfi}, {\tt wrs.sto}, and {\tt wrs.nto}.
 \item Almost all instructions that change the privilege mode have \unspecified\
     behavior.  This includes {\tt ecall}, {\tt mret}, {\tt sret}, and {\tt uret}.
     (To change the privilege mode, the debugger can write
@@ -99,6 +100,12 @@ If halt is requested while {\tt wfi} is executing, then the hart must leave the
 stalled state, completing this instruction's execution, and then enter Debug
 Mode.
 
+\section{Wait-on-Reservation-Set Instructions}
+
+If halt is requested while {\tt wrs.sto} or {\tt wrs.nto} is executing, then the
+hart must leave the stalled state, completing this instruction's execution, and
+then enter Debug Mode.
+
 \section{Single Step}
 
 \subsection{Step Bit In Dcsr} \label{stepBit}
@@ -127,8 +134,9 @@ an instruction fetch causes an exception, that exception does not occur until
 the next time the hart is resumed. Similarly, a trigger at the new address does
 not fire until the hart actually attempts to execute that instruction.
 
-If the instruction being stepped over is {\tt wfi} and would normally stall the
-hart, then instead the instruction is treated as {\tt nop}.
+If the instruction being stepped over would normally stall the hart, then
+instead the instruction is treated as a {\tt nop}. This includes {\tt wfi},
+{\tt wrs.sto}, and {\tt wrs.nto}.
 
 \subsection{Icount Trigger}
 
