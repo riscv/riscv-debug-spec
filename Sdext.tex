@@ -38,7 +38,7 @@ How Debug Mode is implemented is not specified here.
     allowed to be updated.  For example, vector load/store instructions which
     raise exceptions may partially update the destination register and set
     {\tt vstart} appropriately.
-\item No action is taken if a trigger matches.
+\item Triggers don't match or fire.
 \item If \FcsrDcsrStopcount is 0 then counters continue. If it is 1 then
     counters are stopped.
 \item If \FcsrDcsrStoptime is 0 then \Rtime continues to update. If
