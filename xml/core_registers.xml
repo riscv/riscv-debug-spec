@@ -3,7 +3,8 @@
 
     <register name="Debug Control and Status" short="dcsr" address="0x7b0">
         Upon entry into Debug Mode, \FcsrDcsrV and \FcsrDcsrPrv are updated
-        with the privilege level the hart was previously in, and \FcsrDcsrCause
+        with the privilege level the hart was previously in, \FcsrDcsrElp is
+        updated with the ELP state the hart was previously in, and \FcsrDcsrCause
         is updated with the reason for Debug Mode entry.  Other than these
         fields and \FcsrDcsrNmip, the other fields of \RcsrDcsr are only
         writable by the external debugger.
@@ -69,7 +70,17 @@
             available version of this spec.
             </value>
         </field>
-        <field name="0" bits="27:18" access="R" reset="0" />
+	<field name="0" bits="27:19" access="R" reset="0" />
+        <field name="elp" bits="18" access="WARL" reset="0">
+            Contains the ELP state of the hart, as defined in the Zicfilp
+            specification, when Debug Mode was entered.
+            The encoding is described in Table \ref{tab:elpmode}.
+            A debugger can change this value to change the hart's ELP state
+            when exiting Debug Mode.
+            The value will be ignored on exit if forward CFI is not enabled at
+            the privilege mode specified by \FcsrDcsrPrv.
+            This bit is hardwired to 0 on harts that do not support Zicfilp.
+        </field>
         <field name="ebreakvs" bits="17" access="WARL" reset="0">
             <value v="0" name="exception">
             {\tt ebreak} instructions in VS-mode behave as described in the

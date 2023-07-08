@@ -67,7 +67,7 @@ To resume execution, the debug module sets a flag which causes the hart to execu
 not executing from the Program Buffer.
 Its recommended encoding is 0x7b200073.
 When {\tt dret} is executed, \Rpc is restored from \RcsrDpc and normal execution resumes at the
-privilege set by \FcsrDcsrPrv and \FcsrDcsrV.
+privilege set by \FcsrDcsrPrv and \FcsrDcsrV and the ELP state set by \FcsrDcsrElp.
 
 \RdmDataZero etc. are mapped into regular memory at an address relative to \Rzero
 with only a 12-bit {\tt imm}. The exact address is an implementation

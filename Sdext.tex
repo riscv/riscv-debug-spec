@@ -61,6 +61,9 @@ How Debug Mode is implemented is not specified here.
     illegal instructions.
 \item Instructions that depend on the value of the PC (e.g.\ {\tt auipc}) may act
     as illegal instructions.
+\item The ELP state is {\tt NO\_LP\_EXPECTED} and is not updated by any
+    instructions. {\tt lpad} executes as a no-op. (To change the ELP state, the
+    debugger can write \FcsrDcsrElp in \RcsrDcsr).
 \item Effective XLEN is DXLEN.
 \item Forward progress is guaranteed.
 \end{steps}
@@ -170,6 +173,7 @@ executed.
 \begin{steps}{When a hart halts:}
     \item \FcsrDcsrCause is updated.
     \item \FcsrDcsrPrv and \FcsrDcsrV are set to reflect current privilege mode.
+    \item \FcsrDcsrElp is set to the current ELP state.
     \item \RcsrDpc is set to the next instruction that should be executed.
     \item If the current instruction can be partially executed and should be
         restarted to complete, then the relevant state for that is updated. E.g.
@@ -186,6 +190,8 @@ executed.
     \item \Rpc changes to the value stored in \RcsrDpc.
     \item The current privilege mode and virtualization mode are changed to that specified by
         \FcsrDcsrPrv and \FcsrDcsrV.
+    \item The current ELP state is changed to that specified by \FcsrDcsrElp, or to {\tt NO\_LP\_EXPECTED}
+        if forward CFI is not enabled at the new privilege mode.
     \item If the new privilege mode is less privileged than M-mode,
         \FcsrMstatusMprv in \Rmstatus is cleared.
     \item The hart is no longer in debug mode.
