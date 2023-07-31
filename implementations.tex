@@ -47,7 +47,7 @@ program buffer according to \RdmCommand. When \FacAccessregisterTransfer is set,
 populates these words with {\tt lw <gpr>, 0x400(zero)} or {\tt sw 0x400(zero), <gpr>}.
 64- and 128-bit accesses use {\tt ld}/{\tt sd} and {\tt lq}/{\tt sq}
 respectively. If \FacAccessregisterTransfer is not set, the DM populates these instructions as {\tt nop}s.
-If \FcsrMcontrolExecute is set, execution continues to the debugger-controlled Program Buffer,
+If \FacAccessregisterPostexec is set, execution continues to the debugger-controlled Program Buffer,
 otherwise the DM causes a {\tt ebreak} to execute immediately.
 
 When {\tt ebreak} is executed (indicating the end of the
