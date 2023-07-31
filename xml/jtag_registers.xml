@@ -42,11 +42,11 @@
             </value>
 
             <value v="2" name="communication error">
-                There was an error between the DMI and a DMI subordinate device.
+                There was an error between the DMI and a DMI subordinate.
             </value>
 
             <value v="3" name="device error">
-                The DMI subordinate device reported an error, e.g. because a
+                The DMI subordinate reported an error, e.g. because a
                 non-existent register was accessed.
             </value>
 
