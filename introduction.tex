@@ -300,28 +300,29 @@ also listed in the index on page \pageref{index}.
 
 \section{Background}
 
-There are several use cases for dedicated debugging hardware, both
-internal to a CPU core and with an external connection.
+There are several use cases for dedicated debugging hardware, both in native
+debug and external debug. Native debug (sometimes called self-hosted debug)
+refers to debug software running on a RISC-V platform which debugs the same
+platform.  The optional Trigger Module provides features that are useful for
+native debug.  External debug refers to debug software running somewhere else,
+debugging the RISC-V platform via a debug transport like JTAG. The entire
+document provides features that are useful for external debug.
+
 This specification addresses the use cases listed below. Implementations
 can choose not to implement every feature, which means some use cases might
 not be supported.
 
 \begin{itemize}
-
+\item Accessing hardware on a hardware platform without a working CPU. (External
+debug.)
+\item Bootstrapping a hardware platform to test, configure, and program
+components before there is any executable code path in the hardware platform.
+(External debug.)
 \item Debugging low-level software in the absence of an OS or other software.
-
-\item Debugging issues in the OS itself.
-
-\item Bootstrapping a hardware platform to test, configure, and program components before
-  there is any executable code path in the hardware platform.
-
-\item Accessing hardware on a hardware platform without a working CPU.
-
+(External debug.)
+\item Debugging issues in the OS itself. (External or native debug.)
+\item Debugging processes running on an OS. (Native or external debug.)
 \end{itemize}
-
-In addition, even without a hardware debugging interface,
-architectural support in a RISC-V CPU can aid software debugging and
-performance analysis by allowing hardware triggers and breakpoints.
 
 \section{Supported Features}
 
