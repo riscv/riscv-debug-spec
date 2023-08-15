@@ -90,6 +90,7 @@ chisel: $(REGISTERS_CHISEL)
 
 clean:
 	rm -f $(DRAFT).pdf *.aux $(DRAFT).toc $(DRAFT).log $(REGISTERS_TEX) \
-	    $(REGISTERS_TEX:=.inc) *.o *_no128.S *.h $(DRAFT).lof $(DRAFT).lot $(DRAFT).out \
+	    $(REGISTERS_TEX:=.inc) *.o *_no128.S *.h \
 	    $(DRAFT).hst $(DRAFT).pyg debug_defines.h *.scala \
-	    $(NOTES).pdf $(NOTES).toc $(NOTES).log $(NOTES).hst $(NOTES).pyg
+	    $(NOTES).pdf $(NOTES).toc $(NOTES).log $(NOTES).hst $(NOTES).pyg \
+	    *.idx *.ind *.ilg *.lot *.lof *.out
