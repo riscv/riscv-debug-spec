@@ -463,26 +463,29 @@ an implicit {\tt ebreak} that is executed when a hart runs off the end of the
 Program Buffer. This is indicated by \FdmDmstatusImpebreak. With this feature, a Program
 Buffer of just 2 32-bit words can offer efficient debugging.
 
-If \FdmAbstractcsProgbufsize is 1, \FdmDmstatusImpebreak must be 1. It is possible that the Program
-Buffer can hold only one 32- or 16-bit instruction, so the debugger must only
-write a single instruction in this case, regardless of its size.
-This instruction can be a 32-bit
-instruction, or a compressed instruction in the lower 16 bits accompanied by a
-compressed {\tt nop} in the upper 16 bits.
-
-\begin{commentary}
-    The slightly inconsistent behavior with a Program Buffer of size 1 is to
-    accommodate hardware designs that prefer to stuff instructions directly
-    into the pipeline when halted, instead of having the Program Buffer exist
-    in the address space somewhere.
-\end{commentary}
-
 While these programs are executed, the hart does not leave Debug Mode (see
 Section~\ref{debugmode}).  If an exception is encountered during execution of
 the Program Buffer, no more instructions are executed, the hart remains in Debug
 Mode, and \FdmAbstractcsCmderr is set to 3 ({\tt exception error}).  If the debugger
 executes a program that doesn't terminate with an {\tt ebreak} instruction, the
 hart will remain in Debug Mode and the debugger will lose control of the hart.
+
+If \FdmAbstractcsProgbufsize is 1 then the following apply:
+
+\begin{enumerate}[nosep]
+    \item \FdmDmstatusImpebreak must be 1. 
+    \item The debugger must only write a single instruction into the Program Buffer,
+        regardless of the instruction size. It can be a 32-bit instruction, or 
+        a compressed instruction in the lower 16 bits accompanied by a compressed
+        {\tt nop} in the upper 16 bits.
+\end{enumerate}
+
+\begin{commentary}
+    This requirement on the debugger for the case of \FdmAbstractcsProgbufsize equal to 1 
+    is to accommodate hardware designs that prefer to stuff instructions directly into 
+    the pipeline when halted, instead of having the Program Buffer exist in the address 
+    space somewhere.
+\end{commentary}
 
 The Program Buffer may be implemented as RAM which is accessible to the
 hart. A debugger can determine if this is the case by executing small
