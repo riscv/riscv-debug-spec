@@ -470,20 +470,17 @@ Mode, and \FdmAbstractcsCmderr is set to 3 ({\tt exception error}).  If the debu
 executes a program that doesn't terminate with an {\tt ebreak} instruction, the
 hart will remain in Debug Mode and the debugger will lose control of the hart.
 
-If \FdmAbstractcsProgbufsize is 1 then the following apply:
-
-\begin{enumerate}[nosep]
-    \item \FdmDmstatusImpebreak must be 1. 
-    \item The debugger must only write a single instruction into the Program Buffer,
-        regardless of the instruction size. It can be a 32-bit instruction, or 
-        a compressed instruction in the lower 16 bits accompanied by a compressed
+\begin{steps}{If \FdmAbstractcsProgbufsize is 1 then the following apply:}
+    \item \FdmDmstatusImpebreak must be 1.
+    \item If the debugger writes a compressed instruction into the Program Buffer,
+        it must be placed into the lower 16 bits and accompanied by a compressed
         {\tt nop} in the upper 16 bits.
-\end{enumerate}
+\end{steps}
 
 \begin{commentary}
-    This requirement on the debugger for the case of \FdmAbstractcsProgbufsize equal to 1 
-    is to accommodate hardware designs that prefer to stuff instructions directly into 
-    the pipeline when halted, instead of having the Program Buffer exist in the address 
+    This requirement on the debugger for the case of \FdmAbstractcsProgbufsize equal to 1
+    is to accommodate hardware designs that prefer to stuff instructions directly into
+    the pipeline when halted, instead of having the Program Buffer exist in the address
     space somewhere.
 \end{commentary}
 
