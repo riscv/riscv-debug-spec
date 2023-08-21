@@ -46,8 +46,7 @@
             </value>
 
             <value v="3" name="device error">
-                The DMI subordinate reported an error, e.g. because a
-                non-existent register was accessed.
+                The DMI subordinate reported an error.
             </value>
 
             <value v="4" name="unknown">

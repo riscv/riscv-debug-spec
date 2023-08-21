@@ -643,7 +643,7 @@ The registers described in this section are accessed over the DMI bus.  Each DM
 has a base address (which is 0 for the first DM). The register addresses below
 are offsets from this base address.
 
-When read, unimplemented or non-existent Debug Module DMI Registers return 0.
-Writing them has no effect.
+Debug Module DMI Registers that are unimplemented or not mentioned in the table
+below return 0 when read. Writing them has no effect.
 
 \input{dm_registers.tex}
