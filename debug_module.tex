@@ -314,16 +314,28 @@ using \RdmDmcsTwo even if it's not possible to change the configuration.
 \section{Message Registers}
 \label{sec:mr}
 
-Message Registers (MRs) are registers that are only used in a limited way,
-allowing for different implementations. They exist to let two sides communicate
-when the two sides already know who is the sender and who is the receiver.
+Message Registers (MRs) are registers that implement fewer features than a
+traditional register. They support just enough features to pass messages back
+and forth.
 
-An MR implements read and write operations on two sides.  When one side reads an
-MR, and the last write was by the other side, then the result value of the read
-is the value last written by the other side.  When one side reads an MR, and the
-last write was by that same side, then the result value of the read is
-\unspecified.  Thus the MR can be used to exchange data with the other side, but
-not as storage to be accessed later.
+Only registers whose description explicitly says they may be MRs may be
+implemented as MRs instead of traditional registers. \RdmDataZero through
+\RdmDataEleven may be MRs, used to let the debugger pass arguments to abstract
+commands, and let the DM pass results from abstract commands back.
+
+A traditional dual-ported register contains a single value, which can be
+read/written through both ports. A MR has two ports: PortA and PortB. It
+contains two values: ValueA and ValueB. Only one of these values has defined
+contents at any one time.
+
+\begin{steps}{For an MR:}
+    \item A write to PortA updates ValueA with the written value, and makes
+        ValueB \unspecified.
+    \item A write to PortB updates ValueB with the written value, and makes
+        ValueA \unspecified.
+    \item A read from PortA returns ValueB.
+    \item A read from PortB returns ValueA.
+\end{steps}
 
 \begin{commentary}
     A regular register can be used to implement an MR. In some FPGAs it is

@@ -394,9 +394,8 @@
             If \FdmHartinfoDataaccess is 1: Number of 32-bit words in the memory map
             dedicated to shadowing the {\tt data} registers.
 
-            If this value is non-zero, then the {tt data} registers must go
-            beyond being MRs and guarantee they each store a single value, that is
-            readable/writable by either side.
+            If this value is non-zero, then the {tt data} registers must be
+            traditional registers and not MRs.
 
             Since there are at most 12 {\tt data} registers, the value in this
             register must be 12 or smaller.
@@ -641,19 +640,19 @@
     </register>
 
     <register name="Abstract Data 0" short="data0" address="0x04">
-        \RdmDataZero through \RdmDataEleven are Message Registers, whose
-        behavior is described in Section~\ref{sec:mr}, that may
+        \RdmDataZero through \RdmDataEleven may be Message Registers, whose
+        behavior is described in Section~\ref{sec:mr}. These registers may
         be read or changed by abstract commands. \FdmAbstractcsDatacount indicates how many
         of them are implemented, starting at \RdmDataZero, counting up.
         Table~\ref{tab:datareg} shows how abstract commands use these
-        MRs.
+        registers.
 
-        Accessing these MRs while an abstract command is executing causes
+        Accessing these registers while an abstract command is executing causes
         \FdmAbstractcsCmderr to be set to 1 (busy) if it is 0.
 
         Attempts to write them while \FdmAbstractcsBusy is set does not change their value.
 
-        The values in these MRs might not be preserved after an abstract
+        The values in these registers might not be preserved after an abstract
         command is executed. The only guarantees on their contents are the ones
         offered by the command in question. If the command fails, no
         assumptions can be made about the contents of these registers.
