@@ -17,7 +17,7 @@
 *_registers.h
 serial.*
 abstract_commands.*
-debug_defines.h
+debug_defines.*
 
 # Changelogs
 changelog.tex
