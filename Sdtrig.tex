@@ -358,4 +358,12 @@ time than is expected.
 Attempts to access an unimplemented Trigger Register raise an illegal instruction
 exception.
 
+\begin{commentary}
+    Privileged spec v1.12 requires accesses to unimplemented CSRs to raise
+    illegal instruction exceptions, but that may change in the future. Even if
+    it does change, the behavior here overrides it for Sdtrig CSRs for backwards
+    compatibility. This is even true if Sdtrig is not implemented at all, so the
+    discovery algorithm in Section~\ref{sec:trigger} still works.
+\end{commentary}
+
 \input{hwbp_registers.tex}
