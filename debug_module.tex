@@ -321,7 +321,9 @@ and forth.
 Only registers whose description explicitly says they may be MRs may be
 implemented as MRs instead of traditional registers. \RdmDataZero through
 \RdmDataEleven may be MRs, used to let the debugger pass arguments to abstract
-commands, and let the DM pass results from abstract commands back.
+commands, and let the DM pass results from abstract commands back. Debuggers
+must not assume that they'll be able to read back a value that they wrote to a
+register that may be an MR.
 
 A traditional dual-ported register contains a single value, which can be
 read/written through both ports. A MR has two ports: PortA and PortB. It
