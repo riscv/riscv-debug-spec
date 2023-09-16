@@ -118,7 +118,7 @@ class Register( object ):
             syms = f.symbols()
             all_valid = ' && '.join(map(is_valid, syms))
             field = f.c_info(to_c).replace('\n', '\n\t\t')
-            return (f"riscv_debug_reg_field_list_t {getter_name}(riscv_debug_reg_ctx_t context)\n" +
+            return (f"static riscv_debug_reg_field_list_t {getter_name}(riscv_debug_reg_ctx_t context)\n" +
                     "{\n\t" +
                     add_indent((f"assert({all_valid});\n" if syms else "") +
                                f"riscv_debug_reg_field_list_t result = {{\n" +

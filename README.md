@@ -20,7 +20,7 @@ There are two other interesting make targets:
 1. `make debug_defines` creates a C header and implementation files containing
    constants for addresses and fields of all the registers and abstract
    commands, as well as function and structures used to decode register values.
-   An implementation of such decoder can be seen in `debug_register_printers.c/h`.
+   An implementation of such decoder can be seen in `debug_reg_printer.c/h`.
 2. `make chisel` creates scala files for DM registers and abstract commands
    with the same information.
 
