@@ -12,6 +12,9 @@ In order to be compatible with this specification an implementation must
 implement everything described in this section that is not explicitly listed as
 optional.
 
+If Sdext is implemented and Sdtrig is not implemented, then accessing any of the
+Sdtrig CSRs must raise an illegal instruction exception.
+
 \section{Debug Mode} \label{debugmode}
 
 Debug Mode is a special processor mode used only when a hart is halted for
