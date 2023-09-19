@@ -222,6 +222,8 @@ value that they wrote, and must not assume that the result of the last abstract
 command is available as argument to the next abstract command. \PR{728}
 \item It may not be possible to read the contents of the Program Buffer using
 the {\tt progbuf} registers. \PR{731}
+\item \RcsrTcontrol fields apply to all traps, not just breakpoint traps. This
+    reverts \PR{723}. \PR{880}
 \end{steps}
 
 \section{About This Document}
