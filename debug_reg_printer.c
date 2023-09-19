@@ -5,7 +5,7 @@
 #include <assert.h>
 #include <stdarg.h>
 
-#include "debug_register_printers.h"
+#include "debug_reg_printer.h"
 
 static unsigned int get_len_or_sprintf(char *buf, unsigned int curr, const char *format, ...)
 {
@@ -23,7 +23,7 @@ static unsigned int get_len_or_sprintf(char *buf, unsigned int curr, const char 
 	return (unsigned int)length;
 }
 
-static unsigned int print_value(char *buf, unsigned int offset, uint64_t value)
+static unsigned int print_number(char *buf, unsigned int offset, uint64_t value)
 {
 	const char * const format = value > 9 ? "0x%" PRIx64 : "%" PRIx64;
 
@@ -38,7 +38,7 @@ static unsigned int riscv_debug_reg_field_value_to_s(char *buf, unsigned int off
 		NULL;
 
 	if (!field_value_name)
-		return print_value(buf, offset, field_value);
+		return print_number(buf, offset, field_value);
 	return get_len_or_sprintf(buf, offset, "%s", field_value_name);
 }
 
@@ -82,7 +82,7 @@ unsigned int riscv_debug_reg_to_s(char *buf, enum riscv_debug_reg_ordinal reg_or
 	riscv_debug_reg_info_t reg = get_riscv_debug_reg_info(reg_ordinal);
 
 	length += get_len_or_sprintf(buf, length, "%s=", reg.name);
-	length += print_value(buf, length, value);
+	length += print_number(buf, length, value);
 
 	if (reg.get_fields_head)
 		length += riscv_debug_reg_fields_to_s(buf, length, reg.get_fields_head(context),
