@@ -98,8 +98,25 @@ functionality.
 
 \section{Context}
 
-This document is written to work with all RISC-V ISA extensions ratified
-through 2021.
+\begin{steps}{This specification attempts to support all RISC-V ISA extensions
+that have, roughly, been ratified through the first half of 2023.  In
+particular, though, this specification specifically addresses features in the
+following extensions:}
+\item A % Mention atomics in debug mode section
+\item C % Mentioned in single-word progbuf context
+\item D % Access register abstract register numbers.
+\item F % Access register abstract register numbers.
+\item H % Various trigger bits
+\item Sm1p13 % E.g. exceptions
+\item Ss1p13 % Mention S-Mode in various trigger stuff
+\item Smstateen % Mentioned in hcontext register description.
+\item V % Mentioned in debug mode entry section
+\item Zawrs % we refer to wrs.sto and wrs.nto
+\item Zcmp % Mention cm.push, cm.pop in Sdtrig
+\item Zicbom % Mention cbo.clean, cbo.flush, and cbo.inval in Cache Operations
+\item Zicboz % Mention cbo.zero in Cache Operations
+\item Zicbop % Mention prefetch instructions in Cache Operations
+\end{steps}
 
 \subsection{Versions}
 
