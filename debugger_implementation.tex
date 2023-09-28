@@ -210,7 +210,7 @@ configuration).
     \hline
     Write & \RdmDataZero & address & \\
     \hline
-    Write & \RdmCommand & \FacAccessregisterWrite, \FacAccessregisterPostexec, \FacAccessregisterRegno = 0x1008 & Write \Szero, then execute program buffer \\
+    Write & \RdmCommand & \FacAccessregisterTransfer, \FacAccessregisterWrite, \FacAccessregisterPostexec, \FacAccessregisterRegno = 0x1008 & Write \Szero, then execute program buffer \\
     \hline
     Write & \RdmCommand & \FacAccessregisterRegno = 0x1008 & Read \Szero \\
     \hline
@@ -233,7 +233,7 @@ configuration).
     \hline
     Write & \RdmDataZero & address & \\
     \hline
-    Write & \RdmCommand & \FacAccessregisterWrite, \FacAccessregisterPostexec, \FacAccessregisterRegno = 0x1008 & Write \Szero, then execute program buffer \\
+    Write & \RdmCommand & \FacAccessregisterTransfer, \FacAccessregisterWrite, \FacAccessregisterPostexec, \FacAccessregisterRegno = 0x1008 & Write \Szero, then execute program buffer \\
     \hline
     Write & \RdmCommand & \FacAccessregisterPostexec, \FacAccessregisterRegno = 0x1009 & Read \Sone, then execute program buffer \\
     \hline
@@ -355,11 +355,11 @@ configuration).
     \hline
     Write & \RdmDataZero & address & \\
     \hline
-    Write & \RdmCommand & \FacAccessregisterWrite, \FacAccessregisterRegno = 0x1008 & Write \Szero \\
+    Write & \RdmCommand & \FacAccessregisterTransfer, \FacAccessregisterWrite, \FacAccessregisterRegno = 0x1008 & Write \Szero \\
     \hline
     Write & \RdmDataZero & value & \\
     \hline
-    Write & \RdmCommand & \FacAccessregisterWrite, \FacAccessregisterPostexec, \FacAccessregisterRegno = 0x1009 & Write \Sone, then execute program buffer \\
+    Write & \RdmCommand & \FacAccessregisterTransfer, \FacAccessregisterWrite, \FacAccessregisterPostexec, \FacAccessregisterRegno = 0x1009 & Write \Sone, then execute program buffer \\
     \hline
 \end{tabular}
 \medskip
@@ -378,11 +378,11 @@ configuration).
     \hline
     Write & \RdmDataZero & address & \\
     \hline
-    Write & \RdmCommand & \FacAccessregisterWrite, \FacAccessregisterRegno = 0x1008 & Write \Szero \\
+    Write & \RdmCommand & \FacAccessregisterTransfer, \FacAccessregisterWrite, \FacAccessregisterRegno = 0x1008 & Write \Szero \\
     \hline
     Write & \RdmDataZero & value0 & \\
     \hline
-    Write & \RdmCommand & \FacAccessregisterWrite, \FacAccessregisterPostexec, \FacAccessregisterRegno = 0x1009 & Write \Sone, then execute program buffer \\
+    Write & \RdmCommand & \FacAccessregisterTransfer, \FacAccessregisterWrite, \FacAccessregisterPostexec, \FacAccessregisterRegno = 0x1009 & Write \Sone, then execute program buffer \\
     \hline
     Write & \RdmAbstractauto & \FdmAbstractautoAutoexecdata[0] & Set \FdmAbstractautoAutoexecdata[0] \\
     \hline
