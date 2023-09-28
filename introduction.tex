@@ -234,6 +234,8 @@ subject to the mode bits in that trigger.
 \item \PR{728} introduced Message Registers, which were later removed in \PR{878}.
 \item It may not be possible to read the contents of the Program Buffer using
 the {\tt progbuf} registers. \PR{731}
+\item \RcsrTcontrol fields apply to all traps, not just breakpoint traps. This
+    reverts \PR{723}. \PR{880}
 \end{steps}
 
 \section{About This Document}
