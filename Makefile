@@ -12,7 +12,6 @@ REGISTERS_TEX += dm_registers.tex
 REGISTERS_TEX += sample_registers.tex
 REGISTERS_TEX += abstract_commands.tex
 REGISTERS_TEX += sw_registers.tex
-REGISTERS_TEX += serial.tex
 
 REGISTERS_CHISEL += dm_registers.scala
 REGISTERS_CHISEL += abstract_commands.scala
@@ -92,7 +91,7 @@ chisel: $(REGISTERS_CHISEL)
 
 clean:
 	rm -f $(DRAFT).pdf *.aux $(DRAFT).toc $(DRAFT).log $(REGISTERS_TEX) \
-	    $(REGISTERS_TEX:=.inc) *.o *_no128.S *.h \
+	    $(REGISTERS_TEX:=.inc) *.o *_no128.S debug_defines.[ch] \
 	    $(DRAFT).hst $(DRAFT).pyg debug_defines.* *.scala \
 	    $(NOTES).pdf $(NOTES).toc $(NOTES).log $(NOTES).hst $(NOTES).pyg \
 	    *.idx *.ind *.ilg *.lot *.lof *.out
