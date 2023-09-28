@@ -218,28 +218,15 @@
     </register>
 
     <register name="Hypervisor Context" short="hcontext" address="0x6a8">
-        This optional register is only accessible in S/HS-mode, M-mode and
-        Debug Mode.
+        This optional register may be implemented only if the H extension is
+        implemented. If it is implemented, \RcsrMcontext must also be implemented.
 
-        Accessibility of this CSR is controlled by \Rmstateenzero[57]
-        in the Smstateen extension.
+        This register is only accessible in HS-Mode, M-mode and Debug Mode. If
+        Smstateen is implemented, then accessibility of in HS-Mode is
+        controlled by \Rmstateenzero[57].
 
-        If the H extension is not implemented then this register is not
-        implemented, though the underlying state may be accessible via
-        the optional \RcsrMcontext alias.
-
-        <field name="hcontext" bits="XLEN-1:0" access="WARL" reset="0">
-            Hypervisor mode software can write a context number to this register,
-            which can be used to set triggers that only fire in that specific
-            context.
-
-            An implementation may tie any number of upper bits in this field to
-            0. If the H extension is not implemented, it's recommended to implement
-            no more than 6 bits on RV32 and 13 on RV64 (as visible through the
-            \RcsrMcontext register).  If the H extension is implemented,
-            it's recommended to implement no more than 7 bits on RV32
-            and 14 on RV64.
-        </field>
+        This register is an alias of the \RcsrMcontext register, providing
+        access to the \FcsrMcontextHcontext field from HS-Mode.
     </register>
 
     <register name="Supervisor Context" short="scontext" address="0x5a8">
@@ -262,8 +249,28 @@
     </register>
 
     <register name="Machine Context" short="mcontext" address="0x7a8">
-        This optional register is an alias for \RcsrHcontext and is only
-        accessible in M-mode and Debug mode.
+        This register must be implemented if \RcsrHcontext is implemented, and
+        is optional otherwise.  It is only accessible in M-mode and Debug mode.
+
+        \begin{commentary}
+            \FcsrMcontextHcontext is primarily useful to set triggers on
+            hypervisor systems that only fire when a given VM is executing. It
+            is also useful in systems where M-Mode implements something like a
+            hypervisor directly.
+        \end{commentary}
+
+        <field name="hcontext" bits="XLEN-1:0" access="WARL" reset="0">
+            M-Mode or HS-Mode (using \RcsrHcontext) software can write a context
+            number to this register, which can be used to set triggers that only
+            fire in that specific context.
+
+            An implementation may tie any number of upper bits in this field to
+            0. If the H extension is not implemented, it's recommended to implement
+            no more than 6 bits on RV32 and 13 on RV64 (as visible through the
+            \RcsrMcontext register).  If the H extension is implemented,
+            it's recommended to implement no more than 7 bits on RV32
+            and 14 on RV64.
+        </field>
     </register>
 
     <register name="Machine Supervisor Context" short="mscontext" address="0x7aa">
