@@ -328,11 +328,13 @@
         Optional scratch register that can be used by implementations that need
         it. A debugger must not write to this register unless \RdmHartinfo
         explicitly mentions it (the Debug Module may use this register internally).
+        <field name="dscratch0" bits="DXLEN-1:0" access="R/W" reset="0" />
     </register>
 
     <register name="Debug Scratch Register 1" short="dscratch1" address="0x7b3">
         Optional scratch register that can be used by implementations that need
         it. A debugger must not write to this register unless \RdmHartinfo
         explicitly mentions it (the Debug Module may use this register internally).
+        <field name="dscratch1" bits="DXLEN-1:0" access="R/W" reset="0" />
     </register>
 </registers>
