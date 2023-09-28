@@ -258,10 +258,6 @@
             {\tt arg1} (which contains the address used) by the number of bytes
             encoded in \FacAccessmemoryAamsize.
 
-            Implementations that allow this bit to be 1 must implement the
-            relevant {\tt data} registers as traditional registers instead of
-            MRs.
-
             Supporting this variant is optional, but highly recommended for
             performance reasons.
         </field>

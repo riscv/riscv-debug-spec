@@ -67,8 +67,6 @@ functionality.
     \item[Minimal RISC-V Debug Specification]
         A subset of the full Debug Specification that allows for very small
         implementations. See Chapter~\ref{chap:dm}.
-    \item[MR]
-        Message Register, described in Section~\ref{sec:mr}.
     \item[NAPOT]
         Naturally Aligned Power-Of-Two.
     \item[NMI]
@@ -233,10 +231,7 @@ incompatible, but unlikely to be noticeable:}
 called 1.0 stable.}
 \item \FcsrItriggerNmi was moved from \RcsrEtrigger to \RcsrItrigger, and is now
 subject to the mode bits in that trigger.
-\item DM {\tt data} registers are now Message Registers (see
-Section~\ref{sec:mr}). Debuggers must not assume they can read back the same
-value that they wrote, and must not assume that the result of the last abstract
-command is available as argument to the next abstract command. \PR{728}
+\item \PR{728} introduced Message Registers, which were later removed in \PR{878}.
 \item It may not be possible to read the contents of the Program Buffer using
 the {\tt progbuf} registers. \PR{731}
 \end{steps}

@@ -311,41 +311,6 @@ meaning it is never possible to halt or resume just a single hart. This is
 explicitly allowed. In that case it must be possible to discover the groups by
 using \RdmDmcsTwo even if it's not possible to change the configuration.
 
-\section{Message Registers}
-\label{sec:mr}
-
-Message Registers (MRs) are registers that implement fewer features than a
-traditional register. They support just enough features to pass messages back
-and forth.
-
-Only registers whose description explicitly says they may be MRs may be
-implemented as MRs instead of traditional registers. \RdmDataZero through
-\RdmDataEleven may be MRs, used to let the debugger pass arguments to abstract
-commands, and let the DM pass results from abstract commands back. Debuggers
-must not assume that they'll be able to read back a value that they wrote to a
-register that may be an MR.
-
-A traditional dual-ported register contains a single value, which can be
-read/written through both ports. A MR has two ports: PortA and PortB. It
-contains two values: ValueA and ValueB. Only one of these values has defined
-contents at any one time.
-
-\begin{steps}{For an MR:}
-    \item A write to PortA updates ValueA with the written value, and makes
-        ValueB \unspecified.
-    \item A write to PortB updates ValueB with the written value, and makes
-        ValueA \unspecified.
-    \item A read from PortA returns ValueB.
-    \item A read from PortB returns ValueA.
-\end{steps}
-
-\begin{commentary}
-    A regular register can be used to implement an MR. In some FPGAs it is
-    cheaper to trade off storage for muxes, and in that case the storage can be
-    duplicated (one set of bits for sending and one for receiving) to avoid
-    having to implement muxes to read/write data from/to the correct side.
-\end{commentary}
-
 \section{Abstract Commands} \label{abstractcommands}
 
 The DM supports a set of abstract commands, most of which
@@ -375,12 +340,12 @@ successful or not. Commands may fail because a hart is not halted, not running,
 unavailable, or because they encounter an error during execution.
 
 If the command takes arguments, the debugger
-must write them to the {\tt data} MRs before writing to \RdmCommand. If a
+must write them to the {\tt data} registers before writing to \RdmCommand. If a
 command returns results, the Debug Module must ensure they are placed
-in the {\tt data} MRs before \FdmAbstractcsBusy is cleared.
-Which {\tt data} MRs are used for the arguments is
+in the {\tt data} registers before \FdmAbstractcsBusy is cleared.
+Which {\tt data} registers are used for the arguments is
 described in Table~\ref{tab:datareg}.  In all cases the least-significant word
-is placed in the lowest-numbered {\tt data} MR. The argument width
+is placed in the lowest-numbered {\tt data} register. The argument width
 depends on the command being executed, and is DXLEN where not explicitly
 specified.
 
