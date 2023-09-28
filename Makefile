@@ -12,7 +12,6 @@ REGISTERS_TEX += dm_registers.tex
 REGISTERS_TEX += sample_registers.tex
 REGISTERS_TEX += abstract_commands.tex
 REGISTERS_TEX += sw_registers.tex
-REGISTERS_TEX += serial.tex
 
 REGISTERS_CHISEL += dm_registers.scala
 REGISTERS_CHISEL += abstract_commands.scala
