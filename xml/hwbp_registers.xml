@@ -1009,6 +1009,19 @@
         If more than one of the above events occur during a single instruction
         execution, the trigger still only matches once for that instruction.
 
+        \begin{commentary}
+            For use in single step, icount must match for traps where the
+            instruction will not be reexecuted after the handler, such as
+            illegal instructions that are emulated by privileged software and
+            the instruction being emulated never retires. Ideally, icount would
+            not match for traps where the instruction will later be retried by
+            the handler, such as page faults where privileged software modifies
+            the page tables and returns to the faulting instruction which
+            ultimately retires. Trying to distinguish the two cases leads to
+            complex rules, so instead the rule is simply that all traps match.
+            See also Section~\ref{stepIcount}.
+        \end{commentary}
+
         When \FcsrIcountCount is greater than 1 and the trigger matches, then
         \FcsrIcountCount is decremented by 1.
 
