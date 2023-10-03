@@ -1292,7 +1292,7 @@
         and fire the trigger once it is legal to do so.
 
         \begin{commentary}
-            \FcsrTmexttriggerIntctl is intended to be used by {\tt clicinttrig}
+            \FcsrTmexttriggerIntctl is intended to be used by the {\tt clicinttrig}
             mechanism from the Core-Local Interrupt Controller (CLIC) RISC-V
             Privileged Architecture Extensions.
         \end{commentary}
