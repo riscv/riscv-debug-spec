@@ -141,7 +141,7 @@ If the instruction being stepped over would normally stall the hart, then
 instead the instruction is treated as a {\tt nop}. This includes {\tt wfi},
 {\tt wrs.sto}, and {\tt wrs.nto}.
 
-\subsection{Icount Trigger}
+\subsection{Icount Trigger} \label{stepIcount}
 
 Native debuggers won't have access to \RcsrDcsr, but can use the \RcsrIcount
 trigger by setting \FcsrIcountCount to 1.
