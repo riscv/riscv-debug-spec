@@ -1303,6 +1303,12 @@
         An implementation may either ignore the signal altogether when it cannot
         fire (dropping the trigger event) or it may hold the action as pending
         and fire the trigger once it is legal to do so.
+
+        \begin{commentary}
+            \FcsrTmexttriggerIntctl is intended to be used by the {\tt clicinttrig}
+            mechanism from the Core-Local Interrupt Controller (CLIC) RISC-V
+            Privileged Architecture Extensions.
+        \end{commentary}
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="4" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
         <field name="hit" bits="XLEN-6" access="WARL" reset="0">
