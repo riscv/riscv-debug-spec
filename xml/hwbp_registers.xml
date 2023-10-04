@@ -385,6 +385,10 @@
             though the load will not update its destination register. Debuggers
             should consider this when setting such breakpoints on, for example,
             memory-mapped I/O addresses.
+
+            If an instruction matches this trigger and the instruction performs
+            multiple memory accesses, it is \unspecified which memory accesses
+            have completed before the trigger fires.
             </value>
 
             <value v="1" name="after">
@@ -748,15 +752,23 @@
             </value>
 
             <value v="1" name="before">
-            The trigger fired just before the instruction that triggered it was
-            retired, but after all preceding instructions are retired.
+            The trigger fired before the instruction that matched it was
+            retired, but after all preceding instructions are retired. This
+            explicitly allows for instructions to be partially executed.
             \Rxepc or \RcsrDpc (depending on \FcsrMcontrolSixAction) must be set
             to the virtual address of the instruction that matched.
 
-            If a load operation matched and \FcsrMcontrolSixSelect=1 then a
-            memory access has been performed (including any side effects of
-            performing such an access) even though the load has not updated its
-            destination register.
+            An instruction that caused a trigger to fire might be executed
+            partially. In that case not all memory accesses may have been
+            performed, and some registers may not have been updated. Executing
+            that instruction again must have the same result as fully executing
+            it the first time would have, except for any effects due to
+            non-idempotent memory. Implementations should avoid partial
+            instruction execution, but it might be unavoidable for instructions
+            that perform a large number of operations.
+
+            For vector instructions, the vstart mechanism can be used to handle
+            partial execution without duplicating memory accesses.
             </value>
 
             <value v="2" name="after">
@@ -773,6 +785,9 @@
             \Rxepc or \RcsrDpc (depending on \FcsrMcontrolSixAction) must be set
             to the virtual address of the next instruction that must be executed
             to preserve the program flow.
+
+            If the instruction performed multiple memory accesses, all of them
+            have been completed.
             </value>
         </field>
         <field name="select" bits="21" access="WARL" reset="0">
