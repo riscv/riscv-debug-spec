@@ -754,21 +754,11 @@
             <value v="1" name="before">
             The trigger fired before the instruction that matched it was
             retired, but after all preceding instructions are retired. This
-            explicitly allows for instructions to be partially executed.
+            explicitly allows for instructions to be partially executed, as
+            described in Section \ref{sec:multistate}.
+
             \Rxepc or \RcsrDpc (depending on \FcsrMcontrolSixAction) must be set
             to the virtual address of the instruction that matched.
-
-            An instruction that caused a trigger to fire might be executed
-            partially. In that case not all memory accesses may have been
-            performed, and some registers may not have been updated. Executing
-            that instruction again must have the same result as fully executing
-            it the first time would have, except for any effects due to
-            non-idempotent memory. Implementations should avoid partial
-            instruction execution, but it might be unavoidable for instructions
-            that perform a large number of operations.
-
-            For vector instructions, the vstart mechanism can be used to handle
-            partial execution without duplicating memory accesses.
             </value>
 
             <value v="2" name="after">
