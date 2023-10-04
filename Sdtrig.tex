@@ -319,24 +319,6 @@ Cache operations encoded as HINTs do not match debug triggers.
     \end{steps}
 \end{commentary}
 
-\section{Multiple State Change Instructions} \label{sec:multistate}
-
-An instruction that performs multiple architectural state changes (e.g.,
-register updates and/or memory accesses) might cause a trigger to fire at an
-intermediate point in its execution. As a result, architectural state changes up
-to that point might have been performed, while subsequent state changes,
-starting from the event that activated the trigger, might not have been. The
-definition of such an instruction will specify the order in which architectural
-state changes take place. Alternatively, it may state that partial execution is
-not allowed, implying that a mid-execution trigger must prevent any
-architectural state changes from occurring.
-
-Debuggers won't be aware if an instruction has been partially executed. When
-they resume execution, they will execute the same instruction once more.
-Therefore, it's crucial that partially executing the instruction and then
-executing it again leaves the hart in a state closely resembling the state it
-would have been in if the instruction had only been executed once.
-
 \section{Trigger Registers}
 
 These registers are CSRs, accessible using the RISC-V {\tt csr} opcodes and
