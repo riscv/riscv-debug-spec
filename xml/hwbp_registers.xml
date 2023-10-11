@@ -1132,18 +1132,18 @@
     <register name="Interrupt Trigger" short="itrigger" address="0x7a1">
         This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 4.
 
-        This trigger may fire on any of the interrupts configurable in \Rmie
-        (described in the Privileged Spec) or the NMI. The interrupts to fire on are
-        configured by setting the same bit in \RcsrTdataTwo as would be set in
-        \Rmie to enable the interrupt.
+        This trigger can fire when an interrupt trap is taken.
+
+        It can be enabled for individual interrupt numbers by setting the bit
+        corresponding to the interrupt number in \RcsrTdataTwo. The interrupt
+        number is interpreted in the mode that the trap handler executes in.
+        (E.g. virtualized interrupt numbers are not the same in every mode.)
+        In addition the trigger can be enabled for non-maskable interrupts using
+        \FcsrItriggerNmi.
 
         Hardware may only support a subset of interrupts for this trigger.  A
         debugger must read back \RcsrTdataTwo after writing it to confirm the
         requested functionality is actually supported.
-
-        The trigger only fires if the hart takes a trap because of the
-        interrupt. (E.g.\  it does not fire when a timer interrupt occurs but that
-        interrupt is not enabled in \Rmie.)
 
         When the trigger matches, it fires after the trap occurs, just before
         the first instruction of the trap handler is executed.  If
