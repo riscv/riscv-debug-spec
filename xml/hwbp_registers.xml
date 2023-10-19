@@ -1141,6 +1141,14 @@
         In addition the trigger can be enabled for non-maskable interrupts using
         \FcsrItriggerNmi.
 
+        \begin{commentary}
+        If XLEN is 32, then it is not possible to set a trigger for interrupts
+        with Exception Code larger than 31. A future version of the RISC-V
+        Privileged Spec will likely define interrupt Exception Codes 32 through
+        47. Some of those numbers are already being used by the RISC-V Advanced
+        Interrupt Architecture.
+        \end{commentary}
+
         Hardware may only support a subset of interrupts for this trigger.  A
         debugger must read back \RcsrTdataTwo after writing it to confirm the
         requested functionality is actually supported.
