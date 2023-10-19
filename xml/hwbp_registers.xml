@@ -1222,6 +1222,13 @@
         (E.g.\  to trap on an illegal instruction, the debugger sets bit 2 in
         \RcsrTdataTwo.)
 
+        \begin{commentary}
+        If XLEN is 32, then it is not possible to set a trigger on Exception
+        Codes higher than 31. A future version of the RISC-V Privileged Spec
+        will likely define Exception Codes 32 through 47.
+        <!-- Source: https://github.com/riscv/riscv-debug-spec/issues/905#issue-1950231166 -->
+        \end{commentary}
+
         Hardware may support only a subset of exceptions. A debugger must read
         back \RcsrTdataTwo after writing it to confirm the requested functionality
         is actually supported.
