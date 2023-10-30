@@ -242,7 +242,12 @@ class Field( object ):
 
     def c_values_array_def(self):
         assert len(self.values)
-        arr_elem_def = (f'[{v.value}] = "{v.name}"' for v in self.values if v.value is not None)
+
+        # Remove whitespace from the names, so when they're displayed we can use
+        # only ' ' as a separator.
+        arr_elem_def = (f'[{v.value}] = "{toCIdentifier(v.name)}"'
+                        for v in self.values if v.value is not None)
+
         #WA for *lo & *hi splitted fields
         if len(self.values) > 2**self.length():
             return f"static const char *{self.c_values_array_name()}[{2**self.length()}] = {{}};"
