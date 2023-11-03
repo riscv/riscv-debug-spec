@@ -319,6 +319,25 @@ Cache operations encoded as HINTs do not match debug triggers.
     \end{steps}
 \end{commentary}
 
+\subsection{Invalid Virtual Addresses}
+
+For virtual address matches without a mask, \RcsrTdataTwo must be able to hold
+all valid virtual addresses but it need not be capable of holding other values.
+Implementations may convert an invalid virtual address to a different invalid
+virtual address before comparing the address to \RcsrTdataTwo.
+
+\begin{commentary}
+    A straightforward trigger implementation would compare the effective address
+    to the contents of \RcsrTdataTwo. This is most intuitive to a user setting
+    triggers. However, the Privileged Spec makes various accommodations that
+    allow a shorter representation of invalid virtual addresses, and the Debug
+    Spec should do the same.  If an implementation converts some invalid
+    addresses to other invalid addresses, then it is impossible to compare
+    against the original effective address.  To simplify the spec and allow for
+    more implementations, we don't specify which version is compared for an
+    invalid virtual address.
+\end{commentary}
+
 \section{Multiple State Change Instructions} \label{sec:multistate}
 
 An instruction that performs multiple architectural state changes (e.g.,

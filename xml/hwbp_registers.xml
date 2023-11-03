@@ -310,12 +310,6 @@
         Table~\ref{tab:hwbp_timing}, both timings should be supported on load
         address triggers.
 
-        This trigger type may be limited to address comparisons (\FcsrMcontrolSelect is
-        always 0) only. If that is the case and masking is not supported (match
-        values 4, 5, 12, 13), then \RcsrTdataTwo must be able to
-        hold all valid virtual addresses but it need not be capable of holding
-        other values.
-
         The Privileged Spec says that breakpoint exceptions that occur on
         instruction fetches, loads, or stores update the {\tt tval} CSR
         with either zero or the faulting virtual address.  The faulting
@@ -666,12 +660,6 @@
 
         A chain of triggers must only fire if every trigger in the chain was
         matched by the same instruction.
-
-        This trigger type may be limited to address comparisons (\FcsrMcontrolSixSelect is
-        always 0) only. If that is the case and masking is not supported (match
-        values 4, 5, 12, 13), then \RcsrTdataTwo must be able to
-        hold all valid virtual addresses but it need not be capable of holding
-        other values.
 
         The Privileged Spec says that breakpoint exceptions that occur on
         instruction fetches, loads, or stores update the {\tt tval} CSR
