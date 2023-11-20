@@ -394,9 +394,6 @@
             If \FdmHartinfoDataaccess is 1: Number of 32-bit words in the memory map
             dedicated to shadowing the {\tt data} registers.
 
-            If this value is non-zero, then the {tt data} registers must be
-            traditional registers and not MRs.
-
             Since there are at most 12 {\tt data} registers, the value in this
             register must be 12 or smaller.
         </field>
@@ -640,8 +637,7 @@
     </register>
 
     <register name="Abstract Data 0" short="data0" address="0x04">
-        \RdmDataZero through \RdmDataEleven may be Message Registers, whose
-        behavior is described in Section~\ref{sec:mr}. These registers may
+        \RdmDataZero through \RdmDataEleven are registers that may
         be read or changed by abstract commands. \FdmAbstractcsDatacount indicates how many
         of them are implemented, starting at \RdmDataZero, counting up.
         Table~\ref{tab:datareg} shows how abstract commands use these

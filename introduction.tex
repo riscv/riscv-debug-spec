@@ -67,8 +67,6 @@ functionality.
     \item[Minimal RISC-V Debug Specification]
         A subset of the full Debug Specification that allows for very small
         implementations. See Chapter~\ref{chap:dm}.
-    \item[MR]
-        Message Register, described in Section~\ref{sec:mr}.
     \item[NAPOT]
         Naturally Aligned Power-Of-Two.
     \item[NMI]
@@ -98,8 +96,25 @@ functionality.
 
 \section{Context}
 
-This document is written to work with all RISC-V ISA extensions ratified
-through 2021.
+\begin{steps}{This specification attempts to support all RISC-V ISA extensions
+that have, roughly, been ratified through the first half of 2023.  In
+particular, though, this specification specifically addresses features in the
+following extensions:}
+\item A % Mention atomics in debug mode section
+\item C % Mentioned in single-word progbuf context
+\item D % Access register abstract register numbers.
+\item F % Access register abstract register numbers.
+\item H % Various trigger bits
+\item Sm1p13 % E.g. exceptions
+\item Ss1p13 % Mention S-Mode in various trigger stuff
+\item Smstateen % Mentioned in hcontext register description.
+\item V % Mentioned in debug mode entry section
+\item Zawrs % we refer to wrs.sto and wrs.nto
+\item Zcmp % Mention cm.push, cm.pop in Sdtrig
+\item Zicbom % Mention cbo.clean, cbo.flush, and cbo.inval in Cache Operations
+\item Zicboz % Mention cbo.zero in Cache Operations
+\item Zicbop % Mention prefetch instructions in Cache Operations
+\end{steps}
 
 \subsection{Versions}
 
@@ -216,12 +231,11 @@ incompatible, but unlikely to be noticeable:}
 called 1.0 stable.}
 \item \FcsrItriggerNmi was moved from \RcsrEtrigger to \RcsrItrigger, and is now
 subject to the mode bits in that trigger.
-\item DM {\tt data} registers are now Message Registers (see
-Section~\ref{sec:mr}). Debuggers must not assume they can read back the same
-value that they wrote, and must not assume that the result of the last abstract
-command is available as argument to the next abstract command. \PR{728}
+\item \PR{728} introduced Message Registers, which were later removed in \PR{878}.
 \item It may not be possible to read the contents of the Program Buffer using
 the {\tt progbuf} registers. \PR{731}
+\item \RcsrTcontrol fields apply to all traps, not just breakpoint traps. This
+    reverts \PR{723}. \PR{880}
 \end{steps}
 
 \section{About This Document}

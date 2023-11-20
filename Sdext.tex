@@ -9,8 +9,11 @@ is a special execution mode (Debug Mode) and a few extra CSRs. The DM takes care
 of the rest.
 
 In order to be compatible with this specification an implementation must
-implement everything described in this section that is not explicitly listed as
+implement everything described in this chapter that is not explicitly listed as
 optional.
+
+If Sdext is implemented and Sdtrig is not implemented, then accessing any of the
+Sdtrig CSRs must raise an illegal instruction exception.
 
 \section{Debug Mode} \label{debugmode}
 
@@ -22,7 +25,7 @@ How Debug Mode is implemented is not specified here.
 \begin{steps}{When executing code due to an abstract command, the hart stays in
     Debug Mode and the following apply:}
 \item All implemented instructions operate just as they do in M-mode, unless
-    an exception is mentioned in this section.
+    an exception is mentioned in this list.
 \item All operations are executed with machine mode privilege, except that
     additional Debug Mode CSRs are accessible and
     \FcsrMstatusMprv in \Rmstatus may be ignored according to \FcsrDcsrMprven.
@@ -138,7 +141,7 @@ If the instruction being stepped over would normally stall the hart, then
 instead the instruction is treated as a {\tt nop}. This includes {\tt wfi},
 {\tt wrs.sto}, and {\tt wrs.nto}.
 
-\subsection{Icount Trigger}
+\subsection{Icount Trigger} \label{stepIcount}
 
 Native debuggers won't have access to \RcsrDcsr, but can use the \RcsrIcount
 trigger by setting \FcsrIcountCount to 1.

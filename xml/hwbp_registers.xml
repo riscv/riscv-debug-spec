@@ -196,7 +196,7 @@
             regarding triggers with action=0 firing in M-mode trap handlers. See
             Section~\ref{sec:nativetrigger} for more details.
 
-            When a breakpoint trap into M-mode is taken, \FcsrTcontrolMpte is set to the value of
+            When any trap into M-mode is taken, \FcsrTcontrolMpte is set to the value of
             \FcsrTcontrolMte.
         </field>
         <field name="0" bits="6:4" access="R" reset="0" />
@@ -211,35 +211,22 @@
                 Triggers do match/fire while the hart is in M-mode.
             </value>
 
-            When a breakpoint trap into M-mode is taken, \FcsrTcontrolMte is set to 0. When {\tt
+            When any trap into M-mode is taken, \FcsrTcontrolMte is set to 0. When {\tt
             mret} is executed, \FcsrTcontrolMte is set to the value of \FcsrTcontrolMpte.
         </field>
         <field name="0" bits="2:0" access="R" reset="0" />
     </register>
 
     <register name="Hypervisor Context" short="hcontext" address="0x6a8">
-        This optional register is only accessible in S/HS-mode, M-mode and
-        Debug Mode.
+        This optional register may be implemented only if the H extension is
+        implemented. If it is implemented, \RcsrMcontext must also be implemented.
 
-        Accessibility of this CSR is controlled by \Rmstateenzero[57]
-        in the Smstateen extension.
+        This register is only accessible in HS-Mode, M-mode and Debug Mode. If
+        Smstateen is implemented, then accessibility of in HS-Mode is
+        controlled by \Rmstateenzero[57].
 
-        If the H extension is not implemented then this register is not
-        implemented, though the underlying state may be accessible via
-        the optional \RcsrMcontext alias.
-
-        <field name="hcontext" bits="XLEN-1:0" access="WARL" reset="0">
-            Hypervisor mode software can write a context number to this register,
-            which can be used to set triggers that only fire in that specific
-            context.
-
-            An implementation may tie any number of upper bits in this field to
-            0. If the H extension is not implemented, it's recommended to implement
-            no more than 6 bits on RV32 and 13 on RV64 (as visible through the
-            \RcsrMcontext register).  If the H extension is implemented,
-            it's recommended to implement no more than 7 bits on RV32
-            and 14 on RV64.
-        </field>
+        This register is an alias of the \RcsrMcontext register, providing
+        access to the \FcsrMcontextHcontext field from HS-Mode.
     </register>
 
     <register name="Supervisor Context" short="scontext" address="0x5a8">
@@ -262,8 +249,28 @@
     </register>
 
     <register name="Machine Context" short="mcontext" address="0x7a8">
-        This optional register is an alias for \RcsrHcontext and is only
-        accessible in M-mode and Debug mode.
+        This register must be implemented if \RcsrHcontext is implemented, and
+        is optional otherwise.  It is only accessible in M-mode and Debug mode.
+
+        \begin{commentary}
+            \FcsrMcontextHcontext is primarily useful to set triggers on
+            hypervisor systems that only fire when a given VM is executing. It
+            is also useful in systems where M-Mode implements something like a
+            hypervisor directly.
+        \end{commentary}
+
+        <field name="hcontext" bits="XLEN-1:0" access="WARL" reset="0">
+            M-Mode or HS-Mode (using \RcsrHcontext) software can write a context
+            number to this register, which can be used to set triggers that only
+            fire in that specific context.
+
+            An implementation may tie any number of upper bits in this field to
+            0. If the H extension is not implemented, it's recommended to implement
+            no more than 6 bits on RV32 and 13 on RV64 (as visible through the
+            \RcsrMcontext register).  If the H extension is implemented,
+            it's recommended to implement no more than 7 bits on RV32
+            and 14 on RV64.
+        </field>
     </register>
 
     <register name="Machine Supervisor Context" short="mscontext" address="0x7aa">
@@ -378,6 +385,10 @@
             though the load will not update its destination register. Debuggers
             should consider this when setting such breakpoints on, for example,
             memory-mapped I/O addresses.
+
+            If an instruction matches this trigger and the instruction performs
+            multiple memory accesses, it is \unspecified which memory accesses
+            have completed before the trigger fires.
             </value>
 
             <value v="1" name="after">
@@ -741,15 +752,13 @@
             </value>
 
             <value v="1" name="before">
-            The trigger fired just before the instruction that triggered it was
-            retired, but after all preceding instructions are retired.
+            The trigger fired before the instruction that matched it was
+            retired, but after all preceding instructions are retired. This
+            explicitly allows for instructions to be partially executed, as
+            described in Section \ref{sec:multistate}.
+
             \Rxepc or \RcsrDpc (depending on \FcsrMcontrolSixAction) must be set
             to the virtual address of the instruction that matched.
-
-            If a load operation matched and \FcsrMcontrolSixSelect=1 then a
-            memory access has been performed (including any side effects of
-            performing such an access) even though the load has not updated its
-            destination register.
             </value>
 
             <value v="2" name="after">
@@ -766,6 +775,9 @@
             \Rxepc or \RcsrDpc (depending on \FcsrMcontrolSixAction) must be set
             to the virtual address of the next instruction that must be executed
             to preserve the program flow.
+
+            If the instruction performed multiple memory accesses, all of them
+            have been completed.
             </value>
         </field>
         <field name="select" bits="21" access="WARL" reset="0">
@@ -1002,6 +1014,19 @@
         If more than one of the above events occur during a single instruction
         execution, the trigger still only matches once for that instruction.
 
+        \begin{commentary}
+            For use in single step, icount must match for traps where the
+            instruction will not be reexecuted after the handler, such as
+            illegal instructions that are emulated by privileged software and
+            the instruction being emulated never retires. Ideally, icount would
+            not match for traps where the instruction will later be retried by
+            the handler, such as page faults where privileged software modifies
+            the page tables and returns to the faulting instruction which
+            ultimately retires. Trying to distinguish the two cases leads to
+            complex rules, so instead the rule is simply that all traps match.
+            See also Section~\ref{stepIcount}.
+        \end{commentary}
+
         When \FcsrIcountCount is greater than 1 and the trigger matches, then
         \FcsrIcountCount is decremented by 1.
 
@@ -1107,24 +1132,34 @@
     <register name="Interrupt Trigger" short="itrigger" address="0x7a1">
         This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 4.
 
-        This trigger may fire on any of the interrupts configurable in \Rmie
-        (described in the Privileged Spec) or the NMI. The interrupts to fire on are
-        configured by setting the same bit in \RcsrTdataTwo as would be set in
-        \Rmie to enable the interrupt.
+        This trigger can fire when an interrupt trap is taken.
+
+        It can be enabled for individual interrupt numbers by setting the bit
+        corresponding to the interrupt number in \RcsrTdataTwo. The interrupt
+        number is interpreted in the mode that the trap handler executes in.
+        (E.g. virtualized interrupt numbers are not the same in every mode.)
+        In addition the trigger can be enabled for non-maskable interrupts using
+        \FcsrItriggerNmi.
+
+        \begin{commentary}
+        If XLEN is 32, then it is not possible to set a trigger for interrupts
+        with Exception Code larger than 31. A future version of the RISC-V
+        Privileged Spec will likely define interrupt Exception Codes 32 through
+        47. Some of those numbers are already being used by the RISC-V Advanced
+        Interrupt Architecture.
+        \end{commentary}
 
         Hardware may only support a subset of interrupts for this trigger.  A
         debugger must read back \RcsrTdataTwo after writing it to confirm the
         requested functionality is actually supported.
 
-        The trigger only fires if the hart takes a trap because of the
-        interrupt. (E.g.\  it does not fire when a timer interrupt occurs but that
-        interrupt is not enabled in \Rmie.)
-
-        When the trigger fires, all CSRs are updated for the interrupt trap as defined by the
-        Privileged Spec, and the requested action is taken just before the
-        first instruction of the trap handler is executed.
-        If the trigger fires with \FcsrItriggerAction=0 then zero is written to the
-        {\tt tval} CSR on the breakpoint trap (see ~\ref{sec:nativetrigger}).
+        When the trigger matches, it fires after the trap occurs, just before
+        the first instruction of the trap handler is executed.  If
+        \FcsrItriggerAction=0, the standard CSRs are updated for taking the
+        breakpoint trap, and zero is written to the relevant {\tt tval} CSR.  If
+        the breakpoint trap does not go to a higher privilege mode, this will
+        lose CSR information for the original trap.  See
+        Section~\ref{sec:nativetrigger} for more information about this case.
 
         If \RcsrTextraThirtytwo or \RcsrTextraSixtyfour are implemented for this
         trigger, it only matches when the conditions set there are satisfied.
@@ -1195,15 +1230,24 @@
         (E.g.\  to trap on an illegal instruction, the debugger sets bit 2 in
         \RcsrTdataTwo.)
 
+        \begin{commentary}
+        If XLEN is 32, then it is not possible to set a trigger on Exception
+        Codes higher than 31. A future version of the RISC-V Privileged Spec
+        will likely define Exception Codes 32 through 47.
+        <!-- Source: https://github.com/riscv/riscv-debug-spec/issues/905#issue-1950231166 -->
+        \end{commentary}
+
         Hardware may support only a subset of exceptions. A debugger must read
         back \RcsrTdataTwo after writing it to confirm the requested functionality
         is actually supported.
 
-        When the trigger fires, all CSRs are updated for the exception as defined by the
-        Privileged Spec, and the requested action is taken just before the
-        first instruction of the trap handler is executed.
-        If the trigger fires with \FcsrEtriggerAction=0 then zero is written to the
-        {\tt tval} CSR on the breakpoint trap (see ~\ref{sec:nativetrigger}).
+        When the trigger matches, it fires after the trap occurs, just before
+        the first instruction of the trap handler is executed.  If
+        \FcsrEtriggerAction=0, the standard CSRs are updated for taking the
+        breakpoint trap, and zero is written to the relevant {\tt tval} CSR.  If
+        the breakpoint trap does not go to a higher privilege mode, this will
+        lose CSR information for the original trap.  See
+        Section~\ref{sec:nativetrigger} for more information about this case.
 
         If \RcsrTextraThirtytwo or \RcsrTextraSixtyfour are implemented for this
         trigger, it only matches when the conditions set there are satisfied.
@@ -1283,6 +1327,12 @@
         An implementation may either ignore the signal altogether when it cannot
         fire (dropping the trigger event) or it may hold the action as pending
         and fire the trigger once it is legal to do so.
+
+        \begin{commentary}
+            \FcsrTmexttriggerIntctl is intended to be used by the {\tt clicinttrig}
+            mechanism from the Core-Local Interrupt Controller (CLIC) RISC-V
+            Privileged Architecture Extensions.
+        \end{commentary}
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="4" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
         <field name="hit" bits="XLEN-6" access="WARL" reset="0">

@@ -118,7 +118,7 @@ class Register( object ):
             syms = f.symbols()
             all_valid = ' && '.join(map(is_valid, syms))
             field = f.c_info(to_c).replace('\n', '\n\t\t')
-            return (f"riscv_debug_reg_field_list_t {getter_name}(riscv_debug_reg_ctx_t context)\n" +
+            return (f"static riscv_debug_reg_field_list_t {getter_name}(riscv_debug_reg_ctx_t context)\n" +
                     "{\n\t" +
                     add_indent((f"assert({all_valid});\n" if syms else "") +
                                f"riscv_debug_reg_field_list_t result = {{\n" +
@@ -242,7 +242,12 @@ class Field( object ):
 
     def c_values_array_def(self):
         assert len(self.values)
-        arr_elem_def = (f'[{v.value}] = "{v.name}"' for v in self.values if v.value is not None)
+
+        # Remove whitespace from the names, so when they're displayed we can use
+        # only ' ' as a separator.
+        arr_elem_def = (f'[{v.value}] = "{toCIdentifier(v.name)}"'
+                        for v in self.values if v.value is not None)
+
         #WA for *lo & *hi splitted fields
         if len(self.values) > 2**self.length():
             return f"static const char *{self.c_values_array_name()}[{2**self.length()}] = {{}};"
@@ -386,26 +391,17 @@ class Macro:
     def body(self):
         return self.expression
 
-def sympy_to_c(expression, sym_to_c = lambda s: "(" + str(s) + ")"):
+def sympy_to_c(expression, sym_to_c = lambda s: f"({s})", unsigned=True):
     """Implement our own string function, so we can replace 2** with 1<<."""
-    stc = lambda x : sympy_to_c(x, sym_to_c)
+    stc = lambda x : sympy_to_c(x, sym_to_c, unsigned)
     if isinstance(expression, str):
         return expression
     if isinstance(expression, sympy.Number):
-        if (expression >= 2**32):
-            return "0x%xULL" % expression
-        elif (expression >= 2**31):
-            return "0x%xU" % expression
-        elif (expression >= 10):
-            return "0x%x" % expression
-        elif (expression > -10):
-            return "%d" % expression
-        elif (expression > -2**31):
-            return "-0x%x" % -expression
-        elif (expression > -2**32):
-            return "-0x%xU" % -expression
+        suffix = "ULL" if unsigned else ""
+        if (expression < 10 and expression > -10):
+            return "%d%s" % (expression, suffix)
         else:
-            return "-0x%xULL" % -expression
+            return "%#0x%s" % (expression, suffix)
     elif isinstance(expression, sympy.Symbol):
         return sym_to_c(expression)
     elif isinstance(expression, sympy.Add):
@@ -502,7 +498,7 @@ def print_cgetters( registers_list, fd_h, fd_c):
     fd_h.write(Register.c_field_list_type())
     fd_h.write(Register.c_info_type())
 
-    to_c = lambda string: sympy_to_c(sympy.simplify(string), lambda s: f"context.{s}.value")
+    to_c = lambda string: sympy_to_c(sympy.simplify(string), lambda s: f"context.{s}.value", False)
     is_valid = lambda s: f"context.{s}.is_set"
 
     for r in all_regs:
