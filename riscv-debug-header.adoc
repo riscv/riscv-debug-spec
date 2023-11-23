@@ -1,0 +1,68 @@
+[[risc-v-debug]]
+= The RISC-V Debug Specification
+:description: RISC-V Debug Specification
+:company: RISC-V.org
+:authors: Editors: Paul Donahue <pdonahue@ventanamicro.com>, Ventana Micro Systems, Tim Newsome <tim@sifive.com>, SiFive, Inc.
+:revdate: Revised 20231107
+:revnumber: 20231107
+//:revremark: Pre-release version
+:url-riscv: http://riscv.org
+:doctype: book
+:colophon:
+:pdf-theme: ../docs-resources/themes/riscv-spec.yml
+:pdf-fontsdir: ../docs-resources/fonts/
+:preface-title: Preamble
+:appendix-caption: Appendix
+:imagesdir: ../docs-resources/images
+:title-logo-image: image:risc-v_logo.png[pdfwidth=3.25in,align=center]
+//:page-background-image: image:draft.png[opacity=20%]
+//:title-page-background-image: none
+//:back-cover-image: image:backpage.png[opacity=25%]
+:back-cover-image: image:riscv-horizontal-color.svg[opacity=25%]
+// Settings:
+:experimental:
+:reproducible:
+:imagesoutdir: ../docs-resources/images
+:bibtex-file: ../docs-resources/resources/riscv-spec.bib
+:bibtex-order: alphabetical
+:bibtex-style: apa
+:bibtex-format: asciidoc
+:bibtex-throw: false
+:icons: font
+:lang: en
+:listing-caption: Example
+:sectnums:
+:toc: left
+:toclevels: 4
+:source-highlighter: pygments
+ifdef::backend-pdf[]
+:source-highlighter: rouge
+endif::[]
+:table-caption: Table
+:figure-caption: Figure
+:xrefstyle: short 
+:chapter-refsig: Chapter
+:section-refsig: Section
+:appendix-refsig: Appendix
+:data-uri:
+:hide-uri-scheme:
+:stem: latexmath
+:footnote:
+
+
+_This document is released under a Creative Commons Attribution 4.0 International License._
+
+include::introduction.adoc[]
+include::preface.adoc[]
+include::preamble.adoc[]
+include::overview.adoc[]
+include::debug_module.adoc[]
+include::Sdext.adoc[]
+include::Sdtrig.adoc[]
+include::jtagdtm.adoc[]
+include::implementations.adoc[]
+include::debugger.adoc[]
+include::riscv-debug-spec.adoc[]
+include::future.adoc[]
+//include::index.adoc[]
+//include::bibliography.adoc[]
