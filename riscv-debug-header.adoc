@@ -9,7 +9,7 @@
 :url-riscv: http://riscv.org
 :doctype: book
 :colophon:
-:pdf-theme: ../docs-resources/themes/riscv-spec.yml
+:pdf-theme: ../docs-resources/themes/riscv-pdf.yml
 :pdf-fontsdir: ../docs-resources/fonts/
 :preface-title: Preamble
 :appendix-caption: Appendix
@@ -18,16 +18,16 @@
 //:page-background-image: image:draft.png[opacity=20%]
 //:title-page-background-image: none
 //:back-cover-image: image:backpage.png[opacity=25%]
-:back-cover-image: image:riscv-horizontal-color.svg[opacity=25%]
+//:back-cover-image: image:riscv-horizontal-color.svg[opacity=25%]
 // Settings:
 :experimental:
 :reproducible:
 :imagesoutdir: ../docs-resources/images
-:bibtex-file: ../docs-resources/resources/riscv-spec.bib
-:bibtex-order: alphabetical
-:bibtex-style: apa
-:bibtex-format: asciidoc
-:bibtex-throw: false
+//:bibtex-file: ../docs-resources/resources/riscv-spec.bib
+//:bibtex-order: alphabetical
+//:bibtex-style: apa
+//:bibtex-format: asciidoc
+//:bibtex-throw: false
 :icons: font
 :lang: en
 :listing-caption: Example
@@ -61,7 +61,7 @@ include::Sdext.adoc[]
 include::Sdtrig.adoc[]
 include::jtagdtm.adoc[]
 include::implementations.adoc[]
-include::debugger.adoc[]
+include::debugger_implementation.adoc[]
 include::riscv-debug-spec.adoc[]
 include::future.adoc[]
 //include::index.adoc[]
