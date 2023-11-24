@@ -1,5 +1,8 @@
 name: Verify Build
-on: [push]
+on:
+  push:
+   branches:
+        - asciidoc
 jobs:
     Build:
         runs-on: ubuntu-latest
