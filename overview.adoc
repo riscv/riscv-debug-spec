@@ -1,12 +1,8 @@
 [[overview]]
 == System Overview
 
-<<overview>> shows the main components of Debug Support.
+<<systemoverview>> shows the main components of Debug Support.
 Blocks shown in dotted lines are optional.
-
-.RISC-V Debug System Overview
-[overview]
-include::fig/overview-eps-converted-to.svg[fig/overview-eps-converted-to]
 
 The user interacts with the Debug Host (e.g. laptop), which is running a
 debugger (e.g. gdb). The debugger communicates with a Debug Translator
@@ -35,3 +31,7 @@ hart to perform the access.
 Each RISC-V hart may implement a Trigger Module. When trigger conditions
 are met, harts will halt and inform the debug module that they have
 halted.
+
+[[systemoverview]]
+.RISC-V Debug System Overview
+image::overview-eps-converted-to.png[]
