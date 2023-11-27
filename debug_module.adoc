@@ -5,60 +5,41 @@ The Debug Module implements a translation interface between abstract
 debug operations and their specific implementation. It might support the
 following operations:
 
-Give the debugger necessary information about the implementation.
+. Give the debugger necessary information about the implementation.
 (Required)
-
-Allow any individual hart to be halted and resumed. (Required)
-
-Provide status on which harts are halted. (Required)
-
-Provide abstract read and write access to a halted hart’s GPRs.
+. Allow any individual hart to be halted and resumed. (Required)
+. Provide status on which harts are halted. (Required)
+. Provide abstract read and write access to a halted hart’s GPRs.
 (Required)
-
-Provide access to a reset signal that allows debugging from the very
+. Provide access to a reset signal that allows debugging from the very
 first instruction after reset. (Required)
-
-Provide a mechanism to allow debugging harts immediately out of reset
+. Provide a mechanism to allow debugging harts immediately out of reset
 (regardless of the reset cause). (Optional)
-
-Provide abstract access to non-GPR hart registers. (Optional)
-
-Provide a Program Buffer to force the hart to execute arbitrary
+. Provide abstract access to non-GPR hart registers. (Optional)
+. Provide a Program Buffer to force the hart to execute arbitrary
 instructions. (Optional)
-
-Allow multiple harts to be halted, resumed, and/or reset at the same
+. Allow multiple harts to be halted, resumed, and/or reset at the same
 time. (Optional)
-
-Allow memory access from a hart’s point of view. (Optional)
-
-Allow direct System Bus Access. (Optional)
-
-Group harts. When any hart in the group halts, they all halt. (Optional)
-
-Respond to external triggers by halting each hart in a configured group.
+. Allow memory access from a hart’s point of view. (Optional)
+. Allow direct System Bus Access. (Optional)
+. Group harts. When any hart in the group halts, they all halt. (Optional)
+. Respond to external triggers by halting each hart in a configured group.
 (Optional)
-
-Signal an external trigger when a hart in a group halts. (Optional)
+. Signal an external trigger when a hart in a group halts. (Optional)
 
 In order to be compatible with this specification an implementation
 must:
 
-Implement all the required features listed above.
-
-Implement at least one of Program Buffer, System Bus Access, or Abstract
+. Implement all the required features listed above.
+. Implement at least one of Program Buffer, System Bus Access, or Abstract
 Access Memory command mechanisms.
-
-Do at least one of:
-
-Implement the Program Buffer.
-
-Implement abstract access to all registers that are visible to software
+. Do at least one of:
+.. Implement the Program Buffer.
+.. Implement abstract access to all registers that are visible to software
 running on the hart including all the registers that are present on the
-hart and listed in Table #tab:regno[[tab:regno]].
-
-Implement abstract access to at least all GPRs, , and , and advertise
-the implementation as conforming to the ``Minimal RISC-V Debug
-Specification '', instead of the ``RISC-V Debug Specification ''.
+hart and listed in <<regno.
+.. Implement abstract access to at least all GPRs, <<descr>>, and <<dpc>>, and advertise the implementation as conforming to the "Minimal RISC-V Debug
+Specification", instead of the "RISC-V Debug Specification".
 
 A single DM can debug up to latexmath:[$2^{20}$] harts.
 
@@ -68,7 +49,7 @@ A single DM can debug up to latexmath:[$2^{20}$] harts.
 Debug Modules are subordinates on a bus called the Debug Module
 Interface (DMI). The bus manager is the Debug Transport Module(s). The
 Debug Module Interface can be a trivial bus with one manager and one
-subordinate (see link:#dmi_signals[[dmi_signals]]), or use a more
+subordinate (see <<dmi_signals>>), or use a more
 full-featured bus like TileLink or the AMBA Advanced Peripheral Bus. The
 details are left to the system designer.
 
@@ -77,7 +58,7 @@ single 32-bit register that can be read or written. The bottom of the
 address space is used for the first (and usually only) DM. Extra space
 can be used for custom debug devices, other cores, additional DMs, etc.
 If there are additional DMs on this DMI, the base address of the next DM
-in the DMI address space is given in .
+in the DMI address space is given in <<nextdm>>.
 
 The Debug Module is controlled via register accesses to its DMI address
 space.
@@ -85,15 +66,15 @@ space.
 [[reset]]
 === Reset Control
 
-There are two methods that allow a debugger to reset harts. resets all
+There are two methods that allow a debugger to reset harts. <<ndmreset>> resets all
 the harts in the hardware platform, as well as all other parts of the
 hardware platform except for the Debug Modules, Debug Transport Modules,
 and Debug Module Interface. Exactly what is affected by this reset is
 implementation dependent, but it must be possible to debug programs from
-the first instruction executed. resets all the currently selected harts.
+the first instruction executed. <<hartreset>> resets all the currently selected harts.
 In this case an implementation may reset more harts than just the ones
 that are selected. The debugger can discover which other harts are reset
-(if any) by selecting them and checking and .
+(if any) by selecting them and checking <<anyhavereset>> and <<allhavereset>>.
 
 To perform either of these resets, the debugger first asserts the bit,
 and then clears it. The actual reset may start as soon as the bit is
@@ -103,14 +84,17 @@ While the reset is on-going, harts are either in the running state,
 indicating it’s possible to perform some abstract commands during this
 time, or in the unavailable state, indicating it’s not possible to
 perform any abstract commands during this time. Once a hart’s reset is
-complete, `havereset` becomes set. When a hart comes out of reset and or
+complete, `havereset` becomes set. When a hart comes out of reset and <<haltreq>> or <<resethaltreq>> 
 are set, the hart will immediately enter Debug Mode (halted state).
 Otherwise, if the hart was initially running it will execute normally
 (running state) and if the hart was initially halted it should now be
 running but may be halted.
 
+[NOTE]
+====
 There is no general, reliable way for the debugger to know when reset
 has actually begun.
+====
 
 The Debug Module’s own state and registers should only be reset at
 power-up and while in is 0. If there is another mechanism to reset the
