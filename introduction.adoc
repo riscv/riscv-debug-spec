@@ -2,7 +2,7 @@
 == Introduction
 
 When a design progresses from simulation to hardware implementation, a
-user’s control and understanding of the system’s current state drops
+user's control and understanding of the system's current state drops
 dramatically. To help bring up and debug low level software and
 hardware, it is critical to have good debugging support built into the
 hardware. When a robust OS is running on a core, software can handle
@@ -22,77 +22,88 @@ functionality.
 
 === Terminology
 
-An advanced feature for advanced users. Most users will not be able to
-take advantage of it.
+*advanced feature*
+    An advanced feature for advanced users. Most users will not be able to take advantage of it.
 
-Atomic Memory Operation.
+*AMO*
+    Atomic Memory Operation.
 
-JTAG instruction that selects a single bit data register, also called
-BYPASS.
+*BYPASS*
+    JTAG instruction that selects a single bit data register, also called BYPASS.
 
-A RISC-V core, or other part of a hardware platform. Typically all
-components will be connected to a single system bus.
+*component*
+    A RISC-V core, or other part of a hardware platform. Typically all components will be connected to a single system bus.
 
-Control and Status Register.
+*CSR*
+    Control and Status Register.
 
-Debug Module (see Chapter <<dm>>).
+*DM* Debug Module (see Chapter <<dm>>).
 
-Debug Module Interface (see Section <<dmi>>).
+*DMI*
+    Debug Module Interface (see Section <<dmi>>).
 
-JTAG Data Register.
+*DR* JTAG Data Register.
 
-Debug Transport Module (see Section <<dtm>>).
+*DTM*
+    Debug Transport Module (see Section <<dtm>>).
 
-Debug XLEN, which is the widest XLEN a hart supports, ignoring the
-current value of in .
+*DXLEN*
+    Debug XLEN, which is the widest XLEN a hart supports, ignoring the current value of in .
 
-An essential feature must be present in order for debug to work
-correctly.
+*essential feature*
+    An essential feature must be present in order for debug to work correctly.
 
-General Purpose Register.
+*GPR*
+    General Purpose Register.
 
-A single system consisting of one or more _components_.
+*hardware platform*
+    A single system consisting of one or more _components_.
 
-A hardware thread in a RISC-V core.
+*hart*
+    A hardware thread in a RISC-V core.
 
-32-bit Identification CODE, and a JTAG instruction that returns the
-IDCODE value.
+*IDCODE*
+    32-bit Identification CODE, and a JTAG instruction that returns the IDCODE value.
 
-JTAG Instruction Register.
+*IR* JTAG Instruction Register.
 
-Refers to work done by IEEE’s Joint Test Action Group, described in IEEE
-1149.1.
+*JTAG*
+    Refers to work done by IEEE's Joint Test Action Group, described in IEEE 1149.1.
 
-A legacy feature should only be implemented to support legacy hardware
-that is present in a system.
+*legacy feature*
+    A legacy feature should only be implemented to support legacy hardware that is present in a system.
 
-A subset of the full Debug Specification that allows for very small
-implementations. See Chapter <<dm>>.
+*Minimal RISC-V Debug Specification*
+    A subset of the full Debug Specification that allows for very small implementations. See Chapter <<dm>>.
 
-Naturally Aligned Power-Of-Two.
+*NAPOT*
+    Naturally Aligned Power-Of-Two.
 
-Non-Maskable Interrupt.
+*NMI*
+    Non-Maskable Interrupt.
 
-An address that is directly usable on the system bus.
+*physical address*
+     address that is directly usable on the system bus.
 
-A recommended feature is not required for debug to work correctly, but
-it is so useful that it should not be omitted without good reason.
+*recommended feature*
+    A recommended feature is not required for debug to work correctly, but  it is so useful that it should not be omitted without good reason.
 
-System Bus Access (see Section <<systembusaccess>>).
+*SBA*
+    System Bus Access (see Section <<systembusaccess>>).
 
-A specialized feature, that only makes sense in the context of some
-specific hardware.
+*specialized feature*
+    A specialized feature, that only makes sense in the context of some specific hardware.
 
-Test Access Port, defined in IEEE 1149.1.
+*TAP*
+    Test Access Port, defined in IEEE 1149.1.
 
-Trigger Module (see Section <<trigger>>).
+*TM* Trigger Module (see Section <<trigger>>).
 
-An address as a hart sees it. If the hart is using address translation
-this may be different from the physical address. If there is no
-translation then it will be the same.
+*virtual address*
+    An address as a hart sees it. If the hart is using address translation this may be different from the physical address. If there is no translation then it will be the same.
 
-The exception program counter CSR (e.g. ) that is appropriate for the
-mode being trapped to.
+*xepc*
+    The exception program counter CSR (e.g. ) that is appropriate for the mode being trapped to.
 
 === Context
 
