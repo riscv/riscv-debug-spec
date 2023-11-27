@@ -384,11 +384,11 @@ The debug interface described in this specification supports the
 following features:
 
 . All hart registers (including CSRs) can be read/written.
-. Memory can be accessed either from the hart’s point of view, through
+. Memory can be accessed either from the hart's point of view, through
 the system bus directly, or both.
 . RV32, RV64, and future RV128 are all supported.
 . Any hart in the hardware platform can be independently debugged.
-. A debugger can discover almostfootnote:[Notable exceptions include
+. A debugger can discover almost footnote:[Notable exceptions include
 information about the memory map and peripherals.] everything it needs
 to know itself, without user configuration.
 . Each hart can be debugged from the very first instruction executed.
