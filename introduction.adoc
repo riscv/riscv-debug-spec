@@ -22,7 +22,7 @@ functionality.
 
 === Terminology
 
-*advanced feature*
+*advanced feature* +
     An advanced feature for advanced users. Most users will not be able to take advantage of it.
 
 *AMO*
@@ -112,33 +112,20 @@ have, roughly, been ratified through the first half of 2023. In
 particular, though, this specification specifically addresses features
 in the following extensions:
 
-A
-
-C
-
-D
-
-F
-
-H
-
-Sm1p13
-
-Ss1p13
-
-Smstateen
-
-V
-
-Zawrs
-
-Zcmp
-
-Zicbom
-
-Zicboz
-
-Zicbop
+. A
+. C
+. D
+. F
+. H
+. Sm1p13
+. Ss1p13
+. Smstateen
+. V
+. Zawrs
+. Zcmp
+. Zicbom
+. Zicboz
+. Zicbop
 
 ==== Versions
 
@@ -155,22 +142,16 @@ Version 0.13.
 
 Changes that fix a bug in the spec:
 
-Fix order of operations described in .
+. Fix order of operations described in <<sbdata0>>.
 https://github.com/riscv/riscv-debug-spec/pull/392[#392]
-
-Resume ack is set after resume, in
-Section link:#runcontrol[[runcontrol]].
+. Resume ack is set after resume, in <<runcontrol>>.
 https://github.com/riscv/riscv-debug-spec/pull/400[#400]
-
-applies to . https://github.com/riscv/riscv-debug-spec/pull/402[#402]
-
-only applies when action=0.
+. <<sselect>> applies to <<svalue>> . https://github.com/riscv/riscv-debug-spec/pull/402[#402]
+. <<mte>> only applies when action=0.
 https://github.com/riscv/riscv-debug-spec/pull/411[#411]
-
-does not affect Argument Width.
+. <<aamsize>> does not affect Argument Width.
 https://github.com/riscv/riscv-debug-spec/pull/420[#420]
-
-Clarify that harts halt out of reset if .
+. Clarify that harts halt out of reset if <<haltreq>> =1.
 https://github.com/riscv/riscv-debug-spec/pull/419[#419]
 
 ===== Incompatible Changes from 0.13 to 1.0
@@ -179,37 +160,24 @@ Changes that are not backwards-compatible. Debuggers or hardware
 implementations that implement 0.13 will have to change something in
 order to implement 1.0:
 
-Make haltsum0 optional if there is only one hart.
+. Make haltsum0 optional if there is only one hart.
 https://github.com/riscv/riscv-debug-spec/pull/505[#505]
-
-System bus autoincrement only happens if an access actually takes place.
-() https://github.com/riscv/riscv-debug-spec/pull/507[#507]
-
-Bump to 3. https://github.com/riscv/riscv-debug-spec/pull/512[#512]
-
-Require debugger to poll after lowering it.
+. System bus autoincrement only happens if an access actually takes place.
+(<<sbdata0>>) https://github.com/riscv/riscv-debug-spec/pull/507[#507]
+. Bump <<version>> to 3. https://github.com/riscv/riscv-debug-spec/pull/512[#512]
+, Require debugger to poll <<dmactive>> after lowering it.
 https://github.com/riscv/riscv-debug-spec/pull/566[#566]
-
-Add to . https://github.com/riscv/riscv-debug-spec/pull/574[#574]
-
-When a selected trigger is disabled, and can be written with any value
-supported by any of the types this trigger supports.
+. Add <<pending>> to <<icount>> . https://github.com/riscv/riscv-debug-spec/pull/574[#574]
+. When a selected trigger is disabled, <<tdata2>> and <<tdata3>> can be written with any value supported by any of the types this trigger supports.
 https://github.com/riscv/riscv-debug-spec/pull/721[#721]
-
-fields only apply to breakpoint traps, not any trap.
+. <<tcontrol>> fields only apply to breakpoint traps, not any trap.
 https://github.com/riscv/riscv-debug-spec/pull/723[#723]
-
-If is greater than 0, then (previously called .latexmath:[$|hit|$]) now
-contains 0 when a trigger fires more than one instruction after the
+. If <<version>> is greater than 0, then <<hit0>> (previously called <<mcontrol>>.``hit``) now contains 0 when a trigger fires more than one instruction after the
 instruction that matched. (This information is now reflected in .)
 https://github.com/riscv/riscv-debug-spec/pull/795[#795]
-
-If is greater than 0, then bit 20 of is no longer used for timing
-information. (Previously the bit was called .latexmath:[$|timing|$].)
+. If <<version>> is greater than 0, then bit 20 of <<mcontrol16>> is no longer used for timing information. (Previously the bit was called <<mcontrol>>.``timing``.)
 https://github.com/riscv/riscv-debug-spec/pull/807[#807]
-
-If is greater than 0, then the encodings of for sizes greater than 64
-bit have changed.
+. If <<version>> is greater than 0, then the encodings of <<size>> for sizes greater than 64 bit have changed.
 https://github.com/riscv/riscv-debug-spec/pull/807[#807]
 
 ===== Minor Changes from 0.13 to 1.0
@@ -217,117 +185,79 @@ https://github.com/riscv/riscv-debug-spec/pull/807[#807]
 Changes that slightly modify defined behavior. Technically backwards
 incompatible, but unlikely to be noticeable:
 
-only applies to hart-local counters.
+. <<stopcount>> only applies to hart-local counters.
 https://github.com/riscv/riscv-debug-spec/pull/405[#405]
-
-may be invalid when .
+. <<version>> may be invalid when <<dmactive>>=0.
 https://github.com/riscv/riscv-debug-spec/pull/414[#414]
-
-Address triggers () may fire on any accessed address.
+. Address triggers (<<mcontrol>>) may fire on any accessed address.
 https://github.com/riscv/riscv-debug-spec/pull/421[#421]
-
-All trigger registers (Section link:#csrTrigger[[csrTrigger]]) are
-optional. https://github.com/riscv/riscv-debug-spec/pull/431[#431]
-
-When extending IR, still is all ones.
+. All trigger registers (<<csrTrigger>>) are optional. https://github.com/riscv/riscv-debug-spec/pull/431[#431]
+. When extending IR, <<bypass>> still is all ones.
 https://github.com/riscv/riscv-debug-spec/pull/437[#437]
-
-and are WARL. https://github.com/riscv/riscv-debug-spec/pull/458[#458]
-
-NMIs are disabled by .
+. <<ebreaks>> and <<ebreaku>> are WARL. https://github.com/riscv/riscv-debug-spec/pull/458[#458]
+. NMIs are disabled by <<stepie>>.
 https://github.com/riscv/riscv-debug-spec/pull/465[#465]
-
-R/W1C fields should be cleared by writing every bit high.
+. R/W1C fields should be cleared by writing every bit high.
 https://github.com/riscv/riscv-debug-spec/pull/472[#472]
-
-Specify trigger priorities in Table #tab:priority[[tab:priority]]
-relative to exceptions.
+. Specify trigger priorities in <<priority>> relative to exceptions.
 https://github.com/riscv/riscv-debug-spec/pull/478[#478]
-
-Time may pass before becomes high.
+. Time may pass before <<dmactive>> becomes high.
 https://github.com/riscv/riscv-debug-spec/pull/500[#500]
-
-Clear MPRV when resuming into lower privilege mode.
+. Clear MPRV when resuming into lower privilege mode.
 https://github.com/riscv/riscv-debug-spec/pull/503[#503]
-
-Halt state may not be preserved across reset.
+. Halt state may not be preserved across reset.
 https://github.com/riscv/riscv-debug-spec/pull/504[#504]
-
-Hardware should clear trigger action when is cleared and action is 1.
+. Hardware should clear trigger action when <<dmode>> is cleared and action is 1.
 https://github.com/riscv/riscv-debug-spec/pull/501[#501]
-
-Change quick access exceptions to halt the target in
-Section link:#acQuickaccess[[acQuickaccess]].
+. Change quick access exceptions to halt the target in <<acQuickaccess>>.
 https://github.com/riscv/riscv-debug-spec/pull/585[#585]
-
-Writing 0 to forces a state where and are writable.
+. Writing 0 to <<tdata1>> forces a state where <<tdata2>> and <<tdata3>> are writable.
 https://github.com/riscv/riscv-debug-spec/pull/598[#598]
-
-Solutions to deal with reentrancy in
-Section #sec:nativetrigger[[sec:nativetrigger]] prevent triggers from
+. Solutions to deal with reentrancy in <<nativetrigger>> prevent triggers from
 _matching_, not merely _firing_. This primarily affects behavior.
 https://github.com/riscv/riscv-debug-spec/pull/722[#722]
-
-Attempts to access an unimplemented CSR raise an illegal instruction
+. Attempts to access an unimplemented CSR raise an illegal instruction
 exception. https://github.com/riscv/riscv-debug-spec/pull/791[#791]
 
 ===== New Features from 0.13 to 1.0
 
 New backwards-compatible feature that did not exist before:
 
-Add halt groups and external triggers in
-Section link:#hrgroups[[hrgroups]].
+. Add halt groups and external triggers in <<hrgroups>>.
 https://github.com/riscv/riscv-debug-spec/pull/404[#404]
-
-Reserve some DMI space for non-standard use. See , and through .
+. Reserve some DMI space for non-standard use. See <<custom>>, and <<custom0>> through .
 https://github.com/riscv/riscv-debug-spec/pull/406[#406]
-
-Reserve trigger values for non-standard use.
+. Reserve trigger <<type>> values for non-standard use.
 https://github.com/riscv/riscv-debug-spec/pull/417[#417]
-
-Add bit to . https://github.com/riscv/riscv-debug-spec/pull/408[#408]
+. Add <<nmi>> bit to <<itrigger>>. https://github.com/riscv/riscv-debug-spec/pull/408[#408]
 and https://github.com/riscv/riscv-debug-spec/pull/709[#709]
-
-Recommend matching on every accessed address.
+. Recommend matching on every accessed address.
 https://github.com/riscv/riscv-debug-spec/pull/449[#449]
-
-Add resume groups in Section link:#hrgroups[[hrgroups]].
+. Add resume groups in <<hrgroups>>.
 https://github.com/riscv/riscv-debug-spec/pull/506[#506]
-
-Add . https://github.com/riscv/riscv-debug-spec/pull/536[#536]
-
-Move , renaming original to , and create .
+. Add <<relaxedpriv>> . https://github.com/riscv/riscv-debug-spec/pull/536[#536]
+. Move <<scontext>>, renaming original to <<mscontext>>, and create <<hcontext>>.
 https://github.com/riscv/riscv-debug-spec/pull/535[#535]
-
-Add , deprecating .
+. Add <<mcontrol6>>, deprecating <<mcontrol>>.
 https://github.com/riscv/riscv-debug-spec/pull/538[#538]
-
-Add hypervisor support: , , , , , , and .
+. Add hypervisor support: <<ebreakvs>>, <<ebreakvu>>, <<v>>, <<hcontext>>, <<mcontrol>>, <<mcontrol6>>, and <<priv>>.
 https://github.com/riscv/riscv-debug-spec/pull/549[#549]
-
-Optionally make and sticky, controlled by .
+. Optionally make <<anyunavail>> and <<allunavail>> sticky, controlled by <<stickyunavail>>.
 https://github.com/riscv/riscv-debug-spec/pull/520[#520]
-
-Add to support trigger module external trigger inputs.
+. Add <<tmexttrigger>> to support trigger module external trigger inputs.
 https://github.com/riscv/riscv-debug-spec/pull/543[#543]
-
-Describe and behavior with atomic instructions.
+. Describe <<mcontrol>> and <<mcontrol6>> behavior with atomic instructions.
 https://github.com/riscv/riscv-debug-spec/pull/561[#561]
-
-Trigger hit bits must be set on fire, may be set on match.
+. Trigger hit bits must be set on fire, may be set on match.
 https://github.com/riscv/riscv-debug-spec/pull/593[#593]
-
-Add and to and .
+. Add <<sbytemask>> and <<sbytemask>> to <<textra32>> and <<textra64>>.
 https://github.com/riscv/riscv-debug-spec/pull/588[#588]
-
-Allow debugger to request harts stay alive with keepalive bit in
-Section link:#keepalive[[keepalive]].
+. Allow debugger to request harts stay alive with keepalive bit in
+<<keepalive>>.
 https://github.com/riscv/riscv-debug-spec/pull/592[#592]
-
-Add to allow a debugger to determine when ndmreset is complete.
+. Add <<ndmresetpending>> to allow a debugger to determine when ndmreset is complete.
 https://github.com/riscv/riscv-debug-spec/pull/594[#594]
-
-Add to support triggers from an interrupt controller.
+. Add <<intctl>> to support triggers from an interrupt controller.
 https://github.com/riscv/riscv-debug-spec/pull/599[#599]
 
 ===== Incompatible Changes During 1.0 Stable
@@ -335,17 +265,15 @@ https://github.com/riscv/riscv-debug-spec/pull/599[#599]
 Backwards-incompatible changes between two versions that are both called
 1.0 stable.
 
-was moved from to , and is now subject to the mode bits in that trigger.
+. <<nmi>> was moved from <<etrigger>> to <<itrigger>>, and is now subject to the mode bits in that trigger.
 
-https://github.com/riscv/riscv-debug-spec/pull/728[#728] introduced
+. https://github.com/riscv/riscv-debug-spec/pull/728[#728] introduced
 Message Registers, which were later removed in
 https://github.com/riscv/riscv-debug-spec/pull/878[#878].
-
-It may not be possible to read the contents of the Program Buffer using
+. It may not be possible to read the contents of the Program Buffer using
 the `progbuf` registers.
 https://github.com/riscv/riscv-debug-spec/pull/731[#731]
-
-fields apply to all traps, not just breakpoint traps. This reverts
+. <<tcontrol>> fields apply to all traps, not just breakpoint traps. This reverts
 https://github.com/riscv/riscv-debug-spec/pull/723[#723].
 https://github.com/riscv/riscv-debug-spec/pull/880[#880]
 
@@ -376,20 +304,21 @@ The total number of bits in the field are shown below it.
 
 After the graphic follows a table which for each field lists its name,
 description, allowed accesses, and reset value. The allowed accesses are
-listed in Table #tab:access[[tab:access]]. The reset value is either a
-constant or ``Preset.'' The latter means it is an
-implementation-specific legal value.
+listed in <<access>>. The reset value is either a constant or "Preset." The latter means it is an implementation-specific legal value.
 
 Parts of the register which are currently unused are labeled with the
 number 0. Software must only write 0 to those fields, and ignore their
 value while reading. Hardware must return 0 when those fields are read,
 and ignore the value written to them.
 
+[NOTE]
+====
 This behavior enables us to use those fields later without having to
 increase the values in the version fields.
+====
 
 Names of registers and their fields are hyperlinks to their definition,
-and are also listed in the index on page .
+and are also listed in the index on page <<singlestep>>.
 
 |l|L| R & Read-only. +
 R/W & Read/Write. +
