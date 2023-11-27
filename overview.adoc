@@ -1,12 +1,12 @@
 [[overview]]
 == System Overview
 
-Figure #fig:overview[1.1] shows the main components of Debug Support.
+<<overview>> shows the main components of Debug Support.
 Blocks shown in dotted lines are optional.
 
 .RISC-V Debug System Overview
-[#fig:overview]
-image::fig/overview-eps-converted-to.pdf[fig/overview-eps-converted-to]
+[overview]
+include::fig/overview-eps-converted-to.svg[fig/overview-eps-converted-to]
 
 The user interacts with the Debug Host (e.g. laptop), which is running a
 debugger (e.g. gdb). The debugger communicates with a Debug Translator
