@@ -1,4 +1,4 @@
-[[chap:dm]]
+[[dm]]
 == Debug Module (DM) (non-ISA extension)
 
 The Debug Module implements a translation interface between abstract
