@@ -7,8 +7,8 @@ jobs:
     Build:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v2
-            - run: sudo apt-get update
+            - name: Checkout repository
+            - uses: actions/checkout@v3
             
             # Pull the latest RISC-V Docs container image
             - name: Pull Container
@@ -22,4 +22,4 @@ jobs:
             - if: steps.pull_container_image.outcome == 'success'
             - run: |
                 docker run --rm -v ${{ github.workspace }}:/build riscvintl/riscv-docs-base-container-image:latest \
-                /bin/sh -c 'cd ./build && make'
+                /bin/sh -c make
