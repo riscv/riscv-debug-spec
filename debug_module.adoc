@@ -106,8 +106,7 @@ When harts have been reset, they must set a sticky `havereset` state
 bit. The conceptual `havereset` state bits can be read for selected
 harts in <<anyhavereset>> and <<allhavereset>> in <<dmstatus>>. These bits must be set regardless of the cause of the
 reset. The `havereset` bits for the selected harts can be cleared by
-writing 1 to <<ackhavereset>> in <<dmcontrol>>. The `havereset` bits might or might not be cleared
-when is low.
+writing 1 to <<ackhavereset>> in <<dmcontrol>>. The `havereset` bits might or might not be cleared when <<dmactive>> is low.
 
 [[selectingharts]]
 === Selecting Harts
@@ -118,17 +117,16 @@ Commands issued to the DM only apply to the currently selected harts.
 To enumerate all the harts, a debugger must first determine `HARTSELLEN`
 by writing all ones to (assuming the maximum size) and reading back the
 value to see which bits were actually set. Then it selects each hart
-starting from 0 until either in is 1, or the highest index (depending on
-`HARTSELLEN`) is reached.
+starting from 0 until either <<anynonexistent>> in <<dmstatus>> is 1, or the highest index (depending on `HARTSELLEN`) is reached.
 
 The debugger can discover the mapping between hart indices and by using
-the interface to read , or by reading the hardware platform’s
+the interface to read , or by reading the hardware platform's
 configuration structure.
 
 ==== Selecting a Single Hart
 
 All debug modules must support selecting a single hart. The debugger can
-select a hart by writing its index to . Hart indexes start at 0 and are
+select a hart by writing its index to <<hartsel>>. Hart indexes start at 0 and are
 contiguous until the final index.
 
 [[hartarraymask]]
@@ -139,25 +137,25 @@ selecting multiple harts at once. The latexmath:[$n$]th bit in the Hart
 Array Mask register applies to the hart with index latexmath:[$n$]. If
 the bit is 1 then the hart is selected. Usually a DM will have a Hart
 Array Mask register exactly wide enough to select all the harts it
-supports, but it’s allowed to tie any of these bits to 0.
+supports, but it's allowed to tie any of these bits to 0.
 
-The debugger can set bits in the hart array mask register using and ,
-then apply actions to all selected harts by setting . If this feature is
+The debugger can set bits in the hart array mask register using <<hawindowsel>> and <<hawindow>>,
+then apply actions to all selected harts by setting <<hasel>>. If this feature is
 supported, multiple harts can be halted, resumed, and reset
 simultaneously. The state of the hart array mask register is not
-affected by setting or clearing .
+affected by setting or clearing <<hasel>>.
 
 Execution of Abstract Commands ignores this mechanism and only applies
-to the hart selected by .
+to the hart selected by <<hartsel>>.
 
 === Hart DM States
 
 Every hart that can be selected is in exactly one of the following four
 DM states: non-existent, unavailable, running, or halted. Which state
-the selected harts are in is reflected by , , , , , , , and .
+the selected harts are in is reflected by <<allnonexistent>>, <<anynonexistent>>, <<allunavail>>, <<anyunavail>>, <<allrunning>>, <<anyrunning>>, <<allhalted>>, and <<anyhalted>>.
 
 Harts are nonexistent if they will never be part of this hardware
-platform, no matter how long a user waits. E.g. in a simple single-hart
+platform, no matter how long a user waits. E.g. in a simple single-hart
 hardware platform only one hart exists, and all others are nonexistent.
 Debuggers may assume that a hardware platform has no harts with indexes
 higher than the first nonexistent one.
@@ -189,7 +187,7 @@ Which states a hart that is reset goes through is implementation
 dependent. Harts may be unavailable while reset is asserted, and some
 time after reset is deasserted. They might transition to running for
 some time after reset is deasserted. Finally they end up either running
-or halted, depending on and .
+or halted, depending on <<haltreq>> and <<resethaltreq>>.
 
 [[runcontrol]]
 === Run Control
