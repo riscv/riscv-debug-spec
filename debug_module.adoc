@@ -96,20 +96,17 @@ There is no general, reliable way for the debugger to know when reset
 has actually begun.
 ====
 
-The Debug Module’s own state and registers should only be reset at
-power-up and while in is 0. If there is another mechanism to reset the
-DM, this mechanism must also reset all the harts accessible to the DM.
+The Debug Module's own state and registers should only be reset at
+power-up and while <<dmactive>> in <<dmcontrol>> is 0. If there is another mechanism to reset the DM, this mechanism must also reset all the harts accessible to the DM.
 
 Due to clock and power domain crossing issues, it might not be possible
-to perform arbitrary DMI accesses across hardware platform reset. While
-or any external reset is asserted, the only supported DM operations are
-reading and writing . The behavior of other accesses is undefined.
+to perform arbitrary DMI accesses across hardware platform reset. While <<ndmreset>>  or any external reset is asserted, the only supported DM operations are reading and writing <<dmcontrol>>. The behavior of other accesses is undefined.
 
 When harts have been reset, they must set a sticky `havereset` state
 bit. The conceptual `havereset` state bits can be read for selected
-harts in and in . These bits must be set regardless of the cause of the
+harts in <<anyhavereset>> and <<allhavereset>> in <<dmstatus>>. These bits must be set regardless of the cause of the
 reset. The `havereset` bits for the selected harts can be cleared by
-writing 1 to in . The `havereset` bits might or might not be cleared
+writing 1 to <<ackhavereset>> in <<dmcontrol>>. The `havereset` bits might or might not be cleared
 when is low.
 
 [[selectingharts]]
