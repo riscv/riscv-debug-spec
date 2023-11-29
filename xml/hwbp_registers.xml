@@ -712,8 +712,8 @@
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
         <field name="0" bits="XLEN-6:27" access="R" reset="0" />
         <field name="uncertain" bits="26" access="WARL" reset="0">
-            This bit should be updated every time that \FcsrMcontrolSixHitZero
-            or \FcsrMcontrolSixHitOne is updated.
+            If implemented, the TM updates this field every time the trigger
+            fires.
 
             <value v="0" name="certain">
                 The trigger that fired satisfied the configured conditions, or
