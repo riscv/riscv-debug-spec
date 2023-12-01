@@ -1,5 +1,5 @@
-<registers name="Trigger Registers" prefix="CSR_" label="trigger">
-    The trigger registers, except \RcsrMscontext, \RcsrScontext, and \RcsrHcontext, are only accessible in machine
+<registers name="Trigger Module Registers" prefix="CSR_" label="trigger">
+    The Trigger Module registers, except \RcsrMscontext, \RcsrScontext, and \RcsrHcontext, are only accessible in machine
     and Debug Mode to prevent untrusted user code from causing entry into Debug
     Mode without the OS's permission.
 
@@ -16,7 +16,7 @@
 
     <register name="Trigger Select" short="tselect" address="0x7a0">
         This register determines which trigger is accessible through the other
-        trigger registers. It is optional if no triggers are implemented.  The
+        Trigger Module registers. It is optional if no triggers are implemented.  The
         set of accessible triggers must start at 0, and be contiguous.
 
         This register is \warl.
