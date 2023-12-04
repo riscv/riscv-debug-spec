@@ -337,7 +337,7 @@ Therefore, it's crucial that partially executing the instruction and then
 executing it again leaves the hart in a state closely resembling the state it
 would have been in if the instruction had only been executed once.
 
-\section{Trigger Registers}
+\section{Trigger Module Registers}
 
 These registers are CSRs, accessible using the RISC-V {\tt csr} opcodes and
 optionally also using abstract debug commands.
@@ -373,7 +373,7 @@ the current privilege mode must use this same sequence to restore the triggers.
 This avoids the problem of a partially written trigger firing at a different
 time than is expected.
 
-Attempts to access an unimplemented Trigger Register raise an illegal instruction
-exception.
+Attempts to access an unimplemented Trigger Module Register raise an illegal
+instruction exception.
 
 \input{hwbp_registers.tex}
