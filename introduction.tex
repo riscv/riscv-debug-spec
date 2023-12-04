@@ -236,6 +236,8 @@ subject to the mode bits in that trigger.
 the {\tt progbuf} registers. \PR{731}
 \item \RcsrTcontrol fields apply to all traps, not just breakpoint traps. This
     reverts \PR{723}. \PR{880}
+\item \RcsrTdataTwo cannot be limited to only holding addresses, even if only
+addresses can be matched. \PR{919}
 \end{steps}
 
 \section{About This Document}
