@@ -340,7 +340,8 @@ would have been in if the instruction had only been executed once.
 \section{Trigger Module Registers}
 
 These registers are CSRs, accessible using the RISC-V {\tt csr} opcodes and
-optionally also using abstract debug commands.
+optionally also using abstract debug commands. They are the only mechanism
+to access the triggers.
 
 Almost all trigger functionality is optional. All {\tt tdata} registers follow
 write-any-read-legal semantics. If a debugger writes an unsupported
