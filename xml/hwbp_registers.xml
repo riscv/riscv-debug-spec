@@ -34,6 +34,8 @@
     </register>
 
     <register name="Trigger Data 1" short="tdata1" address="0x7a1">
+        This register provides access to the trigger selected by \RcsrTselect.
+
         This register is optional if no triggers are implemented.
 
         Writing 0 to this register must result in a trigger that is disabled.
@@ -125,6 +127,8 @@
     </register>
 
     <register name="Trigger Data 2" short="tdata2" address="0x7a2">
+        This register provides access to the trigger selected by \RcsrTselect.
+
         Trigger-specific data. It is optional if no implemented triggers use
         it.
 
@@ -136,6 +140,8 @@
     </register>
 
     <register name="Trigger Data 3" short="tdata3" address="0x7a3">
+        This register provides access to the trigger selected by \RcsrTselect.
+
         Trigger-specific data. It is optional if no implemented triggers use
         it.
 
@@ -147,6 +153,8 @@
     </register>
 
     <register name="Trigger Info" short="tinfo" address="0x7a4">
+        This register provides access to the trigger selected by \RcsrTselect.
+
         This register is optional if no triggers are implemented, or if
         \FcsrTdataOneType is not writable and \FcsrTinfoVersion would be 0. In
         this case the debugger can read the only supported type from
@@ -287,6 +295,8 @@
     </register>
 
     <register name="Match Control" short="mcontrol" address="0x7a1">
+        This register provides access to the trigger selected by \RcsrTselect.
+
         This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 2.
         This trigger type is deprecated.  It is included for backward compatibility
         with version 0.13.
@@ -621,6 +631,8 @@
     </register>
 
     <register name="Match Control Type 6" short="mcontrol6" address="0x7a1">
+        This register provides access to the trigger selected by \RcsrTselect.
+
         This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 6.
 
         Implementing this trigger as described here requires that
@@ -1000,6 +1012,8 @@
     </register>
 
     <register name="Instruction Count" short="icount" address="0x7a1">
+        This register provides access to the trigger selected by \RcsrTselect.
+
         This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 3.
 
         \begin{steps}{This trigger matches when:}
@@ -1130,6 +1144,8 @@
     </register>
 
     <register name="Interrupt Trigger" short="itrigger" address="0x7a1">
+        This register provides access to the trigger selected by \RcsrTselect.
+
         This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 4.
 
         This trigger can fire when an interrupt trap is taken.
@@ -1222,6 +1238,8 @@
     </register>
 
     <register name="Exception Trigger" short="etrigger" address="0x7a1">
+        This register provides access to the trigger selected by \RcsrTselect.
+
         This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 5.
 
         This trigger may fire on up to XLEN of the Exception Codes defined in
@@ -1307,6 +1325,8 @@
     </register>
 
     <register name="External Trigger" short="tmexttrigger" address="0x7a1">
+        This register provides access to the trigger selected by \RcsrTselect.
+
         This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 7.
 
         This trigger fires when any selected TM external trigger input
@@ -1366,6 +1386,8 @@
     </register>
 
     <register name="Trigger Extra (RV32)" short="textra32" address="0x7a3">
+        This register provides access to the trigger selected by \RcsrTselect.
+
         This register is accessible as \RcsrTdataThree when \FcsrTdataOneType is 2, 3, 4,
         5, or 6 and XLEN=32.
 
@@ -1457,6 +1479,8 @@
     </register>
 
     <register name="Trigger Extra (RV64)" short="textra64" address="0x7a3">
+        This register provides access to the trigger selected by \RcsrTselect.
+
         This register is accessible as \RcsrTdataThree when \FcsrTdataOneType is 2, 3, 4,
         5, or 6 and XLEN=64. The fields are defined
         above, in \RcsrTextraThirtytwo.
