@@ -35,6 +35,7 @@
 
     <register name="Trigger Data 1" short="tdata1" address="0x7a1">
         This register provides access to the trigger selected by \RcsrTselect.
+        The reset values listed here apply to every underlying trigger.
 
         This register is optional if no triggers are implemented.
 
@@ -128,6 +129,7 @@
 
     <register name="Trigger Data 2" short="tdata2" address="0x7a2">
         This register provides access to the trigger selected by \RcsrTselect.
+        The reset values listed here apply to every underlying trigger.
 
         Trigger-specific data. It is optional if no implemented triggers use
         it.
@@ -141,6 +143,7 @@
 
     <register name="Trigger Data 3" short="tdata3" address="0x7a3">
         This register provides access to the trigger selected by \RcsrTselect.
+        The reset values listed here apply to every underlying trigger.
 
         Trigger-specific data. It is optional if no implemented triggers use
         it.
@@ -154,6 +157,7 @@
 
     <register name="Trigger Info" short="tinfo" address="0x7a4">
         This register provides access to the trigger selected by \RcsrTselect.
+        The reset values listed here apply to every underlying trigger.
 
         This register is optional if no triggers are implemented, or if
         \FcsrTdataOneType is not writable and \FcsrTinfoVersion would be 0. In
@@ -296,6 +300,7 @@
 
     <register name="Match Control" short="mcontrol" address="0x7a1">
         This register provides access to the trigger selected by \RcsrTselect.
+        The reset values listed here apply to every underlying trigger.
 
         This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 2.
         This trigger type is deprecated.  It is included for backward compatibility
@@ -632,6 +637,7 @@
 
     <register name="Match Control Type 6" short="mcontrol6" address="0x7a1">
         This register provides access to the trigger selected by \RcsrTselect.
+        The reset values listed here apply to every underlying trigger.
 
         This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 6.
 
@@ -1013,6 +1019,7 @@
 
     <register name="Instruction Count" short="icount" address="0x7a1">
         This register provides access to the trigger selected by \RcsrTselect.
+        The reset values listed here apply to every underlying trigger.
 
         This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 3.
 
@@ -1145,6 +1152,7 @@
 
     <register name="Interrupt Trigger" short="itrigger" address="0x7a1">
         This register provides access to the trigger selected by \RcsrTselect.
+        The reset values listed here apply to every underlying trigger.
 
         This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 4.
 
@@ -1239,6 +1247,7 @@
 
     <register name="Exception Trigger" short="etrigger" address="0x7a1">
         This register provides access to the trigger selected by \RcsrTselect.
+        The reset values listed here apply to every underlying trigger.
 
         This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 5.
 
@@ -1326,6 +1335,7 @@
 
     <register name="External Trigger" short="tmexttrigger" address="0x7a1">
         This register provides access to the trigger selected by \RcsrTselect.
+        The reset values listed here apply to every underlying trigger.
 
         This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 7.
 
@@ -1387,6 +1397,7 @@
 
     <register name="Trigger Extra (RV32)" short="textra32" address="0x7a3">
         This register provides access to the trigger selected by \RcsrTselect.
+        The reset values listed here apply to every underlying trigger.
 
         This register is accessible as \RcsrTdataThree when \FcsrTdataOneType is 2, 3, 4,
         5, or 6 and XLEN=32.
@@ -1480,6 +1491,7 @@
 
     <register name="Trigger Extra (RV64)" short="textra64" address="0x7a3">
         This register provides access to the trigger selected by \RcsrTselect.
+        The reset values listed here apply to every underlying trigger.
 
         This register is accessible as \RcsrTdataThree when \FcsrTdataOneType is 2, 3, 4,
         5, or 6 and XLEN=64. The fields are defined
