@@ -319,6 +319,35 @@ Cache operations encoded as HINTs do not match debug triggers.
     \end{steps}
 \end{commentary}
 
+\subsection{Address Matches}
+
+For address matches without a mask, \RcsrTdataTwo must be able to hold all valid
+addresses in all supported translation modes. That means that after writing any
+of these valid addresses, the exact same value XLEN-wide value is read back,
+including any high bits. An implementation may be able to optimize the storage
+required, depending on the widest addresses it supports.
+
+\begin{commentary}
+    If physical addresses are less than XLEN bits wide, they are zero-extended.
+    If virtual addresses are less than XLEN bits wide, they are sign-extended.
+    \RcsrTdataTwo must be implemented with enough bits of storage to represent
+    the full range of supported physical and virtual address values when read by
+    software and used by hardware.
+\end{commentary}
+
+\subsubsection{Invalid Addresses}
+
+If \RcsrTdataTwo can hold any invalid addresses, then writes of an
+invalid address that can not be represented as-is should be converted to
+a different invalid address that can be represented.
+
+For invalid instruction fetch addresses and load and store effective addresses,
+the compare value may be changed to a different invalid address.
+
+In addition, an implementation may choose to inhibit all trigger matching
+against invalid addresses, especially if there is no support for storage of any
+invalid address values in tdata2.
+
 \section{Multiple State Change Instructions} \label{sec:multistate}
 
 An instruction that performs multiple architectural state changes (e.g.,
