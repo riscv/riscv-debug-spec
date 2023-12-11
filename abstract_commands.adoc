@@ -49,85 +49,44 @@ The encoding of <<aarsize>> was chosen to match <,sbaccess>> in <<sbcs>>.
 This command modifies `arg0` only when a register is read. The other
 `data` registers are not changed.
 
-[cols="<,<,<,<,<,<,<,<",options="header",]
-|===
-|31 |24 |23 | |22 |20 |19 |
-|latexmath:[$|cmdtype|$] | |latexmath:[$|0|$] | |latexmath:[$|aarsize|$]
-| |latexmath:[$|aarpostincrement|$] |
+include::images/datareg.edn[]
 
-|8 | |1 | |3 | |1 |
-|===
-
-[cols="<,<,<,<,<,<,<,<",options="header",]
-|===
-|18 | |17 | |16 | |15 |0
-|latexmath:[$|postexec|$] | |latexmath:[$|transfer|$] |
-|latexmath:[$|write|$] | |latexmath:[$|regno|$] |
-
-|1 | |1 | |1 | |16 |
-|===
-
-[[acAccessregisterRegno]]
-[cols="<,<",options="header",]
+[[AccessregisterRegno]]
+[float="center",align="center",cols="<1,<3",options="header"]
 |===
 |Field |Description
-|_Continued on next page_ |
-
-|[#acAccessregisterCmdtype]## \|cmdtype\| |This is 0 to indicate Access
+|[[cmdtype]] `cmdtype`|This is 0 to indicate Access
 Register Command.
 
-|[#acAccessregisterAarsize]## \|aarsize\| a|
-2 (32bit): Access the lowest 32 bits of the register.
-
-3 (64bit): Access the lowest 64 bits of the register.
-
-4 (128bit): Access the lowest 128 bits of the register.
-
-If specifies a size larger than the register’s actual size, then the
-access must fail. If a register is accessible, then reads of less than
-or equal to the register’s actual size must be supported. Writing less
-than the full register may be supported, but what happens to the high
-bits in that case is .
-
-This field controls the Argument Width as referenced in
-Table #tab:datareg[[tab:datareg]].
-
-|[#acAccessregisterAarpostincrement]## \|aarpostincrement\| a|
-0 (disabled): No effect. This variant must be supported.
-
-1 (enabled): After a successful register access, is incremented.
-Incrementing past the highest supported value causes to become .
-Supporting this variant is optional. It is undefined whether the
-increment happens when is 0.
-
-|[#acAccessregisterPostexec]## \|postexec\| a|
-0 (disabled): No effect. This variant must be supported, and is the only
-supported one if is 0.
-
+|[[aarsize]] `aarsize`
+| 2 (32bit): Access the lowest 32 bits of the register. +
+3 (64bit): Access the lowest 64 bits of the register. +
+4 (128bit): Access the lowest 128 bits of the register.+
+If <<aarsize,aarsize>> specifies a size larger than the register's actual size, then the access must fail. If a register is accessible, then reads of <<aarsize,aarsize>> less than or equal to the register's actual size must be supported. Writing less than the full register may be supported, but what happens to the high bits in that case is UNSPECIFIED. +
+This field controls the Argument Width as referenced in <<datareg,datareg>>.
+|[[aarpostincrement]] `aarpostincrement`
+|0 (disabled): No effect. This variant must be supported. +
+1 (enabled): After a successful register access, <<regno,regno>> is incremented.
+Incrementing past the highest supported value causes <<regno,regno>> to become UNSPECIFIED.  Supporting this variant is optional. It is undefined whether the
+increment happens when <<transfer,transfer>> is 0.
+|[[postexec]] `postexec`
+|0 (disabled): No effect. This variant must be supported, and is the only
+supported one if <<progbufsize,progbufsize>> is 0. +
 1 (enabled): Execute the program in the Program Buffer exactly once
 after performing the transfer, if any. Supporting this variant is
 optional.
-
-|[#acAccessregisterTransfer]## \|transfer\| a|
-0 (disabled): Don’t do the operation specified by .
-
-1 (enabled): Do the operation specified by .
-
+|[[transfer]] `transfer`
+|0 (disabled): Don’t do the operation specified by <<write,write>>. +
+1 (enabled): Do the operation specified by <<write,write>>. +
 This bit can be used to just execute the Program Buffer without having
-to worry about placing valid values into or .
-
-|[#acAccessregisterWrite]## \|write\| a|
-When is set:
-
+to worry about placing valid values into <<aarsize,aarsize>> or <<regno,regno>>.
+|[[write]] `write`
+|When <<transfer,transfer>> is set: +
 0 (arg0): Copy data from the specified register into `arg0` portion of
-`data`.
-
+`data`. +
 1 (register): Copy data from `arg0` portion of `data` into the specified
 register.
-
-|\|regno\| |Number of the register to access, as described in
-Table #tab:regno[[tab:regno]]. may be used as an alias for PC if this
-command is supported on a non-halted hart.
+|[[regno]] `regno` |Number of the register to access, as described in <<regno,regno>>. <<dpc,dpc>> may be used as an alias for PC if this command is supported on a non-halted hart.
 |===
 
 ===== Quick Access

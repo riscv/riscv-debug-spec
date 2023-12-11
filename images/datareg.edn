@@ -1,0 +1,28 @@
+[bytefield]
+----
+(defattrs :plain [:plain {:font-family "M+ 1p Fallback"}])
+(def row-height 45)
+(def row-header-fn nil)
+(def boxes-per-row 32)
+(draw-column-headers {:height 20 :font-size 18 :labels (reverse ["0" "" "" "15" "" "16" "" "" "17" "" "" "" "18" "" "" "" "" "" "" "19" "" "" "" "20" "" "" "22" "23" "24" "" "" "31"])})
+
+(draw-box "cmdtype" {:span 4})
+(draw-box "0" {:span 1})
+(draw-box "aarsize" {:span 4})
+(draw-box "aarpostincrement" {:span 6})
+(draw-box nil {:span 2 :borders {}})
+(draw-box "postexec" {:span 4})
+(draw-box "transfer" {:span 4})
+(draw-box "write" {:span 3})
+(draw-box "regno" {:span 4})
+
+(draw-box "8" {:span 4 :borders {}})
+(draw-box "1" {:span 1 :borders {}})
+(draw-box "3" {:span 4 :borders {}})
+(draw-box "1" {:span 6 :borders {}})
+(draw-box nil {:span 2 :borders {}})
+(draw-box "1" {:span 4 :borders {}})
+(draw-box "1" {:span 4 :borders {}})
+(draw-box "1" {:span 3 :borders {}})
+(draw-box "16" {:span 4 :borders {}})
+----
