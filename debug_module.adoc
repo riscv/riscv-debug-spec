@@ -9,7 +9,7 @@ following operations:
 (Required)
 . Allow any individual hart to be halted and resumed. (Required)
 . Provide status on which harts are halted. (Required)
-. Provide abstract read and write access to a halted hart’s GPRs.
+. Provide abstract read and write access to a halted hart's GPRs.
 (Required)
 . Provide access to a reset signal that allows debugging from the very
 first instruction after reset. (Required)
@@ -20,7 +20,7 @@ first instruction after reset. (Required)
 instructions. (Optional)
 . Allow multiple harts to be halted, resumed, and/or reset at the same
 time. (Optional)
-. Allow memory access from a hart’s point of view. (Optional)
+. Allow memory access from a hart's point of view. (Optional)
 . Allow direct System Bus Access. (Optional)
 . Group harts. When any hart in the group halts, they all halt. (Optional)
 . Respond to external triggers by halting each hart in a configured group.
@@ -37,7 +37,7 @@ Access Memory command mechanisms.
 .. Implement the Program Buffer.
 .. Implement abstract access to all registers that are visible to software
 running on the hart including all the registers that are present on the
-hart and listed in <<regno.
+hart and listed in <<regno>>.
 .. Implement abstract access to at least all GPRs, <<descr>>, and <<dpc>>, and advertise the implementation as conforming to the "Minimal RISC-V Debug
 Specification", instead of the "RISC-V Debug Specification".
 
@@ -83,7 +83,7 @@ deasserted. The reset itself may also take an arbitrarily long time.
 While the reset is on-going, harts are either in the running state,
 indicating it’s possible to perform some abstract commands during this
 time, or in the unavailable state, indicating it’s not possible to
-perform any abstract commands during this time. Once a hart’s reset is
+perform any abstract commands during this time. Once a hart's reset is
 complete, `havereset` becomes set. When a hart comes out of reset and <<haltreq>> or <<resethaltreq>> 
 are set, the hart will immediately enter Debug Mode (halted state).
 Otherwise, if the hart was initially running it will execute normally
@@ -197,39 +197,33 @@ request, resume ack, halt-on-reset request, and hart reset. (The hart
 reset and halt-on-reset request bits are optional.) These 4 bits reset
 to 0, except for resume ack, which may reset to either 0 or 1. The DM
 receives halted, running, and havereset signals from each hart. The
-debugger can observe the state of resume ack in and , and the state of
-halted, running, and havereset signals in , , , , , and . The state of
-the other bits cannot be observed directly.
+debugger can observe the state of resume ack in <<allresumeack>> and <<anyresumeack>>, and the state of halted, running, and havereset signals in <<allhalted>>, <<anyhalted>>, <<allrunning>>, <<anyrunning>>, <<allhavereset>>, and <<anyhavereset>>. The state of the other bits cannot be observed directly.
 
-When a debugger writes 1 to , each selected hart’s halt request bit is
+When a debugger writes 1 to <<haltreq>>, each selected hart's halt request bit is
 set. When a running hart, or a hart just coming out of reset, sees its
 halt request bit high, it responds by halting, deasserting its running
 signal, and asserting its halted signal. Halted harts ignore their halt
 request bit.
 
-When a debugger writes 1 to , each selected hart’s resume ack bit is
+When a debugger writes 1 to <<resumereq>>, each selected hart's resume ack bit is
 cleared and each selected, halted hart is sent a resume request. Harts
 respond by resuming, clearing their halted signal, and asserting their
 running signal. At the end of this process the resume ack bit is set.
-These status signals of all selected harts are reflected in , , , and .
-Resume requests are ignored by running harts.
+These status signals of all selected harts are reflected in <<allresumeack>>, <<anyresumeack>>, <<allrunning>>, and <<anyrunning>>. Resume requests are ignored by running harts.
 
 When halt or resume is requested, a hart must respond in less than one
 second, unless it is unavailable. (How this is implemented is not
 further specified. A few clock cycles will be a more typical latency).
 
 The DM can implement optional halt-on-reset bits for each hart, which it
-indicates by setting to 1. This means the DM implements the and bits.
-Writing 1 to sets the halt-on-reset request bit for each selected hart.
-When a hart’s halt-on-reset request bit is set, the hart will
+indicates by setting <<hasresethaltreq>> to 1. This means the DM implements the <<setresethaltreq>> and <<clrresethaltreq>> bits.  Writing 1 to <<setresethaltreq>> sets the halt-on-reset request bit for each selected hart.
+When a hart's halt-on-reset request bit is set, the hart will
 immediately enter debug mode on the next deassertion of its reset. This
-is true regardless of the reset’s cause. The hart’s halt-on-reset
-request bit remains set until cleared by the debugger writing 1 to while
-the hart is selected, or by DM reset.
+is true regardless of the reset's cause. The hart's halt-on-reset
+request bit remains set until cleared by the debugger writing 1 to <<clrresethaltreq>> while the hart is selected, or by DM reset.
 
-If the DM is reset while a hart is halted, it is  whether that hart
-resumes. Debuggers should use to explicitly resume harts before clearing
-and disconnecting.
+If the DM is reset while a hart is halted, it is UNSPECIFIED whether that hart
+resumes. Debuggers should use <<resumereq>> to explicitly resume harts before clearing <<dmactive>> and disconnecting.
 
 [[hrgroups]]
 === Halt Groups, Resume Groups, and External Triggers
@@ -387,6 +381,7 @@ Each abstract command is a 32-bit value. The top 8 bits contain which
 determines the kind of command. Table #tab:cmdtype[[tab:cmdtype]] lists
 all commands.
 
+
 |r|l|l|l| & Command & Page +
 & Access Register Command & +
 & Quick Access & +
@@ -449,7 +444,7 @@ image::fig/abstract_commands.pdf[fig/abstract_commands]
 [[systembusaccess]]
 === System Bus Access
 
-A debugger can access memory from a hart’s point of view using a Program
+A debugger can access memory from a hart's point of view using a Program
 Buffer or the Abstract Access Memory command. (Both these features are
 optional.) A Debug Module may also include a System Bus Access block to
 provide memory access without involving a hart, regardless of whether
@@ -1087,7 +1082,7 @@ of these registers between commands. |R |Preset
 is DXLEN bits in size, and corresponds to a single argument, per
 Table #tab:datareg[[tab:datareg]].
 
-1 (memory): The `data` registers are shadowed in the hart’s memory map.
+1 (memory): The `data` registers are shadowed in the hart's memory map.
 Each register takes up 4 bytes in the memory map.
 
 |R |Preset
