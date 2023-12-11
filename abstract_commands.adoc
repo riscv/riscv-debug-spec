@@ -1,29 +1,21 @@
 ===== Access Register
 
-[#acAccessregister]##
+[[Accessregister]]
 
 This command gives the debugger access to CPU registers and allows it to
 execute the Program Buffer. It performs the following sequence of
 operations:
 
-If is clear and is set, then copy data from the register specified by
-into the `arg0` region of `data`, and perform any side effects that
-occur when this register is read from M-mode.
+. If <<write>> is clear and <<transfer>> is set, then copy data from the register specified by <<regno>> into the `arg0` region of `data`, and perform any side effects that occur when this register is read from M-mode.
+. If <<write>> is set and <<transfer>> is set, then copy data from the `arg0` region of `data` into the register specified by <<regno>>, and perform any side effects that occur when this register is written from M-mode.
+. If <<aarpostincrement>> and <<transfer>> are set, increment <<regno>>. <<regno>> may also be incremented if <<aarpostincrement>>is set and <<transfer>> is clear.
+. Execute the Program Buffer, if <<postexec>> is set.
 
-If is set and is set, then copy data from the `arg0` region of `data`
-into the register specified by , and perform any side effects that occur
-when this register is written from M-mode.
-
-If and are set, increment . may also be incremented if is set and is
-clear.
-
-Execute the Program Buffer, if is set.
-
-If any of these operations fail, is set and none of the remaining steps
+If any of these operations fail, <<cmderr>> is set and none of the remaining steps
 are executed. An implementation may detect an upcoming failure early,
 and fail the overall command before it reaches the step that would cause
 failure. If the failure is that the requested register does not exist in
-the hart, must be set to 3 (exception).
+the hart, <<cmderr>> must be set to 3 (exception).
 
 Debug Modules must implement this command and must support read and
 write access to all GPRs when the selected hart is halted. Debug Modules
@@ -33,21 +25,26 @@ group is accessible, then all registers in that group are accessible,
 but each individual register (aside from GPRs) may be supported
 differently across read, write, and halt status.
 
-Registers might not be accessible if they wouldn’t be accessible by M
+Registers might not be accessible if they wouldn't be accessible by M
 mode code currently running. (E.g. `fflags` might not be accessible when
 `mstatus`.latexmath:[$|FS|$] is 0.) If this is the case, the debugger is
 responsible for changing state to make the registers accessible. The
-Core Debug Registers (Section link:#debreg[[debreg]]) should be
+Core Debug Registers (<<debreg>>) should be
 accessible if abstract CSR access is implemented.
 
-|r|l| Numbers & Group Description +
-0x0000 – 0x0fff & CSRs. The ``PC'' can be accessed here through . +
-0x1000 – 0x101f & GPRs +
-0x1020 – 0x103f & Floating point registers +
-0xc000 – 0xffff & Reserved for non-standard extensions and internal
-use. +
-
-The encoding of was chosen to match in .
+[NOTE]
+====
+The encoding of <<aarsize>> was chosen to match <,sbaccess>> in <<sbcs>>.
+====
+.Abstract Register Numbers
+[%autowidth,float="center",align="center",cols=">,<",options="header"]
+|===
+|Numbers |Group Description
+|0x0000 - 0x0fff | CSRs. The "PC" can be accessed here through <<dpc>>.
+|0x1000 - 0x101f | GPRs
+|0x1020 - 0x103f | Floating point registers
+|0xc000 - 0xffff | Reserved for non-standard extensions and internal use.
+|===
 
 This command modifies `arg0` only when a register is read. The other
 `data` registers are not changed.
@@ -164,7 +161,7 @@ This command does not touch the `data` registers.
 |===
 
 [[acQuickaccessCmdtype]]
-[cols="<,<",options="header",]
+[%autowidth,float="center",align="center",cols="<,<",options="header",]
 |===
 |Field |Description
 |_Continued on next page_ |
@@ -173,7 +170,7 @@ This command does not touch the `data` registers.
 
 ===== Access Memory
 
-[#acAccessmemory]##
+[[Accessmemory]]
 
 This command lets the debugger perform memory accesses, with the exact
 same memory view and permissions as the selected hart has. This includes

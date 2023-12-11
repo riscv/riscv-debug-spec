@@ -342,7 +342,7 @@ The argument width depends on the command being executed, and is DXLEN
 where not explicitly specified.
 
 .Use of Data Registers
-[cols="^,<,<,<",options="header",]
+[%autowidth,float="center",align="center",cols="^,<,<,<",options="header"]
 |===
 | Argument Width | arg0/return value | arg1 | arg2
 | 32 | <<data0>> | `data1` | `data2`
@@ -386,8 +386,8 @@ their fields should be interpreted when they are written to <<command>>.
 Each abstract command is a 32-bit value. The top 8 bits contain which
 determines the kind of command. <<cmdtype>> lists all commands.
 
-.Meanding of <<cmdtype>>
-[cols=">,<,<",options="header",]
+.Meaning of <<cmdtype>>
+[%autowidth,float="center",align="center",cols=">,<,<",options="header"]
 |===
 | <<cmdtype>> | Command | Page
 | 0 | Access Register Command |
