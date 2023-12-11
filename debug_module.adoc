@@ -381,17 +381,19 @@ be hung (<<busy>> never goes low).
 ==== Abstract Command Listing
 
 This section describes each of the different abstract commands and how
-their fields should be interpreted when they are written to .
+their fields should be interpreted when they are written to <<command>>.
 
 Each abstract command is a 32-bit value. The top 8 bits contain which
-determines the kind of command. Table #tab:cmdtype[[tab:cmdtype]] lists
-all commands.
+determines the kind of command. <<cmdtype>> lists all commands.
 
-
-|r|l|l|l| & Command & Page +
-& Access Register Command & +
-& Quick Access & +
-& Access Memory Command & +
+.Meanding of <<cmdtype>>
+[cols=">,<,<",options="header",]
+|===
+| <<cmdtype>> | Command | Page
+| 0 | Access Register Command |
+| 1 | Quick Access |
+| 2 | Access Memory Command |
+|===
 
 [[programbuffer]]
 === Program Buffer
