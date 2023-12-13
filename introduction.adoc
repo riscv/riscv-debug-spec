@@ -32,13 +32,13 @@ functionality.
 
 *CSR*:: Control and Status Register.
 
-*DM*:: Debug Module (see Chapter <<dm>>).
+*DM*:: Debug Module (see <<dm>>).
 
-*DMI*:: Debug Module Interface (see Section <<dmi>>).
+*DMI*:: Debug Module Interface (see <<dmi>>).
 
 *DR*:: JTAG Data Register.
 
-*DTM*:: Debug Transport Module (see Section <<dtm>>).
+*DTM*:: Debug Transport Module (see <<dtm>>).
 
 *DXLEN*:: Debug XLEN, which is the widest XLEN a hart supports, ignoring the current value of in .
 
@@ -58,7 +58,7 @@ functionality.
 
 *legacy feature*:: A legacy feature should only be implemented to support legacy hardware that is present in a system.
 
-*Minimal RISC-V Debug Specification*:: A subset of the full Debug Specification that allows for very small implementations. See Chapter <<dm>>.
+*Minimal RISC-V Debug Specification*:: A subset of the full Debug Specification that allows for very small implementations. See <<dm>>.
 
 *NAPOT*:: Naturally Aligned Power-Of-Two.
 
