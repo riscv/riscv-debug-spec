@@ -91,21 +91,16 @@ register.
 
 ===== Quick Access
 
-[#acQuickaccess]##
+[[acQuickaccess]]
 
 Perform the following sequence of operations:
 
-If the hart is halted, the command sets to ``halt/resume'' and does not
-continue.
-
-Halt the hart. If the hart halts for some other reason (e.g.
-breakpoint), the command sets to ``halt/resume'' and does not continue.
-
-Execute the Program Buffer. If an exception occurs, is set to
-``exception,'' the Program Buffer execution ends, and the hart is halted
-with set to 3.
-
-If the Program Buffer executed without an exception, then resume the
+. If the hart is halted, the command sets <<cmderr,cmderr>> to "halt/resume" and does not continue.
+. Halt the hart. If the hart halts for some other reason (e.g.
+breakpoint), the command sets <<cmderr,cmderr> to "halt/resume" and does not continue.
+. Execute the Program Buffer. If an exception occurs, <<cmderr,cmderr>> is set to "exception," the Program Buffer execution ends, and the hart is halted
+with <<cause,cause>> set to 3.
+. If the Program Buffer executed without an exception, then resume the
 hart.
 
 Implementing this command is optional.
