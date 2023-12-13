@@ -68,13 +68,13 @@ functionality.
 
 *recommended feature*:: A recommended feature is not required for debug to work correctly, but  it is so useful that it should not be omitted without good reason.
 
-*SBA*:: System Bus Access (see Section <<systembusaccess>>).
+*SBA*:: System Bus Access (see <<systembusaccess>>).
 
 *specialized feature*:: A specialized feature, that only makes sense in the context of some specific hardware.
 
 *TAP*:: Test Access Port, defined in IEEE 1149.1.
 
-*TM*:: Trigger Module (see Section <<trigger>>).
+*TM*:: Trigger Module (see <<trigger>>).
 
 *virtual address*:: An address as a hart sees it. If the hart is using address translation this may be different from the physical address. If there is no translation then it will be the same.
 
