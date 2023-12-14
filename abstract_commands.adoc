@@ -55,9 +55,7 @@ include::images/datareg.edn[]
 [float="center",align="center",cols="<1,<3",options="header"]
 |===
 |Field |Description
-|[[cmdtype]] `cmdtype`|This is 0 to indicate Access
-Register Command.
-
+| `cmdtype`|This is 0 to indicate Access Register Command.
 |[[aarsize]] `aarsize`
 | 2 (32bit): Access the lowest 32 bits of the register. +
 3 (64bit): Access the lowest 64 bits of the register. +
@@ -107,19 +105,13 @@ Implementing this command is optional.
 
 This command does not touch the `data` registers.
 
-[cols="<,<,<,<",options="header",]
-|===
-|31 |24 |23 |0
-|latexmath:[$|cmdtype|$] | |latexmath:[$|0|$] |
-|8 | |24 |
-|===
+include::images/qaccess.adoc[]
 
 [[acQuickaccessCmdtype]]
-[%autowidth,float="center",align="center",cols="<,<",options="header",]
+[%autowidth,float="center",align="center",cols="<1,<2",options="header"]
 |===
 |Field |Description
-|_Continued on next page_ |
-|\|cmdtype\| |This is 1 to indicate Quick Access command.
+|`cmdtype` | This is 1 to indicate Quick Access command.
 |===
 
 ===== Access Memory
