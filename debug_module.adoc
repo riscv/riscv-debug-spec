@@ -491,8 +491,8 @@ improve performance when accessing memory. Third, it may provide access
 to devices that a hart does not have access to.
 ====
 
-[[abstract_sm]]
-.Run/Halt Debug State Machine for single-hart hardware platforms. As only a small amount of state is visible to the debugger, the states and transitions are conceptual.
+//[[abstract_sm]]
+//.Run/Halt Debug State Machine for single-hart hardware platforms. As only a small amount of state is visible to the debugger, the states and transitions are conceptual.
 
 //FIXME::image:images/abstract_commands.svg[]
 
@@ -509,9 +509,9 @@ without halting the hart.
 Second, the Quick Access abstract command can be used to halt a hart,
 quickly execute the contents of the Program Buffer, and let the hart run
 again. Combined with instructions that allow Program Buffer code to
-access the `data` registers, as described in , this can be used to
+access the `data` registers, as described in <<hartinfo>>, this can be used to
 quickly perform a memory or register access. For some hardware platforms
-this will be too intrusive, but many hardware platforms that can’t be
+this will be too intrusive, but many hardware platforms that can't be
 halted can bear an occasional hiccup of a hundred or less cycles.
 
 Third, if the System Bus Access block is implemented, it can be used
@@ -526,60 +526,43 @@ Debug Module that can be used to be permanently disable it. Since this
 is technology specific, it is not further addressed in this spec.
 
 Another option is to allow the DM to be unlocked only by users who have
-an access key. Between , , and arbitrarily complex authentication
-mechanism can be supported. When is clear, the DM must not interact with
+an access key. Between <<authenticated>>, <<authbusy>>, and <<authdata>> arbitrarily complex authentication
+mechanism can be supported. When <<authenticated>> is clear, the DM must not interact with
 the rest of the hardware platform, nor expose details about the harts
 connected to the DM. All DM registers should read 0, while writes should
 be ignored, with the following mandatory exceptions:
 
-in is readable.
+. <<authenticated>> in <<dmstatus>> is readable.
+. <<authbusy>> in <<dmstatus>> is readable.
+. <<version>> in <<dmstatus>> is readable.
+. <<dmactive>> in <<dmcontrol>> is readable and writable.
+. <<authdata>> is readable and writable.
 
-in is readable.
-
-in is readable.
-
-in is readable and writable.
-
-is readable and writable.
-
-Implementations where it’s not possible to unlock the DM by using should
-not implement that register.
+Implementations where it's not possible to unlock the DM by using <<authdata>> should not implement that register.
 
 === Version Detection
 
 To detect the version of the Debug Module with a minimum of side
 effects, use the following procedure:
 
-Read .
+. Read <<dmcontrol>>.
+. If <<dmactive>> is 0 or <<ndmreset>> is 1:
+.. Write <<dmcontrol>>, preserving <<hartreset>>, <<hasel>>, <<hartsello>>, and <<hartselhi>> from the value that was read, setting <<dmactive>>, and clearing all the other bits.
+.. Read <<dmstatus>>until <<dmactive>> is high.
+. Read <<dmstatus>>, which contains <<version>>.
 
-If is 0 or is 1:
-
-. Write , preserving , , , and from the value that was read, setting ,
-and clearing all the other bits.
-. Read until is high.
-
-Read , which contains .
-
-If it was necessary to clear , this might have the following unavoidable
+If it was necessary to clear <<ndmreset>>, this might have the following  
 side effects:
 
-is cleared, potentially preventing a halt request made by a previous
-debugger from taking effect.
-
-is cleared, potentially preventing a resume request made by a previous
-debugger from taking effect.
-
-is deasserted, releasing the hardware platform from reset if a previous
-debugger had set it.
-
-is asserted, releasing the DM from reset. This in itself is not
+. <<haltreq>> is cleared, potentially preventing a halt request made by a previous debugger from taking effect.
+. <<resumereq>> is cleared, potentially preventing a resume request made by a previous debugger from taking effect.
+. <<ndmreset>> is deasserted, releasing the hardware platform from reset if a previous debugger had set it.
+. <<dmactive>> is asserted, releasing the DM from reset. This in itself is not
 observable by any harts.
 
 This procedure is guaranteed to work in future versions of this spec.
-The meaning of the bits where , , , and currently reside might change,
-but preserving them will have no side effects. Clearing the bits of not
-explicitly mentioned here will have no side effects beyond the ones
-mentioned above.
+The meaning of the <<dmcontrol>> bits where <<hartreset>>, <<hasel>>, <<hartsello>>, and <<hardselhi>> currently reside might change,
+but preserving them will have no side effects. Clearing the bits of <<dmcontrol>> not explicitly mentioned here will have no side effects beyond the ones mentioned above.
 
 [[dmdebbus]]
 === Debug Module Registers
@@ -593,11 +576,10 @@ the table below return 0 when read. Writing them has no effect.
 
 [[dm]]
 .Debug Module Debug Bus Registers
-[cols=">,<,<",options="header",]
+[%autowidth,float="center",align="center",cols=">,<,<",options="header"]
 |===
 |Address |Name |Page
-|_Continued on next page_ | |
-|0x04 |Abstract Data 0 (`data0`) |
+|0x04 |Abstract Data 0 (`data0`) |<<data0>>
 |0x05 |Abstract Data 1 (`data1`) |
 |0x06 |Abstract Data 2 (`data2`) |
 |0x07 |Abstract Data 3 (`data3`) |
@@ -609,22 +591,22 @@ the table below return 0 when read. Writing them has no effect.
 |0x0d |Abstract Data 9 (`data9`) |
 |0x0e |Abstract Data 10 (`data10`) |
 |0x0f |Abstract Data 11 (`data11`) |
-|0x10 |Debug Module Control (`dmcontrol`) |
-|0x11 |Debug Module Status (`dmstatus`) |
-|0x12 |Hart Info (`hartinfo`) |
+|0x10 |Debug Module Control (`dmcontrol`) |<<dmcontrol>>
+|0x11 |Debug Module Status (`dmstatus`) |<<dmstatus>>
+|0x12 |Hart Info (`hartinfo`) |<<hartinfo>>
 |0x13 |Halt Summary 1 (`haltsum1`) |
 |0x14 |Hart Array Window Select (`hawindowsel`) |
 |0x15 |Hart Array Window (`hawindow`) |
 |0x16 |Abstract Control and Status (`abstractcs`) |
 |0x17 |Abstract Command (`command`) |
 |0x18 |Abstract Command Autoexec (`abstractauto`) |
-|0x19 |Configuration Structure Pointer 0 (`confstrptr0`) |
-|0x1a |Configuration Structure Pointer 1 (`confstrptr1`) |
-|0x1b |Configuration Structure Pointer 2 (`confstrptr2`) |
-|0x1c |Configuration Structure Pointer 3 (`confstrptr3`) |
-|0x1d |Next Debug Module (`nextdm`) |
-|0x1f |Custom Features (`custom`) |
-|0x20 |Program Buffer 0 (`progbuf0`) |
+|0x19 |Configuration Structure Pointer 0 (`confstrptr0`) |<<confstrptr0>>
+|0x1a |Configuration Structure Pointer 1 (`confstrptr1`) |<<confstrptr1>>
+|0x1b |Configuration Structure Pointer 2 (`confstrptr2`) |<<confstrptr2>>
+|0x1c |Configuration Structure Pointer 3 (`confstrptr3`) |<<confstrptr3>>
+|0x1d |Next Debug Module (`nextdm`) |<<nextdm>>
+|0x1f |Custom Features (`custom`) |<<custom>>
+|0x20 |Program Buffer 0 (`progbuf0`) |<<progbuf0>>
 |0x21 |Program Buffer 1 (`progbuf1`) |
 |0x22 |Program Buffer 2 (`progbuf2`) |
 |0x23 |Program Buffer 3 (`progbuf3`) |
@@ -640,21 +622,21 @@ the table below return 0 when read. Writing them has no effect.
 |0x2d |Program Buffer 13 (`progbuf13`) |
 |0x2e |Program Buffer 14 (`progbuf14`) |
 |0x2f |Program Buffer 15 (`progbuf15`) |
-|0x30 |Authentication Data (`authdata`) |
-|0x32 |Debug Module Control and Status 2 (`dmcs2`) |
-|0x34 |Halt Summary 2 (`haltsum2`) |
-|0x35 |Halt Summary 3 (`haltsum3`) |
-|0x37 |System Bus Address 127:96 (`sbaddress3`) |
-|0x38 |System Bus Access Control and Status (`sbcs`) |
-|0x39 |System Bus Address 31:0 (`sbaddress0`) |
-|0x3a |System Bus Address 63:32 (`sbaddress1`) |
-|0x3b |System Bus Address 95:64 (`sbaddress2`) |
-|0x3c |System Bus Data 31:0 (`sbdata0`) |
-|0x3d |System Bus Data 63:32 (`sbdata1`) |
-|0x3e |System Bus Data 95:64 (`sbdata2`) |
-|0x3f |System Bus Data 127:96 (`sbdata3`) |
-|0x40 |Halt Summary 0 (`haltsum0`) |
-|0x70 |Custom Features 0 (`custom0`) |
+|0x30 |Authentication Data (`authdata`) |<<authdata>>
+|0x32 |Debug Module Control and Status 2 (`dmcs2`) |<<dmcs2>>
+|0x34 |Halt Summary 2 (`haltsum2`) |<<haltsum2>>
+|0x35 |Halt Summary 3 (`haltsum3`) |<<haltsum3>>
+|0x37 |System Bus Address 127:96 (`sbaddress3`) |<<sbaddress3>>
+|0x38 |System Bus Access Control and Status (`sbcs`) |<<sbcs>>
+|0x39 |System Bus Address 31:0 (`sbaddress0`) |<<sbaddress0>>
+|0x3a |System Bus Address 63:32 (`sbaddress1`) |<<sbaddress1>>
+|0x3b |System Bus Address 95:64 (`sbaddress2`) |<<sbaddress2>>
+|0x3c |System Bus Data 31:0 (`sbdata0`) |<<sbdata0>>
+|0x3d |System Bus Data 63:32 (`sbdata1`) |<<sbdata1>>
+|0x3e |System Bus Data 95:64 (`sbdata2`) |<<sbdata2>>
+|0x3f |System Bus Data 127:96 (`sbdata3`) |<<sbdata3>>
+|0x40 |Halt Summary 0 (`haltsum0`) |<<haltsum0>>
+|0x70 |Custom Features 0 (`custom0`) |<<custom0>>
 |0x71 |Custom Features 1 (`custom1`) |
 |0x72 |Custom Features 2 (`custom2`) |
 |0x73 |Custom Features 3 (`custom3`) |
@@ -672,11 +654,11 @@ the table below return 0 when read. Writing them has no effect.
 |0x7f |Custom Features 15 (`custom15`) |
 |===
 
-==== Debug Module Status (`dmstatus`, at 0x11)
+==== Debug Module Status ([[dmstatus]]`dmstatus`, at 0x11)
 
-[#dmDmstatus]## This register reports status for the overall Debug
-Module as well as the currently selected harts, as defined in . Its
-address will not change in the future, because it contains .
+This register reports status for the overall Debug
+Module as well as the currently selected harts, as defined in <<hasel>>. Its
+address will not change in the future, because it contains <<version>>.
 
 This entire register is read-only.
 
