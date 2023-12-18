@@ -149,71 +149,34 @@ This command modifies `arg0` only when memory is read. It modifies
 `arg1` only if <<aampostincrement>> is set. The other `data` registers are not changed.
 
 include::images/aam.adoc[float="center",align="center"]
-[cols="<,<,<,<,<,<,<,<",options="header",]
-|===
-|31 |24 |23 | |22 |20 |19 |
-|latexmath:[$|cmdtype|$] | |latexmath:[$|aamvirtual|$] |
-|latexmath:[$|aamsize|$] | |latexmath:[$|aampostincrement|$] |
-
-|8 | |1 | |3 | |1 |
-|===
-
-[cols="<,<,<,<,<,<,<,<",options="header",]
-|===
-|18 |17 |16 | |15 |14 |13 |0
-|latexmath:[$|0|$] | |latexmath:[$|write|$] |
-|latexmath:[$|target-specific|$] | |latexmath:[$|0|$] |
-
-|2 | |1 | |2 | |14 |
-|===
 
 [[acAccessmemoryTargetspecific]]
-[cols="<,<",options="header",]
+[%autowidth,align="center",float="center",cols="<,<",options="header"]
 |===
 |Field |Description
-|_Continued on next page_ |
-
-|[#acAccessmemoryCmdtype]## \|cmdtype\| |This is 2 to indicate Access
-Memory Command.
-
-|[#acAccessmemoryAamvirtual]## \|aamvirtual\| a|
-An implementation does not have to implement both virtual and physical
-accesses, but it must fail accesses that it doesn’t support.
-
+|[[acAccessmemoryCmdtype]] `cmdtype` |This is 2 to indicate Access Memory Command.
+|[[acAccessmemoryAamvirtual]] `aamvirtual`| An implementation does not have to implement both virtual and accesses, but it must fail accesses that it doesn't support. +
 0 (physical): Addresses are physical (to the hart they are performed
-on).
-
+on). +
 1 (virtual): Addresses are virtual, and translated the way they would be
-from M-mode, with set.
-
+from M-mode, with set. +
 Debug Modules on systems without address translation (i.e. virtual
-addresses equal physical) may optionally allow set to 1, which would
-produce the same result as that same abstract command with cleared.
-
-|[#acAccessmemoryAamsize]## \|aamsize\| a|
-0 (8bit): Access the lowest 8 bits of the memory location.
-
-1 (16bit): Access the lowest 16 bits of the memory location.
-
-2 (32bit): Access the lowest 32 bits of the memory location.
-
-3 (64bit): Access the lowest 64 bits of the memory location.
-
+addresses equal physical) may optionally allow <<aamvirtual>> set to 1, which would produce the same result as that same abstract command with <<aamvirtual>> cleared.
+|[[acAccessmemoryAamsize]] `aamsize`
+|0 (8bit): Access the lowest 8 bits of the memory location. +
+1 (16bit): Access the lowest 16 bits of the memory location. +
+2 (32bit): Access the lowest 32 bits of the memory location. +
+3 (64bit): Access the lowest 64 bits of the memory location. +
 4 (128bit): Access the lowest 128 bits of the memory location.
-
-|[#acAccessmemoryAampostincrement]## \|aampostincrement\| a|
+|[[acAccessmemoryAampostincrement]] `aampostincrement`|
 After a memory access has completed, if this bit is 1, increment `arg1`
-(which contains the address used) by the number of bytes encoded in .
-
+(which contains the address used) by the number of bytes encoded in <<aamsize>>.
 Supporting this variant is optional, but highly recommended for
 performance reasons.
-
-|[#acAccessmemoryWrite]## \|write\| a|
-0 (arg0): Copy data from the memory location specified in `arg1` into
-the low bits of `arg0`. The value of the remaining bits of `arg0` are .
-
+|[[acAccessmemoryWrite]] `write`
+|0 (arg0): Copy data from the memory location specified in `arg1` into
+the low bits of `arg0`. The value of the remaining bits of `arg0` are UNSPECIFIED. +
 1 (memory): Copy data from the low bits of `arg0` into the memory
 location specified in `arg1`.
-
-|\|target-specific\| |These bits are reserved for target-specific uses.
+|[[target-specific]] `target-specific` |These bits are reserved for target-specific uses.
 |===
