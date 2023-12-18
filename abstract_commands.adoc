@@ -151,7 +151,7 @@ This command modifies `arg0` only when memory is read. It modifies
 include::images/aam.adoc[float="center",align="center"]
 
 [[acAccessmemoryTargetspecific]]
-[%autowidth,align="center",float="center",cols="<,<",options="header"]
+[align="center",float="center",cols="<1,<3",options="header"]
 |===
 |Field |Description
 |[[acAccessmemoryCmdtype]] `cmdtype` |This is 2 to indicate Access Memory Command.
@@ -161,7 +161,7 @@ on). +
 1 (virtual): Addresses are virtual, and translated the way they would be
 from M-mode, with set. +
 Debug Modules on systems without address translation (i.e. virtual
-addresses equal physical) may optionally allow <<aamvirtual>> set to 1, which would produce the same result as that same abstract command with <<aamvirtual>> cleared.
+addresses equal physical) may optionally allow <<acAccessmemoryAamvirtual, aamvirtual>> set to 1, which would produce the same result as that same abstract command with <<acAccessmemoryAamvirtual, aamvirtual>> cleared.
 |[[acAccessmemoryAamsize]] `aamsize`
 |0 (8bit): Access the lowest 8 bits of the memory location. +
 1 (16bit): Access the lowest 16 bits of the memory location. +
@@ -170,7 +170,7 @@ addresses equal physical) may optionally allow <<aamvirtual>> set to 1, which wo
 4 (128bit): Access the lowest 128 bits of the memory location.
 |[[acAccessmemoryAampostincrement]] `aampostincrement`|
 After a memory access has completed, if this bit is 1, increment `arg1`
-(which contains the address used) by the number of bytes encoded in <<aamsize>>.
+(which contains the address used) by the number of bytes encoded in <<acAccessmemoryAamsize, aamsize>>.
 Supporting this variant is optional, but highly recommended for
 performance reasons.
 |[[acAccessmemoryWrite]] `write`
