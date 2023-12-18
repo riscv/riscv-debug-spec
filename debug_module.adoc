@@ -359,8 +359,7 @@ slower than the target and commands succeed, which allows for maximum
 throughput. If there is a failure, the interface ensures that no
 commands execute after the failing one. To discover which command
 failed, the debugger has to look at the state of the DM (e.g. contents
-of <<data0>>) or hart (e.g. contents of a register modified by a Program Buffer
-program) to determine which one failed.
+of <<data0>>) or hart (e.g. contents of a register modified by a Program Buffer program) to determine which one failed.
 ====
 
 Before starting an abstract command, a debugger must ensure that <<haltreq>>, <<resumereq>>, and <<ackhavereset>> are all 0.
@@ -407,7 +406,7 @@ commands only may choose to omit the Program Buffer.
 
 A debugger can write a small program to the Program Buffer, and then
 execute it exactly once with the Access Register Abstract Command,
-setting the bit in . The debugger can write whatever program it likes
+setting the <<postexec>> bit in <<command>>. The debugger can write whatever program it likes
 (including jumps out of the Program Buffer), but the program must end
 with `ebreak` or `c.ebreak`. An implementation may support an implicit
 `ebreak` that is executed when a hart runs off the end of the Program
@@ -415,25 +414,27 @@ Buffer. This is indicated by . With this feature, a Program Buffer of
 just 2 32-bit words can offer efficient debugging.
 
 While these programs are executed, the hart does not leave Debug Mode
-(see Section link:#debugmode[[debugmode]]). If an exception is
+(see <<debugmode>>). If an exception is
 encountered during execution of the Program Buffer, no more instructions
-are executed, the hart remains in Debug Mode, and is set to 3
+are executed, the hart remains in Debug Mode, and <<cmderr>> is set to 3
 (`exception error`). If the debugger executes a program that doesn’t
 terminate with an `ebreak` instruction, the hart will remain in Debug
 Mode and the debugger will lose control of the hart.
 
-If is 1 then the following apply:
+If <<progbufsize>> is 1 then the following apply:
 
-must be 1.
-
-If the debugger writes a compressed instruction into the Program Buffer,
+. <<impebreak>> must be 1.
+. If the debugger writes a compressed instruction into the Program Buffer,
 it must be placed into the lower 16 bits and accompanied by a compressed
 `nop` in the upper 16 bits.
 
-This requirement on the debugger for the case of equal to 1 is to
+[NOTE]
+====
+This requirement on the debugger for the case of <<progbufsize>> equal to 1 is to
 accommodate hardware designs that prefer to stuff instructions directly
 into the pipeline when halted, instead of having the Program Buffer
 exist in the address space somewhere.
+====
 
 The Program Buffer may be implemented as RAM which is accessible to the
 hart. A debugger can determine if this is the case by executing small
@@ -443,13 +444,9 @@ what it can do with the program buffer.
 
 === Overview of Hart Debug States
 
-Figure #fig:abstract_sm[1.1] shows a conceptual view of the states
+<<abstract_sm>> shows a conceptual view of the states
 passed through by a hart during run/halt debugging as influenced by the
-different fields of , , , and .
-
-.Run/Halt Debug State Machine for single-hart hardware platforms. As only a small amount of state is visible to the debugger, the states and transitions are conceptual.
-[#fig:abstract_sm]
-image::fig/abstract_commands.pdf[fig/abstract_commands]
+different fields of <<dmcontrol>>, <<abstractcs>>, <<abstractauto>>, and <<command>>.
 
 [[systembusaccess]]
 === System Bus Access
@@ -462,15 +459,21 @@ Program Buffer is implemented. The System Bus Access block uses physical
 addresses.
 
 The System Bus Access block may support 8-, 16-, 32-, 64-, and 128-bit
-accesses. Table #tab:sbdatabits[[tab:sbdatabits]] shows which bits in
-`sbdata` are used for each access size.
+accesses. <<sbdatabits>> shows which bits in `sbdata` are used for each access size.
 
-|r|l| Access Size & Data Bits +
-& bits 7:0 +
-& bits 15:0 +
-& +
-& , +
-& , , , +
+<<<
+
+[[sbdatabits]]
+.System Bus Data Bits
+[%autowidth,align="center",float="center",cols=">,<",options="header"]
+|===
+|Access Size | Data Bits
+| 8 | <<sbdata0>> bits 7:0
+| 16 | <<sbdata0>> bits 15:0
+| 32 | <<sbdata0>>
+| 64 | <<sbdata1>>, <<sbdata0>>
+| 128 | <<sbdata3>>, <<sbdata2>>, <<sbdata1>>, <<sbdata0>>
+|===
 
 Depending on the microarchitecture, data accessed through System Bus
 Access might not always be coherent with that observed by each hart. It
@@ -479,11 +482,19 @@ not. This specification does not define a standard way to do this.
 Possibilities may include writing to special memory-mapped locations, or
 executing special instructions via the Program Buffer.
 
+[NOTE]
+====
 Implementing a System Bus Access block has several benefits even when a
 Debug Module also implements a Program Buffer. First, it is possible to
 access memory in a running system with minimal impact. Second, it may
 improve performance when accessing memory. Third, it may provide access
 to devices that a hart does not have access to.
+====
+
+[[abstract_sm]]
+.Run/Halt Debug State Machine for single-hart hardware platforms. As only a small amount of state is visible to the debugger, the states and transitions are conceptual.
+
+//FIXME::image:images/abstract_commands.svg[]
 
 === Minimally Intrusive Debugging
 
