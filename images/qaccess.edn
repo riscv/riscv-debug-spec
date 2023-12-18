@@ -1,0 +1,14 @@
+[bytefield]
+----
+(defattrs :plain [:plain {:font-family "M+ 1p Fallback"}])
+(def row-height 25)
+(def row-header-fn nil)
+(def boxes-per-row 15)
+(draw-column-headers {:height 20 :font-size 18 :labels (reverse ["0" "" "" "" "" "" "" "" "" "23" "24" "" "" "" "31"])})
+
+(draw-box "cmdtype" {:span 5})
+(draw-box "0" {:span 10})
+
+(draw-box "8" {:span 5 :borders {}})
+(draw-box "24" {:span 10 :borders {}})
+----

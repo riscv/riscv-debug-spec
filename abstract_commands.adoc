@@ -123,15 +123,13 @@ same memory view and permissions as the selected hart has. This includes
 access to hart-local memory-mapped registers, etc. The command performs
 the following sequence of operations:
 
-Copy data from the memory location specified in `arg1` into the `arg0`
-portion of `data`, if is clear.
+. Copy data from the memory location specified in `arg1` into the `arg0`
+portion of `data`, if <<write>> is clear.
+. Copy data from the `arg0` portion of `data` into the memory location
+specified in `arg1`, if <<write>> is set.
+. If <<aampostincrement>> is set, increment `arg1`.
 
-Copy data from the `arg0` portion of `data` into the memory location
-specified in `arg1`, if is set.
-
-If is set, increment `arg1`.
-
-If any of these operations fail, is set and none of the remaining steps
+If any of these operations fail, <<cmderr>> is set and none of the remaining steps
 are executed. An access may only fail if the hart, running M-mode code,
 might encounter that same failure when it attempts the same access. An
 implementation may detect an upcoming failure early, and fail the
@@ -142,11 +140,15 @@ and write access to memory locations when the selected hart is running
 or halted. If this command supports memory accesses while the hart is
 running, it must also support memory accesses while the hart is halted.
 
-The encoding of was chosen to match in .
+[NOTE]
+====
+The encoding of <<aamsize>> was chosen to match <<sbaccess>> in <<sbcs>>.
+====
 
 This command modifies `arg0` only when memory is read. It modifies
-`arg1` only if is set. The other `data` registers are not changed.
+`arg1` only if <<aampostincrement>> is set. The other `data` registers are not changed.
 
+include::images/aam.adoc[float="center",align="center"]
 [cols="<,<,<,<,<,<,<,<",options="header",]
 |===
 |31 |24 |23 | |22 |20 |19 |
