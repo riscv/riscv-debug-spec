@@ -809,15 +809,15 @@ def print_adoc( registers ):
         if r.short:
             # TODO: Check that (((foo))) renders as ((foo)) inside parens
             if r.address:
-                print(f"={sub} {r.name} ((({r.short})), at {r.address})")
+                print(f"==={sub} {r.name} ((({r.short})), at {r.address})")
             else:
-                print(f"={sub} {r.name} ((({r.short})))")
+                print(f"==={sub} {r.name} ((({r.short})))")
             # TODO: confirm that index works
         else:
             if r.address:
-                print("={sub} ((`{r.name}`)) (at {r.address})")
+                print(f"==={sub} ((`{r.name}`)) (at {r.address})")
             else:
-                print("={sub} ((`{r.name}`))")
+                print(f"==={sub} ((`{r.name}`))")
         print()
         if r.label and r.define:
             print("[[%s]]" % toLatexIdentifier(registers.prefix, r.label))
