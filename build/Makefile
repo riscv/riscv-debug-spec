@@ -13,56 +13,47 @@
 # the documentation for RISC-V ISA Manuals. It supports multiple build targets 
 # for generating documentation in various formats (PDF, HTML).
 
-# Build Targets
-TARGETS := debug debug-HTML
+DOCKER_RUN := docker run --rm -v ${PWD}/..:/build -w /build \
+riscvintl/riscv-docs-base-container-image:latest
 
-# Declare phony targets
-.PHONY: all $(TARGETS) clean
+HEADER_SOURCE := riscv-debug-header.adoc
+PDF_RESULT := ./build/riscv-debug-specification.pdf
 
-# Default target builds all
-all: $(TARGETS)
+ASCIIDOCTOR_PDF := asciidoctor-pdf
+OPTIONS := --trace \
+           -a compress \
+           -a mathematical-format=svg \
+           -a pdf-fontsdir=docs-resources/fonts \
+           -a pdf-theme=docs-resources/themes/riscv-pdf.yml \
+           --failure-level=ERROR
+REQUIRES := --require=asciidoctor-diagram \
+            --require=asciidoctor-mathematical
 
-# Build with preinstalled docker container; first install it with:
-#   docker pull riscvintl/riscv-docs-base-container-image:latest
-docker:
-	cd .. && docker run -it -v .:/build riscvintl/riscv-docs-base-container-image:latest /bin/sh -c 'cd ./build; make $(MAKEFLAGS)'
+.PHONY: all build clean build-container build-no-container
 
-# Asciidoctor options
-ASCIIDOCTOR_OPTS := -a compress \
-                    --attribute=mathematical-format=svg \
-                    --failure-level=ERROR \
-                    --require=asciidoctor-diagram \
-                    --require=asciidoctor-mathematical \
-                    --trace
-#                    --require=asciidoctor-bibtex \
-# Source directory
-SRCDIR := ../
+all: build
 
-# Temporary files to clean up for LaTeX build
-JUNK := *.pdf *.aux *.log *.bbl *.blg *.toc *.out *.fdb_latexmk *.fls *.synctex.gz
+build: 
+	@echo "Checking if Docker is available..."
+	@if command -v docker >/dev/null 2>&1 ; then \
+		echo "Docker is available, building inside Docker container..."; \
+		$(MAKE) build-container; \
+	else \
+		echo "Docker is not available, building without Docker..."; \
+		$(MAKE) build-no-container; \
+	fi
 
-# RISC-V Debug spec PDF build
-debug: riscv-debug-spec.pdf
+build-container:
+	@echo "Starting build inside Docker container..."
+	$(DOCKER_RUN) /bin/sh -c "$(ASCIIDOCTOR_PDF) $(OPTIONS) $(REQUIRES) --out-file=$(PDF_RESULT) $(HEADER_SOURCE)"
+	@echo "Build completed successfully inside Docker container."
 
-riscv-debug-spec.pdf: $(SRCDIR)/riscv-debug-header.adoc $(SRCDIR)/*.adoc
-	@echo "Building Debug Specification"
-	rm -f $@.tmp
-	asciidoctor-pdf $(ASCIIDOCTOR_OPTS) --out-file=$@.tmp $<
-	mv $@.tmp $@
-
-# RISC-C Debug spec HTML build
-debug-html: riscv-debug-spec.html
-
-riscv-debug-spec.html: $(SRCDIR)/riscv-debug-header.adoc
-	@echo "Building Debug Specification HTML"
-	asciidoctor $(ASCIIDOCTOR_OPTS) --out-file=$@ $<
+build-no-container:
+	@echo "Starting build..."
+	$(ASCIIDOCTOR_PDF) $(OPTIONS) $(REQUIRES) --out-file=$(PDF_RESULT) $(HEADER_SOURCE)
+	@echo "Build completed successfully."
 
 clean:
-	@if [ -f riscv-debug-spec.pdf ]; then \
-		echo "Removing riscv-debug-spec.pdf"; \
-		rm -f riscv-debug-spec.pdf; \
-	fi
-	@if [ -f riscv-debug-spec.html ]; then \
-		echo "Removing riscv-debug-spec.html"; \
-		rm -f riscv-debug-spec.html; \
-	fi
+	@echo "Cleaning up generated files..."
+	rm -f $(PDF_RESULT)
+	@echo "Cleanup completed."
