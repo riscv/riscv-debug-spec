@@ -12,8 +12,6 @@
 :pdf-theme: ./docs-resources/themes/riscv-pdf.yml
 :pdf-fontsdir: ./docs-resources/fonts/
 :preface-title: Preface
-:toc: preamble
-:toclevels: 4 
 :appendix-caption: Appendix
 :imagesdir: ./docs-resources/images
 :title-logo-image: image:risc-v_logo.png[pdfwidth=3.25in,align=center]
@@ -33,9 +31,10 @@
 :icons: font
 :lang: en
 :listing-caption: Example
+:toc: left
+:toclevels: 4 
 :sectnums:
 :sectnumlevels: 4
-//:toc: left
 :source-highlighter: pygments
 ifdef::backend-pdf[]
 :source-highlighter: rouge
