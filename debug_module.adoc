@@ -1182,113 +1182,66 @@ Accessing these registers while an abstract command is executing causes
 
 Attempts to write them while <<busy>> is set does not change their value.
 
-[cols="<,<",options="header",]
-|===
-|31 |0
-|latexmath:[$|data|$] |
-|32 |
-|===
+*FIXME:Register diagram goes here.*
 
 ==== Authentication Data (`authdata`, at 0x30)
 
-[Authdata]## This register serves as a 32-bit serial port to/from the
-authentication module.
+[[authdata,authdata]]
+This register serves as a 32-bit serial port to/from the authentication module.
 
-When is clear, the debugger can communicate with the authentication
-module by reading or writing this register. There is no separate
-mechanism to signal overflow/underflow.
+When <<authbusy>> is clear, the debugger can communicate with the authentication module by reading or writing this register. There is no separate mechanism to signal overflow/underflow.
 
-[cols="<,<",options="header",]
-|===
-|31 |0
-|latexmath:[$|data|$] |
-|32 |
-|===
+*FIXME:Register diagram goes here.*
 
 ==== Debug Module Control and Status 2 (`dmcs2`, at 0x32)
 
-[DmcsTwo]## This register contains DM control and status bits that
-didn’t easily fit in and . All are optional.
+[[dmcstwo,dmcstwo]]
+This register contains DM control and status bits that
+didn’t easily fit in <<dmcontrol>> and <<dmstatus>>. All are optional.
 
-If halt groups are not implemented, then will always be 0 when is 0.
+If halt groups are not implemented, then <<group>> will always be 0 when <<grouptype>> is 0.
 
-If resume groups are not implemented, then will remain 0 even after 1 is
-written there.
+If resume groups are not implemented, then <<grouptype>> will remain 0 even after 1 is written there.
 
 The DM external triggers available to add to halt groups may be the same
 as or distinct from the DM external triggers available to add to resume
 groups.
 
-[cols="<,<,<,<,<,<,<,<,<,<,<,<",options="header",]
-|===
-|31 |12 |11 | |10 |7 |6 |2 |1 | |0 |
-|latexmath:[$|0|$] | |latexmath:[$|grouptype|$] |
-|latexmath:[$|dmexttrigger|$] | |latexmath:[$|group|$] |
-|latexmath:[$|hgwrite|$] | |latexmath:[$|hgselect|$] |
+*FIXME:Register diagram goes here.*
 
-|20 | |1 | |4 | |5 | |1 | |1 |
-|===
-
-[[csTwoHgselect]]
-[cols="<,<,^,<",options="header",]
+[[cstwohgselect]]
+[float="center",align="center",cols="<2,<3,^1,<1",options="header"]
 |===
 |Field |Description |Access |Reset
-|_Continued on next page_ | | |
-
-|[DmcsTwoGrouptype] `grouptype` a|
-0 (halt): The remaining fields in this register configure halt groups.
-
-1 (resume): The remaining fields in this register configure resume
-groups.
-
+|[[dmcstwogrouptype]] `grouptype` 
+|0 (halt): The remaining fields in this register configure halt groups. +
+1 (resume): The remaining fields in this register configure resume groups.
 |WARL |0
-
-|[DmcsTwoDmexttrigger] `dmexttrigger` a|
-This field contains the currently selected DM external trigger.
-
+|[[dmcstwodmexttrigger]] `dmexttrigger` 
+|This field contains the currently selected DM external trigger. +
 If a non-existent trigger value is written here, the hardware will
 change it to a valid one or 0 if no DM external triggers exist.
-
 |WARL |0
-
-|[DmcsTwoGroup] `group` a|
-When is 0, contains the group of the hart specified by .
-
-When is 1, contains the group of the DM external trigger selected by .
-
-The value written to this field is ignored unless is also written 1.
-
+|[[dmcstwogroup]] `group` 
+|When <<hgselect>> is 0, contains the group of the hart specified by <<hartsel>>. +
+When <<hgselect>> is 1, contains the group of the DM external trigger selected by <<dmexttrigger>>. +
+The value written to this field is ignored unless <<hgwrite>> is also written 1. +
 Group numbers are contiguous starting at 0, with the highest number
 being implementation-dependent, and possibly different between different
 group types. Debuggers should read back this field after writing to
-confirm they are using a hart group that is supported.
-
-If groups aren’t implemented, then this entire field is 0.
-
+confirm they are using a hart group that is supported. +
+If groups aren't implemented, then this entire field is 0.
 |WARL |preset
-
-|[DmcsTwoHgwrite] `hgwrite` a|
-When 1 is written and is 0, for every selected hart the DM will change
-its group to the value written to , if the hardware supports that group
-for that hart. Implementations may also change the group of a minimal
-set of unselected harts in the same way, if that is necessary due to a
-hardware limitation.
-
-When 1 is written and is 1, the DM will change the group of the DM
-external trigger selected by to the value written to , if the hardware
-supports that group for that trigger.
-
+|[[dmcstwohgwrite]] `hgwrite` 
+|When 1 is written and <<hgselect>> is 0, for every selected hart the DM will change its group to the value written to <<group>>, if the hardware supports that group for that hart. Implementations may also change the group of a minimal set of unselected harts in the same way, if that is necessary due to a
+hardware limitation. +
+When 1 is written and <<hgselect>> is 1, the DM will change the group of the DM external trigger selected by <<dmexttrigger>> to the value written to <<group>>, if the hardware supports that group for that trigger. +
 Writing 0 has no effect.
-
 |W1 |-
-
-|`hgselect` a|
-0 (harts): Operate on harts.
-
-1 (triggers): Operate on DM external triggers.
-
+|`hgselect` 
+|0 (harts): Operate on harts. +
+1 (triggers): Operate on DM external triggers. +
 If there are no DM external triggers, this field must be tied to 0.
-
 |WARL |0
 |===
 
