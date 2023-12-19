@@ -1090,7 +1090,8 @@ value in <<command>> was written there again after the access to `data` complete
 
 ==== Configuration Structure Pointer 0 (`confstrptr0`, at 0x19)
 
-[ConfstrptrZero]## When is set, reading this register returns bits
+[[confstrptrzero,confstrptrzero]]
+When <<confstrptrvalid>> is set, reading this register returns bits
 31:0 of the configuration structure pointer. Reading the other
 `confstrptr` registers returns the upper bits of the address.
 
@@ -1099,8 +1100,7 @@ be used with the System Bus Access module. Otherwise, this must be an
 address that can be used to access the configuration structure from the
 hart with ID 0.
 
-If is 0, then the `confstrptr` registers hold identifier information
-which is not further specified in this document.
+If <<confstrptrvalid>> is 0, then the `confstrptr` registers hold identifier information which is not further specified in this document.
 
 The configuration structure itself is a data structure of the same
 format as the data structure pointed to by mconfigptr as described in
@@ -1108,110 +1108,79 @@ the Privileged Spec.
 
 This entire register is read-only.
 
-[cols="<,<",options="header",]
-|===
-|31 |0
-|latexmath:[$|addr|$] |
-|32 |
-|===
+*FIXME: Register diagram goes here.*
 
 ==== Configuration Structure Pointer 1 (`confstrptr1`, at 0x1a)
 
-[ConfstrptrOne]## When is set, reading this register returns bits
-63:32 of the configuration structure pointer. See for more details.
+[[confstrptrone,confstrptrone]]
+When <<confstrptrvalid>> is set, reading this register returns bits
+63:32 of the configuration structure pointer. See <<confstrptr0>> for more details.
 
 This entire register is read-only.
 
-[cols="<,<",options="header",]
-|===
-|31 |0
-|latexmath:[$|addr|$] |
-|32 |
-|===
+*FIXME:Register diagram goes here.*
 
 ==== Configuration Structure Pointer 2 (`confstrptr2`, at 0x1b)
 
-[ConfstrptrTwo]## When is set, reading this register returns bits
-95:64 of the configuration structure pointer. See for more details.
+[[confstrptrtwo,confstrptrtwo]]
+When <<confstrptrvalid>> is set, reading this register returns bits
+95:64 of the configuration structure pointer. See <<confstrptr0>> for more details.
 
 This entire register is read-only.
 
-[cols="<,<",options="header",]
-|===
-|31 |0
-|latexmath:[$|addr|$] |
-|32 |
-|===
+*FIXME: Register diagram goes here.*
 
 ==== Configuration Structure Pointer 3 (`confstrptr3`, at 0x1c)
 
-[ConfstrptrThree]## When is set, reading this register returns bits
-127:96 of the configuration structure pointer. See for more details.
+[[confstrptrthree,confstrptrthree]]
+When <<confstrptrvalid>> is set, reading this register returns bits
+127:96 of the configuration structure pointer. See <<confstrptr0>> for more details.
 
 This entire register is read-only.
 
-[cols="<,<",options="header",]
-|===
-|31 |0
-|latexmath:[$|addr|$] |
-|32 |
-|===
+*FIXME:Register diagram goes here.*
 
 ==== Next Debug Module (`nextdm`, at 0x1d)
 
-[Nextdm]## If there is more than one DM accessible on this DMI, this
+[[nextdm,nextdm]]
+If there is more than one DM accessible on this DMI, this
 register contains the base address of the next one in the chain, or 0 if
 this is the last one in the chain.
 
 This entire register is read-only.
 
-[cols="<,<",options="header",]
-|===
-|31 |0
-|latexmath:[$|addr|$] |
-|32 |
-|===
+*FIXME:Register diagram goes here.*
 
 ==== Abstract Data 0 (`data0`, at 0x04)
 
-[DataZero]## through may be Message Registers, whose behavior is
-described in Section #sec:mr[[sec:mr]]. These registers may be read or
-changed by abstract commands. indicates how many of them are
-implemented, starting at , counting up.
-Table #tab:datareg[[tab:datareg]] shows how abstract commands use these
-registers.
+[[datazero,datazero]]
+<<datazero>> through `data11` are registers that may be read or
+changed by abstract commands. <<datacount>> indicates how many of them are
+implemented, starting at <<datazero>>, counting up.
+<<datareg>> shows how abstract commands use these registers.
 
-Accessing these registers while an abstract command is executing causes
-to be set to 1 (busy) if it is 0.
+Accessing these registers while an abstract command is executing causes <<cmderr>> to be set to 1 (busy) if it is 0.
 
-Attempts to write them while is set does not change their value.
+Attempts to write them while <<busy>> is set does not change their value.
 
 The values in these registers might not be preserved after an abstract
 command is executed. The only guarantees on their contents are the ones
 offered by the command in question. If the command fails, no assumptions
 can be made about the contents of these registers.
 
-[cols="<,<",options="header",]
-|===
-|31 |0
-|latexmath:[$|data|$] |
-|32 |
-|===
+*FIXME:Register diagram goes here.*
 
 ==== Program Buffer 0 (`progbuf0`, at 0x20)
 
-[ProgbufZero]## through must provide write access to the optional
-program buffer. It may also be possible for the debugger to read from
-the program buffer through these registers. If reading is not supported,
+[[progbufzero,progbufzero]] through 'progbuf15' must provide write access to the optional program buffer. It may also be possible for the debugger to read from the program buffer through these registers. If reading is not supported,
 then all reads return 0.
 
-indicates how many `progbuf` registers are implemented starting at ,
-counting up.
+<<progbufsize>> indicates how many `progbuf` registers are implemented starting at <<progbuf0>>, counting up.
 
 Accessing these registers while an abstract command is executing causes
-to be set to 1 (busy) if it is 0.
+<<cmderr>> to be set to 1 (busy) if it is 0.
 
-Attempts to write them while is set does not change their value.
+Attempts to write them while <<busy>> is set does not change their value.
 
 [cols="<,<",options="header",]
 |===
