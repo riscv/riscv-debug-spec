@@ -73,7 +73,7 @@ static unsigned int riscv_debug_reg_fields_to_s(char *buf, unsigned int offset,
 
 		uint64_t field_value = riscv_debug_reg_field_value(list.field, value);
 
-		if ((show == RISCV_DEBUG_REG_SHOW_ALL) ||
+		if (show == RISCV_DEBUG_REG_SHOW_ALL ||
 				(show == RISCV_DEBUG_REG_HIDE_UNNAMED_0 &&
 					(field_value != 0 ||
 						(list.field.values && list.field.values[0]))) ||

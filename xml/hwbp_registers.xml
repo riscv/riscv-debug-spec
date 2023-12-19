@@ -1,5 +1,5 @@
-<registers name="Trigger Registers" prefix="CSR_" label="trigger">
-    The trigger registers, except \RcsrMscontext, \RcsrScontext, and \RcsrHcontext, are only accessible in machine
+<registers name="Trigger Module Registers" prefix="CSR_" label="trigger">
+    The Trigger Module registers, except \RcsrMscontext, \RcsrScontext, and \RcsrHcontext, are only accessible in machine
     and Debug Mode to prevent untrusted user code from causing entry into Debug
     Mode without the OS's permission.
 
@@ -16,7 +16,7 @@
 
     <register name="Trigger Select" short="tselect" address="0x7a0">
         This register determines which trigger is accessible through the other
-        trigger registers. It is optional if no triggers are implemented.  The
+        Trigger Module registers. It is optional if no triggers are implemented.  The
         set of accessible triggers must start at 0, and be contiguous.
 
         This register is \warl.
@@ -34,6 +34,9 @@
     </register>
 
     <register name="Trigger Data 1" short="tdata1" address="0x7a1">
+        This register provides access to the trigger selected by \RcsrTselect.
+        The reset values listed here apply to every underlying trigger.
+
         This register is optional if no triggers are implemented.
 
         Writing 0 to this register must result in a trigger that is disabled.
@@ -125,6 +128,9 @@
     </register>
 
     <register name="Trigger Data 2" short="tdata2" address="0x7a2">
+        This register provides access to the trigger selected by \RcsrTselect.
+        The reset values listed here apply to every underlying trigger.
+
         Trigger-specific data. It is optional if no implemented triggers use
         it.
 
@@ -136,6 +142,9 @@
     </register>
 
     <register name="Trigger Data 3" short="tdata3" address="0x7a3">
+        This register provides access to the trigger selected by \RcsrTselect.
+        The reset values listed here apply to every underlying trigger.
+
         Trigger-specific data. It is optional if no implemented triggers use
         it.
 
@@ -147,6 +156,9 @@
     </register>
 
     <register name="Trigger Info" short="tinfo" address="0x7a4">
+        This register provides access to the trigger selected by \RcsrTselect.
+        The reset values listed here apply to every underlying trigger.
+
         This register is optional if no triggers are implemented, or if
         \FcsrTdataOneType is not writable and \FcsrTinfoVersion would be 0. In
         this case the debugger can read the only supported type from
@@ -287,6 +299,9 @@
     </register>
 
     <register name="Match Control" short="mcontrol" address="0x7a1">
+        This register provides access to the trigger selected by \RcsrTselect.
+        The reset values listed here apply to every underlying trigger.
+
         This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 2.
         This trigger type is deprecated.  It is included for backward compatibility
         with version 0.13.
@@ -309,12 +324,6 @@
         value will never fire. That means to implement the suggestions in
         Table~\ref{tab:hwbp_timing}, both timings should be supported on load
         address triggers.
-
-        This trigger type may be limited to address comparisons (\FcsrMcontrolSelect is
-        always 0) only. If that is the case and masking is not supported (match
-        values 4, 5, 12, 13), then \RcsrTdataTwo must be able to
-        hold all valid virtual addresses but it need not be capable of holding
-        other values.
 
         The Privileged Spec says that breakpoint exceptions that occur on
         instruction fetches, loads, or stores update the {\tt tval} CSR
@@ -621,6 +630,9 @@
     </register>
 
     <register name="Match Control Type 6" short="mcontrol6" address="0x7a1">
+        This register provides access to the trigger selected by \RcsrTselect.
+        The reset values listed here apply to every underlying trigger.
+
         This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 6.
 
         Implementing this trigger as described here requires that
@@ -667,12 +679,6 @@
         A chain of triggers must only fire if every trigger in the chain was
         matched by the same instruction.
 
-        This trigger type may be limited to address comparisons (\FcsrMcontrolSixSelect is
-        always 0) only. If that is the case and masking is not supported (match
-        values 4, 5, 12, 13), then \RcsrTdataTwo must be able to
-        hold all valid virtual addresses but it need not be capable of holding
-        other values.
-
         The Privileged Spec says that breakpoint exceptions that occur on
         instruction fetches, loads, or stores update the {\tt tval} CSR
         with either zero or the faulting virtual address.  The faulting
@@ -712,8 +718,8 @@
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
         <field name="0" bits="XLEN-6:27" access="R" reset="0" />
         <field name="uncertain" bits="26" access="WARL" reset="0">
-            This bit should be updated every time that \FcsrMcontrolSixHitZero
-            or \FcsrMcontrolSixHitOne is updated.
+            If implemented, the TM updates this field every time the trigger
+            fires.
 
             <value v="0" name="certain">
                 The trigger that fired satisfied the configured conditions, or
@@ -1000,6 +1006,9 @@
     </register>
 
     <register name="Instruction Count" short="icount" address="0x7a1">
+        This register provides access to the trigger selected by \RcsrTselect.
+        The reset values listed here apply to every underlying trigger.
+
         This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 3.
 
         \begin{steps}{This trigger matches when:}
@@ -1130,6 +1139,9 @@
     </register>
 
     <register name="Interrupt Trigger" short="itrigger" address="0x7a1">
+        This register provides access to the trigger selected by \RcsrTselect.
+        The reset values listed here apply to every underlying trigger.
+
         This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 4.
 
         This trigger can fire when an interrupt trap is taken.
@@ -1222,6 +1234,9 @@
     </register>
 
     <register name="Exception Trigger" short="etrigger" address="0x7a1">
+        This register provides access to the trigger selected by \RcsrTselect.
+        The reset values listed here apply to every underlying trigger.
+
         This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 5.
 
         This trigger may fire on up to XLEN of the Exception Codes defined in
@@ -1307,6 +1322,9 @@
     </register>
 
     <register name="External Trigger" short="tmexttrigger" address="0x7a1">
+        This register provides access to the trigger selected by \RcsrTselect.
+        The reset values listed here apply to every underlying trigger.
+
         This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 7.
 
         This trigger fires when any selected TM external trigger input
@@ -1366,6 +1384,9 @@
     </register>
 
     <register name="Trigger Extra (RV32)" short="textra32" address="0x7a3">
+        This register provides access to the trigger selected by \RcsrTselect.
+        The reset values listed here apply to every underlying trigger.
+
         This register is accessible as \RcsrTdataThree when \FcsrTdataOneType is 2, 3, 4,
         5, or 6 and XLEN=32.
 
@@ -1457,6 +1478,9 @@
     </register>
 
     <register name="Trigger Extra (RV64)" short="textra64" address="0x7a3">
+        This register provides access to the trigger selected by \RcsrTselect.
+        The reset values listed here apply to every underlying trigger.
+
         This register is accessible as \RcsrTdataThree when \FcsrTdataOneType is 2, 3, 4,
         5, or 6 and XLEN=64. The fields are defined
         above, in \RcsrTextraThirtytwo.
