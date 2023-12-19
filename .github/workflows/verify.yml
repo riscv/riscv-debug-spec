@@ -1,8 +1,11 @@
 name: Verify Build
+
 on:
+  pull_request:
   push:
-   branches:
-        - asciidoc
+    branches:
+      - asciidoc
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -27,5 +30,5 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: Build Artifacts
-        path: ${{ github.workspace }}/*.pdf
+        path: ${{ github.workspace }}/build/*.pdf
         retention-days: 30
