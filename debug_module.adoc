@@ -662,168 +662,95 @@ address will not change in the future, because it contains <<version>>.
 
 This entire register is read-only.
 
-[cols="<,<,<,<,<,<,<,<,<,<,<,<",options="header",]
-|===
-|31 |25 |24 | |23 | |22 | |21 |20 |19 |
-|latexmath:[$|0|$] | |latexmath:[$|ndmresetpending|$] |
-|latexmath:[$|stickyunavail|$] | |latexmath:[$|impebreak|$] |
-|latexmath:[$|0|$] | |latexmath:[$|allhavereset|$] |
-
-|7 | |1 | |1 | |1 | |2 | |1 |
-|===
-
-[cols="<,<,<,<,<,<,<,<,<,<,<,<",options="header",]
-|===
-|18 | |17 | |16 | |15 | |14 | |13 |
-|latexmath:[$|anyhavereset|$] | |latexmath:[$|allresumeack|$] |
-|latexmath:[$|anyresumeack|$] | |latexmath:[$|allnonexistent|$] |
-|latexmath:[$|anynonexistent|$] | |latexmath:[$|allunavail|$] |
-
-|1 | |1 | |1 | |1 | |1 | |1 |
-|===
-
-[cols="<,<,<,<,<,<,<,<,<,<,<,<",options="header",]
-|===
-|12 | |11 | |10 | |9 | |8 | |7 |
-|latexmath:[$|anyunavail|$] | |latexmath:[$|allrunning|$] |
-|latexmath:[$|anyrunning|$] | |latexmath:[$|allhalted|$] |
-|latexmath:[$|anyhalted|$] | |latexmath:[$|authenticated|$] |
-
-|1 | |1 | |1 | |1 | |1 | |1 |
-|===
-
-[cols="<,<,<,<,<,<,<,<",options="header",]
-|===
-|6 | |5 | |4 | |3 |0
-|latexmath:[$|authbusy|$] | |latexmath:[$|hasresethaltreq|$] |
-|latexmath:[$|confstrptrvalid|$] | |latexmath:[$|version|$] |
-
-|1 | |1 | |1 | |4 |
-|===
+//register diagram goes here
 
 [[dmDmstatusVersion]]
-[cols="<,<,^,<",options="header",]
+[align="center",float="center",cols="<2,<3,^1,<1",options="header"]
 |===
 |Field |Description |Access |Reset
-|_Continued on next page_ | | |
-
-|[#dmDmstatusNdmresetpending]## \|ndmresetpending\| a|
-0 (false): Unimplemented, or is zero and no ndmreset is currently in
-progress.
-
-1 (true): is currently nonzero, or there is an ndmreset in progress.
-
+|[[dmDmstatusNdmresetpending]] `ndmresetpending`
+|0 (false): Unimplemented, or <<ndmreset>> is zero and no ndmreset is currently in progress. +
+1 (true): <<ndmreset>> is currently nonzero, or there is an ndmreset in progress.
 |R |-
-
-|[#dmDmstatusStickyunavail]## \|stickyunavail\| a|
-0 (current): The per-hart `unavail` bits reflect the current state of
-the hart.
-
+|[[dmDmstatusStickyunavail]] `stickyunavail`
+|0 (current): The per-hart `unavail` bits reflect the current state of
+the hart. +
 1 (sticky): The per-hart `unavail` bits are sticky. Once they are set,
-they will not clear until the debugger acknowledges them using .
-
+they will not clear until the debugger acknowledges them using <<ackunavail>>.
 |R |Preset
-
-|[#dmDmstatusImpebreak]## \|impebreak\| a|
-If 1, then there is an implicit `ebreak` instruction at the non-existent
+|[[dmDmstatusImpebreak]] `impebreak`
+|If 1, then there is an implicit `ebreak` instruction at the non-existent
 word immediately after the Program Buffer. This saves the debugger from
 having to write the `ebreak` itself, and allows the Program Buffer to be
-one word smaller.
-
-This must be 1 when is 1.
-
+one word smaller. +
+This must be 1 when <<progbufsize>> is 1.
 |R |Preset
-
-|[#dmDmstatusAllhavereset]## \|allhavereset\| |This field is 1 when all
-currently selected harts have been reset and reset has not been
-acknowledged for any of them. |R |-
-
-|[#dmDmstatusAnyhavereset]## \|anyhavereset\| |This field is 1 when at
-least one currently selected hart has been reset and reset has not been
-acknowledged for that hart. |R |-
-
-|[#dmDmstatusAllresumeack]## \|allresumeack\| |This field is 1 when all
-currently selected harts have their resume ack bit set. |R |-
-
-|[#dmDmstatusAnyresumeack]## \|anyresumeack\| |This field is 1 when any
-currently selected hart has its resume ack bit set. |R |-
-
-|[#dmDmstatusAllnonexistent]## \|allnonexistent\| |This field is 1 when
-all currently selected harts do not exist in this hardware platform. |R
-|-
-
-|[#dmDmstatusAnynonexistent]## \|anynonexistent\| |This field is 1 when
-any currently selected hart does not exist in this hardware platform. |R
-|-
-
-|[#dmDmstatusAllunavail]## \|allunavail\| |This field is 1 when all
-currently selected harts are unavailable, or (if is 1) were unavailable
-without that being acknowledged. |R |-
-
-|[#dmDmstatusAnyunavail]## \|anyunavail\| |This field is 1 when any
-currently selected hart is unavailable, or (if is 1) was unavailable
-without that being acknowledged. |R |-
-
-|[#dmDmstatusAllrunning]## \|allrunning\| |This field is 1 when all
-currently selected harts are running. |R |-
-
-|[#dmDmstatusAnyrunning]## \|anyrunning\| |This field is 1 when any
-currently selected hart is running. |R |-
-
-|[#dmDmstatusAllhalted]## \|allhalted\| |This field is 1 when all
-currently selected harts are halted. |R |-
-
-|[#dmDmstatusAnyhalted]## \|anyhalted\| |This field is 1 when any
-currently selected hart is halted. |R |-
-
-|[#dmDmstatusAuthenticated]## \|authenticated\| a|
-0 (false): Authentication is required before using the DM.
-
-1 (true): The authentication check has passed.
-
-On components that don’t implement authentication, this bit must be
+|[[dmDmstatusAllhavereset]] `allhavereset`
+|This field is 1 when all currently selected harts have been reset and reset has not been acknowledged for any of them.
+|R |-
+|[[dmDmstatusAnyhavereset]] `anyhavereset`
+|This field is 1 when at least one currently selected hart has been reset and reset has not been acknowledged for that hart.
+|R |-
+|[[dmDmstatusAllresumeack]] `allresumeack`
+|This field is 1 when all currently selected harts have their resume ack bit set.
+|R |-
+|[[dmDmstatusAnyresumeack]] `anyresumeack`
+|This field is 1 when any currently selected hart has its resume ack bit set.
+|R |-
+|[[dmDmstatusAllnonexistent]] `allnonexistent`
+|This field is 1 when all currently selected harts do not exist in this hardware platform.
+|R|-
+|[[dmDmstatusAnynonexistent]] `anynonexistent`
+|This field is 1 when any currently selected hart does not exist in this hardware platform.
+|R|-
+|[[dmDmstatusAllunavail]] `allunavail`
+|This field is 1 when all currently selected harts are unavailable, or (if <<stickyunavail>> is 1) were unavailable without that being acknowledged.
+|R |-
+|[[dmDmstatusAnyunavail]] `anyunavail`
+|This field is 1 when any currently selected hart is unavailable, or (if <<stickyunavail>> is 1) was unavailable without that being acknowledged.
+|R |-
+|[[dmDmstatusAllrunning]] `allrunning`
+|This field is 1 when all currently selected harts are running.
+|R |-
+|[[dmDmstatusAnyrunning]] `anyrunning`
+|This field is 1 when any currently selected hart is running.
+|R |-
+|[[dmDmstatusAllhalted]] `allhalted`
+|This field is 1 when all currently selected harts are halted.
+|R |-
+|[[dmDmstatusAnyhalted]] `anyhalted`
+|This field is 1 when any currently selected hart is halted.
+|R |-
+|[[dmDmstatusAuthenticated]] `authenticated`
+|0 (false): Authentication is required before using the DM. +
+1 (true): The authentication check has passed. +
+On components that don't implement authentication, this bit must be
 preset as 1.
-
 |R |Preset
-
-|[#dmDmstatusAuthbusy]## \|authbusy\| a|
-0 (ready): The authentication module is ready to process the next
-read/write to .
-
-1 (busy): The authentication module is busy. Accessing results in
-unspecified behavior.
-
-only becomes set in immediate response to an access to .
-
+|[[dmDmstatusAuthbusy]] `authbusy`
+|0 (ready): The authentication module is ready to process the next
+read/write to <<authdata>>. +
+1 (busy): The authentication module is busy. Accessing <<authdata>> results in
+unspecified behavior. +
+<<authbusy>> only becomes set in immediate response to an access to <<authdata>>.
 |R |0
-
-|[#dmDmstatusHasresethaltreq]## \|hasresethaltreq\| |1 if this Debug
-Module supports halt-on-reset functionality controllable by the and
-bits. 0 otherwise. |R |Preset
-
-|[#dmDmstatusConfstrptrvalid]## \|confstrptrvalid\| a|
-0 (invalid): –hold information which is not relevant to the
-configuration structure.
-
-1 (valid): –hold the address of the configuration structure.
-
+|[[dmDmstatusHasresethaltreq]] `hasresethaltreq`
+|1 if this Debug Module supports halt-on-reset functionality controllable by the <<setresethaltreq>> and <<clrresethaltreq>> bits. 0 otherwise.
 |R |Preset
-
-|\|version\| a|
-0 (none): There is no Debug Module present.
-
+|[[dmDmstatusConfstrptrvalid]] `confstrptrvalid`
+|0 (invalid): <<confstrptr0>>-<<confstrptr3>> hold information which is not relevant to the configuration structure. +
+1 (valid): <<confstrptr0>>-<<confstrptr3>> hold the address of the configuration structure.
+|R |Preset
+|`version`
+|0 (none): There is no Debug Module present. +
 1 (0.11): There is a Debug Module and it conforms to version 0.11 of
-this specification.
-
+this specification. +
 2 (0.13): There is a Debug Module and it conforms to version 0.13 of
-this specification.
-
+this specification. +
 3 (1.0): There is a Debug Module and it conforms to version 1.0 of this
-specification.
-
+specification. +
 15 (custom): There is a Debug Module but it does not conform to any
 available version of this spec.
-
 |R |3
 |===
 
