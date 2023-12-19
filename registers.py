@@ -797,6 +797,148 @@ def print_latex_register( registers ):
         print("\\end{register}")
         print()
 
+def remove_indent( text ):
+    return "\n".join( line.lstrip() for line in text.splitlines() )
+
+def print_adoc( registers ):
+    sub = "=" * registers.depth
+    for r in registers.registers:
+        if not r.fields and not r.description:
+            continue
+
+        if r.short:
+            # TODO: Check that (((foo))) renders as ((foo)) inside parens
+            if r.address:
+                print(f"={sub} {r.name} ((({r.short})), at {r.address})")
+            else:
+                print(f"={sub} {r.name} ((({r.short})))")
+            # TODO: confirm that index works
+        else:
+            if r.address:
+                print("={sub} ((`{r.name}`)) (at {r.address})")
+            else:
+                print("={sub} ((`{r.name}`))")
+        print()
+        if r.label and r.define:
+            print("[[%s]]" % toLatexIdentifier(registers.prefix, r.label))
+        print(remove_indent(r.description))
+        print()
+
+        if r.fields:
+            if registers.prefix == "CSR_":
+                if int(r.address, 0) >= 0xc00:
+                    print("This CSR is read-only.")
+                elif all(f.access in ('R', '0') for f in r.fields):
+                    print("Writing this read/write CSR has no effect.")
+                else:
+                    print("This CSR is read/write.")
+            elif all(f.access in ('R', '0') for f in r.fields):
+                print("This entire register is read-only.")
+
+            # todo: use wavedrom to draw the picture
+#            print("\\begin{center}")
+#
+#            totalWidth = sum( ( 3 + f.columnWidth() ) for f in r.fields )
+#            split = int( math.ceil( totalWidth / 80. ) )
+#            fieldsPerSplit = int( math.ceil( float( len( r.fields ) ) / split ) )
+#            subRegisterFields = []
+#            for s in range( split ):
+#                subRegisterFields.append( r.fields[ s*fieldsPerSplit : (s+1)*fieldsPerSplit ] )
+#
+#            for registerFields in subRegisterFields:
+#                tabularCols = ""
+#                for f in registerFields:
+#                    fieldLength = str( f.length() )
+#                    lowLen = float( len( f.lowBit ) )
+#                    highLen = float( len( f.highBit ) )
+#                    tabularCols += "p{%.1f ex}" % ( f.columnWidth() * highLen / ( lowLen + highLen ) )
+#                    tabularCols += "p{%.1f ex}" % ( f.columnWidth() * lowLen / ( lowLen + highLen ) )
+#                print("\\begin{tabular}{%s}" % tabularCols)
+#
+#                first = True
+#                for f in registerFields:
+#                    if not first:
+#                        print("&")
+#                    first = False
+#                    if f.highBit == f.lowBit:
+#                        print("\\multicolumn{2}{c}{\\scriptsize %s}" % f.highBit)
+#                    else:
+#                        print("{\\scriptsize %s} &" % f.highBit)
+#                        print("\\multicolumn{1}{r}{\\scriptsize %s}" % f.lowBit)
+#
+#                # The actual field names
+#                print("\\\\")
+#                print("         \hline")
+#                first = True
+#                for f in registerFields:
+#                    if first:
+#                        cols = "|c|"
+#                    else:
+#                        cols = "c|"
+#                        print("&")
+#                    first = False
+#                    print("\\multicolumn{2}{%s}{$|%s|$}" % ( cols, f.name ))
+#                print("\\\\")
+#                print("         \hline")
+#
+#                # Size of each field in bits
+#                print(" & ".join( "\\multicolumn{2}{c}{\\scriptsize %s}" % f.length() for f in registerFields ))
+#                print("\\\\")
+#
+#                print("   \\end{tabular}")
+#
+#            print("\\end{center}")
+
+        columns = [("3", "Field", lambda f: "((" + f.name + "))")]
+        columns += [("10", "Description", lambda f: f.latex_description())]
+        if not registers.skip_access:
+            columns += [("1", "Access", lambda f: f.access)]
+        if not registers.skip_reset:
+            columns += [("1", "Reset", lambda f: f.reset)]
+
+        if any( f.description for f in r.fields ):
+            #print("\\tabletail{\\hline \\multicolumn{%d}{|r|}" % len(columns))
+            #print("   {{Continued on next page}} \\\\ \\hline}")
+            print('[cols="' + ",".join(c[0] for c in columns) + '",options="header"]')
+            print("|===")
+
+            print("|" + " |".join(c[1] for c in columns))
+
+            for f in r.fields:
+                if f.description or f.values:
+                    print("[[%s]]" % toLatexIdentifier(registers.prefix, r.short or r.label, f.name))
+                    for c in columns:
+                        print("| " + c[2](f))
+
+            print("|===")
+        print()
+
+def print_adoc_index( registers ):
+    print(registers.description)
+
+    columns = [
+        ("Address", "1"),
+        ("Name", "6")]
+    if any(r.sdesc for r in registers.registers):
+        columns.append(("Description", "6"))
+
+    print(f"[[{toLatexIdentifier(registers.prefix, registers.label)}]]")
+    print('[cols="' + ",".join(c[1] for c in columns) + '",options="header"]')
+    print("|===")
+    print("|" + " |".join(c[0] for c in columns))
+
+    for r in sorted( registers.registers,
+            key=cmp_to_key(lambda a, b: compare_address(a.address, b.address))):
+        if r.short:
+            name = "%s (`%s`)" % (r.name, r.short)
+        else:
+            name = r.name
+        if r.sdesc:
+            print("|%s | %s | %s" % ( r.address, name, r.sdesc ))
+        else:
+            print("|%s | %s" % ( r.address, name ))
+    print("|===")
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument( 'path' )
@@ -805,6 +947,8 @@ def main():
             'start/end positions.' )
     parser.add_argument( '--custom', action='store_true',
             help='Use custom LaTeX.' )
+    parser.add_argument( '--adoc', action='store_true',
+            help='Use asciidoc.' )
     parser.add_argument( '--definitions',
             help='Write register style definitions to the named file.' )
     parser.add_argument( '--cheader',
@@ -834,11 +978,16 @@ def main():
     if parsed.chisel:
         write_chisel( open( parsed.chisel, "w" ), registers )
     if not registers.skip_index:
-        print_latex_index( registers )
+        if parsed.adoc:
+            print_adoc_index( registers )
+        else:
+            print_latex_index( registers )
     if parsed.register:
         assert(0)
         print_latex_register( registers )
     if parsed.custom:
         print_latex_custom( registers )
+    if parsed.adoc:
+        print_adoc( registers )
 
 sys.exit( main() )
