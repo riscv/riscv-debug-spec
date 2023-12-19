@@ -1,4 +1,4 @@
-[[dm]]
+[[]]
 == Debug Module (DM) (non-ISA extension)
 
 The Debug Module implements a translation interface between abstract
@@ -43,7 +43,7 @@ Specification", instead of the "RISC-V Debug Specification".
 
 A single DM can debug up to latexmath:[$2^{20}$] harts.
 
-[[dmi]]
+[[i]]
 === Debug Module Interface (DMI)
 
 Debug Modules are subordinates on a bus called the Debug Module
@@ -341,6 +341,7 @@ least-significant word is placed in the lowest-numbered `data` register.
 The argument width depends on the command being executed, and is DXLEN
 where not explicitly specified.
 
+[[datareg]]
 .Use of Data Registers
 [%autowidth,float="center",align="center",cols="^,<,<,<",options="header"]
 |===
@@ -564,7 +565,7 @@ This procedure is guaranteed to work in future versions of this spec.
 The meaning of the <<dmcontrol>> bits where <<hartreset>>, <<hasel>>, <<hartsello>>, and <<hardselhi>> currently reside might change,
 but preserving them will have no side effects. Clearing the bits of <<dmcontrol>> not explicitly mentioned here will have no side effects beyond the ones mentioned above.
 
-[[dmdebbus]]
+[[debbus]]
 === Debug Module Registers
 
 The registers described in this section are accessed over the DMI bus.
@@ -574,7 +575,7 @@ addresses below are offsets from this base address.
 Debug Module DMI Registers that are unimplemented or not mentioned in
 the table below return 0 when read. Writing them has no effect.
 
-[[dm]]
+[[]]
 .Debug Module Debug Bus Registers
 [%autowidth,float="center",align="center",cols=">,<,<",options="header"]
 |===
@@ -654,7 +655,7 @@ the table below return 0 when read. Writing them has no effect.
 |0x7f |Custom Features 15 (`custom15`) |
 |===
 
-==== Debug Module Status ([[dmstatus]]`dmstatus`, at 0x11)
+==== Debug Module Status ([[status]]`dmstatus`, at 0x11)
 
 This register reports status for the overall Debug
 Module as well as the currently selected harts, as defined in <<hasel>>. Its
@@ -664,80 +665,80 @@ This entire register is read-only.
 
 *FIXME: register diagram goes here*
 
-[[dmDmstatusVersion]]
+[[statusVersion]]
 [align="center",float="center",cols="<2,<3,^1,<1",options="header"]
 |===
 |Field |Description |Access |Reset
-|[[dmDmstatusNdmresetpending]] `ndmresetpending`
+|[[statusNdmresetpending]] `ndmresetpending`
 |0 (false): Unimplemented, or <<ndmreset>> is zero and no ndmreset is currently in progress. +
 1 (true): <<ndmreset>> is currently nonzero, or there is an ndmreset in progress.
 |R |-
-|[[dmDmstatusStickyunavail]] `stickyunavail`
+|[[statusStickyunavail]] `stickyunavail`
 |0 (current): The per-hart `unavail` bits reflect the current state of
 the hart. +
 1 (sticky): The per-hart `unavail` bits are sticky. Once they are set,
 they will not clear until the debugger acknowledges them using <<ackunavail>>.
 |R |Preset
-|[[dmDmstatusImpebreak]] `impebreak`
+|[[statusImpebreak]] `impebreak`
 |If 1, then there is an implicit `ebreak` instruction at the non-existent
 word immediately after the Program Buffer. This saves the debugger from
 having to write the `ebreak` itself, and allows the Program Buffer to be
 one word smaller. +
 This must be 1 when <<progbufsize>> is 1.
 |R |Preset
-|[[dmDmstatusAllhavereset]] `allhavereset`
+|[[statusAllhavereset]] `allhavereset`
 |This field is 1 when all currently selected harts have been reset and reset has not been acknowledged for any of them.
 |R |-
-|[[dmDmstatusAnyhavereset]] `anyhavereset`
+|[[statusAnyhavereset]] `anyhavereset`
 |This field is 1 when at least one currently selected hart has been reset and reset has not been acknowledged for that hart.
 |R |-
-|[[dmDmstatusAllresumeack]] `allresumeack`
+|[[statusAllresumeack]] `allresumeack`
 |This field is 1 when all currently selected harts have their resume ack bit set.
 |R |-
-|[[dmDmstatusAnyresumeack]] `anyresumeack`
+|[[statusAnyresumeack]] `anyresumeack`
 |This field is 1 when any currently selected hart has its resume ack bit set.
 |R |-
-|[[dmDmstatusAllnonexistent]] `allnonexistent`
+|[[statusAllnonexistent]] `allnonexistent`
 |This field is 1 when all currently selected harts do not exist in this hardware platform.
 |R|-
-|[[dmDmstatusAnynonexistent]] `anynonexistent`
+|[[statusAnynonexistent]] `anynonexistent`
 |This field is 1 when any currently selected hart does not exist in this hardware platform.
 |R|-
-|[[dmDmstatusAllunavail]] `allunavail`
+|[[statusAllunavail]] `allunavail`
 |This field is 1 when all currently selected harts are unavailable, or (if <<stickyunavail>> is 1) were unavailable without that being acknowledged.
 |R |-
-|[[dmDmstatusAnyunavail]] `anyunavail`
+|[[statusAnyunavail]] `anyunavail`
 |This field is 1 when any currently selected hart is unavailable, or (if <<stickyunavail>> is 1) was unavailable without that being acknowledged.
 |R |-
-|[[dmDmstatusAllrunning]] `allrunning`
+|[[statusAllrunning]] `allrunning`
 |This field is 1 when all currently selected harts are running.
 |R |-
-|[[dmDmstatusAnyrunning]] `anyrunning`
+|[[statusAnyrunning]] `anyrunning`
 |This field is 1 when any currently selected hart is running.
 |R |-
-|[[dmDmstatusAllhalted]] `allhalted`
+|[[statusAllhalted]] `allhalted`
 |This field is 1 when all currently selected harts are halted.
 |R |-
-|[[dmDmstatusAnyhalted]] `anyhalted`
+|[[statusAnyhalted]] `anyhalted`
 |This field is 1 when any currently selected hart is halted.
 |R |-
-|[[dmDmstatusAuthenticated]] `authenticated`
+|[[statusAuthenticated]] `authenticated`
 |0 (false): Authentication is required before using the DM. +
 1 (true): The authentication check has passed. +
 On components that don't implement authentication, this bit must be
 preset as 1.
 |R |Preset
-|[[dmDmstatusAuthbusy]] `authbusy`
+|[[statusAuthbusy]] `authbusy`
 |0 (ready): The authentication module is ready to process the next
 read/write to <<authdata>>. +
 1 (busy): The authentication module is busy. Accessing <<authdata>> results in
 unspecified behavior. +
 <<authbusy>> only becomes set in immediate response to an access to <<authdata>>.
 |R |0
-|[[dmDmstatusHasresethaltreq]] `hasresethaltreq`
+|[[statusHasresethaltreq]] `hasresethaltreq`
 |1 if this Debug Module supports halt-on-reset functionality controllable by the <<setresethaltreq>> and <<clrresethaltreq>> bits. 0 otherwise.
 |R |Preset
-|[[dmDmstatusConfstrptrvalid]] `confstrptrvalid`
+|[[statusConfstrptrvalid]] `confstrptrvalid`
 |0 (invalid): <<confstrptr0>>-<<confstrptr3>> hold information which is not relevant to the configuration structure. +
 1 (valid): <<confstrptr0>>-<<confstrptr3>> hold the address of the configuration structure.
 |R |Preset
@@ -756,7 +757,7 @@ available version of this spec.
 
 ==== Debug Module Control (`dmcontrol`, at 0x10)
 
-[[dmDmcontrol]]
+[[control]]
 This register controls the overall Debug Module as well as the currently selected harts, as defined in <<hasel>>.
 
 [[hartsel]]
@@ -792,25 +793,25 @@ For forward compatibility, <<version>> will always be readable when bit 1 (<<ndm
 
 *FIXME: Register diagram goes here.*
 
-[[dmDmcontrolDmactive]]
+[[controlDmactive]]
 [align="center",float="center",cols="<2,<3,^1,<1",options="header",]
 |===
 |Field |Description |Access |Reset
-|[[dmDmcontrolHaltreq]] `haltreq`
+|[[controlHaltreq]] `haltreq`
 |Writing 0 clears the halt request bit for all currently selected harts.
 This may cancel outstanding halt requests for those harts. +
 Writing 1 sets the halt request bit for all currently selected harts.
 Running harts will halt whenever their halt request bit is set. +
 Writes apply to the new value of <<hartsell>> and <<hasel>>.
 |WARZ |-
-|[[dmDmcontrolResumereq]] `resumereq`
+|[[controlResumereq]] `resumereq`
 |Writing 1 causes the currently selected harts to resume once, if they
 are halted when the write occurs. It also clears the resume ack bit for
 those harts. +
 <<resumereq>> is ignored if <<haltreq>> is set. +
 Writes apply to the new value of <<hartsel>> and >>hasel>>.
 |W1 |-
-|[[dmDmcontrolHartreset]] `hartreset`
+|[[controlHartreset]] `hartreset`
 |This optional field writes the reset bit for all the currently selected
 harts. To perform a reset the debugger writes 1, and then writes 0 to
 deassert the reset signal. +
@@ -821,18 +822,18 @@ writing 1 the debugger can read the register back to see if the feature
 is supported. +
 Writes apply to the new value of <<hartsel>> and <<hasel>>.
 |WARL |0
-|[[dmDmcontrolAckhavereset]] `ackhavereset`
+|[[controlAckhavereset]] `ackhavereset`
 |0 (nop): No effect. +
 1 (ack): Clears `havereset` for any selected harts. +
 Writes apply to the new value of <<hartsel>> and <<hasel>>.
 |W1 |-
-|[[dmDmcontrolAckunavail]] `ackunavail`
+|[[controlAckunavail]] `ackunavail`
 |0 (nop): No effect. +
 1 (ack): Clears `unavail` for any selected harts that are currently
 available. +
 Writes apply to the new value of <<hartsel>> and <<hasel>>.
 |W1 |-
-|[[dmDmcontrolHasel]] `hasel`
+|[[controlHasel]] `hasel`
 |Selects the definition of currently selected harts. +
 0 (single): There is a single currently selected hart, that is selected
 by <<hartsel>>. +
@@ -843,32 +844,32 @@ must tie this field to 0. A debugger which wishes to use the hart array
 mask register feature should set this bit and read back to see if the
 functionality is supported.
 |WARL |0
-|[[dmDmcontrolHartsello]] `hartsello`
+|[[controlHartsello]] `hartsello`
 |The low 10 bits of <<hartsel>>: the DM-specific index of the hart to select. This hart is always part of the currently selected harts. 
 |WARL |0
-|[[dmDmcontrolHartselhi]] `hartselhi`
+|[[controlHartselhi]] `hartselhi`
 |The high 10 bits of <<hartsel>>: the DM-specific index of the hart to  select. This hart is always part of the currently selected harts.
 |WARL |0
-|[[dmDmcontrolSetkeepalive]] `setkeepalive`
+|[[controlSetkeepalive]] `setkeepalive`
 |This optional field sets <<heepalive>> for all currently selected harts, unless <<clrkeepalive>> is simultaneously set to 1. +
 Writes apply to the new value of <<hartsel>> and <<hasel>>.
 |W1 |-
-|[[dmDmcontrolClrkeepalive]] `clrkeepalive`
+|[[controlClrkeepalive]] `clrkeepalive`
 |This optional field clears <<keepalive>> for all currently selected harts. +
 Writes apply to the new value of <<hartsel>> and <<hasel>>.
 |W1 |-
-|[[dmDmcontrolSetresethaltreq]] `setresethaltreq`
+|[[controlSetresethaltreq]] `setresethaltreq`
 |This optional field writes the halt-on-reset request bit for all
 currently selected harts, unless <<clrresethaltreq>> is simultaneously set to 1. When set to 1, each selected hart will halt upon the next deassertion of its reset. The halt-on-reset request bit is not automatically cleared. The debugger must write to <<clrresethaltreq>> to clear it. +
 Writes apply to the new value of <<hartsel>> and <<hasel>>. +
 If <<hasresethaltreq>> is 0, this field is not implemented.
 |W1 |-
-|[[dmDmcontrolClrresethaltreq]] `clrresethaltreq`
+|[[controlClrresethaltreq]] `clrresethaltreq`
 |This optional field clears the halt-on-reset request bit for all
 currently selected harts. +
 Writes apply to the new value of <<hartsel>> and <<hasel>>.
 |W1 |-
-|[[dmDmcontrolNdmreset]] `ndmreset`
+|[[controlNdmreset]] `ndmreset`
 |This bit controls the reset signal from the DM to the rest of the hardware platform. The signal should reset every part of the hardware platform, including every hart,
 except for the DM and any logic required to access the DM. To perform a
 hardware platform reset the debugger writes 1, and then writes 0 to
@@ -896,8 +897,9 @@ debugging is active.
 
 ==== Hart Info (`hartinfo`, at 0x12)
 
-[#dmHartinfo]## This register gives information about the hart currently
-selected by .
+[[Hartinfo]]
+This register gives information about the hart currently
+selected by <<hartsel>>.
 
 This register is optional. If it is not present it should read all-zero.
 
@@ -907,205 +909,129 @@ Buffer by writing programs which explicitly access the `data` and/or
 
 This entire register is read-only.
 
-[cols="<,<,<,<,<,<,<,<,<,<,<,<",options="header",]
-|===
-|31 |24 |23 |20 |19 |17 |16 | |15 |12 |11 |0
-|latexmath:[$|0|$] | |latexmath:[$|nscratch|$] | |latexmath:[$|0|$] |
-|latexmath:[$|dataaccess|$] | |latexmath:[$|datasize|$] |
-|latexmath:[$|dataaddr|$] |
+*FIXME: Register diagram goes here*
 
-|8 | |4 | |3 | |1 | |4 | |12 |
-|===
-
-[[dmHartinfoDataaddr]]
-[cols="<,<,^,<",options="header",]
+[[HartinfoDataaddr]]
+[float="center",align="center",cols="<2,<3,^1,<1",options="header"]
 |===
 |Field |Description |Access |Reset
-|_Continued on next page_ | | |
-
-|[#dmHartinfoNscratch]## \|nscratch\| |Number of `dscratch` registers
-available for the debugger to use during program buffer execution,
-starting from . The debugger can make no assumptions about the contents
-of these registers between commands. |R |Preset
-
-|[#dmHartinfoDataaccess]## \|dataaccess\| a|
-0 (csr): The `data` registers are shadowed in the hart by CSRs. Each CSR
+|[[HartinfoNscratch]] `nscratch`
+|Number of `dscratch` registers available for the debugger to use during program buffer execution, starting from <<dscratch0>>. The debugger can make no assumptions about the contents of these registers between commands.
+|R |Preset
+|[[HartinfoDataaccess]] `dataaccess`
+|0 (csr): The `data` registers are shadowed in the hart by CSRs. Each CSR
 is DXLEN bits in size, and corresponds to a single argument, per
-Table #tab:datareg[[tab:datareg]].
-
+<<datareg>>. +
 1 (memory): The `data` registers are shadowed in the hart's memory map.
 Each register takes up 4 bytes in the memory map.
-
 |R |Preset
-
-|[#dmHartinfoDatasize]## \|datasize\| a|
-If is 0: Number of CSRs dedicated to shadowing the `data` registers.
-
-If is 1: Number of 32-bit words in the memory map dedicated to shadowing
-the `data` registers.
-
+|[[HartinfoDatasize]] `datasize`
+|If <<dataaccess>> is 0: Number of CSRs dedicated to shadowing the `data` registers. +
+If <<dataaccess>> is 1: Number of 32-bit words in the memory map dedicated to shadowing the `data` registers. +
 If this value is non-zero, then the tt data registers must be
 traditional registers and not MRs.
-
 Since there are at most 12 `data` registers, the value in this register
 must be 12 or smaller.
-
 |R |Preset
-
-|\|dataaddr\| a|
-If is 0: The number of the first CSR dedicated to shadowing the `data`
-registers.
-
-If is 1: Address of RAM where the data registers are shadowed. This
-address is sign extended giving a range of -2048 to 2047, easily
+|`dataaddr`
+|If <<dataaccess>> is 0: The number of the first CSR dedicated to shadowing the `data` registers. +
+If <<dataaccess>> is 1: Address of RAM where the data registers are shadowed. This address is sign extended giving a range of -2048 to 2047, easily
 addressed with a load or store using as the address register.
-
 |R |Preset
 |===
 
 ==== Hart Array Window Select (`hawindowsel`, at 0x14)
 
-[#dmHawindowsel]## This register selects which of the 32-bit portion of
-the hart array mask register (see Section link:#hartarraymask[1.3.2]) is
-accessible in .
+[[hawindowsel, hawindowsel]]
+This register selects which of the 32-bit portion of the hart array mask register (see <<hartarraymask>>) is accessible in <<hawindow>>.
 
-[cols="<,<,<,<",options="header",]
-|===
-|31 |15 |14 |0
-|latexmath:[$|0|$] | |latexmath:[$|hawindowsel|$] |
-|17 | |15 |
-|===
+*FIXME: Register diagram goes here*
 
-[[dmHawindowselHawindowsel]]
-[cols="<,<,^,<",options="header",]
+[float="center",align="center",cols="<2,<3,^1,<1",options="header"]
 |===
 |Field |Description |Access |Reset
-|_Continued on next page_ | | |
-
-|\|hawindowsel\| |The high bits of this field may be tied to 0,
-depending on how large the array mask register is. E.g. on a hardware
-platform with 48 harts only bit 0 of this field may actually be
-writable. |WARL |0
+|`hawindowsel`
+|The high bits of this field may be tied to 0, depending on how large the array mask register is. E.g. on a hardware platform with 48 harts only bit 0 of this field may actually be writable. 
+|WARL |0
 |===
 
 ==== Hart Array Window (`hawindow`, at 0x15)
 
-[#dmHawindow]## This register provides R/W access to a 32-bit portion of
-the hart array mask register (see Section link:#hartarraymask[1.3.2]).
-The position of the window is determined by . I.e. bit 0 refers to hart
-latexmath:[$\RdmHawindowsel * 32$], while bit 31 refers to hart
-latexmath:[$\RdmHawindowsel * 32 + 31$].
+[[hawindow, hawindow]]
+This register provides R/W access to a 32-bit portion of
+the hart array mask register (see <<hartarraymask>>).
+The position of the window is determined by <<hawindowsel>>. I.e. bit 0 refers to hart latexmath:[$\hawindowsel * 32$], while bit 31 refers to hart
+latexmath:[$\hawindowsel * 32 + 31$].
 
 Since some bits in the hart array mask register may be constant 0, some
 bits in this register may be constant 0, depending on the current value
-of .
+of <<hawindowsel>>.
 
-[cols="<,<",options="header",]
-|===
-|31 |0
-|latexmath:[$|maskdata|$] |
-|32 |
-|===
+*FIXME: Register diagram goes here.*
 
 ==== Abstract Control and Status (`abstractcs`, at 0x16)
 
-[#dmAbstractcs]## Writing this register while an abstract command is
-executing causes to become 1 (busy) once the command completes (busy
+[[abstractcs, abstractcs]]
+Writing this register while an abstract command is executing causes <<cmderr>> to become 1 (busy) once the command completes (busy
 becomes 0).
 
-must be at least 1 to support RV32 harts, 2 to support RV64 harts, or 4
-to support RV128 harts.
+[NOTE]
+====
+<<datacount>> must be at least 1 to support RV32 harts, 2 to support RV64 harts, or 4 to support RV128 harts.
+====
+*FIXME: Register diagram goes here.*
 
-[cols="<,<,<,<,<,<,<,<",options="header",]
-|===
-|31 |29 |28 |24 |23 |13 |12 |
-|latexmath:[$|0|$] | |latexmath:[$|progbufsize|$] | |latexmath:[$|0|$] |
-|latexmath:[$|busy|$] |
-
-|3 | |5 | |11 | |1 |
-|===
-
-[cols="<,<,<,<,<,<,<,<",options="header",]
-|===
-|11 | |10 |8 |7 |4 |3 |0
-|latexmath:[$|relaxedpriv|$] | |latexmath:[$|cmderr|$] |
-|latexmath:[$|0|$] | |latexmath:[$|datacount|$] |
-
-|1 | |3 | |4 | |4 |
-|===
-
-[[dmAbstractcsDatacount]]
-[cols="<,<,^,<",options="header",]
+[[abstractcsdatacount, abstractdatacount]]
+[align="center",float="center",cols="<2,<3,^1,^1",options="header"]
 |===
 |Field |Description |Access |Reset
-|_Continued on next page_ | | |
-
-|[#dmAbstractcsProgbufsize]## \|progbufsize\| |Size of the Program
-Buffer, in 32-bit words. Valid sizes are 0 - 16. |R |Preset
-
-|[#dmAbstractcsBusy]## \|busy\| a|
-0 (ready): There is no abstract command currently being executed.
-
-1 (busy): An abstract command is currently being executed.
-
-This bit is set as soon as is written, and is not cleared until that
-command has completed.
-
+|[[abstractcsprogbufsize]] `progbufsize`
+|Size of the Program Buffer, in 32-bit words. Valid sizes are 0 - 16.
+|R |Preset
+|[[abstractcsbusy]] `busy` 
+|0 (ready): There is no abstract command currently being executed. +
+1 (busy): An abstract command is currently being executed. +
+This bit is set as soon as <<command>> is written, and is not cleared until that command has completed.
 |R |0
-
-|[#dmAbstractcsRelaxedpriv]## \|relaxedpriv\| a|
-This optional bit controls whether program buffer and abstract memory
+|[[abstractcsrelaxedpriv]] `relaxedpriv` 
+|This optional bit controls whether program buffer and abstract memory
 accesses are performed with the exact and full set of permission checks
 that apply based on the current architectural state of the hart
 performing the access, or with a relaxed set of permission checks (e.g.
 PMP restrictions are ignored). The details of the latter are
-implementation-specific.
-
-0 (full checks): Full permission checks apply.
-
+implementation-specific. +
+0 (full checks): Full permission checks apply. +
 1 (relaxed checks): Relaxed permission checks apply.
-
 |WARL |Preset
-
-|[#dmAbstractcsCmderr]## \|cmderr\| a|
-Gets set if an abstract command fails. The bits in this field remain set
+|[[abstractcscmderr]] `cmderr` 
+|Gets set if an abstract command fails. The bits in this field remain set
 until they are cleared by writing 1 to them. No abstract command is
-started until the value is reset to 0.
-
-This field only contains a valid value if is 0.
-
-0 (none): No error.
-
-1 (busy): An abstract command was executing while , , or was written, or
+started until the value is reset to 0. +
+This field only contains a valid value if <<busy>> is 0. +
+0 (none): No error. +
+1 (busy): An abstract command was executing while <<command>>, <<abstractcs>>, or <<abstractauto>> was written, or
 when one of the `data` or `progbuf` registers was read or written. This
-status is only written if contains 0.
-
-2 (not supported): The command in is not supported. It may be supported
+status is only written if <<cmderr>> contains 0. +
+2 (not supported): The command in <<command>> is not supported. It may be supported
 with different options set, but it will not be supported at a later time
-when the hart or system state are different.
-
+when the hart or system state are different. +
 3 (exception): An exception occurred while executing the command
-(e.g. while executing the Program Buffer).
-
-4 (halt/resume): The abstract command couldn’t execute because the hart
-wasn’t in the required state (running/halted), or unavailable.
-
-5 (bus): The abstract command failed due to a bus error (e.g. alignment,
-access size, or timeout).
-
-6 (reserved): Reserved for future use.
-
+(e.g. while executing the Program Buffer). +
+4 (halt/resume): The abstract command couldn't execute because the hart
+wasn't in the required state (running/halted), or unavailable. +
+5 (bus): The abstract command failed due to a bus error (e.g. alignment,
+access size, or timeout). +
+6 (reserved): Reserved for future use. +
 7 (other): The command failed for another reason.
-
 |R/W1C |0
-
-|\|datacount\| |Number of `data` registers that are implemented as part
-of the abstract command interface. Valid sizes are 1 – 12. |R |Preset
+|`datacount` |Number of `data` registers that are implemented as part
+of the abstract command interface. Valid sizes are 1 - 12.
+|R |Preset
 |===
 
 ==== Abstract Command (`command`, at 0x17)
 
-[#dmCommand]## Writes to this register cause the corresponding abstract
+[Command]## Writes to this register cause the corresponding abstract
 command to be executed.
 
 Writing this register while an abstract command is executing causes to
@@ -1126,22 +1052,22 @@ might have depended on the previous one succeeding) passed.
 |8 | |24 |
 |===
 
-[[dmCommandControl]]
+[[CommandControl]]
 [cols="<,<,^,<",options="header",]
 |===
 |Field |Description |Access |Reset
 |_Continued on next page_ | | |
 
-|[#dmCommandCmdtype]## \|cmdtype\| |The type determines the overall
+|[CommandCmdtype] `cmdtype` |The type determines the overall
 functionality of this abstract command. |WARZ |0
 
-|\|control\| |This field is interpreted in a command-specific manner,
+|`control` |This field is interpreted in a command-specific manner,
 described for each abstract command. |WARZ |0
 |===
 
 ==== Abstract Command Autoexec (`abstractauto`, at 0x18)
 
-[#dmAbstractauto]## This register is optional. Including it allows more
+[Abstractauto]## This register is optional. Including it allows more
 efficient burst accesses. A debugger can detect whether it is supported
 by setting bits and reading them back.
 
@@ -1162,18 +1088,18 @@ the write is ignored and becomes 1 (busy) once the command completes
 |16 | |4 | |12 |
 |===
 
-[[dmAbstractautoAutoexecdata]]
+[[AbstractautoAutoexecdata]]
 [cols="<,<,^,<",options="header",]
 |===
 |Field |Description |Access |Reset
 |_Continued on next page_ | | |
 
-|[#dmAbstractautoAutoexecprogbuf]## \|autoexecprogbuf\| |When a bit in
+|[AbstractautoAutoexecprogbuf] `autoexecprogbuf` |When a bit in
 this field is 1, read or write accesses to the corresponding `progbuf`
 word cause the DM to act as if the current value in was written there
 again after the access to `progbuf` completes. |WARL |0
 
-|\|autoexecdata\| |When a bit in this field is 1, read or write accesses
+|`autoexecdata` |When a bit in this field is 1, read or write accesses
 to the corresponding `data` word cause the DM to act as if the current
 value in was written there again after the access to `data` completes.
 |WARL |0
@@ -1181,7 +1107,7 @@ value in was written there again after the access to `data` completes.
 
 ==== Configuration Structure Pointer 0 (`confstrptr0`, at 0x19)
 
-[#dmConfstrptrZero]## When is set, reading this register returns bits
+[ConfstrptrZero]## When is set, reading this register returns bits
 31:0 of the configuration structure pointer. Reading the other
 `confstrptr` registers returns the upper bits of the address.
 
@@ -1208,7 +1134,7 @@ This entire register is read-only.
 
 ==== Configuration Structure Pointer 1 (`confstrptr1`, at 0x1a)
 
-[#dmConfstrptrOne]## When is set, reading this register returns bits
+[ConfstrptrOne]## When is set, reading this register returns bits
 63:32 of the configuration structure pointer. See for more details.
 
 This entire register is read-only.
@@ -1222,7 +1148,7 @@ This entire register is read-only.
 
 ==== Configuration Structure Pointer 2 (`confstrptr2`, at 0x1b)
 
-[#dmConfstrptrTwo]## When is set, reading this register returns bits
+[ConfstrptrTwo]## When is set, reading this register returns bits
 95:64 of the configuration structure pointer. See for more details.
 
 This entire register is read-only.
@@ -1236,7 +1162,7 @@ This entire register is read-only.
 
 ==== Configuration Structure Pointer 3 (`confstrptr3`, at 0x1c)
 
-[#dmConfstrptrThree]## When is set, reading this register returns bits
+[ConfstrptrThree]## When is set, reading this register returns bits
 127:96 of the configuration structure pointer. See for more details.
 
 This entire register is read-only.
@@ -1250,7 +1176,7 @@ This entire register is read-only.
 
 ==== Next Debug Module (`nextdm`, at 0x1d)
 
-[#dmNextdm]## If there is more than one DM accessible on this DMI, this
+[Nextdm]## If there is more than one DM accessible on this DMI, this
 register contains the base address of the next one in the chain, or 0 if
 this is the last one in the chain.
 
@@ -1265,7 +1191,7 @@ This entire register is read-only.
 
 ==== Abstract Data 0 (`data0`, at 0x04)
 
-[#dmDataZero]## through may be Message Registers, whose behavior is
+[DataZero]## through may be Message Registers, whose behavior is
 described in Section #sec:mr[[sec:mr]]. These registers may be read or
 changed by abstract commands. indicates how many of them are
 implemented, starting at , counting up.
@@ -1291,7 +1217,7 @@ can be made about the contents of these registers.
 
 ==== Program Buffer 0 (`progbuf0`, at 0x20)
 
-[#dmProgbufZero]## through must provide write access to the optional
+[ProgbufZero]## through must provide write access to the optional
 program buffer. It may also be possible for the debugger to read from
 the program buffer through these registers. If reading is not supported,
 then all reads return 0.
@@ -1313,7 +1239,7 @@ Attempts to write them while is set does not change their value.
 
 ==== Authentication Data (`authdata`, at 0x30)
 
-[#dmAuthdata]## This register serves as a 32-bit serial port to/from the
+[Authdata]## This register serves as a 32-bit serial port to/from the
 authentication module.
 
 When is clear, the debugger can communicate with the authentication
@@ -1329,7 +1255,7 @@ mechanism to signal overflow/underflow.
 
 ==== Debug Module Control and Status 2 (`dmcs2`, at 0x32)
 
-[#dmDmcsTwo]## This register contains DM control and status bits that
+[DmcsTwo]## This register contains DM control and status bits that
 didn’t easily fit in and . All are optional.
 
 If halt groups are not implemented, then will always be 0 when is 0.
@@ -1351,13 +1277,13 @@ groups.
 |20 | |1 | |4 | |5 | |1 | |1 |
 |===
 
-[[dmDmcsTwoHgselect]]
+[[csTwoHgselect]]
 [cols="<,<,^,<",options="header",]
 |===
 |Field |Description |Access |Reset
 |_Continued on next page_ | | |
 
-|[#dmDmcsTwoGrouptype]## \|grouptype\| a|
+|[DmcsTwoGrouptype] `grouptype` a|
 0 (halt): The remaining fields in this register configure halt groups.
 
 1 (resume): The remaining fields in this register configure resume
@@ -1365,7 +1291,7 @@ groups.
 
 |WARL |0
 
-|[#dmDmcsTwoDmexttrigger]## \|dmexttrigger\| a|
+|[DmcsTwoDmexttrigger] `dmexttrigger` a|
 This field contains the currently selected DM external trigger.
 
 If a non-existent trigger value is written here, the hardware will
@@ -1373,7 +1299,7 @@ change it to a valid one or 0 if no DM external triggers exist.
 
 |WARL |0
 
-|[#dmDmcsTwoGroup]## \|group\| a|
+|[DmcsTwoGroup] `group` a|
 When is 0, contains the group of the hart specified by .
 
 When is 1, contains the group of the DM external trigger selected by .
@@ -1389,7 +1315,7 @@ If groups aren’t implemented, then this entire field is 0.
 
 |WARL |preset
 
-|[#dmDmcsTwoHgwrite]## \|hgwrite\| a|
+|[DmcsTwoHgwrite] `hgwrite` a|
 When 1 is written and is 0, for every selected hart the DM will change
 its group to the value written to , if the hardware supports that group
 for that hart. Implementations may also change the group of a minimal
@@ -1404,7 +1330,7 @@ Writing 0 has no effect.
 
 |W1 |-
 
-|\|hgselect\| a|
+|`hgselect` a|
 0 (harts): Operate on harts.
 
 1 (triggers): Operate on DM external triggers.
@@ -1416,7 +1342,7 @@ If there are no DM external triggers, this field must be tied to 0.
 
 ==== Halt Summary 0 (`haltsum0`, at 0x40)
 
-[#dmHaltsumZero]## Each bit in this read-only register indicates whether
+[HaltsumZero]## Each bit in this read-only register indicates whether
 one specific hart is halted or not. Unavailable/nonexistent harts are
 not considered to be halted.
 
@@ -1437,7 +1363,7 @@ This entire register is read-only.
 
 ==== Halt Summary 1 (`haltsum1`, at 0x13)
 
-[#dmHaltsumOne]## Each bit in this read-only register indicates whether
+[HaltsumOne]## Each bit in this read-only register indicates whether
 any of a group of harts is halted or not. Unavailable/nonexistent harts
 are not considered to be halted.
 
@@ -1459,7 +1385,7 @@ This entire register is read-only.
 
 ==== Halt Summary 2 (`haltsum2`, at 0x34)
 
-[#dmHaltsumTwo]## Each bit in this read-only register indicates whether
+[HaltsumTwo]## Each bit in this read-only register indicates whether
 any of a group of harts is halted or not. Unavailable/nonexistent harts
 are not considered to be halted.
 
@@ -1481,7 +1407,7 @@ This entire register is read-only.
 
 ==== Halt Summary 3 (`haltsum3`, at 0x35)
 
-[#dmHaltsumThree]## Each bit in this read-only register indicates
+[HaltsumThree]## Each bit in this read-only register indicates
 whether any of a group of harts is halted or not.
 Unavailable/nonexistent harts are not considered to be halted.
 
@@ -1502,7 +1428,7 @@ This entire register is read-only.
 
 ==== System Bus Access Control and Status (`sbcs`, at 0x38)
 
-[#dmSbcs]##
+[Sbcs]##
 
 [cols="<,<,<,<,<,<,<,<,<,<",options="header",]
 |===
@@ -1534,13 +1460,13 @@ This entire register is read-only.
 |1 | |1 | |1 | |1 | |1 |
 |===
 
-[[dmSbcsSbaccessEight]]
+[[SbcsSbaccessEight]]
 [cols="<,<,^,<",options="header",]
 |===
 |Field |Description |Access |Reset
 |_Continued on next page_ | | |
 
-|[#dmSbcsSbversion]## \|sbversion\| a|
+|[SbcsSbversion] `sbversion` a|
 0 (legacy): The System Bus interface conforms to mainline drafts of this
 spec older than 1 January, 2018.
 
@@ -1550,7 +1476,7 @@ Other values are reserved for future versions.
 
 |R |1
 
-|[#dmSbcsSbbusyerror]## \|sbbusyerror\| a|
+|[SbcsSbbusyerror] `sbbusyerror` a|
 Set when the debugger attempts to read data while a read is in progress,
 or when the debugger initiates a new access while one is already in
 progress (while is set). It remains set until it’s explicitly cleared by
@@ -1561,7 +1487,7 @@ the Debug Module.
 
 |R/W1C |0
 
-|[#dmSbcsSbbusy]## \|sbbusy\| a|
+|[SbcsSbbusy] `sbbusy` a|
 When 1, indicates the system bus manager is busy. (Whether the system
 bus itself is busy is related, but not the same thing.) This bit goes
 high immediately when a read or write is requested for any reason, and
@@ -1572,10 +1498,10 @@ not write to until it reads as 0.
 
 |R |0
 
-|[#dmSbcsSbreadonaddr]## \|sbreadonaddr\| |When 1, every write to
+|[SbcsSbreadonaddr] `sbreadonaddr` |When 1, every write to
 automatically triggers a system bus read at the new address. |R/W |0
 
-|[#dmSbcsSbaccess]## \|sbaccess\| a|
+|[SbcsSbaccess] `sbaccess` a|
 Select the access size to use for system bus accesses.
 
 0 (8bit): 8-bit
@@ -1593,15 +1519,15 @@ is not performed and is set to 4.
 
 |R/W |2
 
-|[#dmSbcsSbautoincrement]## \|sbautoincrement\| |When 1, `sbaddress` is
+|[SbcsSbautoincrement] `sbautoincrement` |When 1, `sbaddress` is
 incremented by the access size (in bytes) selected in after every system
 bus access. |R/W |0
 
-|[#dmSbcsSbreadondata]## \|sbreadondata\| |When 1, every read from
+|[SbcsSbreadondata] `sbreadondata` |When 1, every read from
 automatically triggers a system bus read at the (possibly
 auto-incremented) address. |R/W |0
 
-|[#dmSbcsSberror]## \|sberror\| a|
+|[SbcsSberror] `sberror` a|
 When the Debug Module’s system bus manager encounters an error, this
 field gets set. The bits in this field remain set until they are cleared
 by writing 1 to them. While this field is non-zero, no more system bus
@@ -1623,28 +1549,28 @@ An implementation may report ``Other'' (7) for any error condition.
 
 |R/W1C |0
 
-|[#dmSbcsSbasize]## \|sbasize\| |Width of system bus addresses in bits.
+|[SbcsSbasize] `sbasize` |Width of system bus addresses in bits.
 (0 indicates there is no bus access support.) |R |Preset
 
-|[#dmSbcsSbaccessOneTwentyeight]## \|sbaccess128\| |1 when 128-bit
+|[SbcsSbaccessOneTwentyeight] `sbaccess128` |1 when 128-bit
 system bus accesses are supported. |R |Preset
 
-|[#dmSbcsSbaccessSixtyfour]## \|sbaccess64\| |1 when 64-bit system bus
+|[SbcsSbaccessSixtyfour] `sbaccess64` |1 when 64-bit system bus
 accesses are supported. |R |Preset
 
-|[#dmSbcsSbaccessThirtytwo]## \|sbaccess32\| |1 when 32-bit system bus
+|[SbcsSbaccessThirtytwo] `sbaccess32` |1 when 32-bit system bus
 accesses are supported. |R |Preset
 
-|[#dmSbcsSbaccessSixteen]## \|sbaccess16\| |1 when 16-bit system bus
+|[SbcsSbaccessSixteen] `sbaccess16` |1 when 16-bit system bus
 accesses are supported. |R |Preset
 
-|\|sbaccess8\| |1 when 8-bit system bus accesses are supported. |R
+|`sbaccess8` |1 when 8-bit system bus accesses are supported. |R
 |Preset
 |===
 
 ==== System Bus Address 31:0 (`sbaddress0`, at 0x39)
 
-[#dmSbaddressZero]## If is 0, then this register is not present.
+[SbaddressZero]## If is 0, then this register is not present.
 
 When the system bus manager is busy, writes to this register will set
 and don’t do anything else.
@@ -1667,19 +1593,19 @@ Clear .
 |32 |
 |===
 
-[[dmSbaddressZeroAddress]]
+[[SbaddressZeroAddress]]
 [cols="<,<,^,<",options="header",]
 |===
 |Field |Description |Access |Reset
 |_Continued on next page_ | | |
 
-|\|address\| |Accesses bits 31:0 of the physical address in `sbaddress`.
+|`address` |Accesses bits 31:0 of the physical address in `sbaddress`.
 |R/W |0
 |===
 
 ==== System Bus Address 63:32 (`sbaddress1`, at 0x3a)
 
-[#dmSbaddressOne]## If is less than 33, then this register is not
+[SbaddressOne]## If is less than 33, then this register is not
 present.
 
 When the system bus manager is busy, writes to this register will set
@@ -1692,19 +1618,19 @@ and don’t do anything else.
 |32 |
 |===
 
-[[dmSbaddressOneAddress]]
+[[SbaddressOneAddress]]
 [cols="<,<,^,<",options="header",]
 |===
 |Field |Description |Access |Reset
 |_Continued on next page_ | | |
 
-|\|address\| |Accesses bits 63:32 of the physical address in `sbaddress`
+|`address` |Accesses bits 63:32 of the physical address in `sbaddress`
 (if the system address bus is that wide). |R/W |0
 |===
 
 ==== System Bus Address 95:64 (`sbaddress2`, at 0x3b)
 
-[#dmSbaddressTwo]## If is less than 65, then this register is not
+[SbaddressTwo]## If is less than 65, then this register is not
 present.
 
 When the system bus manager is busy, writes to this register will set
@@ -1717,19 +1643,19 @@ and don’t do anything else.
 |32 |
 |===
 
-[[dmSbaddressTwoAddress]]
+[[SbaddressTwoAddress]]
 [cols="<,<,^,<",options="header",]
 |===
 |Field |Description |Access |Reset
 |_Continued on next page_ | | |
 
-|\|address\| |Accesses bits 95:64 of the physical address in `sbaddress`
+|`address` |Accesses bits 95:64 of the physical address in `sbaddress`
 (if the system address bus is that wide). |R/W |0
 |===
 
 ==== System Bus Address 127:96 (`sbaddress3`, at 0x37)
 
-[#dmSbaddressThree]## If is less than 97, then this register is not
+[SbaddressThree]## If is less than 97, then this register is not
 present.
 
 When the system bus manager is busy, writes to this register will set
@@ -1742,19 +1668,19 @@ and don’t do anything else.
 |32 |
 |===
 
-[[dmSbaddressThreeAddress]]
+[[SbaddressThreeAddress]]
 [cols="<,<,^,<",options="header",]
 |===
 |Field |Description |Access |Reset
 |_Continued on next page_ | | |
 
-|\|address\| |Accesses bits 127:96 of the physical address in
+|`address` |Accesses bits 127:96 of the physical address in
 `sbaddress` (if the system address bus is that wide). |R/W |0
 |===
 
 ==== System Bus Data 31:0 (`sbdata0`, at 0x3c)
 
-[#dmSbdataZero]## If all of the `sbaccess` bits in are 0, then this
+[SbdataZero]## If all of the `sbaccess` bits in are 0, then this
 register is not present.
 
 Any successful system bus read updates `sbdata`. If the width of the
@@ -1802,17 +1728,17 @@ should access after accessing the other ` sbdata` registers.
 |32 |
 |===
 
-[[dmSbdataZeroData]]
+[[SbdataZeroData]]
 [cols="<,<,^,<",options="header",]
 |===
 |Field |Description |Access |Reset
 |_Continued on next page_ | | |
-|\|data\| |Accesses bits 31:0 of `sbdata`. |R/W |0
+|`data` |Accesses bits 31:0 of `sbdata`. |R/W |0
 |===
 
 ==== System Bus Data 63:32 (`sbdata1`, at 0x3d)
 
-[#dmSbdataOne]## If and are 0, then this register is not present.
+[SbdataOne]## If and are 0, then this register is not present.
 
 If the bus manager is busy then accesses set , and don’t do anything
 else.
@@ -1824,19 +1750,19 @@ else.
 |32 |
 |===
 
-[[dmSbdataOneData]]
+[[SbdataOneData]]
 [cols="<,<,^,<",options="header",]
 |===
 |Field |Description |Access |Reset
 |_Continued on next page_ | | |
 
-|\|data\| |Accesses bits 63:32 of `sbdata` (if the system bus is that
+|`data` |Accesses bits 63:32 of `sbdata` (if the system bus is that
 wide). |R/W |0
 |===
 
 ==== System Bus Data 95:64 (`sbdata2`, at 0x3e)
 
-[#dmSbdataTwo]## This register only exists if is 1.
+[SbdataTwo]## This register only exists if is 1.
 
 If the bus manager is busy then accesses set , and don’t do anything
 else.
@@ -1848,19 +1774,19 @@ else.
 |32 |
 |===
 
-[[dmSbdataTwoData]]
+[[SbdataTwoData]]
 [cols="<,<,^,<",options="header",]
 |===
 |Field |Description |Access |Reset
 |_Continued on next page_ | | |
 
-|\|data\| |Accesses bits 95:64 of `sbdata` (if the system bus is that
+|`data` |Accesses bits 95:64 of `sbdata` (if the system bus is that
 wide). |R/W |0
 |===
 
 ==== System Bus Data 127:96 (`sbdata3`, at 0x3f)
 
-[#dmSbdataThree]## This register only exists if is 1.
+[SbdataThree]## This register only exists if is 1.
 
 If the bus manager is busy then accesses set , and don’t do anything
 else.
@@ -1872,23 +1798,23 @@ else.
 |32 |
 |===
 
-[[dmSbdataThreeData]]
+[[SbdataThreeData]]
 [cols="<,<,^,<",options="header",]
 |===
 |Field |Description |Access |Reset
 |_Continued on next page_ | | |
 
-|\|data\| |Accesses bits 127:96 of `sbdata` (if the system bus is that
+|`data` |Accesses bits 127:96 of `sbdata` (if the system bus is that
 wide). |R/W |0
 |===
 
 ==== Custom Features (`custom`, at 0x1f)
 
-[#dmCustom]## This optional register may be used for non-standard
+[Custom]## This optional register may be used for non-standard
 features. Future version of the debug spec will not use this address.
 
 ==== Custom Features 0 (`custom0`, at 0x70)
 
-[#dmCustomZero]## The optional through registers may be used for
+[CustomZero]## The optional through registers may be used for
 non-standard features. Future versions of the debug spec will not use
 these addresses.
