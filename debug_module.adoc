@@ -662,7 +662,7 @@ address will not change in the future, because it contains <<version>>.
 
 This entire register is read-only.
 
-//register diagram goes here
+*FIXME: register diagram goes here*
 
 [[dmDmstatusVersion]]
 [align="center",float="center",cols="<2,<3,^1,<1",options="header"]
@@ -756,64 +756,41 @@ available version of this spec.
 
 ==== Debug Module Control (`dmcontrol`, at 0x10)
 
-[#dmDmcontrol]## This register controls the overall Debug Module as well
-as the currently selected harts, as defined in .
+[[dmDmcontrol]]
+This register controls the overall Debug Module as well as the currently selected harts, as defined in <<hasel>>.
 
-[#hartsel]## Throughout this document we refer to , which is combined
-with . While the spec allows for 20 bits, an implementation may choose
-to implement fewer than that. The actual width of is called
+[[hartsel]]
+Throughout this document we refer to <<hartsel>>, which is <<hartselhi>> combined with <<hartsello>>. While the spec allows for 20 <<hartsel>> bits, an implementation may choose
+to implement fewer than that. The actual width of <<hartsel>> is called
 `HARTSELLEN`. It must be at least 0 and at most 20. A debugger should
-discover `HARTSELLEN` by writing all ones to (assuming the maximum size)
+discover `HARTSELLEN` by writing all ones to <<hartsel>> (assuming the maximum size)
 and reading back the value to see which bits were actually set.
-Debuggers must not change while an abstract command is executing.
+Debuggers must not change <<hartsel>> while an abstract command is executing.
 
-There are separate and bits so that it is possible to write without
+[NOTE]
+====
+There are separate <<setresethaltreq>> and <<clrresethaltreq>> bits so that it is possible to write <<dmcontroll>> without
 changing the halt-on-reset request bit for each selected hart, when not
 all selected harts have the same configuration.
+====
 
 On any given write, a debugger may only write 1 to at most one of the
-following bits: , , , , and . The others must be written 0.
+following bits: <<resumereq>>, <<hartreset>>, <<ackhavereset>>, <<setresethaltreq>>, and <<clrresethaltreq>>. The others must be written 0.
 
-[#resethaltreq]## is an optional internal bit of per-hart state that
-cannot be read, but can be written with and .
+[[resethaltreq]]
+<<resethaltreq>> is an optional internal bit of per-hart state that
+cannot be read, but can be written with <<setresethaltreq>> and <<clrresethaltreq>>.
 
-[#keepalive]## is an optional internal bit of per-hart state. When it is
+[[keepalive]]
+<<heepalive>> is an optional internal bit of per-hart state. When it is
 set, it suggests that the hardware should attempt to keep the hart
 available for the debugger, e.g. by keeping it from entering a low-power
 state once powered on. Even if the bit is implemented, hardware might
-not be able to keep a hart available. The bit is written through and .
+not be able to keep a hart available. The bit is written through <<setkeepalive>> and <<clrkeepalive>>.
 
-For forward compatibility, will always be readable when bit 1 () is 0
-and bit 0 () is 1.
+For forward compatibility, <<version>> will always be readable when bit 1 (<<ndmreset>>) is 0 and bit 0 (<<dmactive>>) is 1.
 
-[cols="<,<,<,<,<,<,<,<,<,<",options="header",]
-|===
-|31 | |30 | |29 | |28 | |27 |
-|latexmath:[$|haltreq|$] | |latexmath:[$|resumereq|$] |
-|latexmath:[$|hartreset|$] | |latexmath:[$|ackhavereset|$] |
-|latexmath:[$|ackunavail|$] |
-
-|1 | |1 | |1 | |1 | |1 |
-|===
-
-[cols="<,<,<,<,<,<,<,<,<,<",options="header",]
-|===
-|26 | |25 |16 |15 |6 |5 | |4 |
-|latexmath:[$|hasel|$] | |latexmath:[$|hartsello|$] |
-|latexmath:[$|hartselhi|$] | |latexmath:[$|setkeepalive|$] |
-|latexmath:[$|clrkeepalive|$] |
-
-|1 | |10 | |10 | |1 | |1 |
-|===
-
-[cols="<,<,<,<,<,<,<,<",options="header",]
-|===
-|3 | |2 | |1 | |0 |
-|latexmath:[$|setresethaltreq|$] | |latexmath:[$|clrresethaltreq|$] |
-|latexmath:[$|ndmreset|$] | |latexmath:[$|dmactive|$] |
-
-|1 | |1 | |1 | |1 |
-|===
+*FIXME: Register diagram goes here.*
 
 [[dmDmcontrolDmactive]]
 [cols="<,<,^,<",options="header",]
