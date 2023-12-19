@@ -793,160 +793,104 @@ For forward compatibility, <<version>> will always be readable when bit 1 (<<ndm
 *FIXME: Register diagram goes here.*
 
 [[dmDmcontrolDmactive]]
-[cols="<,<,^,<",options="header",]
+[align="center",float="center",cols="<2,<3,^1,<1",options="header",]
 |===
 |Field |Description |Access |Reset
-|_Continued on next page_ | | |
-
-|[#dmDmcontrolHaltreq]## \|haltreq\| a|
-Writing 0 clears the halt request bit for all currently selected harts.
-This may cancel outstanding halt requests for those harts.
-
+|[[dmDmcontrolHaltreq]] `haltreq`
+|Writing 0 clears the halt request bit for all currently selected harts.
+This may cancel outstanding halt requests for those harts. +
 Writing 1 sets the halt request bit for all currently selected harts.
-Running harts will halt whenever their halt request bit is set.
-
-Writes apply to the new value of and .
-
+Running harts will halt whenever their halt request bit is set. +
+Writes apply to the new value of <<hartsell>> and <<hasel>>.
 |WARZ |-
-
-|[#dmDmcontrolResumereq]## \|resumereq\| a|
-Writing 1 causes the currently selected harts to resume once, if they
+|[[dmDmcontrolResumereq]] `resumereq`
+|Writing 1 causes the currently selected harts to resume once, if they
 are halted when the write occurs. It also clears the resume ack bit for
-those harts.
-
-is ignored if is set.
-
-Writes apply to the new value of and .
-
+those harts. +
+<<resumereq>> is ignored if <<haltreq>> is set. +
+Writes apply to the new value of <<hartsel>> and >>hasel>>.
 |W1 |-
-
-|[#dmDmcontrolHartreset]## \|hartreset\| a|
-This optional field writes the reset bit for all the currently selected
+|[[dmDmcontrolHartreset]] `hartreset`
+|This optional field writes the reset bit for all the currently selected
 harts. To perform a reset the debugger writes 1, and then writes 0 to
-deassert the reset signal.
-
+deassert the reset signal. +
 While this bit is 1, the debugger must not change which harts are
-selected.
-
+selected. +
 If this feature is not implemented, the bit always stays 0, so after
 writing 1 the debugger can read the register back to see if the feature
-is supported.
-
-Writes apply to the new value of and .
-
+is supported. +
+Writes apply to the new value of <<hartsel>> and <<hasel>>.
 |WARL |0
-
-|[#dmDmcontrolAckhavereset]## \|ackhavereset\| a|
-0 (nop): No effect.
-
-1 (ack): Clears `havereset` for any selected harts.
-
-Writes apply to the new value of and .
-
+|[[dmDmcontrolAckhavereset]] `ackhavereset`
+|0 (nop): No effect. +
+1 (ack): Clears `havereset` for any selected harts. +
+Writes apply to the new value of <<hartsel>> and <<hasel>>.
 |W1 |-
-
-|[#dmDmcontrolAckunavail]## \|ackunavail\| a|
-0 (nop): No effect.
-
+|[[dmDmcontrolAckunavail]] `ackunavail`
+|0 (nop): No effect. +
 1 (ack): Clears `unavail` for any selected harts that are currently
-available.
-
-Writes apply to the new value of and .
-
+available. +
+Writes apply to the new value of <<hartsel>> and <<hasel>>.
 |W1 |-
-
-|[#dmDmcontrolHasel]## \|hasel\| a|
-Selects the definition of currently selected harts.
-
+|[[dmDmcontrolHasel]] `hasel`
+|Selects the definition of currently selected harts. +
 0 (single): There is a single currently selected hart, that is selected
-by .
-
-1 (multiple): There may be multiple currently selected harts – the hart
-selected by , plus those selected by the hart array mask register.
-
+by <<hartsel>>. +
+1 (multiple): There may be multiple currently selected harts - the hart
+selected by <<hartsel>>, plus those selected by the hart array mask register. +
 An implementation which does not implement the hart array mask register
 must tie this field to 0. A debugger which wishes to use the hart array
 mask register feature should set this bit and read back to see if the
 functionality is supported.
-
 |WARL |0
-
-|[#dmDmcontrolHartsello]## \|hartsello\| |The low 10 bits of : the
-DM-specific index of the hart to select. This hart is always part of the
-currently selected harts. |WARL |0
-
-|[#dmDmcontrolHartselhi]## \|hartselhi\| |The high 10 bits of : the
-DM-specific index of the hart to select. This hart is always part of the
-currently selected harts. |WARL |0
-
-|[#dmDmcontrolSetkeepalive]## \|setkeepalive\| a|
-This optional field sets for all currently selected harts, unless is
-simultaneously set to 1.
-
-Writes apply to the new value of and .
-
+|[[dmDmcontrolHartsello]] `hartsello`
+|The low 10 bits of <<hartsel>>: the DM-specific index of the hart to select. This hart is always part of the currently selected harts. 
+|WARL |0
+|[[dmDmcontrolHartselhi]] `hartselhi`
+|The high 10 bits of <<hartsel>>: the DM-specific index of the hart to  select. This hart is always part of the currently selected harts.
+|WARL |0
+|[[dmDmcontrolSetkeepalive]] `setkeepalive`
+|This optional field sets <<heepalive>> for all currently selected harts, unless <<clrkeepalive>> is simultaneously set to 1. +
+Writes apply to the new value of <<hartsel>> and <<hasel>>.
 |W1 |-
-
-|[#dmDmcontrolClrkeepalive]## \|clrkeepalive\| a|
-This optional field clears for all currently selected harts.
-
-Writes apply to the new value of and .
-
+|[[dmDmcontrolClrkeepalive]] `clrkeepalive`
+|This optional field clears <<keepalive>> for all currently selected harts. +
+Writes apply to the new value of <<hartsel>> and <<hasel>>.
 |W1 |-
-
-|[#dmDmcontrolSetresethaltreq]## \|setresethaltreq\| a|
-This optional field writes the halt-on-reset request bit for all
-currently selected harts, unless is simultaneously set to 1. When set to
-1, each selected hart will halt upon the next deassertion of its reset.
-The halt-on-reset request bit is not automatically cleared. The debugger
-must write to to clear it.
-
-Writes apply to the new value of and .
-
-If is 0, this field is not implemented.
-
+|[[dmDmcontrolSetresethaltreq]] `setresethaltreq`
+|This optional field writes the halt-on-reset request bit for all
+currently selected harts, unless <<clrresethaltreq>> is simultaneously set to 1. When set to 1, each selected hart will halt upon the next deassertion of its reset. The halt-on-reset request bit is not automatically cleared. The debugger must write to <<clrresethaltreq>> to clear it. +
+Writes apply to the new value of <<hartsel>> and <<hasel>>. +
+If <<hasresethaltreq>> is 0, this field is not implemented.
 |W1 |-
-
-|[#dmDmcontrolClrresethaltreq]## \|clrresethaltreq\| a|
-This optional field clears the halt-on-reset request bit for all
-currently selected harts.
-
-Writes apply to the new value of and .
-
+|[[dmDmcontrolClrresethaltreq]] `clrresethaltreq`
+|This optional field clears the halt-on-reset request bit for all
+currently selected harts. +
+Writes apply to the new value of <<hartsel>> and <<hasel>>.
 |W1 |-
-
-|[#dmDmcontrolNdmreset]## \|ndmreset\| |This bit controls the reset
-signal from the DM to the rest of the hardware platform. The signal
-should reset every part of the hardware platform, including every hart,
+|[[dmDmcontrolNdmreset]] `ndmreset`
+|This bit controls the reset signal from the DM to the rest of the hardware platform. The signal should reset every part of the hardware platform, including every hart,
 except for the DM and any logic required to access the DM. To perform a
 hardware platform reset the debugger writes 1, and then writes 0 to
-deassert the reset. |R/W |0
-
-|\|dmactive\| a|
-This bit serves as a reset signal for the Debug Module itself. After
-changing the value of this bit, the debugger must poll until has taken
+deassert the reset. 
+|R/W |0
+|`dmactive`
+|This bit serves as a reset signal for the Debug Module itself. After
+changing the value of this bit, the debugger must poll <<dmcontrol>> until <<dmactive>> has taken
 the requested value before performing any action that assumes the
-requested state change has completed. Hardware may take an arbitrarily
+requested <<dmactive>> state change has completed. Hardware may take an arbitrarily
 long time to complete activation or deactivation and will indicate
-completion by setting to the requested value.
-
-0 (inactive): The module’s state, including authentication mechanism,
-takes its reset values (the bit is the only bit which can be written to
+completion by setting <<dmactive>> to the requested value. +
+0 (inactive): The module's state, including authentication mechanism,
+takes its reset values (the <<dmactive>> bit is the only bit which can be written to
 something other than its reset value). Any accesses to the module may
-fail. Specifically, might not return correct data.
-
-1 (active): The module functions normally.
-
+fail. Specifically, <<version>> might not return correct data. +
+1 (active): The module functions normally. +
 No other mechanism should exist that may result in resetting the Debug
-Module after power up.
-
-To place the Debug Module into a known state, a debugger may write 0 to
-, poll until is observed 0, write 1 to , and poll until is observed 1.
-
+Module after power up.  To place the Debug Module into a known state, a debugger may write 0 to <<dmactive>>, poll until <<dmactive>> is observed 0, write 1 to <<dmactive>>, and poll <<dmactive>> until is observed 1. +
 Implementations may pay attention to this bit to further aid debugging,
 for example by preventing the Debug Module from being power gated while
 debugging is active.
-
 |R/W |0
 |===
 
