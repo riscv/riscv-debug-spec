@@ -1031,45 +1031,38 @@ of the abstract command interface. Valid sizes are 1 - 12.
 
 ==== Abstract Command (`command`, at 0x17)
 
-[Command]## Writes to this register cause the corresponding abstract
+[[command,command]]
+Writes to this register cause the corresponding abstract
 command to be executed.
 
-Writing this register while an abstract command is executing causes to
-become 1 (busy) once the command completes (busy becomes 0).
+Writing this register while an abstract command is executing causes <<cmderr>> to become 1 (busy) once the command completes (busy becomes 0).
 
-If is non-zero, writes to this register are ignored.
+If <<cmderr>> is non-zero, writes to this register are ignored.
 
-inhibits starting a new command to accommodate debuggers that, for
+[NOTE]
+====
+<<cmderr>> inhibits starting a new command to accommodate debuggers that, for
 performance reasons, send several commands to be executed in a row
-without checking in between. They can safely do so and check at the end
-without worrying that one command failed but then a later command (which
-might have depended on the previous one succeeding) passed.
+without checking <<cmderr>> in between. They can safely do so and check <<cmderr>> at the end without worrying that one command failed but then a later command (which might have depended on the previous one succeeding) passed.
+====
+*FIXME: Register diagram goes here.*
 
-[cols="<,<,<,<",options="header",]
-|===
-|31 |24 |23 |0
-|latexmath:[$|cmdtype|$] | |latexmath:[$|control|$] |
-|8 | |24 |
-|===
-
-[[CommandControl]]
+[[commandcontrol, commandcontrol]]
 [cols="<,<,^,<",options="header",]
 |===
-|Field |Description |Access |Reset
-|_Continued on next page_ | | |
-
-|[CommandCmdtype] `cmdtype` |The type determines the overall
-functionality of this abstract command. |WARZ |0
-
+|Field |Description |Access ^|Reset
+|[[commandcmdtype,commandcmdtype]] `cmdtype`
+|The type determines the overall functionality of this abstract command.
+|WARZ |0
 |`control` |This field is interpreted in a command-specific manner,
-described for each abstract command. |WARZ |0
+described for each abstract command. 
+|WARZ |0
 |===
 
 ==== Abstract Command Autoexec (`abstractauto`, at 0x18)
 
-[Abstractauto]## This register is optional. Including it allows more
-efficient burst accesses. A debugger can detect whether it is supported
-by setting bits and reading them back.
+[[abstractauto,abstractauto]]
+This register is optional. Including it allows more efficient burst accesses. A debugger can detect whether it is supported by setting bits and reading them back.
 
 If this register is implemented then bits corresponding to implemented
 progbuf and data registers must be writable. Other bits must be
@@ -1079,29 +1072,19 @@ If this register is written while an abstract command is executing then
 the write is ignored and becomes 1 (busy) once the command completes
 (busy becomes 0).
 
-[cols="<,<,<,<,<,<",options="header",]
+*FIXME: Register diagram goes here.*
+
+[[abstractautoautoexecdata,abstractautoautoexecdata]]
+[align="center",float="center",cols="<2,<3,^1,<1",options="header",]
 |===
-|31 |16 |15 |12 |11 |0
-|latexmath:[$|autoexecprogbuf|$] | |latexmath:[$|0|$] |
-|latexmath:[$|autoexecdata|$] |
-
-|16 | |4 | |12 |
-|===
-
-[[AbstractautoAutoexecdata]]
-[cols="<,<,^,<",options="header",]
-|===
-|Field |Description |Access |Reset
-|_Continued on next page_ | | |
-
-|[AbstractautoAutoexecprogbuf] `autoexecprogbuf` |When a bit in
-this field is 1, read or write accesses to the corresponding `progbuf`
-word cause the DM to act as if the current value in was written there
-again after the access to `progbuf` completes. |WARL |0
-
-|`autoexecdata` |When a bit in this field is 1, read or write accesses
+|Field |Description |Access ^|Reset
+|[[abstractautoautoexecprogbuf,abstractautoautoexecprogbuf]] `autoexecprogbuf` 
+|When a bit in this field is 1, read or write accesses to the corresponding `progbuf` word cause the DM to act as if the current value in <<command>> was written there again after the access to `progbuf` completes. 
+|WARL |0
+|`autoexecdata`
+|When a bit in this field is 1, read or write accesses
 to the corresponding `data` word cause the DM to act as if the current
-value in was written there again after the access to `data` completes.
+value in <<command>> was written there again after the access to `data` completes.
 |WARL |0
 |===
 
