@@ -4,31 +4,28 @@ on:
    branches:
         - asciidoc
 jobs:
-    Build:
-        runs-on: ubuntu-latest
-        
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v3
-            
-            # Set the short SHA for use in artifact names
-            - name: Set short SHA
-              run: echo "SHORT_SHA=$(echo ${GITHUB_SHA::7})" >> $GITHUB_ENV
-      
-            # Get the current date
-            - name: Get current date
-              run: echo "CURRENT_DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
-            
-            # Pull the latest RISC-V Docs container image
-            - name: Pull Container
-              id: pull_container_image
-              run: |
-                docker pull riscvintl/riscv-docs-base-container-image:latest
+  build:
+    runs-on: ubuntu-latest
 
-            # Build PDF file using the container
-            - name: Build Files
-              id: build_files
-              if: steps.pull_container_image.outcome == 'success'
-              run: |
-                docker run --rm -v ${{ github.workspace }}:/build riscvintl/riscv-docs-base-container-image:latest \
-                /bin/sh -c 'cd ../build && make debug'
+    steps:
+    # Step 1: Checkout the repository
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
+
+    # Step 2: Pull the latest RISC-V Docs container image
+    - name: Pull Container
+      run: docker pull riscvintl/riscv-docs-base-container-image:latest
+
+    # Step 3: Build Files
+    - name: Build Files
+      run: cd ./build && make
+
+    # Step 4: Upload the built PDF files as a single artifact
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: Build Artifacts
+        path: ${{ github.workspace }}/*.pdf
+        retention-days: 30
