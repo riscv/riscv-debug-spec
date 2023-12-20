@@ -18,6 +18,14 @@ riscvintl/riscv-docs-base-container-image:latest
 
 HEADER_SOURCE := riscv-debug-header.adoc
 PDF_RESULT := ./build/riscv-debug-specification.pdf
+REGISTERS_ADOC = jtag_registers.adoc
+REGISTERS_ADOC += core_registers.adoc
+REGISTERS_ADOC += hwbp_registers.adoc
+REGISTERS_ADOC += dm_registers.adoc
+REGISTERS_ADOC += sample_registers.adoc
+REGISTERS_ADOC += abstract_commands.adoc
+REGISTERS_ADOC += sw_registers.adoc
+REGISTERS_PY = ../registers.py
 
 ASCIIDOCTOR_PDF := asciidoctor-pdf
 OPTIONS := --trace \
@@ -43,15 +51,20 @@ build:
 		$(MAKE) build-no-container; \
 	fi
 
-build-container:
+build-container:	build-registers
 	@echo "Starting build inside Docker container..."
 	$(DOCKER_RUN) /bin/sh -c "$(ASCIIDOCTOR_PDF) $(OPTIONS) $(REQUIRES) --out-file=$(PDF_RESULT) $(HEADER_SOURCE)"
 	@echo "Build completed successfully inside Docker container."
 
-build-no-container:
+build-no-container:	build-registers
 	@echo "Starting build..."
 	$(ASCIIDOCTOR_PDF) $(OPTIONS) $(REQUIRES) --out-file=$(PDF_RESULT) $(HEADER_SOURCE)
 	@echo "Build completed successfully."
+
+build-registers:	$(REGISTERS_ADOC)
+
+%.adoc:	../xml/%.xml $(REGISTERS_PY)
+	../registers.py --adoc $< > $@
 
 clean:
 	@echo "Cleaning up generated files..."
