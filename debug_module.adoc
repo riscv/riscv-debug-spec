@@ -1209,7 +1209,7 @@ groups.
 
 *FIXME:Register diagram goes here.*
 
-[[cstwohgselect]]
+[[cstwohgselect,cstwohgselect]]
 [float="center",align="center",cols="<2,<3,^1,<1",options="header"]
 |===
 |Field |Description |Access |Reset
@@ -1232,7 +1232,7 @@ group types. Debuggers should read back this field after writing to
 confirm they are using a hart group that is supported. +
 If groups aren't implemented, then this entire field is 0.
 |WARL |preset
-|[[dmcstwohgwrite]] `hgwrite` 
+|[[dmcstwohgwrite,dmcstwohgwrite]] `hgwrite` 
 |When 1 is written and <<hgselect>> is 0, for every selected hart the DM will change its group to the value written to <<group>>, if the hardware supports that group for that hart. Implementations may also change the group of a minimal set of unselected harts in the same way, if that is necessary due to a
 hardware limitation. +
 When 1 is written and <<hgselect>> is 1, the DM will change the group of the DM external trigger selected by <<dmexttrigger>> to the value written to <<group>>, if the hardware supports that group for that trigger. +
@@ -1247,7 +1247,7 @@ If there are no DM external triggers, this field must be tied to 0.
 
 ==== Halt Summary 0 (`haltsum0`, at 0x40)
 
-[[haltsumzero]]
+[[haltsumzero,haltsumzero]]
 Each bit in this read-only register indicates whether one specific hart is halted or not. Unavailable/nonexistent harts are not considered to be halted.
 
 This register might not be present if fewer than 2 harts are connected
@@ -1262,7 +1262,7 @@ This entire register is read-only.
 
 ==== Halt Summary 1 (`haltsum1`, at 0x13)
 
-[[haltsumone]]
+[[haltsumone,haltsumone]]
 Each bit in this read-only register indicates whether any of a group of harts is halted or not. Unavailable/nonexistent harts are not considered to be halted.
 
 This register might not be present if fewer than 33 harts are connected
@@ -1278,7 +1278,8 @@ This entire register is read-only.
 
 ==== Halt Summary 2 (`haltsum2`, at 0x34)
 
-[[haltsumtwo]] Each bit in this read-only register indicates whether
+[[haltsumtwo,haltsumtwo]] 
+Each bit in this read-only register indicates whether
 any of a group of harts is halted or not. Unavailable/nonexistent harts
 are not considered to be halted.
 
@@ -1295,7 +1296,8 @@ This entire register is read-only.
 
 ==== Halt Summary 3 (`haltsum3`, at 0x35)
 
-[[haltsumthree]] Each bit in this read-only register indicates
+[[haltsumthree,haltsumthree]] 
+Each bit in this read-only register indicates
 whether any of a group of harts is halted or not.
 Unavailable/nonexistent harts are not considered to be halted.
 
@@ -1311,144 +1313,83 @@ This entire register is read-only.
 
 ==== System Bus Access Control and Status (`sbcs`, at 0x38)
 
-[Sbcs]##
+[[sbcs,sbcs]]
 
-[cols="<,<,<,<,<,<,<,<,<,<",options="header",]
-|===
-|31 |29 |28 |23 |22 | |21 | |20 |
-|latexmath:[$|sbversion|$] | |latexmath:[$|0|$] |
-|latexmath:[$|sbbusyerror|$] | |latexmath:[$|sbbusy|$] |
-|latexmath:[$|sbreadonaddr|$] |
+*FIXME:Register diagram goes here.*
 
-|3 | |6 | |1 | |1 | |1 |
-|===
-
-[cols="<,<,<,<,<,<,<,<,<,<",options="header",]
-|===
-|19 |17 |16 | |15 | |14 |12 |11 |5
-|latexmath:[$|sbaccess|$] | |latexmath:[$|sbautoincrement|$] |
-|latexmath:[$|sbreadondata|$] | |latexmath:[$|sberror|$] |
-|latexmath:[$|sbasize|$] |
-
-|3 | |1 | |1 | |3 | |7 |
-|===
-
-[cols="<,<,<,<,<,<,<,<,<,<",options="header",]
-|===
-|4 | |3 | |2 | |1 | |0 |
-|latexmath:[$|sbaccess128|$] | |latexmath:[$|sbaccess64|$] |
-|latexmath:[$|sbaccess32|$] | |latexmath:[$|sbaccess16|$] |
-|latexmath:[$|sbaccess8|$] |
-
-|1 | |1 | |1 | |1 | |1 |
-|===
-
-[[SbcsSbaccessEight]]
-[cols="<,<,^,<",options="header",]
+[[sbcssbaccesseight,sbcssbaccesseight]]
+[float="center",align="center",cols="<2,<3,^1,<1",options="header"]
 |===
 |Field |Description |Access |Reset
-|_Continued on next page_ | | |
-
-|[SbcsSbversion] `sbversion` a|
-0 (legacy): The System Bus interface conforms to mainline drafts of this
-spec older than 1 January, 2018.
-
-1 (1.0): The System Bus interface conforms to this version of the spec.
-
+|[[sbcssbversion,sbcssbversion]] `sbversion` 
+|0 (legacy): The System Bus interface conforms to mainline drafts of this
+spec older than 1 January, 2018. +
+1 (1.0): The System Bus interface conforms to this version of the spec. +
 Other values are reserved for future versions.
-
 |R |1
-
-|[SbcsSbbusyerror] `sbbusyerror` a|
-Set when the debugger attempts to read data while a read is in progress,
+|[[sbcssbbusyerror,sbcssbbusyerror]] `sbbusyerror` 
+|Set when the debugger attempts to read data while a read is in progress,
 or when the debugger initiates a new access while one is already in
-progress (while is set). It remains set until it’s explicitly cleared by
-the debugger.
-
+progress (while <<sbbusy>> is set). It remains set until it's explicitly cleared by the debugger. +
 While this field is set, no more system bus accesses can be initiated by
 the Debug Module.
-
 |R/W1C |0
-
-|[SbcsSbbusy] `sbbusy` a|
-When 1, indicates the system bus manager is busy. (Whether the system
+|[[sbcssbbusy,sbcssbbusy]] `sbbusy` 
+|When 1, indicates the system bus manager is busy. (Whether the system
 bus itself is busy is related, but not the same thing.) This bit goes
 high immediately when a read or write is requested for any reason, and
-does not go low until the access is fully completed.
-
-Writes to while is high result in undefined behavior. A debugger must
-not write to until it reads as 0.
-
+does not go low until the access is fully completed. +
+Writes to <<sbcs>> while <<sbbusy>> is high resulting in undefined behavior. A debugger must not write to <<sbcs>> until it reads <<sbbusy>> as 0.
 |R |0
-
-|[SbcsSbreadonaddr] `sbreadonaddr` |When 1, every write to
-automatically triggers a system bus read at the new address. |R/W |0
-
-|[SbcsSbaccess] `sbaccess` a|
-Select the access size to use for system bus accesses.
-
-0 (8bit): 8-bit
-
-1 (16bit): 16-bit
-
-2 (32bit): 32-bit
-
-3 (64bit): 64-bit
-
-4 (128bit): 128-bit
-
-If has an unsupported value when the DM starts a bus access, the access
-is not performed and is set to 4.
-
+|[[sbcssbreadonaddr,sbcssbreadonaddr]] `sbreadonaddr` 
+|When 1, every write to <<sbaddress0>> automatically triggers a system bus read at the new address. 
+|R/W |0
+|[[sbcssbaccess,sbcssbaccess]] `sbaccess` 
+|Select the access size to use for system bus accesses. +
+0 (8bit): 8-bit +
+1 (16bit): 16-bit +
+2 (32bit): 32-bit +
+3 (64bit): 64-bit +
+4 (128bit): 128-bit +
+If <<sbaccess>> has an unsupported value when the DM starts a bus access, the access is not performed and <<sberror>> is set to 4.
 |R/W |2
-
-|[SbcsSbautoincrement] `sbautoincrement` |When 1, `sbaddress` is
-incremented by the access size (in bytes) selected in after every system
-bus access. |R/W |0
-
-|[SbcsSbreadondata] `sbreadondata` |When 1, every read from
-automatically triggers a system bus read at the (possibly
-auto-incremented) address. |R/W |0
-
-|[SbcsSberror] `sberror` a|
-When the Debug Module’s system bus manager encounters an error, this
+|[[sbcssbautoincrement,sbcssbautoincrement]] `sbautoincrement` 
+|When 1, `sbaddress` is incremented by the access size (in bytes) selected in after every system bus access.
+ |R/W |0
+|[[sbcssbreadondata,sbcssbreadondata]] `sbreadondata` 
+|When 1, every read from ,,sbdata0>> automatically triggers a system bus read at the (possibly auto-incremented) address.
+|R/W |0
+|[[sbcssberror,sbcssberror]] `sberror` 
+|When the Debug Module's system bus manager encounters an error, this
 field gets set. The bits in this field remain set until they are cleared
 by writing 1 to them. While this field is non-zero, no more system bus
-accesses can be initiated by the Debug Module.
-
-An implementation may report ``Other'' (7) for any error condition.
-
-0 (none): There was no bus error.
-
-1 (timeout): There was a timeout.
-
-2 (address): A bad address was accessed.
-
-3 (alignment): There was an alignment error.
-
-4 (size): An access of unsupported size was requested.
-
-7 (other): Other.
-
+accesses can be initiated by the Debug Module. +
+An implementation may report "Other" (7) for any error condition. +
+0 (none): There was no bus error. +
+1 (timeout): There was a timeout. +
+2 (address): A bad address was accessed. +
+3 (alignment): There was an alignment error. +
+4 (size): An access of unsupported size was requested. +
+7 (other): Other. 
 |R/W1C |0
-
-|[SbcsSbasize] `sbasize` |Width of system bus addresses in bits.
-(0 indicates there is no bus access support.) |R |Preset
-
-|[SbcsSbaccessOneTwentyeight] `sbaccess128` |1 when 128-bit
-system bus accesses are supported. |R |Preset
-
-|[SbcsSbaccessSixtyfour] `sbaccess64` |1 when 64-bit system bus
-accesses are supported. |R |Preset
-
-|[SbcsSbaccessThirtytwo] `sbaccess32` |1 when 32-bit system bus
-accesses are supported. |R |Preset
-
-|[SbcsSbaccessSixteen] `sbaccess16` |1 when 16-bit system bus
-accesses are supported. |R |Preset
-
-|`sbaccess8` |1 when 8-bit system bus accesses are supported. |R
-|Preset
+|[[sbcssbasize,sbcssbasize]] `sbasize` 
+|Width of system bus addresses in bits. (0 indicates there is no bus access support.) 
+|R |Preset
+|[[sbcssbaccessonetwentyeight,sbcssbaccessonetwentyeight]] `sbaccess128` 
+|1 when 128-bit system bus accesses are supported.
+|R |Preset
+|[[sbcssbaccesssixtyfour,sbcssbaccessonetwentyeight]] `sbaccess64`
+|1 when 64-bit system bus accesses are supported.
+|R |Preset
+|[[sbcssbaccessthirtytwo,sbcssbaccessthirtytwo]] `sbaccess32`
+|1 when 32-bit system bus accesses are supported.
+|R |Preset
+|[[sbcssbaccesssixteen,sbcssbaccesssixteen]] `sbaccess16`
+|1 when 16-bit system bus accesses are supported.
+|R |Preset
+|`sbaccess8`
+|1 when 8-bit system bus accesses are supported.
+|R |Preset
 |===
 
 ==== System Bus Address 31:0 (`sbaddress0`, at 0x39)
