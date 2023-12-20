@@ -1394,35 +1394,22 @@ An implementation may report "Other" (7) for any error condition. +
 
 ==== System Bus Address 31:0 (`sbaddress0`, at 0x39)
 
-[SbaddressZero]## If is 0, then this register is not present.
+[[sbaddresszero,sbaddresszero]]
+If <<sbasize>> is 0, then this register is not present.
+When the system bus manager is busy, writes to this register will set <<sbbusyerror>> and don't do anything else.
+If <<sberror>> is 0, <<sbbusyerror>> is 0, and <<sbreadonaddr>> is set then writes to this register start the following:
 
-When the system bus manager is busy, writes to this register will set
-and don’t do anything else.
+. Set <<sbbusy>>.
+. Perform a bus read from the new value of `sbaddress`.
+. If the read succeeded and <<sbautoincrement>> is set, increment `sbaddress`.
+. Clear <<sbbusy>>.
 
-If is 0, is 0, and is set then writes to this register start the
-following:
+*FIXME: Register diagram goes here.*
 
-Set .
-
-Perform a bus read from the new value of `sbaddress`.
-
-If the read succeeded and is set, increment `sbaddress`.
-
-Clear .
-
-[cols="<,<",options="header",]
-|===
-|31 |0
-|latexmath:[$|address|$] |
-|32 |
-|===
-
-[[SbaddressZeroAddress]]
-[cols="<,<,^,<",options="header",]
+[[sbaddresszeroaddress,sbaddresszeroaddress]]
+[%autowidth,float="center",align="center",cols="<,<,^,<",options="header"]
 |===
 |Field |Description |Access |Reset
-|_Continued on next page_ | | |
-
 |`address` |Accesses bits 31:0 of the physical address in `sbaddress`.
 |R/W |0
 |===
