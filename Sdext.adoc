@@ -172,7 +172,7 @@ instruction is executed.
 
 When a hart halts:
 
-. <,cause>> is updated.
+. <<cause>> is updated.
 . <<prv>> and <<v>> are set to reflect current privilege mode.
 . <<dpc>> is set to the next instruction that should be executed.
 . If the current instruction can be partially executed and should be
@@ -209,11 +209,9 @@ opcodes and optionally also using abstract debug commands.
 Attempts to access an unimplemented Core Debug Register raise an illegal
 instruction exception.
 
-These registers are only accessible from Debug Mode.
-
-include::core_registers.adoc[]
+include::build/core_registers.adoc[]
 
 [[virtreg]]
 === Virtual Debug Registers
 
-include::sw_registers.adoc[]
+include::build/sw_registers.adoc[]
