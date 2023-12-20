@@ -2,6 +2,8 @@ name: Verify Build
 
 on:
   pull_request:
+    branches:
+      - asciidoc
   push:
     branches:
       - asciidoc
