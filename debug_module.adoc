@@ -1434,7 +1434,7 @@ When the system bus manager is busy, writes to this register will set <<sbbusyer
 
 ==== System Bus Address 95:64 (`sbaddress2`, at 0x3b)
 
-[sbaddresstwo,sbaddresstwo]] If <<sbasize>> is less than 65, then this register is not present.
+[[sbaddresstwo,sbaddresstwo]] If <<sbasize>> is less than 65, then this register is not present.
 
 When the system bus manager is busy, writes to this register will set <<sbbusyerror>> and don't do anything else.
 
