@@ -211,9 +211,9 @@ instruction exception.
 
 These registers are only accessible from Debug Mode.
 
-include::core_registers.adoc[]
+include::build/core_registers.adoc[]
 
 [[virtreg]]
 === Virtual Debug Registers
 
-include::sw_registers.adoc[]
+include::build/sw_registers.adoc[]
