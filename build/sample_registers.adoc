@@ -1,0 +1,15 @@
+===== Long Name (((shortname)), at 0x123)
+
+[[shortname]]
+
+
+[cols="3,10,1,1",options="header"]
+|===
+|Field |Description |Access |Reset
+[[shortnameField]]
+| ((field))
+| Description of what this field is used for.
+| R/W
+| 15
+|===
+

@@ -1,0 +1,69 @@
+A virtual register is one that doesn't exist directly in the hardware, but
+    that the debugger exposes as if it does. Debug software should implement
+    them, but hardware can skip this section. Virtual registers exist to give
+    users access to functionality that's not part of standard debuggers without
+    requiring them to carefully modify debug registers while the debugger is
+    also accessing those same registers.
+[[virt]]
+[cols="1,6",options="header"]
+|===
+|Address |Name
+|virtual | Privilege Mode (`priv`)
+|===
+==== Privilege Mode (((priv)), at virtual)
+
+[[virtPriv]]
+Users can read this register to inspect the privilege mode that
+the hart was running in when the hart halted.
+Users can write this register to change the privilege mode that
+the hart will run in when it resumes.
+
+This register contains \FcsrDcsrPrv and \FcsrDcsrV from \RcsrDcsr, but in a place that the user
+is expected to access. The user should not access \RcsrDcsr directly,
+because doing so might interfere with the debugger.
+
+\begin{table}
+\centering
+\caption{Privilege Mode and Virtualization Mode Encoding}
+\label{tab:privmode}
+\begin{tabular}{|c|c|c|l|l|}
+\hline
+H extension & \multirow{2}{*}{v} & \multirow{2}{*}{prv} & \multirow{2}{*}{Abbreviation} & \multirow{2}{*}{Name} \\
+supported   &                    &                      &                               &                       \\
+\hline
+No & 0 & 0 & U-mode & User mode \\
+No & 0 & 1 & S-mode & Supervisor mode \\
+No & 0 & 3 & M-mode & Machine mode \\
+\hline
+Yes & 0 & 0 & U-mode & User mode \\
+Yes & 0 & 1 & HS-mode & Hypervisor-enabled supervisor mode \\
+Yes & 0 & 3 & M-mode & Machine mode \\
+Yes & 1 & 0 & VU-mode & Virtual user mode \\
+Yes & 1 & 1 & VS-mode & Virtual supervisor mode \\
+\hline
+\end{tabular}
+\end{table}
+
+[cols="3,10,1,1",options="header"]
+|===
+|Field |Description |Access |Reset
+[[virtPrivV]]
+| ((v))
+| Contains the virtualization mode the hart was operating in when Debug
+          Mode was entered. The encoding is described in Table \ref{tab:privmode},
+          and matches the virtualization mode encoding from the Privileged Spec.
+          A user can write this value to change the hart's virtualization mode
+          when exiting Debug Mode.
+| WARL
+| 0
+[[virtPrivPrv]]
+| ((prv))
+| Contains the privilege mode the hart was operating in when Debug
+            Mode was entered. The encoding is described in Table
+            \ref{tab:privmode}, and matches the privilege mode encoding from
+            the Privileged Spec. A user can write this
+            value to change the hart's privilege mode when exiting Debug Mode.
+| R/W
+| 0
+|===
+
