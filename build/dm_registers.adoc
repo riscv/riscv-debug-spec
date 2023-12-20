@@ -1,0 +1,1370 @@
+
+[[dm]]
+[cols="1,6",options="header"]
+|===
+|Address |Name
+|0x04 | Abstract Data 0 (`data0`)
+|0x05 | Abstract Data 1 (`data1`)
+|0x06 | Abstract Data 2 (`data2`)
+|0x07 | Abstract Data 3 (`data3`)
+|0x08 | Abstract Data 4 (`data4`)
+|0x09 | Abstract Data 5 (`data5`)
+|0x0a | Abstract Data 6 (`data6`)
+|0x0b | Abstract Data 7 (`data7`)
+|0x0c | Abstract Data 8 (`data8`)
+|0x0d | Abstract Data 9 (`data9`)
+|0x0e | Abstract Data 10 (`data10`)
+|0x0f | Abstract Data 11 (`data11`)
+|0x10 | Debug Module Control (`dmcontrol`)
+|0x11 | Debug Module Status (`dmstatus`)
+|0x12 | Hart Info (`hartinfo`)
+|0x13 | Halt Summary 1 (`haltsum1`)
+|0x14 | Hart Array Window Select (`hawindowsel`)
+|0x15 | Hart Array Window  (`hawindow`)
+|0x16 | Abstract Control and Status (`abstractcs`)
+|0x17 | Abstract Command (`command`)
+|0x18 | Abstract Command Autoexec (`abstractauto`)
+|0x19 | Configuration Structure Pointer 0 (`confstrptr0`)
+|0x1a | Configuration Structure Pointer 1 (`confstrptr1`)
+|0x1b | Configuration Structure Pointer 2 (`confstrptr2`)
+|0x1c | Configuration Structure Pointer 3 (`confstrptr3`)
+|0x1d | Next Debug Module (`nextdm`)
+|0x1f | Custom Features (`custom`)
+|0x20 | Program Buffer 0 (`progbuf0`)
+|0x21 | Program Buffer 1 (`progbuf1`)
+|0x22 | Program Buffer 2 (`progbuf2`)
+|0x23 | Program Buffer 3 (`progbuf3`)
+|0x24 | Program Buffer 4 (`progbuf4`)
+|0x25 | Program Buffer 5 (`progbuf5`)
+|0x26 | Program Buffer 6 (`progbuf6`)
+|0x27 | Program Buffer 7 (`progbuf7`)
+|0x28 | Program Buffer 8 (`progbuf8`)
+|0x29 | Program Buffer 9 (`progbuf9`)
+|0x2a | Program Buffer 10 (`progbuf10`)
+|0x2b | Program Buffer 11 (`progbuf11`)
+|0x2c | Program Buffer 12 (`progbuf12`)
+|0x2d | Program Buffer 13 (`progbuf13`)
+|0x2e | Program Buffer 14 (`progbuf14`)
+|0x2f | Program Buffer 15 (`progbuf15`)
+|0x30 | Authentication Data (`authdata`)
+|0x32 | Debug Module Control and Status 2 (`dmcs2`)
+|0x34 | Halt Summary 2 (`haltsum2`)
+|0x35 | Halt Summary 3 (`haltsum3`)
+|0x37 | System Bus Address 127:96 (`sbaddress3`)
+|0x38 | System Bus Access Control and Status (`sbcs`)
+|0x39 | System Bus Address 31:0 (`sbaddress0`)
+|0x3a | System Bus Address 63:32 (`sbaddress1`)
+|0x3b | System Bus Address 95:64 (`sbaddress2`)
+|0x3c | System Bus Data 31:0 (`sbdata0`)
+|0x3d | System Bus Data 63:32 (`sbdata1`)
+|0x3e | System Bus Data 95:64 (`sbdata2`)
+|0x3f | System Bus Data 127:96 (`sbdata3`)
+|0x40 | Halt Summary 0 (`haltsum0`)
+|0x70 | Custom Features 0 (`custom0`)
+|0x71 | Custom Features 1 (`custom1`)
+|0x72 | Custom Features 2 (`custom2`)
+|0x73 | Custom Features 3 (`custom3`)
+|0x74 | Custom Features 4 (`custom4`)
+|0x75 | Custom Features 5 (`custom5`)
+|0x76 | Custom Features 6 (`custom6`)
+|0x77 | Custom Features 7 (`custom7`)
+|0x78 | Custom Features 8 (`custom8`)
+|0x79 | Custom Features 9 (`custom9`)
+|0x7a | Custom Features 10 (`custom10`)
+|0x7b | Custom Features 11 (`custom11`)
+|0x7c | Custom Features 12 (`custom12`)
+|0x7d | Custom Features 13 (`custom13`)
+|0x7e | Custom Features 14 (`custom14`)
+|0x7f | Custom Features 15 (`custom15`)
+|===
+==== Debug Module Status (((dmstatus)), at 0x11)
+
+[[dmDmstatus]]
+This register reports status for the overall Debug Module as well as
+the currently selected harts, as defined in \FdmDmcontrolHasel.  Its address will
+not change in the future, because it contains \FdmDmstatusVersion.
+
+This entire register is read-only.
+[cols="3,10,1,1",options="header"]
+|===
+|Field |Description |Access |Reset
+[[dmDmstatusNdmresetpending]]
+| ((ndmresetpending))
+| 
+
+0 (false): Unimplemented, or \FdmDmcontrolNdmreset is zero and no ndmreset is currently 
+            in progress.
+
+
+1 (true): \FdmDmcontrolNdmreset is currently nonzero, or there is an ndmreset in progress.
+
+| R
+| -
+[[dmDmstatusStickyunavail]]
+| ((stickyunavail))
+| 
+
+0 (current): The per-hart {\tt unavail} bits reflect the current state of the hart.
+
+
+1 (sticky): The per-hart {\tt unavail} bits are sticky. Once they are set, they will
+            not clear until the debugger acknowledges them using \FdmDmcontrolAckunavail.
+
+| R
+| Preset
+[[dmDmstatusImpebreak]]
+| ((impebreak))
+| If 1, then there is an implicit {\tt ebreak} instruction at the
+            non-existent word immediately after the Program Buffer. This saves
+            the debugger from having to write the {\tt ebreak} itself, and
+            allows the Program Buffer to be one word smaller.
+
+            This must be 1 when \FdmAbstractcsProgbufsize is 1.
+| R
+| Preset
+[[dmDmstatusAllhavereset]]
+| ((allhavereset))
+| This field is 1 when all currently selected harts have been reset
+            and reset has not been acknowledged for any of them.
+| R
+| -
+[[dmDmstatusAnyhavereset]]
+| ((anyhavereset))
+| This field is 1 when at least one currently selected hart has been
+            reset and reset has not been acknowledged for that hart.
+| R
+| -
+[[dmDmstatusAllresumeack]]
+| ((allresumeack))
+| This field is 1 when all currently selected harts have their
+            resume ack bit\index{resume ack bit} set.
+| R
+| -
+[[dmDmstatusAnyresumeack]]
+| ((anyresumeack))
+| This field is 1 when any currently selected hart has its
+            resume ack bit\index{resume ack bit} set.
+| R
+| -
+[[dmDmstatusAllnonexistent]]
+| ((allnonexistent))
+| This field is 1 when all currently selected harts do not exist in
+            this hardware platform.
+| R
+| -
+[[dmDmstatusAnynonexistent]]
+| ((anynonexistent))
+| This field is 1 when any currently selected hart does not exist in
+            this hardware platform.
+| R
+| -
+[[dmDmstatusAllunavail]]
+| ((allunavail))
+| This field is 1 when all currently selected harts are
+            unavailable, or (if \FdmDmstatusStickyunavail is 1) were
+            unavailable without that being acknowledged.
+| R
+| -
+[[dmDmstatusAnyunavail]]
+| ((anyunavail))
+| This field is 1 when any currently selected hart is unavailable,
+            or (if \FdmDmstatusStickyunavail is 1) was unavailable without
+            that being acknowledged.
+| R
+| -
+[[dmDmstatusAllrunning]]
+| ((allrunning))
+| This field is 1 when all currently selected harts are running.
+| R
+| -
+[[dmDmstatusAnyrunning]]
+| ((anyrunning))
+| This field is 1 when any currently selected hart is running.
+| R
+| -
+[[dmDmstatusAllhalted]]
+| ((allhalted))
+| This field is 1 when all currently selected harts are halted.
+| R
+| -
+[[dmDmstatusAnyhalted]]
+| ((anyhalted))
+| This field is 1 when any currently selected hart is halted.
+| R
+| -
+[[dmDmstatusAuthenticated]]
+| ((authenticated))
+| 
+
+0 (false): Authentication is required before using the DM.
+
+
+1 (true): The authentication check has passed.
+
+On components that don't implement authentication, this bit must be
+            preset as 1.
+| R
+| Preset
+[[dmDmstatusAuthbusy]]
+| ((authbusy))
+| 
+
+0 (ready): The authentication module is ready to process the next
+            read/write to \RdmAuthdata.
+
+
+1 (busy): The authentication module is busy. Accessing \RdmAuthdata results
+            in unspecified behavior.
+
+\FdmDmstatusAuthbusy only becomes set in immediate response to an access to
+            \RdmAuthdata.
+| R
+| 0
+[[dmDmstatusHasresethaltreq]]
+| ((hasresethaltreq))
+| 1 if this Debug Module supports halt-on-reset functionality
+            controllable by the \FdmDmcontrolSetresethaltreq and \FdmDmcontrolClrresethaltreq bits.
+            0 otherwise.
+| R
+| Preset
+[[dmDmstatusConfstrptrvalid]]
+| ((confstrptrvalid))
+| 
+
+0 (invalid): \RdmConfstrptrZero--\RdmConfstrptrThree hold information which
+            is not relevant to the configuration structure.
+
+
+1 (valid): \RdmConfstrptrZero--\RdmConfstrptrThree hold the address of the
+            configuration structure.
+
+| R
+| Preset
+[[dmDmstatusVersion]]
+| ((version))
+| 
+
+0 (none): There is no Debug Module present.
+
+
+1 (0.11): There is a Debug Module and it conforms to version 0.11 of this
+            specification.
+
+
+2 (0.13): There is a Debug Module and it conforms to version 0.13 of this
+            specification.
+
+
+3 (1.0): There is a Debug Module and it conforms to version 1.0 of this
+            specification.
+
+
+15 (custom): There is a Debug Module but it does not conform to any
+            available version of this spec.
+
+| R
+| 3
+|===
+
+==== Debug Module Control (((dmcontrol)), at 0x10)
+
+[[dmDmcontrol]]
+This register controls the overall Debug Module
+as well as the currently selected harts, as defined in \FdmDmcontrolHasel.
+
+\label{hartsel}
+\index{hartsel}
+Throughout this document we refer to \Fhartsel, which is \FdmDmcontrolHartselhi
+combined with \FdmDmcontrolHartsello. While the spec allows for 20 \Fhartsel bits,
+an implementation may choose to implement fewer than that. The actual
+width of \Fhartsel is called {\tt HARTSELLEN}. It must be at least 0
+and at most 20. A debugger should discover {\tt HARTSELLEN} by writing
+all ones to \Fhartsel (assuming the maximum size) and reading back the
+value to see which bits were actually set. Debuggers must not change
+\Fhartsel while an abstract command is executing.
+
+\begin{commentary}
+There are separate \FdmDmcontrolSetresethaltreq and \FdmDmcontrolClrresethaltreq bits so that
+it is possible to write \RdmDmcontrol without changing the halt-on-reset
+request bit for each selected hart, when not all selected harts have
+the same configuration.
+\end{commentary}
+
+On any given write, a debugger may only write 1 to at most one of the
+following bits: \FdmDmcontrolResumereq, \FdmDmcontrolHartreset, \FdmDmcontrolAckhavereset,
+\FdmDmcontrolSetresethaltreq, and \FdmDmcontrolClrresethaltreq. The others must be written 0.
+
+\label{resethaltreq}
+\index{resethaltreq}
+\Fresethaltreq is an optional internal bit of per-hart state that cannot be
+read, but can be written with \FdmDmcontrolSetresethaltreq and \FdmDmcontrolClrresethaltreq.
+
+\label{keepalive}
+\index{keepalive}
+\Fkeepalive is an optional internal bit of per-hart state. When it is
+set, it suggests that the hardware should attempt to keep the hart
+available for the debugger, e.g. by keeping it from entering a
+low-power state once powered on. Even if the bit is implemented,
+hardware might not be able to keep a hart available. The bit is
+written through \FdmDmcontrolSetkeepalive and
+\FdmDmcontrolClrkeepalive.
+
+For forward compatibility, \FdmDmstatusVersion will always be readable when bit 1
+(\FdmDmcontrolNdmreset) is 0 and bit 0 (\FdmDmcontrolDmactive) is 1.
+
+[cols="3,10,1,1",options="header"]
+|===
+|Field |Description |Access |Reset
+[[dmDmcontrolHaltreq]]
+| ((haltreq))
+| Writing 0 clears the halt request bit for all currently selected
+            harts. This may cancel outstanding halt requests for those harts.
+
+            Writing 1 sets the halt request bit for all currently selected
+            harts. Running harts will halt whenever their halt request bit is
+            set.
+
+            Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
+| WARZ
+| -
+[[dmDmcontrolResumereq]]
+| ((resumereq))
+| Writing 1 causes the currently selected harts to resume once, if
+            they are halted when the write occurs. It also clears the resume
+            ack bit for those harts.
+
+            \FdmDmcontrolResumereq is ignored if \FdmDmcontrolHaltreq is set.
+
+            Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
+| W1
+| -
+[[dmDmcontrolHartreset]]
+| ((hartreset))
+| This optional field writes the reset bit for all the currently
+            selected harts.  To perform a reset the debugger writes 1, and then
+            writes 0 to deassert the reset signal.
+
+            While this bit is 1, the debugger must not change which harts are
+            selected.
+
+            If this feature is not implemented, the bit always stays 0, so
+            after writing 1 the debugger can read the register back to see if
+            the feature is supported.
+
+            Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
+| WARL
+| 0
+[[dmDmcontrolAckhavereset]]
+| ((ackhavereset))
+| 
+
+0 (nop): No effect.
+
+
+1 (ack): Clears {\tt havereset} for any selected harts.
+
+Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
+| W1
+| -
+[[dmDmcontrolAckunavail]]
+| ((ackunavail))
+| 
+
+0 (nop): No effect.
+
+
+1 (ack): Clears {\tt unavail} for any selected harts that are currently available.
+
+Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
+| W1
+| -
+[[dmDmcontrolHasel]]
+| ((hasel))
+| Selects the definition of currently selected harts.
+
+0 (single): There is a single currently selected hart, that is selected by \Fhartsel.
+
+
+1 (multiple): There may be multiple currently selected harts -- the hart
+            selected by \Fhartsel, plus those selected by the hart array mask
+            register.
+
+An implementation which does not implement the hart array mask register
+            must tie this field to 0. A debugger which wishes to use the hart array
+            mask register feature should set this bit and read back to see if the functionality
+            is supported.
+| WARL
+| 0
+[[dmDmcontrolHartsello]]
+| ((hartsello))
+| The low 10 bits of \Fhartsel: the DM-specific index of the hart to
+            select. This hart is always part of the currently selected harts.
+| WARL
+| 0
+[[dmDmcontrolHartselhi]]
+| ((hartselhi))
+| The high 10 bits of \Fhartsel: the DM-specific index of the hart to
+            select. This hart is always part of the currently selected harts.
+| WARL
+| 0
+[[dmDmcontrolSetkeepalive]]
+| ((setkeepalive))
+| This optional field sets \Fkeepalive for all currently selected
+            harts, unless \FdmDmcontrolClrkeepalive is simultaneously set to
+            1.
+
+            Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
+| W1
+| -
+[[dmDmcontrolClrkeepalive]]
+| ((clrkeepalive))
+| This optional field clears \Fkeepalive for all currently selected
+            harts.
+
+            Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
+| W1
+| -
+[[dmDmcontrolSetresethaltreq]]
+| ((setresethaltreq))
+| This optional field writes the halt-on-reset request bit for all
+            currently selected harts, unless \FdmDmcontrolClrresethaltreq is
+            simultaneously set to 1.
+            When set to 1, each selected hart will halt upon the next deassertion
+            of its reset. The halt-on-reset request bit is not automatically
+            cleared. The debugger must write to \FdmDmcontrolClrresethaltreq to clear it.
+
+            Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
+
+            If \FdmDmstatusHasresethaltreq is 0, this field is not implemented.
+| W1
+| -
+[[dmDmcontrolClrresethaltreq]]
+| ((clrresethaltreq))
+| This optional field clears the halt-on-reset request bit for all
+            currently selected harts.
+
+            Writes apply to the new value of \Fhartsel and \FdmDmcontrolHasel.
+| W1
+| -
+[[dmDmcontrolNdmreset]]
+| ((ndmreset))
+| This bit controls the reset signal from the DM to the rest of the
+            hardware platform. The signal should reset every part of the hardware platform, including
+            every hart, except for the DM and any logic required to access the
+            DM.
+            To perform a hardware platform reset the debugger writes 1,
+            and then writes 0
+            to deassert the reset.
+| R/W
+| 0
+[[dmDmcontrolDmactive]]
+| ((dmactive))
+| This bit serves as a reset signal for the Debug Module itself.
+            After changing the value of this bit, the debugger must poll
+            \RdmDmcontrol until \FdmDmcontrolDmactive has taken the requested value
+            before performing any action that assumes the requested \FdmDmcontrolDmactive
+            state change has completed.  Hardware may
+            take an arbitrarily long time to complete activation or deactivation and will
+            indicate completion by setting \FdmDmcontrolDmactive to the requested value.
+
+0 (inactive): The module's state, including authentication mechanism,
+            takes its reset values (the \FdmDmcontrolDmactive bit is the only bit which can
+            be written to something other than its reset value). Any accesses
+            to the module may fail. Specifically, \FdmDmstatusVersion might not return
+            correct data.
+
+
+1 (active): The module functions normally.
+
+No other mechanism should exist that may result in resetting the
+            Debug Module after power up.
+
+            To place the Debug Module into a known state, a debugger may write 0 to \FdmDmcontrolDmactive,
+            poll until \FdmDmcontrolDmactive is observed 0, write 1 to \FdmDmcontrolDmactive, and
+            poll until \FdmDmcontrolDmactive is observed 1.
+
+            Implementations may pay attention to this bit to further aid
+            debugging, for example by preventing the Debug Module from being
+            power gated while debugging is active.
+| R/W
+| 0
+|===
+
+==== Hart Info (((hartinfo)), at 0x12)
+
+[[dmHartinfo]]
+This register gives information about the hart currently
+selected by \Fhartsel.
+
+This register is optional. If it is not present it should
+read all-zero.
+
+If this register is included, the debugger can do more with
+the Program Buffer by writing programs which
+explicitly access the {\tt data} and/or {\tt dscratch}
+registers.
+
+This entire register is read-only.
+[cols="3,10,1,1",options="header"]
+|===
+|Field |Description |Access |Reset
+[[dmHartinfoNscratch]]
+| ((nscratch))
+| Number of {\tt dscratch} registers available for the debugger
+            to use during program buffer execution, starting from \RcsrDscratchZero.
+            The debugger can make no assumptions about the contents of these
+            registers between commands.
+| R
+| Preset
+[[dmHartinfoDataaccess]]
+| ((dataaccess))
+| 
+
+0 (csr): The {\tt data} registers are shadowed in the hart by CSRs.
+            Each CSR is DXLEN bits in size, and corresponds
+            to a single argument, per Table~\ref{tab:datareg}.
+
+
+1 (memory): The {\tt data} registers are shadowed in the hart's memory map.
+            Each register takes up 4 bytes in the memory map.
+
+| R
+| Preset
+[[dmHartinfoDatasize]]
+| ((datasize))
+| If \FdmHartinfoDataaccess is 0: Number of CSRs dedicated to
+            shadowing the {\tt data} registers.
+
+            If \FdmHartinfoDataaccess is 1: Number of 32-bit words in the memory map
+            dedicated to shadowing the {\tt data} registers.
+
+            Since there are at most 12 {\tt data} registers, the value in this
+            register must be 12 or smaller.
+| R
+| Preset
+[[dmHartinfoDataaddr]]
+| ((dataaddr))
+| If \FdmHartinfoDataaccess is 0: The number of the first CSR dedicated to
+            shadowing the {\tt data} registers.
+
+            If \FdmHartinfoDataaccess is 1: Address of RAM where the data
+            registers are shadowed. This address is sign extended giving a
+            range of -2048 to 2047, easily addressed with a load or store using
+            \Xzero as the address register.
+| R
+| Preset
+|===
+
+==== Hart Array Window Select (((hawindowsel)), at 0x14)
+
+[[dmHawindowsel]]
+This register selects which of the 32-bit portion of the hart array mask
+register (see Section~\ref{hartarraymask}) is accessible in \RdmHawindow.
+
+[cols="3,10,1,1",options="header"]
+|===
+|Field |Description |Access |Reset
+[[dmHawindowselHawindowsel]]
+| ((hawindowsel))
+| The high bits of this field may be tied to 0, depending on how large
+          the array mask register is.  E.g.\ on a hardware platform with 48 harts only bit 0
+          of this field may actually be writable.
+| WARL
+| 0
+|===
+
+==== Hart Array Window  (((hawindow)), at 0x15)
+
+[[dmHawindow]]
+This register provides R/W access to a 32-bit portion of the
+hart array mask register (see Section~\ref{hartarraymask}).
+The position of the window is determined by \RdmHawindowsel. I.e. bit 0
+refers to hart $\RdmHawindowsel * 32$, while bit 31 refers to hart
+$\RdmHawindowsel * 32 + 31$.
+
+Since some bits in the hart array mask register may be constant 0, some
+bits in this register may be constant 0, depending on the current value
+of \FdmHawindowselHawindowsel.
+
+
+==== Abstract Control and Status (((abstractcs)), at 0x16)
+
+[[dmAbstractcs]]
+Writing this register while an abstract command is executing causes
+\FdmAbstractcsCmderr to become 1 (busy) once the command completes
+(busy becomes 0).
+
+\begin{commentary}
+\FdmAbstractcsDatacount must be at least 1 to support RV32 harts, 2 to support
+RV64 harts, or 4 to support RV128 harts.
+\end{commentary}
+
+[cols="3,10,1,1",options="header"]
+|===
+|Field |Description |Access |Reset
+[[dmAbstractcsProgbufsize]]
+| ((progbufsize))
+| Size of the Program Buffer, in 32-bit words. Valid sizes are 0 - 16.
+| R
+| Preset
+[[dmAbstractcsBusy]]
+| ((busy))
+| 
+
+0 (ready): There is no abstract command currently being executed.
+
+
+1 (busy): An abstract command is currently being executed.
+
+This bit is set as soon as \RdmCommand is written, and is
+            not cleared until that command has completed.
+| R
+| 0
+[[dmAbstractcsRelaxedpriv]]
+| ((relaxedpriv))
+| This optional bit controls whether program buffer and abstract
+           memory accesses are performed with the exact and full set of
+           permission checks that apply based on the current architectural
+           state of the hart performing the access, or with a relaxed set of
+           permission checks (e.g. PMP restrictions are ignored).  The
+           details of the latter are implementation-specific.
+
+0 (full checks): Full permission checks apply.
+
+
+1 (relaxed checks): Relaxed permission checks apply.
+
+| WARL
+| Preset
+[[dmAbstractcsCmderr]]
+| ((cmderr))
+| Gets set if an abstract command fails. The bits in this field remain set until
+            they are cleared by writing 1 to them. No abstract command is
+            started until the value is reset to 0.
+
+            This field only contains a valid value if \FdmAbstractcsBusy is 0.
+
+0 (none): No error.
+
+
+1 (busy): An abstract command was executing while \RdmCommand,
+            \RdmAbstractcs, or \RdmAbstractauto was written, or when one
+            of the {\tt data} or {\tt progbuf} registers was read or written.
+            This status is only written if \FdmAbstractcsCmderr contains 0.
+
+
+2 (not supported): The command in \RdmCommand is not supported.  It
+            may be supported with different options set, but it will not be
+            supported at a later time when the hart or system state are
+            different.
+
+
+3 (exception): An exception occurred while executing the command
+            (e.g.\ while executing the Program Buffer).
+
+
+4 (halt/resume): The abstract command couldn't execute because the
+            hart wasn't in the required state (running/halted), or unavailable.
+
+
+5 (bus): The abstract command failed due to a bus error (e.g.\ 
+            alignment, access size, or timeout).
+
+
+6 (reserved): Reserved for future use.
+
+
+7 (other): The command failed for another reason.
+
+| R/W1C
+| 0
+[[dmAbstractcsDatacount]]
+| ((datacount))
+| Number of {\tt data} registers that are implemented as part of the
+            abstract command interface. Valid sizes are 1 -- 12.
+| R
+| Preset
+|===
+
+==== Abstract Command (((command)), at 0x17)
+
+[[dmCommand]]
+Writes to this register cause the corresponding abstract command to be
+executed.
+
+Writing this register while an abstract command is executing causes
+\FdmAbstractcsCmderr to become 1 (busy) once the command completes
+(busy becomes 0).
+
+If \FdmAbstractcsCmderr is non-zero, writes to this register are ignored.
+
+\begin{commentary}
+\FdmAbstractcsCmderr inhibits starting a new command to accommodate debuggers
+that, for performance reasons, send several commands to be executed
+in a row without checking \FdmAbstractcsCmderr in between. They can safely do
+so and check \FdmAbstractcsCmderr at the end without worrying that one command
+failed but then a later command (which might have depended on the
+previous one succeeding) passed.
+\end{commentary}
+
+[cols="3,10,1,1",options="header"]
+|===
+|Field |Description |Access |Reset
+[[dmCommandCmdtype]]
+| ((cmdtype))
+| The type determines the overall functionality of this
+            abstract command.
+| WARZ
+| 0
+[[dmCommandControl]]
+| ((control))
+| This field is interpreted in a command-specific manner,
+            described for each abstract command.
+| WARZ
+| 0
+|===
+
+==== Abstract Command Autoexec (((abstractauto)), at 0x18)
+
+[[dmAbstractauto]]
+This register is optional. Including it allows more efficient burst
+accesses.  A debugger can detect whether it is supported by setting bits
+and reading them back.
+
+If this register is implemented then bits corresponding to implemented
+progbuf and data registers must be writable.  Other bits must be
+hard-wired to 0.
+
+If this register is written while an abstract command is executing
+then the write is ignored and
+\FdmAbstractcsCmderr becomes 1 (busy) once the command completes
+(busy becomes 0).
+
+[cols="3,10,1,1",options="header"]
+|===
+|Field |Description |Access |Reset
+[[dmAbstractautoAutoexecprogbuf]]
+| ((autoexecprogbuf))
+| When a bit in this field is 1, read or write accesses to the
+            corresponding {\tt progbuf} word cause the DM to act as if the
+            current value in \RdmCommand was written there again after the
+            access to {\tt progbuf} completes.
+| WARL
+| 0
+[[dmAbstractautoAutoexecdata]]
+| ((autoexecdata))
+| When a bit in this field is 1, read or write accesses to the
+            corresponding {\tt data} word cause the DM to act as if the current
+            value in \RdmCommand was written there again after the
+            access to {\tt data} completes.
+| WARL
+| 0
+|===
+
+==== Configuration Structure Pointer 0 (((confstrptr0)), at 0x19)
+
+[[dmConfstrptrZero]]
+When \FdmDmstatusConfstrptrvalid is set, reading this register returns bits 31:0
+of the configuration structure pointer. Reading the other {\tt confstrptr}
+registers returns the upper bits of the address.
+
+When system bus access is implemented, this must be an
+address that can be used with the System Bus Access module. Otherwise,
+this must be an address that can be used to access the
+configuration structure from the hart with ID 0.
+
+If \FdmDmstatusConfstrptrvalid is 0, then the {\tt confstrptr} registers
+hold identifier information which is not
+further specified in this document.
+
+The configuration structure itself is a data structure of the same format
+as the data structure pointed to by mconfigptr as described in the
+Privileged Spec.
+
+This entire register is read-only.
+
+==== Configuration Structure Pointer 1 (((confstrptr1)), at 0x1a)
+
+[[dmConfstrptrOne]]
+When \FdmDmstatusConfstrptrvalid is set, reading this register returns bits 63:32
+of the configuration structure pointer. See \RdmConfstrptrZero for more details.
+
+This entire register is read-only.
+
+==== Configuration Structure Pointer 2 (((confstrptr2)), at 0x1b)
+
+[[dmConfstrptrTwo]]
+When \FdmDmstatusConfstrptrvalid is set, reading this register returns bits 95:64
+of the configuration structure pointer. See \RdmConfstrptrZero for more details.
+
+This entire register is read-only.
+
+==== Configuration Structure Pointer 3 (((confstrptr3)), at 0x1c)
+
+[[dmConfstrptrThree]]
+When \FdmDmstatusConfstrptrvalid is set, reading this register returns bits 127:96
+of the configuration structure pointer. See \RdmConfstrptrZero for more details.
+
+This entire register is read-only.
+
+==== Next Debug Module (((nextdm)), at 0x1d)
+
+[[dmNextdm]]
+If there is more than one DM accessible on this DMI, this register
+contains the base address of the next one in the chain, or 0 if this is
+the last one in the chain.
+
+This entire register is read-only.
+
+==== Abstract Data 0 (((data0)), at 0x04)
+
+[[dmDataZero]]
+\RdmDataZero through \RdmDataEleven are registers that may
+be read or changed by abstract commands. \FdmAbstractcsDatacount indicates how many
+of them are implemented, starting at \RdmDataZero, counting up.
+Table~\ref{tab:datareg} shows how abstract commands use these
+registers.
+
+Accessing these registers while an abstract command is executing causes
+\FdmAbstractcsCmderr to be set to 1 (busy) if it is 0.
+
+Attempts to write them while \FdmAbstractcsBusy is set does not change their value.
+
+The values in these registers might not be preserved after an abstract
+command is executed. The only guarantees on their contents are the ones
+offered by the command in question. If the command fails, no
+assumptions can be made about the contents of these registers.
+
+
+==== Program Buffer 0 (((progbuf0)), at 0x20)
+
+[[dmProgbufZero]]
+\RdmProgbufZero through \RdmProgbufFifteen must provide write access to the
+optional program buffer. It may also be possible for the debugger to
+read from the program buffer through these registers. If reading
+is not supported, then all reads return 0.
+
+\FdmAbstractcsProgbufsize indicates how many {\tt progbuf} registers are
+implemented starting at \RdmProgbufZero, counting up.
+
+Accessing these registers while an abstract command is executing causes
+\FdmAbstractcsCmderr to be set to 1 (busy) if it is 0.
+
+Attempts to write them while \FdmAbstractcsBusy is set does not change their value.
+
+
+==== Authentication Data (((authdata)), at 0x30)
+
+[[dmAuthdata]]
+This register serves as a 32-bit serial port to/from the authentication
+module.
+
+When \FdmDmstatusAuthbusy is clear, the debugger can communicate with the
+authentication module by reading or writing this register. There is no
+separate mechanism to signal overflow/underflow.
+
+
+==== Debug Module Control and Status 2 (((dmcs2)), at 0x32)
+
+[[dmDmcsTwo]]
+This register contains DM control and status bits that didn't easily
+fit in \RdmDmcontrol and \RdmDmstatus. All are optional.
+
+If halt groups are not implemented, then \FdmDmcsTwoGroup will always
+be 0 when \FdmDmcsTwoGrouptype is 0.
+
+If resume groups are not implemented, then \FdmDmcsTwoGrouptype will
+remain 0 even after 1 is written there.
+
+The DM external triggers available to add to halt groups may be the same as
+or distinct from the DM external triggers available to add to resume groups.
+
+[cols="3,10,1,1",options="header"]
+|===
+|Field |Description |Access |Reset
+[[dmDmcsTwoGrouptype]]
+| ((grouptype))
+| 
+
+0 (halt): The remaining fields in this register configure halt groups.
+
+
+1 (resume): The remaining fields in this register configure resume groups.
+
+| WARL
+| 0
+[[dmDmcsTwoDmexttrigger]]
+| ((dmexttrigger))
+| This field contains the currently selected DM external trigger.
+
+            If a non-existent trigger value is written here, the hardware will
+            change it to a valid one or 0 if no DM external triggers exist.
+| WARL
+| 0
+[[dmDmcsTwoGroup]]
+| ((group))
+| When \FdmDmcsTwoHgselect is 0, contains the group of the hart
+            specified by \Fhartsel.
+
+            When \FdmDmcsTwoHgselect is 1, contains the group of the DM external
+            trigger selected by \FdmDmcsTwoDmexttrigger.
+
+            The value written to this field is ignored unless \FdmDmcsTwoHgwrite
+            is also written 1.
+
+            Group numbers are contiguous starting at 0, with the highest number
+            being implementation-dependent, and possibly different between
+            different group types. Debuggers should read back this field after
+            writing to confirm they are using a hart group that is supported.
+
+            If groups aren't implemented, then this entire field is 0.
+| WARL
+| preset
+[[dmDmcsTwoHgwrite]]
+| ((hgwrite))
+| When 1 is written and \FdmDmcsTwoHgselect is 0, for every selected
+            hart the DM will change its group to the value written to \FdmDmcsTwoGroup,
+            if the hardware supports that group for that hart.
+            Implementations may also change the group of a minimal set of
+            unselected harts in the same way, if that is necessary due to
+            a hardware limitation.
+
+            When 1 is written and \FdmDmcsTwoHgselect is 1, the DM will change
+            the group of the DM external trigger selected by \FdmDmcsTwoDmexttrigger
+            to the value written to \FdmDmcsTwoGroup, if the hardware supports
+            that group for that trigger.
+
+            Writing 0 has no effect.
+| W1
+| -
+[[dmDmcsTwoHgselect]]
+| ((hgselect))
+| 
+
+0 (harts): Operate on harts.
+
+
+1 (triggers): Operate on DM external triggers.
+
+If there are no DM external triggers, this field must be tied to 0.
+| WARL
+| 0
+|===
+
+==== Halt Summary 0 (((haltsum0)), at 0x40)
+
+[[dmHaltsumZero]]
+Each bit in this read-only register indicates whether one specific hart
+is halted or not. Unavailable/nonexistent harts are not considered to
+be halted.
+
+This register might not be present if fewer than 2 harts are connected
+to this DM.
+
+The LSB reflects the halt status of hart \{hartsel[19:5],5'h0\}, and the
+MSB reflects halt status of hart \{hartsel[19:5],5'h1f\}.
+
+This entire register is read-only.
+
+==== Halt Summary 1 (((haltsum1)), at 0x13)
+
+[[dmHaltsumOne]]
+Each bit in this read-only register indicates whether any of a group of
+harts is halted or not. Unavailable/nonexistent harts are not considered to
+be halted.
+
+This register might not be present if fewer than 33 harts are connected
+to this DM.
+
+The LSB reflects the halt status of harts \{hartsel[19:10],10'h0\}
+through \{hartsel[19:10],10'h1f\}.
+The MSB reflects the halt status of harts \{hartsel[19:10],10'h3e0\}
+through \{hartsel[19:10],10'h3ff\}.
+
+This entire register is read-only.
+
+==== Halt Summary 2 (((haltsum2)), at 0x34)
+
+[[dmHaltsumTwo]]
+Each bit in this read-only register indicates whether any of a group of
+harts is halted or not. Unavailable/nonexistent harts are not considered to
+be halted.
+
+This register might not be present if fewer than 1025 harts are connected
+to this DM.
+
+The LSB reflects the halt status of harts \{hartsel[19:15],15'h0\}
+through \{hartsel[19:15],15'h3ff\}.
+The MSB reflects the halt status of harts \{hartsel[19:15],15'h7c00\}
+through \{hartsel[19:15],15'h7fff\}.
+
+This entire register is read-only.
+
+==== Halt Summary 3 (((haltsum3)), at 0x35)
+
+[[dmHaltsumThree]]
+Each bit in this read-only register indicates whether any of a group of
+harts is halted or not. Unavailable/nonexistent harts are not considered to
+be halted.
+
+This register might not be present if fewer than 32769 harts are connected
+to this DM.
+
+The LSB reflects the halt status of harts 20'h0 through 20'h7fff.
+The MSB reflects the halt status of harts 20'hf8000 through 20'hfffff.
+
+This entire register is read-only.
+
+==== System Bus Access Control and Status (((sbcs)), at 0x38)
+
+[[dmSbcs]]
+
+
+[cols="3,10,1,1",options="header"]
+|===
+|Field |Description |Access |Reset
+[[dmSbcsSbversion]]
+| ((sbversion))
+| 
+
+0 (legacy): The System Bus interface conforms to mainline drafts of this
+            spec older than 1 January, 2018.
+
+
+1 (1.0): The System Bus interface conforms to this version of the spec.
+
+Other values are reserved for future versions.
+| R
+| 1
+[[dmSbcsSbbusyerror]]
+| ((sbbusyerror))
+| Set when the debugger attempts to read data while a read is in
+            progress, or when the debugger initiates a new access while one is
+            already in progress (while \FdmSbcsSbbusy is set). It remains set until
+            it's explicitly cleared by the debugger.
+
+            While this field is set, no more system bus accesses can be
+            initiated by the Debug Module.
+| R/W1C
+| 0
+[[dmSbcsSbbusy]]
+| ((sbbusy))
+| When 1, indicates the system bus manager is busy. (Whether the
+            system bus itself is busy is related, but not the same thing.) This
+            bit goes high immediately when a read or write is requested for any
+            reason, and does not go low until the access is fully completed.
+
+            Writes to \RdmSbcs while \FdmSbcsSbbusy is high result in undefined
+            behavior.  A debugger must not write to \RdmSbcs until it reads
+            \FdmSbcsSbbusy as 0.
+| R
+| 0
+[[dmSbcsSbreadonaddr]]
+| ((sbreadonaddr))
+| When 1, every write to \RdmSbaddressZero automatically triggers a
+            system bus read at the new address.
+| R/W
+| 0
+[[dmSbcsSbaccess]]
+| ((sbaccess))
+| Select the access size to use for system bus accesses.
+
+0 (8bit): 8-bit
+
+
+1 (16bit): 16-bit
+
+
+2 (32bit): 32-bit
+
+
+3 (64bit): 64-bit
+
+
+4 (128bit): 128-bit
+
+If \FdmSbcsSbaccess has an unsupported value when the DM starts a bus
+            access, the access is not performed and \FdmSbcsSberror is set to 4.
+| R/W
+| 2
+[[dmSbcsSbautoincrement]]
+| ((sbautoincrement))
+| When 1, {\tt sbaddress} is incremented by the access size (in
+            bytes) selected in \FdmSbcsSbaccess after every system bus access.
+| R/W
+| 0
+[[dmSbcsSbreadondata]]
+| ((sbreadondata))
+| When 1, every read from \RdmSbdataZero automatically triggers a
+            system bus read at the (possibly auto-incremented) address.
+| R/W
+| 0
+[[dmSbcsSberror]]
+| ((sberror))
+| When the Debug Module's system bus
+            manager encounters an error, this field gets set. The bits in this
+            field remain set until they are cleared by writing 1 to them.
+            While this field is non-zero, no more system bus accesses can be
+            initiated by the Debug Module.
+
+            An implementation may report ``Other'' (7) for any error condition.
+
+0 (none): There was no bus error.
+
+
+1 (timeout): There was a timeout.
+
+
+2 (address): A bad address was accessed.
+
+
+3 (alignment): There was an alignment error.
+
+
+4 (size): An access of unsupported size was requested.
+
+
+7 (other): Other.
+
+| R/W1C
+| 0
+[[dmSbcsSbasize]]
+| ((sbasize))
+| Width of system bus addresses in bits. (0 indicates there is no bus
+            access support.)
+| R
+| Preset
+[[dmSbcsSbaccessOneTwentyeight]]
+| ((sbaccess128))
+| 1 when 128-bit system bus accesses are supported.
+| R
+| Preset
+[[dmSbcsSbaccessSixtyfour]]
+| ((sbaccess64))
+| 1 when 64-bit system bus accesses are supported.
+| R
+| Preset
+[[dmSbcsSbaccessThirtytwo]]
+| ((sbaccess32))
+| 1 when 32-bit system bus accesses are supported.
+| R
+| Preset
+[[dmSbcsSbaccessSixteen]]
+| ((sbaccess16))
+| 1 when 16-bit system bus accesses are supported.
+| R
+| Preset
+[[dmSbcsSbaccessEight]]
+| ((sbaccess8))
+| 1 when 8-bit system bus accesses are supported.
+| R
+| Preset
+|===
+
+==== System Bus Address 31:0 (((sbaddress0)), at 0x39)
+
+[[dmSbaddressZero]]
+If \FdmSbcsSbasize is 0, then this register is not present.
+
+When the system bus manager is busy, writes to this register will set
+\FdmSbcsSbbusyerror and don't do anything else.
+
+\begin{steps}{If \FdmSbcsSberror is 0, \FdmSbcsSbbusyerror is 0, and \FdmSbcsSbreadonaddr
+is set then writes to this register start the following:}
+\item Set \FdmSbcsSbbusy.
+\item Perform a bus read from the new value of {\tt sbaddress}.
+\item If the read succeeded and \FdmSbcsSbautoincrement is set, increment
+{\tt sbaddress}.
+\item Clear \FdmSbcsSbbusy.
+\end{steps}
+
+[cols="3,10,1,1",options="header"]
+|===
+|Field |Description |Access |Reset
+[[dmSbaddressZeroAddress]]
+| ((address))
+| Accesses bits 31:0 of the physical address in {\tt sbaddress}.
+| R/W
+| 0
+|===
+
+==== System Bus Address 63:32 (((sbaddress1)), at 0x3a)
+
+[[dmSbaddressOne]]
+If \FdmSbcsSbasize is less than 33, then this register is not present.
+
+When the system bus manager is busy, writes to this register will set
+\FdmSbcsSbbusyerror and don't do anything else.
+
+[cols="3,10,1,1",options="header"]
+|===
+|Field |Description |Access |Reset
+[[dmSbaddressOneAddress]]
+| ((address))
+| Accesses bits 63:32 of the physical address in {\tt sbaddress} (if
+            the system address bus is that wide).
+| R/W
+| 0
+|===
+
+==== System Bus Address 95:64 (((sbaddress2)), at 0x3b)
+
+[[dmSbaddressTwo]]
+If \FdmSbcsSbasize is less than 65, then this register is not present.
+
+When the system bus manager is busy, writes to this register will set
+\FdmSbcsSbbusyerror and don't do anything else.
+
+[cols="3,10,1,1",options="header"]
+|===
+|Field |Description |Access |Reset
+[[dmSbaddressTwoAddress]]
+| ((address))
+| Accesses bits 95:64 of the physical address in {\tt sbaddress} (if
+            the system address bus is that wide).
+| R/W
+| 0
+|===
+
+==== System Bus Address 127:96 (((sbaddress3)), at 0x37)
+
+[[dmSbaddressThree]]
+If \FdmSbcsSbasize is less than 97, then this register is not present.
+
+When the system bus manager is busy, writes to this register will set
+\FdmSbcsSbbusyerror and don't do anything else.
+
+[cols="3,10,1,1",options="header"]
+|===
+|Field |Description |Access |Reset
+[[dmSbaddressThreeAddress]]
+| ((address))
+| Accesses bits 127:96 of the physical address in {\tt sbaddress} (if
+            the system address bus is that wide).
+| R/W
+| 0
+|===
+
+==== System Bus Data 31:0 (((sbdata0)), at 0x3c)
+
+[[dmSbdataZero]]
+If all of the {\tt sbaccess} bits in \RdmSbcs are 0, then this register
+is not present.
+
+Any successful system bus read updates {\tt sbdata}. If the width of
+the read access is less than the width of {\tt sbdata}, the contents of
+the remaining high bits may take on any value.
+
+If either \FdmSbcsSberror or \FdmSbcsSbbusyerror isn't 0 then accesses do nothing.
+
+If the bus manager is busy then accesses set \FdmSbcsSbbusyerror, and don't do
+anything else.
+
+\begin{steps}{Writes to this register start the following:}
+\item Set \FdmSbcsSbbusy.
+\item Perform a bus write of the new value of {\tt sbdata} to {\tt sbaddress}.
+\item If the write succeeded and \FdmSbcsSbautoincrement is set,
+increment {\tt sbaddress}.
+\item Clear \FdmSbcsSbbusy.
+\end{steps}
+
+\begin{steps}{Reads from this register start the following:}
+\item ``Return'' the data.
+\item Set \FdmSbcsSbbusy.
+\item \begin{steps}{If \FdmSbcsSbreadondata is set:}
+\item Perform a system bus read from the address contained in
+{\tt sbaddress}, placing the result in {\tt sbdata}.
+\item If \FdmSbcsSbautoincrement is set and the read was
+successful, increment {\tt sbaddress}.
+\end{steps}
+\item Clear \FdmSbcsSbbusy.
+\end{steps}
+
+Only \RdmSbdataZero has this behavior. The other {\tt sbdata} registers
+have no side effects. On systems that have buses wider than 32 bits, a
+debugger should access \RdmSbdataZero after accessing the other {\tt
+sbdata} registers.
+
+[cols="3,10,1,1",options="header"]
+|===
+|Field |Description |Access |Reset
+[[dmSbdataZeroData]]
+| ((data))
+| Accesses bits 31:0 of {\tt sbdata}.
+| R/W
+| 0
+|===
+
+==== System Bus Data 63:32 (((sbdata1)), at 0x3d)
+
+[[dmSbdataOne]]
+If \FdmSbcsSbaccessSixtyfour and \FdmSbcsSbaccessOneTwentyeight are 0, then this
+register is not present.
+
+If the bus manager is busy then accesses set \FdmSbcsSbbusyerror, and don't do
+anything else.
+
+[cols="3,10,1,1",options="header"]
+|===
+|Field |Description |Access |Reset
+[[dmSbdataOneData]]
+| ((data))
+| Accesses bits 63:32 of {\tt sbdata} (if the system bus is that
+            wide).
+| R/W
+| 0
+|===
+
+==== System Bus Data 95:64 (((sbdata2)), at 0x3e)
+
+[[dmSbdataTwo]]
+This register only exists if \FdmSbcsSbaccessOneTwentyeight is 1.
+
+If the bus manager is busy then accesses set \FdmSbcsSbbusyerror, and don't do
+anything else.
+
+[cols="3,10,1,1",options="header"]
+|===
+|Field |Description |Access |Reset
+[[dmSbdataTwoData]]
+| ((data))
+| Accesses bits 95:64 of {\tt sbdata} (if the system bus is that
+            wide).
+| R/W
+| 0
+|===
+
+==== System Bus Data 127:96 (((sbdata3)), at 0x3f)
+
+[[dmSbdataThree]]
+This register only exists if \FdmSbcsSbaccessOneTwentyeight is 1.
+
+If the bus manager is busy then accesses set \FdmSbcsSbbusyerror, and don't do
+anything else.
+
+[cols="3,10,1,1",options="header"]
+|===
+|Field |Description |Access |Reset
+[[dmSbdataThreeData]]
+| ((data))
+| Accesses bits 127:96 of {\tt sbdata} (if the system bus is that
+            wide).
+| R/W
+| 0
+|===
+
+==== Custom Features (((custom)), at 0x1f)
+
+[[dmCustom]]
+This optional register may be used for non-standard features. Future
+version of the debug spec will not use this address.
+
+
+==== Custom Features 0 (((custom0)), at 0x70)
+
+[[dmCustomZero]]
+The optional \RdmCustomZero through \RdmCustomFifteen registers may
+be used for non-standard features. Future versions of the debug spec
+will not use these addresses.
+
+
