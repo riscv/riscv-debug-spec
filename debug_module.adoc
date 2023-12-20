@@ -1416,216 +1416,156 @@ If <<sberror>> is 0, <<sbbusyerror>> is 0, and <<sbreadonaddr>> is set then writ
 
 ==== System Bus Address 63:32 (`sbaddress1`, at 0x3a)
 
-[SbaddressOne]## If is less than 33, then this register is not
-present.
+[[sbaddressone,sbaddressone]]
+If <<sbasize>> is less than 33, then this register is not present.
 
-When the system bus manager is busy, writes to this register will set
-and don’t do anything else.
+When the system bus manager is busy, writes to this register will set <<sbbusyerror>> and don't do anything else.
 
-[cols="<,<",options="header",]
-|===
-|31 |0
-|latexmath:[$|address|$] |
-|32 |
-|===
+*FIXME:Register diagram goes here.*
 
-[[SbaddressOneAddress]]
-[cols="<,<,^,<",options="header",]
+[[sbaddressoneaddress,sbaddressoneaddress]]
+[%autowidth,float="center,align="center",cols="<,<,^,<",options="header"]
 |===
 |Field |Description |Access |Reset
-|_Continued on next page_ | | |
-
 |`address` |Accesses bits 63:32 of the physical address in `sbaddress`
-(if the system address bus is that wide). |R/W |0
+(if the system address bus is that wide).
+|R/W |0
 |===
 
 ==== System Bus Address 95:64 (`sbaddress2`, at 0x3b)
 
-[SbaddressTwo]## If is less than 65, then this register is not
-present.
+[sbaddresstwo,sbaddresstwo]] If <<sbasize>> is less than 65, then this register is not present.
 
-When the system bus manager is busy, writes to this register will set
-and don’t do anything else.
+When the system bus manager is busy, writes to this register will set <<sbbusyerror>> and don't do anything else.
 
-[cols="<,<",options="header",]
-|===
-|31 |0
-|latexmath:[$|address|$] |
-|32 |
-|===
+*FIXME:Register diagram goes here.*
 
-[[SbaddressTwoAddress]]
-[cols="<,<,^,<",options="header",]
+[[sbaddresstwoaddress,sbaddresstwoaddress]]
+[%autowidth,float="center",align="center",cols="<,<,^,<",options="header"]
 |===
 |Field |Description |Access |Reset
-|_Continued on next page_ | | |
-
-|`address` |Accesses bits 95:64 of the physical address in `sbaddress`
-(if the system address bus is that wide). |R/W |0
+|`address`
+|Accesses bits 95:64 of the physical address in `sbaddress` (if the system address bus is that wide). 
+|R/W |0
 |===
 
 ==== System Bus Address 127:96 (`sbaddress3`, at 0x37)
 
-[SbaddressThree]## If is less than 97, then this register is not
-present.
+[[sbaddressthree,sbaddressthree]]
+If <<sbasize>> is less than 97, then this register is not present.
 
-When the system bus manager is busy, writes to this register will set
-and don’t do anything else.
+When the system bus manager is busy, writes to this register will set <<sbbusyerror>> and don't do anything else.
 
-[cols="<,<",options="header",]
-|===
-|31 |0
-|latexmath:[$|address|$] |
-|32 |
-|===
+*FIXME:Register diagram goes here.*
 
-[[SbaddressThreeAddress]]
-[cols="<,<,^,<",options="header",]
+[[sbaddressthreeaddress,sbaddressthreeaddress]]
+[%autowidth,float="center",align="center",cols="<,<,^,<",options="header"]
 |===
 |Field |Description |Access |Reset
-|_Continued on next page_ | | |
-
-|`address` |Accesses bits 127:96 of the physical address in
-`sbaddress` (if the system address bus is that wide). |R/W |0
+|`address` 
+|Accesses bits 127:96 of the physical address in `sbaddress` (if the system address bus is that wide). 
+|R/W |0
 |===
 
 ==== System Bus Data 31:0 (`sbdata0`, at 0x3c)
 
-[SbdataZero]## If all of the `sbaccess` bits in are 0, then this
-register is not present.
+[[sbdatazero,sbdatazero]] 
+If all of the `sbaccess` bits in <<sbcs>> are 0, then this register is not present.
 
-Any successful system bus read updates `sbdata`. If the width of the
-read access is less than the width of `sbdata`, the contents of the
-remaining high bits may take on any value.
+Any successful system bus read updates `sbdata`. If the width of the read access is less than the width of `sbdata`, the contents of the remaining high bits may take on any value.
 
-If either or isn’t 0 then accesses do nothing.
+If either <<sberror>> or <<sbbusyerror>> isn't 0 then accesses do nothing.
 
-If the bus manager is busy then accesses set , and don’t do anything
-else.
+If the bus manager is busy then accesses set <<sbbusyerror>>, and don't do anything else.
 
 Writes to this register start the following:
 
-Set .
-
-Perform a bus write of the new value of `sbdata` to `sbaddress`.
-
-If the write succeeded and is set, increment `sbaddress`.
-
-Clear .
+. Set <<sbbusy>>.
+. Perform a bus write of the new value of `sbdata` to `sbaddress`.
+. If the write succeeded and <<sbautoincrement>> is set, increment `sbaddress`.
+. Clear <<sbbusy>>.
 
 Reads from this register start the following:
 
-``Return'' the data.
-
-Set .
-
-If is set:
-
-Perform a system bus read from the address contained in `sbaddress`,
+. "Return" the data.
+. Set <<sbbusy>>.
+. If <<sbreadondata>> is set:
+..Perform a system bus read from the address contained in `sbaddress`,
 placing the result in `sbdata`.
+.. If <<sbautoincrement>> is set and the read was successful, increment `sbaddress`.
+. Clear <<sbbusy>>.
 
-If is set and the read was successful, increment `sbaddress`.
-
-Clear .
-
-Only has this behavior. The other `sbdata` registers have no side
+Only <<sbdata0>> has this behavior. The other `sbdata` registers have no side
 effects. On systems that have buses wider than 32 bits, a debugger
-should access after accessing the other ` sbdata` registers.
+should access <<sbdata0>> after accessing the other `sbdata` registers.
 
-[cols="<,<",options="header",]
-|===
-|31 |0
-|latexmath:[$|data|$] |
-|32 |
-|===
+*FIXME: Register diagram goes here.*
 
-[[SbdataZeroData]]
-[cols="<,<,^,<",options="header",]
+[[sbdatazerodata,sbdatazerodata]]
+[%autowidth,align="center",float="center",cols="<,<,^,<",options="header"]
 |===
 |Field |Description |Access |Reset
-|_Continued on next page_ | | |
-|`data` |Accesses bits 31:0 of `sbdata`. |R/W |0
+|`data` |Accesses bits 31:0 of `sbdata`. 
+|R/W |0
 |===
 
 ==== System Bus Data 63:32 (`sbdata1`, at 0x3d)
 
-[SbdataOne]## If and are 0, then this register is not present.
+[[sbdataone,sbdataone]]
+If <<sbaccess64>> and <<sbaccess128>> are 0, then this register is not present.
 
-If the bus manager is busy then accesses set , and don’t do anything
-else.
+If the bus manager is busy then accesses set <<sbbusyerror>>, and don't do anything else.
 
-[cols="<,<",options="header",]
-|===
-|31 |0
-|latexmath:[$|data|$] |
-|32 |
-|===
+*FIXME: Register diagram goes here.*
 
-[[SbdataOneData]]
-[cols="<,<,^,<",options="header",]
+[[sbdataonedata,sbdataonedata]]
+[%autowidth,align="center",float="center",cols="<,<,^,<",options="header"]
 |===
 |Field |Description |Access |Reset
-|_Continued on next page_ | | |
-
-|`data` |Accesses bits 63:32 of `sbdata` (if the system bus is that
-wide). |R/W |0
+|`data` |Accesses bits 63:32 of `sbdata` (if the system bus is that wide).
+|R/W |0
 |===
 
 ==== System Bus Data 95:64 (`sbdata2`, at 0x3e)
 
-[SbdataTwo]## This register only exists if is 1.
+[[sbdatatwo,sbdatatwo]]
+This register only exists if <<sbaccess128>> is 1.
 
-If the bus manager is busy then accesses set , and don’t do anything
-else.
+If the bus manager is busy then accesses set <<sbbusyerror>>, and don't do anything else.
 
-[cols="<,<",options="header",]
-|===
-|31 |0
-|latexmath:[$|data|$] |
-|32 |
-|===
+*FIXME:Register diagram goes here.*
 
-[[SbdataTwoData]]
-[cols="<,<,^,<",options="header",]
+[[sbdatatwodata,sbdatatwodata]]
+[%autowidth,float="center",align="center",cols="<,<,^,<",options="header"]
 |===
 |Field |Description |Access |Reset
-|_Continued on next page_ | | |
-
-|`data` |Accesses bits 95:64 of `sbdata` (if the system bus is that
-wide). |R/W |0
+|`data` |Accesses bits 95:64 of `sbdata` (if the system bus is that wide). 
+|R/W |0
 |===
 
 ==== System Bus Data 127:96 (`sbdata3`, at 0x3f)
 
-[SbdataThree]## This register only exists if is 1.
+[[sbdatathree,sbdatathree]]
+This register only exists if <<sbaccess128>> is 1.
 
-If the bus manager is busy then accesses set , and don’t do anything
-else.
+If the bus manager is busy then accesses set <<sbbusyerror>>, and don't do anything else.
 
-[cols="<,<",options="header",]
-|===
-|31 |0
-|latexmath:[$|data|$] |
-|32 |
-|===
+*FIXME:Register diagram goes here.*
 
-[[SbdataThreeData]]
-[cols="<,<,^,<",options="header",]
+[[sbdatathreedata,sbdatathreedata]]
+[%autowidth,float="center",align="center",cols="<,<,^,<",options="header"]
 |===
 |Field |Description |Access |Reset
-|_Continued on next page_ | | |
-
-|`data` |Accesses bits 127:96 of `sbdata` (if the system bus is that
-wide). |R/W |0
+|`data` |Accesses bits 127:96 of `sbdata` (if the system bus is that wide).
+|R/W |0
 |===
 
 ==== Custom Features (`custom`, at 0x1f)
 
-[Custom]## This optional register may be used for non-standard
-features. Future version of the debug spec will not use this address.
+[[custom,custom,]]
+This optional register may be used for non-standard features. Future version of the debug spec will not use this address.
 
 ==== Custom Features 0 (`custom0`, at 0x70)
 
-[CustomZero]## The optional through registers may be used for
-non-standard features. Future versions of the debug spec will not use
-these addresses.
+[[customzero,customzero]]
+The optional through registers may be used for non-standard features. Future versions of the debug spec will not use these addresses.
