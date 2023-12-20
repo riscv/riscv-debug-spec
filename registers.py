@@ -359,6 +359,10 @@ def toLatexIdentifier( *args ):
         text += arg
     return text
 
+def toAdocIdentifier( *args ):
+    text = "".join( (a or "").lower() for a in args )
+    return text
+
 def toCIdentifier( text ):
     return re.sub( "[^\w]", "_", text )
 
@@ -820,7 +824,7 @@ def print_adoc( registers ):
                 print(f"==={sub} ((`{r.name}`))")
         print()
         if r.label and r.define:
-            print("[[%s]]" % toLatexIdentifier(registers.prefix, r.label))
+            print("[[%s]]" % toAdocIdentifier(registers.prefix, r.label))
         print(remove_indent(r.description))
         print()
 
@@ -889,26 +893,28 @@ def print_adoc( registers ):
 #
 #            print("\\end{center}")
 
-        columns = [("3", "Field", lambda f: "((" + f.name + "))")]
-        columns += [("10", "Description", lambda f: f.latex_description())]
+        columns = [("<2", "Field", lambda f: "((" + f.name + "))")]
+        columns += [("<3", "Description", lambda f: f.latex_description())]
         if not registers.skip_access:
-            columns += [("1", "Access", lambda f: f.access)]
+            columns += [("^1", "Access", lambda f: f.access)]
         if not registers.skip_reset:
-            columns += [("1", "Reset", lambda f: f.reset)]
+            columns += [("^1", "Reset", lambda f: f.reset)]
 
         if any( f.description for f in r.fields ):
             #print("\\tabletail{\\hline \\multicolumn{%d}{|r|}" % len(columns))
             #print("   {{Continued on next page}} \\\\ \\hline}")
-            print('[cols="' + ",".join(c[0] for c in columns) + '",options="header"]')
+            cols = ",".join(c[0] for c in columns)
+            print(f'[float="center",align="center",cols="{cols}",options="header"]')
             print("|===")
 
             print("|" + " |".join(c[1] for c in columns))
 
             for f in r.fields:
                 if f.description or f.values:
-                    print("[[%s]]" % toLatexIdentifier(registers.prefix, r.short or r.label, f.name))
-                    for c in columns:
-                        print("| " + c[2](f))
+                    identifier = toAdocIdentifier(registers.prefix, r.short or r.label, f.name)
+                    print(f"|[[{identifier},{identifier}]] `{columns[0][2](f)}`")
+                    for c in columns[1:]:
+                        print("| " + remove_indent( c[2](f) ))
 
             print("|===")
         print()
@@ -922,7 +928,7 @@ def print_adoc_index( registers ):
     if any(r.sdesc for r in registers.registers):
         columns.append(("Description", "6"))
 
-    print(f"[[{toLatexIdentifier(registers.prefix, registers.label)}]]")
+    print(f"[[{toAdocIdentifier(registers.prefix, registers.label)}]]")
     print('[cols="' + ",".join(c[1] for c in columns) + '",options="header"]')
     print("|===")
     print("|" + " |".join(c[0] for c in columns))
