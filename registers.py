@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from datetime import datetime
 import sys
 import xml.etree.ElementTree
 import argparse
@@ -357,6 +358,10 @@ def toLatexIdentifier( *args ):
         if arg and text:
             arg = arg[0].upper() + arg[1:]
         text += arg
+    return text
+
+def toAdocIdentifier( *args ):
+    text = "".join( (a or "").lower() for a in args )
     return text
 
 def toCIdentifier( text ):
@@ -800,7 +805,18 @@ def print_latex_register( registers ):
 def remove_indent( text ):
     return "\n".join( line.lstrip() for line in text.splitlines() )
 
-def print_adoc( registers ):
+def add_continuations(text):
+    lines = text.splitlines()
+    result = []
+    for i in range(len(lines)):
+        current_line = lines[i].rstrip()
+        if len(current_line) > 0 and i < len(lines) - 1 and lines[i + 1].strip() != "":
+            current_line += " +"
+        result.append(current_line)
+    return "\n".join(result)
+
+def print_adoc( registers, source ):
+    print(f"// Registers auto-generated on {datetime.now()} from {source}")
     sub = "=" * registers.depth
     for r in registers.registers:
         if not r.fields and not r.description:
@@ -820,7 +836,7 @@ def print_adoc( registers ):
                 print(f"==={sub} ((`{r.name}`))")
         print()
         if r.label and r.define:
-            print("[[%s]]" % toLatexIdentifier(registers.prefix, r.label))
+            print("[[%s]]" % toAdocIdentifier(registers.prefix, r.label))
         print(remove_indent(r.description))
         print()
 
@@ -889,32 +905,36 @@ def print_adoc( registers ):
 #
 #            print("\\end{center}")
 
-        columns = [("3", "Field", lambda f: "((" + f.name + "))")]
-        columns += [("10", "Description", lambda f: f.latex_description())]
+        columns = [("<2", "Field", lambda f: f.name)]
+        columns += [("<3", "Description", lambda f: f.latex_description())]
         if not registers.skip_access:
-            columns += [("1", "Access", lambda f: f.access)]
+            columns += [("^1", "Access", lambda f: f.access)]
         if not registers.skip_reset:
-            columns += [("1", "Reset", lambda f: f.reset)]
+            columns += [("^1", "Reset", lambda f: f.reset)]
 
         if any( f.description for f in r.fields ):
             #print("\\tabletail{\\hline \\multicolumn{%d}{|r|}" % len(columns))
             #print("   {{Continued on next page}} \\\\ \\hline}")
-            print('[cols="' + ",".join(c[0] for c in columns) + '",options="header"]')
+            cols = ",".join(c[0] for c in columns)
+            print(f'[float="center",align="center",cols="{cols}",options="header"]')
             print("|===")
 
             print("|" + " |".join(c[1] for c in columns))
 
             for f in r.fields:
                 if f.description or f.values:
-                    print("[[%s]]" % toLatexIdentifier(registers.prefix, r.short or r.label, f.name))
-                    for c in columns:
-                        print("| " + c[2](f))
+                    identifier = toAdocIdentifier(r.short or r.label, f.name)
+                    print(f"|[[{identifier},{identifier}]] `{columns[0][2](f)}`")
+                    for c in columns[1:]:
+                        print("|" + add_continuations(remove_indent( c[2](f) )))
 
             print("|===")
         print()
 
-def print_adoc_index( registers ):
-    print(registers.description)
+def print_adoc_index( registers, source ):
+    print(f"// Index auto-generated on {datetime.now()} from {source}")
+
+    print(remove_indent(registers.description))
 
     columns = [
         ("Address", "1"),
@@ -922,7 +942,7 @@ def print_adoc_index( registers ):
     if any(r.sdesc for r in registers.registers):
         columns.append(("Description", "6"))
 
-    print(f"[[{toLatexIdentifier(registers.prefix, registers.label)}]]")
+    print(f"[[{toAdocIdentifier(registers.prefix, registers.label)}]]")
     print('[cols="' + ",".join(c[1] for c in columns) + '",options="header"]')
     print("|===")
     print("|" + " |".join(c[0] for c in columns))
@@ -979,7 +999,7 @@ def main():
         write_chisel( open( parsed.chisel, "w" ), registers )
     if not registers.skip_index:
         if parsed.adoc:
-            print_adoc_index( registers )
+            print_adoc_index( registers, parsed.path )
         else:
             print_latex_index( registers )
     if parsed.register:
@@ -988,6 +1008,6 @@ def main():
     if parsed.custom:
         print_latex_custom( registers )
     if parsed.adoc:
-        print_adoc( registers )
+        print_adoc( registers, parsed.path )
 
 sys.exit( main() )
