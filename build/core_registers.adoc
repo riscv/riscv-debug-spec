@@ -119,7 +119,7 @@ priority.  See <<dcsrcausepriority>> for priorities. +
 6 (group): The hart halted because it's part of a halt group. Harts may report 3 for this cause instead. +
 Other values are reserved for future use.
 | R| 0
-[[csrDcsrV,v]] `v`
+|[[csrDcsrV,v]] `v`
 |Extends the prv field with the virtualization mode the hart was operating in when Debug Mode was entered. The encoding is described in <<privmode>>. +
 A debugger can change this value to change the hart's virtualization mode when exiting Debug Mode.  This bit is hardwired to 0 on harts that do not support virtualization mode.
 | WARL | 0
