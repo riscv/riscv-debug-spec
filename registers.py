@@ -805,6 +805,7 @@ def print_latex_register( registers ):
 def remove_indent( text ):
     return "\n".join( line.lstrip() for line in text.splitlines() )
 
+
 def add_continuations(text):
     lines = text.splitlines()
     result = []
@@ -815,8 +816,7 @@ def add_continuations(text):
         result.append(current_line)
     return "\n".join(result)
 
-def print_adoc( registers, source ):
-    print(f"// Registers auto-generated on {datetime.now()} from {source}")
+def write_adoc( fd, registers ):
     sub = "=" * registers.depth
     for r in registers.registers:
         if not r.fields and not r.description:
@@ -825,31 +825,31 @@ def print_adoc( registers, source ):
         if r.short:
             # TODO: Check that (((foo))) renders as ((foo)) inside parens
             if r.address:
-                print(f"==={sub} {r.name} ((({r.short})), at {r.address})")
+                fd.write(f"==={sub} {r.name} ((({r.short})), at {r.address})\n")
             else:
-                print(f"==={sub} {r.name} ((({r.short})))")
+                fd.write(f"==={sub} {r.name} ((({r.short})))\n")
             # TODO: confirm that index works
         else:
             if r.address:
-                print(f"==={sub} ((`{r.name}`)) (at {r.address})")
+                fd.write(f"==={sub} ((`{r.name}`)) (at {r.address})\n")
             else:
-                print(f"==={sub} ((`{r.name}`))")
-        print()
+                fd.write(f"==={sub} ((`{r.name}`))\n")
+        fd.write("\n")
         if r.label and r.define:
-            print("[[%s]]" % toAdocIdentifier(registers.prefix, r.label))
-        print(remove_indent(r.description))
-        print()
+            fd.write("[[%s]]\n" % toAdocIdentifier(registers.prefix, r.label))
+        fd.write(remove_indent(r.description))
+        fd.write("\n")
 
         if r.fields:
             if registers.prefix == "CSR_":
                 if int(r.address, 0) >= 0xc00:
-                    print("This CSR is read-only.")
+                    fd.write("This CSR is read-only.\n")
                 elif all(f.access in ('R', '0') for f in r.fields):
-                    print("Writing this read/write CSR has no effect.")
+                    fd.write("Writing this read/write CSR has no effect.\n")
                 else:
-                    print("This CSR is read/write.")
+                    fd.write("This CSR is read/write.\n")
             elif all(f.access in ('R', '0') for f in r.fields):
-                print("This entire register is read-only.")
+                fd.write("This entire register is read-only.\n")
 
             # todo: use wavedrom to draw the picture
 #            print("\\begin{center}")
@@ -913,28 +913,24 @@ def print_adoc( registers, source ):
             columns += [("^1", "Reset", lambda f: f.reset)]
 
         if any( f.description for f in r.fields ):
-            #print("\\tabletail{\\hline \\multicolumn{%d}{|r|}" % len(columns))
-            #print("   {{Continued on next page}} \\\\ \\hline}")
             cols = ",".join(c[0] for c in columns)
-            print(f'[float="center",align="center",cols="{cols}",options="header"]')
-            print("|===")
+            fd.write(f'[float="center",align="center",cols="{cols}",options="header"]\n')
+            fd.write("|===\n")
 
-            print("|" + " |".join(c[1] for c in columns))
+            fd.write("|" + " |".join(c[1] for c in columns) + "\n")
 
             for f in r.fields:
                 if f.description or f.values:
                     identifier = toAdocIdentifier(r.short or r.label, f.name)
-                    print(f"|[[{identifier},{identifier}]] `{columns[0][2](f)}`")
+                    fd.write(f"|[[{identifier},{identifier}]] `{columns[0][2](f)}`\n")
                     for c in columns[1:]:
-                        print("|" + add_continuations(remove_indent( c[2](f) )))
+                        fd.write("|" + add_continuations(remove_indent( c[2](f) )) + "\n")
 
-            print("|===")
-        print()
+            fd.write("|===\n")
+        fd.write("\n")
 
-def print_adoc_index( registers, source ):
-    print(f"// Index auto-generated on {datetime.now()} from {source}")
-
-    print(remove_indent(registers.description))
+def write_adoc_index( fd, registers ):
+    fd.write(remove_indent(registers.description))
 
     columns = [
         ("Address", "1"),
@@ -942,10 +938,10 @@ def print_adoc_index( registers, source ):
     if any(r.sdesc for r in registers.registers):
         columns.append(("Description", "6"))
 
-    print(f"[[{toAdocIdentifier(registers.prefix, registers.label)}]]")
-    print('[cols="' + ",".join(c[1] for c in columns) + '",options="header"]')
-    print("|===")
-    print("|" + " |".join(c[0] for c in columns))
+    fd.write(f"[[{toAdocIdentifier(registers.prefix, registers.label)}]]\n")
+    fd.write('[cols="' + ",".join(c[1] for c in columns) + '",options="header"]\n')
+    fd.write("|===\n")
+    fd.write("|" + " |".join(c[0] for c in columns) + "\n")
 
     for r in sorted( registers.registers,
             key=cmp_to_key(lambda a, b: compare_address(a.address, b.address))):
@@ -954,10 +950,10 @@ def print_adoc_index( registers, source ):
         else:
             name = r.name
         if r.sdesc:
-            print("|%s | %s | %s" % ( r.address, name, r.sdesc ))
+            fd.write("|%s |%s |%s\n" % ( r.address, name, r.sdesc ))
         else:
-            print("|%s | %s" % ( r.address, name ))
-    print("|===")
+            fd.write("|%s |%s\n" % ( r.address, name ))
+    fd.write("|===\n")
 
 def main():
     parser = argparse.ArgumentParser()
@@ -967,8 +963,8 @@ def main():
             'start/end positions.' )
     parser.add_argument( '--custom', action='store_true',
             help='Use custom LaTeX.' )
-    parser.add_argument( '--adoc', action='store_true',
-            help='Use asciidoc.' )
+    parser.add_argument( '--adoc',
+            help='Write asciidoc definition to the named file.' )
     parser.add_argument( '--definitions',
             help='Write register style definitions to the named file.' )
     parser.add_argument( '--cheader',
@@ -997,17 +993,18 @@ def main():
         write_cheader( open( parsed.cheader, "w" ), registers )
     if parsed.chisel:
         write_chisel( open( parsed.chisel, "w" ), registers )
-    if not registers.skip_index:
-        if parsed.adoc:
-            print_adoc_index( registers, parsed.path )
-        else:
-            print_latex_index( registers )
+    if not registers.skip_index and not parsed.adoc:
+        print_latex_index( registers )
     if parsed.register:
         assert(0)
         print_latex_register( registers )
     if parsed.custom:
         print_latex_custom( registers )
     if parsed.adoc:
-        print_adoc( registers, parsed.path )
+        with open( parsed.adoc, "w" ) as fd:
+            fd.write(f"// Auto-generated on {datetime.now()} from {parsed.path}")
+            if not registers.skip_index:
+                write_adoc_index( fd, registers )
+            write_adoc( fd, registers )
 
 sys.exit( main() )
