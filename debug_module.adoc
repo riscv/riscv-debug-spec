@@ -395,7 +395,7 @@ determines the kind of command. <<cmdtype>> lists all commands.
 | 2 | Access Memory Command |
 |===
 
-include::abstract_commands.adoc[]
+include::build/abstract_commands.adoc[]
 
 [[programbuffer]]
 === Program Buffer
