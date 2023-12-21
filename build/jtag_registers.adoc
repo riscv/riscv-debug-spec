@@ -1,5 +1,6 @@
+// Index auto-generated on 2023-12-21 11:57:08.066122 from ../xml/jtag_registers.xml
 
-[[dtmTable:jtagregisters]]
+[[dtm_table:jtag_registers]]
 [cols="1,6,6",options="header"]
 |===
 |Address |Name |Description
@@ -15,52 +16,49 @@
 |0x17 | Reserved (BYPASS) | Reserved for future RISC-V standards
 |0x1f | BYPASS | JTAG requires this encoding
 |===
+// Registers auto-generated on 2023-12-21 11:57:08.071131 from ../xml/jtag_registers.xml
 ==== ((`IDCODE`)) (at 0x01)
 
-[[dtmIdcode]]
+[[dtm_idcode]]
 This register is selected (in IR) when the TAP state machine is reset.
 Its definition is exactly as defined in IEEE Std 1149.1-2013.
 
 This entire register is read-only.
-[cols="3,10,1,1",options="header"]
+[float="center",align="center",cols="<2,<3,^1,^1",options="header"]
 |===
 |Field |Description |Access |Reset
-[[dtmIdcodeVersion]]
-| ((Version))
-| Identifies the release version of this part.
-| R
-| Preset
-[[dtmIdcodePartnumber]]
-| ((PartNumber))
-| Identifies the designer's part number of this part.
-| R
-| Preset
-[[dtmIdcodeManufid]]
-| ((ManufId))
-| Identifies the designer/manufacturer of this part. Bits 6:0 must be
-            bits 6:0 of the designer/manufacturer's Identification Code as
-            assigned by JEDEC Standard JEP106. Bits 10:7 contain the modulo-16
-            count of the number of continuation characters (0x7f) in that same
-            Identification Code.
-| R
-| Preset
+|[[idcodeversion,idcodeversion]] `Version`
+|Identifies the release version of this part.
+|R
+|Preset
+|[[idcodepartnumber,idcodepartnumber]] `PartNumber`
+|Identifies the designer's part number of this part.
+|R
+|Preset
+|[[idcodemanufid,idcodemanufid]] `ManufId`
+|Identifies the designer/manufacturer of this part. Bits 6:0 must be +
+bits 6:0 of the designer/manufacturer's Identification Code as +
+assigned by JEDEC Standard JEP106. Bits 10:7 contain the modulo-16 +
+count of the number of continuation characters (0x7f) in that same +
+Identification Code.
+|R
+|Preset
 |===
 
 ==== DTM Control and Status (((dtmcs)), at 0x10)
 
-[[dtmDtmcs]]
+[[dtm_dtmcs]]
 The size of this register will remain constant in future versions so
 that a debugger can always determine the version of the DTM.
 
-[cols="3,10,1,1",options="header"]
+[float="center",align="center",cols="<2,<3,^1,^1",options="header"]
 |===
 |Field |Description |Access |Reset
-[[dtmDtmcsErrinfo]]
-| ((errinfo))
-| This optional field may provide additional detail about an error
-            that occurred when communicating with a DM. It is updated whenever
-            \FdtmDmiOp is updated by the hardware or when 1 is written to
-            \FdtmDtmcsDmireset.
+|[[dtmcserrinfo,dtmcserrinfo]] `errinfo`
+|This optional field may provide additional detail about an error +
+that occurred when communicating with a DM. It is updated whenever +
+\FdtmDmiOp is updated by the hardware or when 1 is written to +
+\FdtmDtmcsDmireset.
 
 0 (not implemented): This field is not implemented.
 
@@ -74,59 +72,53 @@ that a debugger can always determine the version of the DTM.
 3 (device error): The DMI subordinate reported an error.
 
 
-4 (unknown): There is no error to report, or no further information available
-                about the error. This is the reset value if the field is implemented.
+4 (unknown): There is no error to report, or no further information available +
+about the error. This is the reset value if the field is implemented.
 
 Other values are reserved for future use by this specification.
-| R
-| 4
-[[dtmDtmcsDtmhardreset]]
-| ((dtmhardreset))
-| Writing 1 to this bit does a hard reset of the DTM,
-          causing the DTM to forget about any outstanding DMI transactions, and
-          returning all registers and internal state to their reset value.
-          In general this should only be used when the Debugger has
-          reason to expect that the outstanding DMI transaction will never
-          complete (e.g. a reset condition caused an inflight DMI transaction to
-          be cancelled).
-| W1
-| -
-[[dtmDtmcsDmireset]]
-| ((dmireset))
-| Writing 1 to this bit clears the sticky error state and resets
-            \FdtmDtmcsErrinfo, but does not affect outstanding DMI transactions.
-| W1
-| -
-[[dtmDtmcsIdle]]
-| ((idle))
-| This is a hint to the debugger of the minimum number of
-            cycles a debugger should spend in
-            Run-Test/Idle after every DMI scan to avoid a `busy'
-            return code (\FdtmDtmcsDmistat of 3). A debugger must still
-            check \FdtmDtmcsDmistat when necessary.
+|R
+|4
+|[[dtmcsdtmhardreset,dtmcsdtmhardreset]] `dtmhardreset`
+|Writing 1 to this bit does a hard reset of the DTM, +
+causing the DTM to forget about any outstanding DMI transactions, and +
+returning all registers and internal state to their reset value. +
+In general this should only be used when the Debugger has +
+reason to expect that the outstanding DMI transaction will never +
+complete (e.g. a reset condition caused an inflight DMI transaction to +
+be cancelled).
+|W1
+|-
+|[[dtmcsdmireset,dtmcsdmireset]] `dmireset`
+|Writing 1 to this bit clears the sticky error state and resets +
+\FdtmDtmcsErrinfo, but does not affect outstanding DMI transactions.
+|W1
+|-
+|[[dtmcsidle,dtmcsidle]] `idle`
+|This is a hint to the debugger of the minimum number of +
+cycles a debugger should spend in +
+Run-Test/Idle after every DMI scan to avoid a `busy' +
+return code (\FdtmDtmcsDmistat of 3). A debugger must still +
+check \FdtmDtmcsDmistat when necessary.
 
-            0: It is not necessary to enter Run-Test/Idle at all.
+0: It is not necessary to enter Run-Test/Idle at all.
 
-            1: Enter Run-Test/Idle and leave it immediately.
+1: Enter Run-Test/Idle and leave it immediately.
 
-            2: Enter Run-Test/Idle and stay there for 1 cycle before leaving.
+2: Enter Run-Test/Idle and stay there for 1 cycle before leaving.
 
-            And so on.
-| R
-| Preset
-[[dtmDtmcsDmistat]]
-| ((dmistat))
-| Read-only alias of \FdtmDmiOp.
-| R
-| 0
-[[dtmDtmcsAbits]]
-| ((abits))
-| The size of \FdmSbaddressZeroAddress in \RdtmDmi.
-| R
-| Preset
-[[dtmDtmcsVersion]]
-| ((version))
-| 
+And so on.
+|R
+|Preset
+|[[dtmcsdmistat,dtmcsdmistat]] `dmistat`
+|Read-only alias of \FdtmDmiOp.
+|R
+|0
+|[[dtmcsabits,dtmcsabits]] `abits`
+|The size of \FdmSbaddressZeroAddress in \RdtmDmi.
+|R
+|Preset
+|[[dtmcsversion,dtmcsversion]] `version`
+|
 
 0 (0.11): Version described in spec version 0.11.
 
@@ -135,14 +127,13 @@ Other values are reserved for future use by this specification.
 
 
 15 (custom): Version not described in any available version of this spec.
-
-| R
-| 1
+|R
+|1
 |===
 
 ==== Debug Module Interface Access (((dmi)), at 0x11)
 
-[[dtmDmi]]
+[[dtm_dmi]]
 This register allows access to the Debug Module Interface (DMI).
 
 In Update-DR, the DTM starts the operation specified in \FdtmDmiOp unless the
@@ -163,49 +154,46 @@ it.  If one of the writes fails but the execution continues, then the
 Debug Program may hang or have other unexpected side effects.
 \end{commentary}
 
-[cols="3,10,1,1",options="header"]
+[float="center",align="center",cols="<2,<3,^1,^1",options="header"]
 |===
 |Field |Description |Access |Reset
-[[dtmDmiAddress]]
-| ((address))
-| Address used for DMI access. In Update-DR this value is used
-            to access the DM over the DMI.
-            \FdtmDmiOp defines what this register contains after every possible
-            operation.
-| R/W
-| 0
-[[dtmDmiData]]
-| ((data))
-| The data to send to the DM over the DMI during Update-DR, and
-            the data returned from the DM as a result of the previous operation.
-| R/W
-| 0
-[[dtmDmiOp]]
-| ((op))
-| When the debugger writes this field, it has the following meaning:
+|[[dmiaddress,dmiaddress]] `address`
+|Address used for DMI access. In Update-DR this value is used +
+to access the DM over the DMI. +
+\FdtmDmiOp defines what this register contains after every possible +
+operation.
+|R/W
+|0
+|[[dmidata,dmidata]] `data`
+|The data to send to the DM over the DMI during Update-DR, and +
+the data returned from the DM as a result of the previous operation.
+|R/W
+|0
+|[[dmiop,dmiop]] `op`
+|When the debugger writes this field, it has the following meaning:
 
 0 (nop): Ignore \FdmSbdataZeroData and \FdmSbaddressZeroAddress.
 
-            Don't send anything over the DMI during Update-DR.
-            This operation should never result in a busy or error response.
-            The address and data reported in the following Capture-DR
-            are undefined.
+Don't send anything over the DMI during Update-DR. +
+This operation should never result in a busy or error response. +
+The address and data reported in the following Capture-DR +
+are undefined.
 
-            This operation leaves the values in \FdtmDmiAddress and \FdtmDmiData
-            \unspecified.
+This operation leaves the values in \FdtmDmiAddress and \FdtmDmiData +
+\unspecified.
 
 
 1 (read): Read from \FdtmDmiAddress.
 
-            When this operation succeeds, \FdtmDmiAddress contains the address
-            that was read from, and \FdtmDmiData contains the value that was
-            read.
+When this operation succeeds, \FdtmDmiAddress contains the address +
+that was read from, and \FdtmDmiData contains the value that was +
+read.
 
 
 2 (write): Write \FdtmDmiData to \FdtmDmiAddress.
 
-            This operation leaves the values in \FdtmDmiAddress and \FdtmDmiData
-            \unspecified.
+This operation leaves the values in \FdtmDmiAddress and \FdtmDmiData +
+\unspecified.
 
 
 3 (reserved): Reserved.
@@ -218,34 +206,33 @@ When the debugger reads this field, it means the following:
 1 (reserved): Reserved.
 
 
-2 (failed): A previous operation failed.  The data scanned into \RdtmDmi in
-            this access will be ignored.  This status is sticky and can be
-            cleared by writing \FdtmDtmcsDmireset in \RdtmDtmcs.
+2 (failed): A previous operation failed.  The data scanned into \RdtmDmi in +
+this access will be ignored.  This status is sticky and can be +
+cleared by writing \FdtmDtmcsDmireset in \RdtmDtmcs.
 
-            This indicates that the DM itself or the DMI responded with an error.
-            There are no specified cases in which the DM would
-            respond with an error, and DMI is not required to support
-            returning errors.
+This indicates that the DM itself or the DMI responded with an error. +
+There are no specified cases in which the DM would +
+respond with an error, and DMI is not required to support +
+returning errors.
 
-            If a debugger sees this status, there might be additional
-            information in \FdtmDtmcsErrinfo.
+If a debugger sees this status, there might be additional +
+information in \FdtmDtmcsErrinfo.
 
 
-3 (busy): An operation was attempted while a DMI request is still in
-            progress. The data scanned into \RdtmDmi in this access will be
-            ignored. This status is sticky and can be cleared by writing
-            \FdtmDtmcsDmireset in \RdtmDtmcs. If a debugger sees this status, it
-            needs to give the target more TCK edges between Update-DR and
-            Capture-DR. The simplest way to do that is to add extra transitions
-            in Run-Test/Idle.
-
-| R/W
-| 0
+3 (busy): An operation was attempted while a DMI request is still in +
+progress. The data scanned into \RdtmDmi in this access will be +
+ignored. This status is sticky and can be cleared by writing +
+\FdtmDtmcsDmireset in \RdtmDtmcs. If a debugger sees this status, it +
+needs to give the target more TCK edges between Update-DR and +
+Capture-DR. The simplest way to do that is to add extra transitions +
+in Run-Test/Idle.
+|R/W
+|0
 |===
 
 ==== ((`BYPASS`)) (at 0x1f)
 
-[[dtmBypass]]
+[[dtm_bypass]]
 1-bit register that has no effect. It is used when a debugger does not
 want to communicate with this TAP.
 

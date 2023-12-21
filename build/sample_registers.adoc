@@ -1,15 +1,15 @@
+// Registers auto-generated on 2023-12-21 11:57:13.544126 from ../xml/sample_registers.xml
 ===== Long Name (((shortname)), at 0x123)
 
 [[shortname]]
 
 
-[cols="3,10,1,1",options="header"]
+[float="center",align="center",cols="<2,<3,^1,^1",options="header"]
 |===
 |Field |Description |Access |Reset
-[[shortnameField]]
-| ((field))
-| Description of what this field is used for.
-| R/W
-| 15
+|[[shortnamefield,shortnamefield]] `field`
+|Description of what this field is used for.
+|R/W
+|15
 |===
 
