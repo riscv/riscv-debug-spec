@@ -12,8 +12,8 @@
         Users can write this register to change the privilege mode that
         the hart will run in when it resumes.
 
-        This register contains \FcsrDcsrPrv and \FcsrDcsrV from \RcsrDcsr, but in a place that the user
-        is expected to access. The user should not access \RcsrDcsr directly,
+        This register contains {dcsr-prv} and {dcsr-v} from {csr-dcsr}, but in a place that the user
+        is expected to access. The user should not access {csr-dcsr} directly,
         because doing so might interfere with the debugger.
 
         \begin{table}
