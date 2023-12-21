@@ -361,7 +361,8 @@ def toLatexIdentifier( *args ):
     return text
 
 def toAdocIdentifier( *args ):
-    text = "".join( (a or "").lower() for a in args )
+    text = "-".join( (a or "").lower().rstrip("_") for a in args )
+    text = re.sub( "\s+", "", text )
     return text
 
 def toCIdentifier( text ):
@@ -380,6 +381,17 @@ def write_definitions( fd, registers ):
                         toLatexIdentifier( registers.prefix, regid, f.name ),
                         toLatexIdentifier( registers.prefix, regid, f.name ),
                         f.name ) )
+
+def write_adoc_definitions( fd, registers ):
+    for r in registers.registers:
+        regid = r.short or r.label
+        if r.define:
+            macroName = toAdocIdentifier( registers.prefix, regid )
+            fd.write( f":{macroName}: <<{macroName},{r.short or r.label}>>\n" )
+        for f in r.fields:
+            if f.define:
+                macroName = toAdocIdentifier( regid, f.name )
+                fd.write( f":{macroName}: <<{macroName},{f.name}>>\n" )
 
 class Macro:
     def __init__(self, name, expressionText):
@@ -964,7 +976,9 @@ def main():
     parser.add_argument( '--custom', action='store_true',
             help='Use custom LaTeX.' )
     parser.add_argument( '--adoc',
-            help='Write asciidoc definition to the named file.' )
+            help='Write asciidoc registers to the named file.' )
+    parser.add_argument( '--adoc-definitions',
+            help='Write asciidoc register style definitions to the named file.' )
     parser.add_argument( '--definitions',
             help='Write register style definitions to the named file.' )
     parser.add_argument( '--cheader',
@@ -1006,5 +1020,24 @@ def main():
             if not registers.skip_index:
                 write_adoc_index( fd, registers )
             write_adoc( fd, registers )
+    if parsed.adoc_definitions:
+        with open( parsed.adoc_definitions, "w" ) as fd:
+            fd.write(f"// Auto-generated on {datetime.now()} from {parsed.path}")
+            write_adoc_definitions( fd, registers )
+
+    #sed_convert(registers)
+
+def sed_convert( registers ):
+    for r in registers.registers:
+        regid = r.short or r.label
+        if r.define:
+            latex = "\\\\R" + toLatexIdentifier( registers.prefix, regid )
+            adoc = "{" + toAdocIdentifier( registers.prefix, regid ) + "}"
+            print(f"s/{latex}/{adoc}/g")
+        for f in r.fields:
+            if f.define:
+                latex = "\\\\F" + toLatexIdentifier( registers.prefix, regid, f.name )
+                adoc = "{" + toAdocIdentifier( regid, f.name ) + "}"
+                print(f"s/{latex}/{adoc}/g")
 
 sys.exit( main() )

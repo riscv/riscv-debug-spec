@@ -64,9 +64,9 @@ build-no-container:	build-registers
 build-registers:	$(REGISTERS_ADOC)
 
 %.adoc:	../xml/%.xml $(REGISTERS_PY)
-	../registers.py --adoc $@ $<
+	../registers.py --adoc $@ --adoc-definitions $(patsubst %.adoc,%-def.adoc,$@) $<
 
 clean:
 	@echo "Cleaning up generated files..."
-	rm -f $(PDF_RESULT)
+	rm -f $(PDF_RESULT) $(REGISTERS_ADOC)
 	@echo "Cleanup completed."

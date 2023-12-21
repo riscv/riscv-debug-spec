@@ -67,6 +67,15 @@ Andy Wright, Bryan Wyatt, and Florian Zaruba.
 
 _This document is released under a Creative Commons Attribution 4.0 International License._
 
+// Include macros for registers and fields
+include::build/abstract_commands-def.adoc[]
+include::build/core_registers-def.adoc[]
+include::build/dm_registers-def.adoc[]
+include::build/hwbp_registers-def.adoc[]
+include::build/jtag_registers-def.adoc[]
+include::build/sample_registers-def.adoc[]
+include::build/sw_registers-def.adoc[]
+
 include::introduction.adoc[]
 include::overview.adoc[]
 include::debug_module.adoc[]
