@@ -432,7 +432,7 @@
 
             <value v="0" name="any">
             The trigger will attempt to match against an access of any size.
-            The behavior is only well-defined if $|select|=0$, or if the access
+            The behavior is only well-defined if $select=0$, or if the access
             size is XLEN.
             </value>
 
@@ -515,10 +515,10 @@
             the next index from matching.
             </value>
 
-            A trigger chain starts on the first trigger with $|chain|=1$ after
-            a trigger with $|chain|=0$, or simply on the first trigger if that
-            has $|chain|=1$. It ends on the first trigger after that which has
-            $|chain|=0$. This final trigger is part of the chain. The action
+            A trigger chain starts on the first trigger with $chain=1$ after
+            a trigger with $chain=0$, or simply on the first trigger if that
+            has $chain=1$. It ends on the first trigger after that which has
+            $chain=0$. This final trigger is part of the chain. The action
             on all but the final trigger is ignored.  The action on that final
             trigger will be taken if and only if all the triggers in the chain
             match at the same time.
@@ -546,9 +546,9 @@
             <value v="1" name="napot">
             Matches when the top $M$ bits of any compare value match the top
             $M$ bits of {csr-tdata2}.
-            $M$ is $|XLEN|-1$ minus the index of the least-significant
+            $M$ is $XLEN-1$ minus the index of the least-significant
             bit containing 0 in {csr-tdata2}. Debuggers should only write values
-            to {csr-tdata2} such that $M + ${mcontrol-maskmax}$ \geq |XLEN|$
+            to {csr-tdata2} such that $M + ${mcontrol-maskmax}$ \geq XLEN$
             and $M\gt0$ , otherwise it's undefined on what conditions the
             trigger will match.
             </value>
@@ -564,17 +564,17 @@
             </value>
 
             <value v="4" name="mask low">
-            Matches when $\frac{|XLEN|}{2}-1$:$0$ of any compare value
-            equals $\frac{|XLEN|}{2}-1$:$0$ of {csr-tdata2} after
-            $\frac{|XLEN|}{2}-1$:$0$ of the compare value is ANDed with
-            $|XLEN|-1$:$\frac{|XLEN|}{2}$ of {csr-tdata2}.
+            Matches when $\frac{XLEN}{2}-1$:$0$ of any compare value
+            equals $\frac{XLEN}{2}-1$:$0$ of {csr-tdata2} after
+            $\frac{XLEN}{2}-1$:$0$ of the compare value is ANDed with
+            $XLEN-1$:$\frac{XLEN}{2}$ of {csr-tdata2}.
             </value>
 
             <value v="5" name="mask high">
-            Matches when $|XLEN|-1$:$\frac{|XLEN|}{2}$ of any compare
-            value equals $\frac{|XLEN|}{2}-1$:$0$ of {csr-tdata2} after
-            $|XLEN|-1$:$\frac{|XLEN|}{2}$ of the compare value is ANDed with
-            $|XLEN|-1$:$\frac{|XLEN|}{2}$ of {csr-tdata2}.
+            Matches when $XLEN-1$:$\frac{XLEN}{2}$ of any compare
+            value equals $\frac{XLEN}{2}-1$:$0$ of {csr-tdata2} after
+            $XLEN-1$:$\frac{XLEN}{2}$ of the compare value is ANDed with
+            $XLEN-1$:$\frac{XLEN}{2}$ of {csr-tdata2}.
             </value>
 
             <value v="8" name="not equal">
@@ -808,7 +808,7 @@
         <field name="size" bits="18:16" access="WARL" reset="0">
             <value v="0" name="any">
             The trigger will attempt to match against an access of any size.
-            The behavior is only well-defined if $|select|=0$, or if the access
+            The behavior is only well-defined if $select=0$, or if the access
             size is XLEN.
             </value>
 
@@ -879,10 +879,10 @@
             the next index from matching.
             </value>
 
-            A trigger chain starts on the first trigger with $|chain|=1$ after
-            a trigger with $|chain|=0$, or simply on the first trigger if that
-            has $|chain|=1$. It ends on the first trigger after that which has
-            $|chain|=0$. This final trigger is part of the chain. The action
+            A trigger chain starts on the first trigger with $chain=1$ after
+            a trigger with $chain=0$, or simply on the first trigger if that
+            has $chain=1$. It ends on the first trigger after that which has
+            $chain=0$. This final trigger is part of the chain. The action
             on all but the final trigger is ignored.  The action on that final
             trigger will be taken if and only if all the triggers in the chain
             match at the same time.
@@ -910,12 +910,12 @@
             <value v="1" name="napot">
             Matches when the top $M$ bits of any compare value match the top
             $M$ bits of {csr-tdata2}.
-            $M$ is $|XLEN|-1$ minus the index of the least-significant bit
+            $M$ is $XLEN-1$ minus the index of the least-significant bit
             containing 0 in {csr-tdata2}.
-            {csr-tdata2} is WARL and if bits $|maskmax6|-1$:0 are written with all
-            ones then bit $|maskmax6|-1$ will be set to 0 while the values of bits $|maskmax6|-2$:0
+            {csr-tdata2} is WARL and if bits $maskmax6-1$:0 are written with all
+            ones then bit $maskmax6-1$ will be set to 0 while the values of bits $maskmax6-2$:0
             are \unspecified.
-            Legal values for {csr-tdata2} require $M + |maskmax6| \geq |XLEN|$ and $M\gt0$.
+            Legal values for {csr-tdata2} require $M + maskmax6 \geq XLEN$ and $M\gt0$.
             See above for how to determine maskmax6.
             </value>
 
@@ -930,17 +930,17 @@
             </value>
 
             <value v="4" name="mask low">
-            Matches when $\frac{|XLEN|}{2}-1$:$0$ of any compare value
-            equals $\frac{|XLEN|}{2}-1$:$0$ of {csr-tdata2} after
-            $\frac{|XLEN|}{2}-1$:$0$ of the compare value is ANDed with
-            $|XLEN|-1$:$\frac{|XLEN|}{2}$ of {csr-tdata2}.
+            Matches when $\frac{XLEN}{2}-1$:$0$ of any compare value
+            equals $\frac{XLEN}{2}-1$:$0$ of {csr-tdata2} after
+            $\frac{XLEN}{2}-1$:$0$ of the compare value is ANDed with
+            $XLEN-1$:$\frac{XLEN}{2}$ of {csr-tdata2}.
             </value>
 
             <value v="5" name="mask high">
-            Matches when $|XLEN|-1$:$\frac{|XLEN|}{2}$ of any compare
-            value equals $\frac{|XLEN|}{2}-1$:$0$ of {csr-tdata2} after
-            $|XLEN|-1$:$\frac{|XLEN|}{2}$ of the compare value is ANDed with
-            $|XLEN|-1$:$\frac{|XLEN|}{2}$ of {csr-tdata2}.
+            Matches when $XLEN-1$:$\frac{XLEN}{2}$ of any compare
+            value equals $\frac{XLEN}{2}-1$:$0$ of {csr-tdata2} after
+            $XLEN-1$:$\frac{XLEN}{2}$ of the compare value is ANDed with
+            $XLEN-1$:$\frac{XLEN}{2}$ of {csr-tdata2}.
             </value>
 
             <value v="8" name="not equal">
@@ -1390,8 +1390,8 @@
         This register is accessible as {csr-tdata3} when {tdata1-type} is 2, 3, 4,
         5, or 6 and XLEN=32.
 
-        All functionality in this register is optional. The $|value|$ bits may
-        tie any number of upper bits to 0. The $|select|$ bits may only support
+        All functionality in this register is optional. The $value$ bits may
+        tie any number of upper bits to 0. The $select$ bits may only support
         0 (ignore).
 
         Byte-granular comparison of {csr-scontext} to {textra32-svalue}

@@ -37,7 +37,7 @@
 
         Registers might not be accessible if they wouldn't be accessible by M
         mode code currently running. (E.g. {\tt fflags} might not be accessible
-        when {\tt mstatus}.$|FS|$ is 0.) If this is the case, the debugger is
+        when {\tt mstatus}.$FS$ is 0.) If this is the case, the debugger is
         responsible for changing state to make the registers accessible. The
         Core Debug Registers (Section~\ref{debreg}) should be accessible if
         abstract CSR access is implemented.
