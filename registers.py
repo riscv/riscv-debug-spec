@@ -920,7 +920,7 @@ def write_adoc( fd, registers ):
         columns = [("<2", "Field", lambda f: f.name)]
         columns += [("<3", "Description", lambda f: f.latex_description())]
         if not registers.skip_access:
-            columns += [("^1", "Access", lambda f: f.access)]
+            columns += [("^1", "Access", lambda f: f"*{f.access}*")]
         if not registers.skip_reset:
             columns += [("^1", "Reset", lambda f: f.reset)]
 
