@@ -1022,7 +1022,7 @@ def main():
             write_adoc( fd, registers )
     if parsed.adoc_definitions:
         with open( parsed.adoc_definitions, "w" ) as fd:
-            fd.write(f"// Auto-generated on {datetime.now()} from {parsed.path}")
+            fd.write(f"// Auto-generated on {datetime.now()} from {parsed.path}\n")
             write_adoc_definitions( fd, registers )
 
     #sed_convert(registers)
