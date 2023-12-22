@@ -358,3 +358,5 @@ trigger firing at a different time than is expected.
 
 Attempts to access an unimplemented Trigger Register raise an illegal
 instruction exception.
+
+include::build/hwbp_registers.adoc[]

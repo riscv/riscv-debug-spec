@@ -1016,7 +1016,7 @@ def main():
         print_latex_custom( registers )
     if parsed.adoc:
         with open( parsed.adoc, "w" ) as fd:
-            fd.write(f"// Auto-generated on {datetime.now()} from {parsed.path}")
+            fd.write(f"// Auto-generated on {datetime.now()} from {parsed.path}\n")
             if not registers.skip_index:
                 write_adoc_index( fd, registers )
             write_adoc( fd, registers )
