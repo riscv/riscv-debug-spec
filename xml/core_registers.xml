@@ -2,10 +2,10 @@
     These registers are only accessible from Debug Mode.
 
     <register name="Debug Control and Status" short="dcsr" address="0x7b0">
-        Upon entry into Debug Mode, \FcsrDcsrV and \FcsrDcsrPrv are updated
-        with the privilege level the hart was previously in, and \FcsrDcsrCause
+        Upon entry into Debug Mode, {dcsr-v} and {dcsr-prv} are updated
+        with the privilege level the hart was previously in, and {dcsr-cause}
         is updated with the reason for Debug Mode entry.  Other than these
-        fields and \FcsrDcsrNmip, the other fields of \RcsrDcsr are only
+        fields and {dcsr-nmip}, the other fields of {csr-dcsr} are only
         writable by the external debugger.
 
         \begin{steps}{Table~\ref{tab:dcsrcausepriority} shows the priorities of
@@ -22,7 +22,7 @@
         \label{tab:dcsrcausepriority}
         \begin{tabular}{|c|c|}
         \hline
-        \FcsrDcsrCause encoding &amp; Cause \\
+        {dcsr-cause} encoding &amp; Cause \\
         \hline
         5 &amp; resethaltreq \\
         \hline
@@ -46,11 +46,11 @@
         an execute trigger with timing=after on an ebreak instruction is lower
         priority than the ebreak itself because the trigger will fire after the
         ebreak instruction.  For the same reason, if a single instruction is
-        stepped with both icount and \FcsrDcsrStep then the \FcsrDcsrStep has
+        stepped with both icount and {dcsr-step} then the {dcsr-step} has
         priority.  See table~\ref{tab:priority} for the relative priorities of
         triggers with respect to the ebreak instruction.
 
-        Most multi-hart implementations will probably hardwire \FcsrDcsrStoptime
+        Most multi-hart implementations will probably hardwire {dcsr-stoptime}
         to 0, as the implementation can get complicated and the benefit is
         small.
         \end{commentary}
@@ -132,13 +132,13 @@
         <field name="stepie" bits="11" access="WARL" reset="0">
             <value v="0" name="interrupts disabled">
             Interrupts (including NMI) are disabled during single stepping
-            with \FcsrDcsrStep set.
+            with {dcsr-step} set.
             This value should be supported.
             </value>
 
             <value v="1" name="interrupts enabled">
             Interrupts (including NMI) are enabled during single stepping
-            with \FcsrDcsrStep set.
+            with {dcsr-step} set.
             </value>
 
             Implementations may hard wire this bit to 0.
@@ -172,7 +172,7 @@
             leaving Debug Mode, \Rtime will reflect the latest
             value of \Rmtime again.
 
-            While all harts have \FcsrDcsrStoptime=1 and are in Debug Mode,
+            While all harts have {dcsr-stoptime}=1 and are in Debug Mode,
             \Rmtime is allowed to stop incrementing.
             </value>
 
@@ -182,7 +182,7 @@
             Explains why Debug Mode was entered.
 
             When there are multiple reasons to enter Debug Mode in a single
-            cycle, hardware should set \FcsrDcsrCause to the cause with the highest
+            cycle, hardware should set {dcsr-cause} to the cause with the highest
             priority.  See table~\ref{tab:dcsrcausepriority} for priorities.
 
             <value v="1" name="ebreak">
@@ -194,11 +194,11 @@
             </value>
 
             <value v="3" name="haltreq">
-            The debugger requested entry to Debug Mode using \FdmDmcontrolHaltreq.
+            The debugger requested entry to Debug Mode using {dmcontrol-haltreq}.
             </value>
 
             <value v="4" name="step">
-            The hart single stepped because \FcsrDcsrStep was set.
+            The hart single stepped because {dcsr-step} was set.
             </value>
 
             <value v="5" name="resethaltreq">
@@ -260,7 +260,7 @@
     </register>
 
     <register name="Debug PC" short="dpc" address="0x7b1">
-        Upon entry to debug mode, \RcsrDpc is updated with the virtual address of
+        Upon entry to debug mode, {csr-dpc} is updated with the virtual address of
         the next instruction to be executed. The behavior is described in more
         detail in Table~\ref{tab:dpc}.
 
@@ -281,8 +281,8 @@
         \hline
         trigger module &amp; The address of the next instruction to be
         executed at the time that debug mode was entered. If the trigger is
-        \RcsrMcontrol and \FcsrMcontrolTiming is 0 or if the trigger is
-        \RcsrMcontrolSix and \FcsrMcontrolSixHitOne is 0, this
+        {csr-mcontrol} and {mcontrol-timing} is 0 or if the trigger is
+        {csr-mcontrol}Six and {mcontrol-s}ixHitOne is 0, this
         corresponds to the address of the instruction which caused the trigger
         to fire. \\
         \hline
@@ -292,48 +292,48 @@
         \end{tabular}
         \end{table}
 
-        Executing the Program Buffer may cause the value of \RcsrDpc to become
+        Executing the Program Buffer may cause the value of {csr-dpc} to become
         \unspecified. If that is the case, it must be possible to read/write
-        \RcsrDpc using an abstract command with \FacAccessregisterPostexec not
-        set.  The debugger must attempt to save \RcsrDpc between halting and
-        executing a Program Buffer, and then restore \RcsrDpc before leaving
+        {csr-dpc} using an abstract command with {accessregister-postexec} not
+        set.  The debugger must attempt to save {csr-dpc} between halting and
+        executing a Program Buffer, and then restore {csr-dpc} before leaving
         Debug Mode.
 
         \begin{commentary}
-            Allowing \RcsrDpc to become \unspecified\ upon Program Buffer
+            Allowing {csr-dpc} to become \unspecified\ upon Program Buffer
             execution allows for direct implementations that don't have a
             separate PC register, and do need to use the PC when executing the
             Program Buffer.
         \end{commentary}
 
-        If the Access Register abstract command supports reading \RcsrDpc while
+        If the Access Register abstract command supports reading {csr-dpc} while
         the hart is running, then the value read should be the address of a
         recently executed instruction.
 
-        If the Access Register abstract command supports writing \RcsrDpc while
+        If the Access Register abstract command supports writing {csr-dpc} while
         the hart is running, then the executing program should jump to the
         written address shortly after the write occurs.
 
-        The writability of \RcsrDpc follows the same rules as \Rmepc as defined
-        in the Privileged Spec.  In particular, \RcsrDpc must be able to hold
+        The writability of {csr-dpc} follows the same rules as \Rmepc as defined
+        in the Privileged Spec.  In particular, {csr-dpc} must be able to hold
         all valid virtual addresses and the writability of the low bits depends
         on IALIGN.
 
         When resuming, the hart's PC is updated to the virtual address stored in
-        \RcsrDpc. A debugger may write \RcsrDpc to change where the hart resumes.
+        {csr-dpc}. A debugger may write {csr-dpc} to change where the hart resumes.
         <field name="dpc" bits="DXLEN-1:0" access="R/W" reset="0" />
     </register>
 
     <register name="Debug Scratch Register 0" short="dscratch0" address="0x7b2">
         Optional scratch register that can be used by implementations that need
-        it. A debugger must not write to this register unless \RdmHartinfo
+        it. A debugger must not write to this register unless {dm-hartinfo}
         explicitly mentions it (the Debug Module may use this register internally).
         <field name="dscratch0" bits="DXLEN-1:0" access="R/W" reset="0" />
     </register>
 
     <register name="Debug Scratch Register 1" short="dscratch1" address="0x7b3">
         Optional scratch register that can be used by implementations that need
-        it. A debugger must not write to this register unless \RdmHartinfo
+        it. A debugger must not write to this register unless {dm-hartinfo}
         explicitly mentions it (the Debug Module may use this register internally).
         <field name="dscratch1" bits="DXLEN-1:0" access="R/W" reset="0" />
     </register>
