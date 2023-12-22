@@ -174,9 +174,9 @@
                 \begin{steps}{In these older versions:}
                 \item {csr-mcontrol}Six has a timing bit identical to
                     {mcontrol-timing}
-                \item {mcontrol-s}ixHitZero behaves just as {mcontrol-hit}.
-                \item {mcontrol-s}ixHitOne is read-only 0.
-                \item Encodings for {mcontrol-s}ixSize for access sizes larger
+                \item {mcontrol6-hit0} behaves just as {mcontrol-hit}.
+                \item {mcontrol6-hit1} is read-only 0.
+                \item Encodings for {mcontrol6-size} for access sizes larger
                 than 64 bits are different.
                 \end{steps}
             </value>
@@ -682,18 +682,18 @@
         The Privileged Spec says that breakpoint exceptions that occur on
         instruction fetches, loads, or stores update the {\tt tval} CSR
         with either zero or the faulting virtual address.  The faulting
-        virtual address for an mcontrol6 trigger with {mcontrol-s}ixAction=0 is the
+        virtual address for an mcontrol6 trigger with {mcontrol6-action}=0 is the
         address being accessed and which caused that trigger to fire.
         If multiple mcontrol6 triggers are chained then the faulting
         virtual address is the address which caused any of the chained
         triggers to fire.
 
-        \begin{steps}{In implementations that support {mcontrol-s}ixMatch mode 1 (NAPOT), not all
-        NAPOT ranges may be supported.  All NAPOT ranges between $2^{1}$ and $2^{maskmax6}$
-        are supported where maskmax6 $\geq$ 1.  The value of maskmax6 can be determined
+        \begin{steps}{In implementations that support {mcontrol6-match} mode 1 (NAPOT), not all
+        NAPOT ranges may be supported.  All NAPOT ranges between stem:[2^1] and stem:[2^{maskmax6}]
+        are supported where stem:[{maskmax6} \geq 1].  The value of maskmax6 can be determined
         by the debugger via the following sequence:}
-        \item Set {mcontrol-s}ixMatch=1.
-        \item Read {mcontrol-s}ixMatch. If it is not 1 then NAPOT matching is not supported.
+        \item Set {mcontrol6-match}=1.
+        \item Read {mcontrol6-match}. If it is not 1 then NAPOT matching is not supported.
         \item Write all ones to {csr-tdata2}.
         \item Read {csr-tdata2}. The value of maskmax6 is the index of the most significant 0 bit plus 1.
         \end{steps}
@@ -702,7 +702,7 @@
         trigger, it only matches when the conditions set there are satisfied.
 
         \begin{commentary}
-        {mcontrol-s}ixUncertain and {mcontrol-s}ixUncertainen exist to
+        {mcontrol6-uncertain} and {mcontrol6-uncertain}en exist to
         accommodate systems where not every memory access is fully observed by
         the Trigger Module. Possible examples include data values in far AMOs,
         and the address/data/size of accesses by instructions that perform
@@ -744,8 +744,8 @@
             virtualization mode.
         </field>
         <field name="hit0" bits="22" access="WARL" reset="0">
-            If they are implemented, {mcontrol-s}ixHitOne (MSB) and
-            {mcontrol-s}ixHitZero (LSB) combine into a single 2-bit field.
+            If they are implemented, {mcontrol6-hit1} (MSB) and
+            {mcontrol6-hit0} (LSB) combine into a single 2-bit field.
             The TM updates this field when the trigger fires. After the debugger
             has seen the update, it will normally write 0 to this field to so it
             can see future changes.
@@ -763,14 +763,14 @@
             explicitly allows for instructions to be partially executed, as
             described in Section \ref{sec:multistate}.
 
-            \Rxepc or {csr-dpc} (depending on {mcontrol-s}ixAction) must be set
+            \Rxepc or {csr-dpc} (depending on {mcontrol6-action}) must be set
             to the virtual address of the instruction that matched.
             </value>
 
             <value v="2" name="after">
             The trigger fired after the instruction that triggered and at least
             one additional instruction were retired.
-            \Rxepc or {csr-dpc} (depending on {mcontrol-s}ixAction) must be set
+            \Rxepc or {csr-dpc} (depending on {mcontrol6-action}) must be set
             to the virtual address of the next instruction that must be executed
             to preserve the program flow.
             </value>
@@ -778,7 +778,7 @@
             <value v="3" name="immediately after">
             The trigger fired just after the instruction that triggered it was
             retired, but before any subsequent instructions were executed.
-            \Rxepc or {csr-dpc} (depending on {mcontrol-s}ixAction) must be set
+            \Rxepc or {csr-dpc} (depending on {mcontrol6-action}) must be set
             to the virtual address of the next instruction that must be executed
             to preserve the program flow.
 
@@ -842,7 +842,7 @@
 
             An implementation must support the value of 0, but all other values
             are optional. When an implementation supports address triggers
-            ({mcontrol-s}ixSelect=0), it is recommended that those triggers
+            ({mcontrol6-select}=0), it is recommended that those triggers
             support every access size that the hart supports, as well as for
             every instruction size that the hart supports.
 
@@ -850,9 +850,9 @@
             and stores that are wider than XLEN. Custom extensions may also
             support instructions that are wider than XLEN. Because
             {csr-tdata2} is of size XLEN, there is a known limitation that
-            data value triggers ({mcontrol-s}ixSelect=1) can only be supported
+            data value triggers ({mcontrol6-select}=1) can only be supported
             for access sizes up to XLEN bits.  When an implementation supports
-            data value triggers ({mcontrol-s}ixSelect=1), it is recommended
+            data value triggers ({mcontrol6-select}=1), it is recommended
             that those triggers support every access size up to XLEN that the
             hart supports, as well as for every instruction length up to XLEN
             that the hart supports.
@@ -890,17 +890,17 @@
             Debuggers should not terminate a chain with a trigger with a
             different type. It is undefined when exactly such a chain fires.
 
-            Because {mcontrol-s}ixChain affects the next trigger, hardware must zero it in
+            Because {mcontrol6-chain} affects the next trigger, hardware must zero it in
             writes to {csr-mcontrol}Six that set {tdata1-dmode} to 0 if the next trigger has
             {tdata1-dmode} of 1.
             In addition hardware should ignore writes to {csr-mcontrol}Six that set
             {tdata1-dmode} to 1 if the previous trigger has both {tdata1-dmode} of 0 and
-            {mcontrol-s}ixChain of 1. Debuggers must avoid the latter case by checking
-            {mcontrol-s}ixChain on the previous trigger if they're writing {csr-mcontrol}Six.
+            {mcontrol6-chain} of 1. Debuggers must avoid the latter case by checking
+            {mcontrol6-chain} on the previous trigger if they're writing {csr-mcontrol}Six.
 
             Implementations that wish to limit the maximum length of a trigger
             chain (eg. to meet timing requirements) may do so by zeroing
-            {mcontrol-s}ixChain in writes to {csr-mcontrol}Six that would make the chain too long.
+            {mcontrol6-chain} in writes to {csr-mcontrol}Six that would make the chain too long.
         </field>
         <field name="match" bits="10:7" access="WARL" reset="0">
             <value v="0" name="equal">
@@ -944,19 +944,19 @@
             </value>
 
             <value v="8" name="not equal">
-            Matches when {mcontrol-s}ixMatch$=0$ would not match.
+            Matches when {mcontrol6-match}$=0$ would not match.
             </value>
 
             <value v="9" name="not napot">
-            Matches when {mcontrol-s}ixMatch$=1$ would not match.
+            Matches when {mcontrol6-match}$=1$ would not match.
             </value>
 
             <value v="12" name="not mask low">
-            Matches when {mcontrol-s}ixMatch$=4$ would not match.
+            Matches when {mcontrol6-match}$=4$ would not match.
             </value>
 
             <value v="13" name="not mask high">
-            Matches when {mcontrol-s}ixMatch$=5$ would not match.
+            Matches when {mcontrol6-match}$=5$ would not match.
             </value>
 
             Other values are reserved for future use.
