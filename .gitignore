@@ -17,7 +17,7 @@
 *_registers.h
 serial.*
 abstract_commands.*
-build/*_registers.adoc
+build/*.adoc
 
 # Changelogs
 changelog.tex
