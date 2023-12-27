@@ -210,13 +210,24 @@ class Field( object ):
         return sympy.simplify(self.lowBit).atoms(sympy.Symbol) | sympy.simplify(self.highBit).atoms(sympy.Symbol)
 
     def columnWidth( self ):
-        text = str( self.length() )
-        if text.isdigit():
-            l = int( text )
-        else:
-            # Fancier would be to assume XLEN is 32 or something.
-            l = 20
-        return max( l, len( self.name ), len( self.lowBit + self.highBit ) * 1.2 )
+        """Return the width of the column in boxes."""
+        charWidth = .33
+        xlen_symbol = sympy.symbols('XLEN')
+        try:
+            # Pretend XLEN=32. This makes 32-bit registers with just a single
+            # field be wide, while registers with XLEN-32 width be narrow.
+            length = int(self.length().subs(xlen_symbol, 32))
+        except TypeError:
+            length = 20
+        width = math.ceil(max(
+            1,
+            1 + math.log(max(length, 0.1), 1.7),
+            len( str( self.length() )) * charWidth,
+            len( self.name ) * charWidth))
+        # Make longer widths odd, so we can center the bit.
+        if width > 1 and width % 2 == 0:
+            width += 1
+        return width
 
     def latex_description(self):
         result = [self.description]
@@ -828,6 +839,78 @@ def add_continuations(text):
         result.append(current_line)
     return "\n".join(result)
 
+def write_bytefield_row( fd, fields ):
+    # Have a minimum width, otherwise small registers look huge.
+    totalWidth = sum( f.columnWidth() for f in fields )
+    padding = max(0, 24 - totalWidth)
+    fd.write("[bytefield]\n")
+    fd.write("----\n")
+    fd.write('(defattrs :plain [:plain {:font-family "M+ 1p Fallback"}])\n')
+    fd.write("(def row-height 45)\n")
+    fd.write("(def row-header-fn nil)\n")
+    fd.write(f"(def boxes-per-row {totalWidth + padding})\n")
+    # TODO: column headers
+
+    headers = [""] * padding
+    columnOffset = 0
+    for f in reversed(fields):
+        columnWidth = f.columnWidth()
+        if f.length() == 1:
+            if columnWidth > 1:
+                before = columnWidth // 2
+                after = columnWidth - before - 1
+                headers += [""] * before
+                headers.append(f.lowBit)
+                headers += [""] * after
+            else:
+                headers.append(f.lowBit)
+        else:
+            assert columnWidth >= 2
+            headers.append(f.lowBit)
+            headers += [""] * (columnWidth - 2)
+            headers.append(f.highBit)
+        columnOffset += columnWidth
+    # remove whitespace to save space
+    headers = [h.replace(" ", "") for h in headers]
+    fd.write('(draw-column-headers {:labels [%s]})\n' % " ".join(f'"{h}"' for h in reversed(headers)))
+
+    for f in fields:
+        fd.write('(draw-box "%s" {:span %s})\n' % ( f.name, f.columnWidth() ))
+    if padding:
+        fd.write('(draw-box "" {:span %s :borders {}})\n' % ( padding ))
+
+    for f in fields:
+        fd.write('(draw-box "%s" {:span %s :borders {}})\n' % ( f.length(), f.columnWidth() ))
+    if padding:
+        fd.write('(draw-box "" {:span %s :borders {}})\n' % ( padding ))
+
+    fd.write("----\n")
+
+def write_bytefield( fd, register ):
+    """Return a bytefield representation of the register."""
+    totalWidth = sum( f.columnWidth() for f in register.fields )
+
+    maxWidth = 40
+    if totalWidth > maxWidth:
+        rowCount = math.ceil(totalWidth / maxWidth)
+    else:
+        rowCount = 1
+
+    rowWidth = totalWidth / rowCount
+    rows = [[]]
+    offset = 0
+    for f in register.fields:
+        if rowWidth - offset > f.columnWidth() / 2 or len(rows) >= rowCount:
+            rows[-1].append(f)
+            offset += f.columnWidth()
+        else:
+            rows.append([])
+            rows[-1].append(f)
+            offset = f.columnWidth()
+
+    for row in rows:
+        write_bytefield_row(fd, row)
+
 def write_adoc( fd, registers ):
     sub = "=" * registers.depth
     for r in registers.registers:
@@ -863,59 +946,7 @@ def write_adoc( fd, registers ):
             elif all(f.access in ('R', '0') for f in r.fields):
                 fd.write("This entire register is read-only.\n")
 
-            # todo: use wavedrom to draw the picture
-#            print("\\begin{center}")
-#
-#            totalWidth = sum( ( 3 + f.columnWidth() ) for f in r.fields )
-#            split = int( math.ceil( totalWidth / 80. ) )
-#            fieldsPerSplit = int( math.ceil( float( len( r.fields ) ) / split ) )
-#            subRegisterFields = []
-#            for s in range( split ):
-#                subRegisterFields.append( r.fields[ s*fieldsPerSplit : (s+1)*fieldsPerSplit ] )
-#
-#            for registerFields in subRegisterFields:
-#                tabularCols = ""
-#                for f in registerFields:
-#                    fieldLength = str( f.length() )
-#                    lowLen = float( len( f.lowBit ) )
-#                    highLen = float( len( f.highBit ) )
-#                    tabularCols += "p{%.1f ex}" % ( f.columnWidth() * highLen / ( lowLen + highLen ) )
-#                    tabularCols += "p{%.1f ex}" % ( f.columnWidth() * lowLen / ( lowLen + highLen ) )
-#                print("\\begin{tabular}{%s}" % tabularCols)
-#
-#                first = True
-#                for f in registerFields:
-#                    if not first:
-#                        print("&")
-#                    first = False
-#                    if f.highBit == f.lowBit:
-#                        print("\\multicolumn{2}{c}{\\scriptsize %s}" % f.highBit)
-#                    else:
-#                        print("{\\scriptsize %s} &" % f.highBit)
-#                        print("\\multicolumn{1}{r}{\\scriptsize %s}" % f.lowBit)
-#
-#                # The actual field names
-#                print("\\\\")
-#                print("         \hline")
-#                first = True
-#                for f in registerFields:
-#                    if first:
-#                        cols = "|c|"
-#                    else:
-#                        cols = "c|"
-#                        print("&")
-#                    first = False
-#                    print("\\multicolumn{2}{%s}{$|%s|$}" % ( cols, f.name ))
-#                print("\\\\")
-#                print("         \hline")
-#
-#                # Size of each field in bits
-#                print(" & ".join( "\\multicolumn{2}{c}{\\scriptsize %s}" % f.length() for f in registerFields ))
-#                print("\\\\")
-#
-#                print("   \\end{tabular}")
-#
-#            print("\\end{center}")
+            write_bytefield( fd, r )
 
         columns = [("<2", "Field", lambda f: f.name)]
         columns += [("<3", "Description", lambda f: f.latex_description())]
