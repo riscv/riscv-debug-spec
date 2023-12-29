@@ -16,7 +16,7 @@
         . resethaltreq is higher priority than haltreq
         . the relative order of the other four causes is maintained
 
-        
+        [[tab:dcsrcausepriority]]
         .Priority of reasons for entering Debug Mode from highest to lowest.
         [%autowidth,align="center",float="center",cols="^,^",options="header"]
         |===
