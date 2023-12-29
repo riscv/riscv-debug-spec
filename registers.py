@@ -965,9 +965,9 @@ def write_adoc( fd, registers ):
             for f in r.fields:
                 if f.description or f.values:
                     identifier = toAdocIdentifier(r.short or r.label, f.name)
-                    fd.write(f"|[[{identifier},{identifier}]] `{columns[0][2](f)}`\n")
+                    fd.write(f"|[[{identifier}]] `{columns[0][2](f)}`\n")
                     for c in columns[1:]:
-                        fd.write("|" + add_continuations(remove_indent( c[2](f) )) + "\n")
+                        fd.write("a|" + remove_indent( c[2](f) ) + "\n")
 
             fd.write("|===\n")
         fd.write("\n")
