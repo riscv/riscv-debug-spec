@@ -29,7 +29,8 @@
         | 4 | step
         |===
 
-        \begin{commentary}
+        [NOTE]
+        ====
         Note that mcontrol/mcontrol6 triggers which fire after the
         instruction which hit the trigger are considered
         to be high priority causes on the subsequent instruction.  Therefore,
@@ -43,7 +44,7 @@
         Most multi-hart implementations will probably hardwire {dcsr-stoptime}
         to 0, as the implementation can get complicated and the benefit is
         small.
-        \end{commentary}
+        ====
 
         <field name="debugver" bits="31:28" access="R" reset="Preset">
             <value v="0" name="none">
@@ -272,12 +273,13 @@
         executing a Program Buffer, and then restore {csr-dpc} before leaving
         Debug Mode.
 
-        \begin{commentary}
+        [NOTE]
+        ====
             Allowing {csr-dpc} to become \unspecified\ upon Program Buffer
             execution allows for direct implementations that don't have a
             separate PC register, and do need to use the PC when executing the
             Program Buffer.
-        \end{commentary}
+        ====
 
         If the Access Register abstract command supports reading {csr-dpc} while
         the hart is running, then the value read should be the address of a
