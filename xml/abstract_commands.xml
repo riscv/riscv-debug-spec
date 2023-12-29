@@ -1,24 +1,24 @@
 <registers name="Abstract Commands" skip_index="1" skip_access="1"
         skip_reset="1" prefix="AC_" depth="2">
     <register name="Access Register">
-        \begin{steps}{This command gives the debugger access to CPU registers
+        This command gives the debugger access to CPU registers
         and allows it to execute the Program Buffer.
-        It performs the following sequence of operations:}
-        \item If {accessregister-write} is clear and {accessregister-transfer} is set, then copy data from
+        It performs the following sequence of operations:
+
+        . If {accessregister-write} is clear and {accessregister-transfer} is set, then copy data from
             the register specified by {accessregister-regno} into the {\tt arg0} region of
             {\tt data}, and perform any side effects that occur when this
             register is read from M-mode.
-        \item If {accessregister-write} is set and {accessregister-transfer} is set, then copy data from the
+        . If {accessregister-write} is set and {accessregister-transfer} is set, then copy data from the
             {\tt arg0} region of {\tt data} into the register specified by
             {accessregister-regno}, and perform any side effects that occur when this register
             is written from M-mode.
-        \item If {accessregister-aarpostincrement} and
+        . If {accessregister-aarpostincrement} and
             {accessregister-transfer} are set, increment
             {accessregister-regno}. {accessregister-regno} may also be
             incremented if {accessregister-aarpostincrement} is set and
             {accessregister-transfer} is clear.
-        \item Execute the Program Buffer, if {accessregister-postexec} is set.
-        \end{steps}
+        . Execute the Program Buffer, if {accessregister-postexec} is set.
 
         If any of these operations fail, {abstractcs-cmderr} is set and none of the
         remaining steps are executed. An implementation may detect an upcoming
@@ -154,17 +154,17 @@
     </register>
 
     <register name="Quick Access">
-        \begin{steps}{Perform the following sequence of operations:}
-        \item If the hart is halted, the command  sets {abstractcs-cmderr} to ``halt/resume'' and does not continue.
-        \item Halt the hart. If the hart halts for some other reason (e.g. breakpoint), the command
+        Perform the following sequence of operations:
+
+        . If the hart is halted, the command  sets {abstractcs-cmderr} to ``halt/resume'' and does not continue.
+        . Halt the hart. If the hart halts for some other reason (e.g. breakpoint), the command
             sets {abstractcs-cmderr} to ``halt/resume'' and does not continue.
-        \item Execute the Program Buffer.
+        . Execute the Program Buffer.
             If an exception occurs, {abstractcs-cmderr} is set to
             ``exception,'' the Program Buffer execution ends, and the hart is
             halted with {dcsr-cause} set to 3.
-        \item If the Program Buffer executed without an exception, then
+        . If the Program Buffer executed without an exception, then
             resume the hart.
-        \end{steps}
 
         Implementing this command is optional.
 
@@ -177,17 +177,17 @@
     </register>
 
     <register name="Access Memory">
-        \begin{steps}{This command lets the debugger perform memory accesses,
+        This command lets the debugger perform memory accesses,
             with the exact same memory view and permissions as the selected
             hart has. This includes access to hart-local memory-mapped
             registers, etc. The command performs the following sequence of
-            operations:}
-        \item Copy data from the memory location specified in {\tt arg1} into the
+            operations:
+
+        . Copy data from the memory location specified in {\tt arg1} into the
             {\tt arg0} portion of {\tt data}, if {accessregister-write} is clear.
-        \item Copy data from the {\tt arg0} portion of {\tt data} into the
+        . Copy data from the {\tt arg0} portion of {\tt data} into the
             memory location specified in {\tt arg1}, if {accessregister-write} is set.
-        \item If {accessmemory-aampostincrement} is set, increment {\tt arg1}.
-        \end{steps}
+        . If {accessmemory-aampostincrement} is set, increment {\tt arg1}.
 
         If any of these operations fail, {abstractcs-cmderr} is set and none of the
         remaining steps are executed. An access may only fail if the hart,

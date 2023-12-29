@@ -8,13 +8,13 @@
         fields and {dcsr-nmip}, the other fields of {csr-dcsr} are only
         writable by the external debugger.
 
-        \begin{steps}{Table~\ref{tab:dcsrcausepriority} shows the priorities of
+        Table~\ref{tab:dcsrcausepriority} shows the priorities of
         reasons for entering Debug Mode.  Implementations should implement
         priorities as shown in the table. For compatibility with old versions of this spec, resethaltreq and haltreq are
-        allowed to be at different positions than shown as long as:}
-        \item resethaltreq is higher priority than haltreq
-        \item the relative order of the other four causes is maintained
-        \end{steps}
+        allowed to be at different positions than shown as long as:
+
+        . resethaltreq is higher priority than haltreq
+        . the relative order of the other four causes is maintained
 
         \begin{table}[H]
         \centering
@@ -282,7 +282,7 @@
         trigger module &amp; The address of the next instruction to be
         executed at the time that debug mode was entered. If the trigger is
         {csr-mcontrol} and {mcontrol-timing} is 0 or if the trigger is
-        {csr-mcontrol}Six and {mcontrol6-hit1} is 0, this
+        {csr-mcontrol6} and {mcontrol6-hit1} is 0, this
         corresponds to the address of the instruction which caused the trigger
         to fire. \\
         \hline
