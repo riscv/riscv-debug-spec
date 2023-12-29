@@ -16,28 +16,18 @@
         . resethaltreq is higher priority than haltreq
         . the relative order of the other four causes is maintained
 
-        \begin{table}[H]
-        \centering
-        \caption{Priority of reasons for entering Debug Mode from highest to lowest.}
-        \label{tab:dcsrcausepriority}
-        \begin{tabular}{|c|c|}
-        \hline
-        {dcsr-cause} encoding &amp; Cause \\
-        \hline
-        5 &amp; resethaltreq \\
-        \hline
-        6 &amp; halt group \\
-        \hline
-        3 &amp; haltreq \\
-        \hline
-        2 &amp; trigger (See table~\ref{tab:priority} for detailed priority) \\
-        \hline
-        1 &amp; ebreak \\
-        \hline
-        4 &amp; step \\
-        \hline
-        \end{tabular}
-        \end{table}
+        
+        .Priority of reasons for entering Debug Mode from highest to lowest.
+        [%autowidth,align="center",float="center",cols="^,^",options="header"]
+        |===
+        | &lt;&lt;cause&gt;&gt; encoding | Cause
+        | 5 | resethaltreq
+        | 6 | halt group
+        | 3 | haltreq
+        | 2 | trigger (See &lt;&lt;tab:priority&gt;&gt; for detailed priority)
+        | 1 | ebreak
+        | 4 | step
+        |===
 
         \begin{commentary}
         Note that mcontrol/mcontrol6 triggers which fire after the
