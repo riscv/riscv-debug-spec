@@ -20,7 +20,7 @@
         .Priority of reasons for entering Debug Mode from highest to lowest.
         [%autowidth,align="center",float="center",cols="^,^",options="header"]
         |===
-        | {csr-cause} encoding | Cause
+        | {dcsr-cause} encoding | Cause
         | 5 | resethaltreq
         | 6 | halt group
         | 3 | haltreq
