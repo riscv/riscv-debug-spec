@@ -981,14 +981,14 @@
         When the system bus manager is busy, writes to this register will set
         {sbcs-sbbusyerror} and don't do anything else.
 
-        \begin{steps}{If {sbcs-sberror} is 0, {sbcs-sbbusyerror} is 0, and {sbcs-sbreadonaddr}
-        is set then writes to this register start the following:}
-            \item Set {sbcs-sbbusy}.
-            \item Perform a bus read from the new value of {\tt sbaddress}.
-            \item If the read succeeded and {sbcs-sbautoincrement} is set, increment
+        If {sbcs-sberror} is 0, {sbcs-sbbusyerror} is 0, and {sbcs-sbreadonaddr}
+        is set then writes to this register start the following:
+
+            . Set {sbcs-sbbusy}.
+            . Perform a bus read from the new value of {\tt sbaddress}.
+            . If the read succeeded and {sbcs-sbautoincrement} is set, increment
             {\tt sbaddress}.
-            \item Clear {sbcs-sbbusy}.
-        \end{steps}
+            . Clear {sbcs-sbbusy}.
 
         <field name="address" bits="31:0" access="R/W" reset="0">
             Accesses bits 31:0 of the physical address in {\tt sbaddress}.
@@ -1044,25 +1044,25 @@
         If the bus manager is busy then accesses set {sbcs-sbbusyerror}, and don't do
         anything else.
 
-        \begin{steps}{Writes to this register start the following:}
-            \item Set {sbcs-sbbusy}.
-            \item Perform a bus write of the new value of {\tt sbdata} to {\tt sbaddress}.
-            \item If the write succeeded and {sbcs-sbautoincrement} is set,
-            increment {\tt sbaddress}.
-            \item Clear {sbcs-sbbusy}.
-        \end{steps}
+        Writes to this register start the following:
 
-        \begin{steps}{Reads from this register start the following:}
-            \item ``Return'' the data.
-            \item Set {sbcs-sbbusy}.
-            \item \begin{steps}{If {sbcs-sbreadondata} is set:}
-                \item Perform a system bus read from the address contained in
+            . Set {sbcs-sbbusy}.
+            . Perform a bus write of the new value of {\tt sbdata} to {\tt sbaddress}.
+            . If the write succeeded and {sbcs-sbautoincrement} is set,
+            increment {\tt sbaddress}.
+            . Clear {sbcs-sbbusy}.
+
+        Reads from this register start the following:
+
+            . ``Return'' the data.
+            . Set {sbcs-sbbusy}.
+            . If {sbcs-sbreadondata} is set:
+                // TODO: This doesn't work right, but it does work in asiidoclive
+                .. Perform a system bus read from the address contained in
                         {\tt sbaddress}, placing the result in {\tt sbdata}.
-                \item If {sbcs-sbautoincrement} is set and the read was
+                .. If {sbcs-sbautoincrement} is set and the read was
                         successful, increment {\tt sbaddress}.
-            \end{steps}
-            \item Clear {sbcs-sbbusy}.
-        \end{steps}
+            . Clear {sbcs-sbbusy}.
 
         Only {dm-sbdata0} has this behavior. The other {\tt sbdata} registers
         have no side effects. On systems that have buses wider than 32 bits, a

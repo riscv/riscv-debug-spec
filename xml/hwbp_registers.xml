@@ -171,14 +171,12 @@
                 Supports triggers as described in this spec at commit 5a5c078,
                 made on February 2, 2023.
 
-                \begin{steps}{In these older versions:}
-                \item {csr-mcontrol}Six has a timing bit identical to
-                    {mcontrol-timing}
-                \item {mcontrol6-hit0} behaves just as {mcontrol-hit}.
-                \item {mcontrol6-hit1} is read-only 0.
-                \item Encodings for {mcontrol6-size} for access sizes larger
-                than 64 bits are different.
-                \end{steps}
+                In these older versions:
+
+                . {csr-mcontrol6} has a timing bit identical to {mcontrol-timing}
+                . {mcontrol6-hit0} behaves just as {mcontrol-hit}.
+                . {mcontrol6-hit1} is read-only 0.
+                . Encodings for {mcontrol6-size} for access sizes larger than 64 bits are different.
             </value>
             <value v="1" name="1">
                 Supports triggers as described in the ratified version 1.0 of
@@ -688,15 +686,15 @@
         virtual address is the address which caused any of the chained
         triggers to fire.
 
-        \begin{steps}{In implementations that support {mcontrol6-match} mode 1 (NAPOT), not all
+        In implementations that support {mcontrol6-match} mode 1 (NAPOT), not all
         NAPOT ranges may be supported.  All NAPOT ranges between stem:[2^1] and stem:[2^{maskmax6}]
         are supported where stem:[{maskmax6} \geq 1].  The value of maskmax6 can be determined
-        by the debugger via the following sequence:}
-        \item Set {mcontrol6-match}=1.
-        \item Read {mcontrol6-match}. If it is not 1 then NAPOT matching is not supported.
-        \item Write all ones to {csr-tdata2}.
-        \item Read {csr-tdata2}. The value of maskmax6 is the index of the most significant 0 bit plus 1.
-        \end{steps}
+        by the debugger via the following sequence:
+
+        . Set {mcontrol6-match}=1.
+        . Read {mcontrol6-match}. If it is not 1 then NAPOT matching is not supported.
+        . Write all ones to {csr-tdata2}.
+        . Read {csr-tdata2}. The value of maskmax6 is the index of the most significant 0 bit plus 1.
 
         If {csr-textra32} or {csr-textra64} are implemented for this
         trigger, it only matches when the conditions set there are satisfied.
@@ -1011,14 +1009,13 @@
 
         This register is accessible as {csr-tdata1} when {tdata1-type} is 3.
 
-        \begin{steps}{This trigger matches when:}
-            \item
-                An instruction retires after having been fetched in a privilege
+        This trigger matches when:
+
+            .  An instruction retires after having been fetched in a privilege
                 mode where the trigger is enabled.
                 This explicitly includes {\em x}\/RET instructions.
-            \item A trap is taken from a privilege mode where the trigger is enabled.
+            . A trap is taken from a privilege mode where the trigger is enabled.
                 This explicitly includes traps taken due to interrupts.
-        \end{steps}
 
         If more than one of the above events occur during a single instruction
         execution, the trigger still only matches once for that instruction.
