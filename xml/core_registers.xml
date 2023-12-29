@@ -20,7 +20,7 @@
         .Priority of reasons for entering Debug Mode from highest to lowest.
         [%autowidth,align="center",float="center",cols="^,^",options="header"]
         |===
-        | &lt;&lt;cause&gt;&gt; encoding | Cause
+        | {csr-cause} encoding | Cause
         | 5 | resethaltreq
         | 6 | halt group
         | 3 | haltreq
@@ -261,8 +261,8 @@
         | `ebreak` | Address of the `ebreak` instruction
         | single step | Address of the instruction that would be executed next if no debugging was going on. Ie. `pc` + 4 for
         32-bit instructions that don’t change program flow, the destination PC on taken jumps/branches, etc.
-        | trigger module | The address of the next instruction to be executed at the time that debug mode was entered. If the trigger is &lt;&lt;mcontrol&gt;&gt; and &lt;&lt;timing&gt;&gt; is 0 or if the trigger is
-        &lt;&lt;mcontrol6&gt;&gt; and `hit1` is 0, this corresponds to the address of the instruction which caused the trigger to fire.
+        | trigger module | The address of the next instruction to be executed at the time that debug mode was entered. If the trigger is {csr-mcontrol} and {mcontrol-timing} is 0 or if the trigger is
+        {csr-mcontrol6} and `hit1` is 0, this corresponds to the address of the instruction which caused the trigger to fire.
         | halt request | Address of the next instruction to be executed at the time that debug mode was entered.
         |=== 
 
@@ -275,7 +275,7 @@
 
         [NOTE]
         ====
-            Allowing {csr-dpc} to become \unspecified\ upon Program Buffer
+            Allowing {csr-dpc} to become UNSPECIFIED upon Program Buffer
             execution allows for direct implementations that don't have a
             separate PC register, and do need to use the PC when executing the
             Program Buffer.
