@@ -917,6 +917,8 @@ def write_adoc( fd, registers ):
         if not r.fields and not r.description:
             continue
 
+        if r.label and r.define:
+            fd.write("[[%s]]\n" % toAdocIdentifier(registers.prefix, r.label))
         if r.short:
             # TODO: Check that (((foo))) renders as ((foo)) inside parens
             if r.address:
@@ -930,8 +932,6 @@ def write_adoc( fd, registers ):
             else:
                 fd.write(f"==={sub} ((`{r.name}`))\n")
         fd.write("\n")
-        if r.label and r.define:
-            fd.write("[[%s]]\n" % toAdocIdentifier(registers.prefix, r.label))
         fd.write(remove_indent(r.description))
         fd.write("\n")
 
