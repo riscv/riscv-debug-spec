@@ -1,4 +1,4 @@
-[[sec:trigger]]
+[[trigger]]
 == Sdtrig (ISA Extension)
 
 This chapter describes the Sdtrig ISA extension, which can be
@@ -29,60 +29,56 @@ Triggers do not fire while in Debug Mode.
 Each trigger may support a variety of features. A debugger can build a
 list of all triggers and their features as follows:
 
-Write 0 to . If this results in an illegal instruction exception, then
-there are no triggers implemented.
+. Write 0 to <<tselect>>. If this results in an illegal instruction exception, then there are no triggers implemented.
+. Read back <<tselect>> and check that it contains the written value. If not, exit the loop.
+. Read <<tinfo>>.
+. If that caused an exception, the debugger must read <<tdata1>> to discover the type. (If <<type>> is 0, this trigger doesn't exist. Exit the loop.)
+. If <<info>> is 1, this trigger doesn't exist. Exit the loop.
+. Otherwise, the selected trigger supports the types discovered in <<info>>.
+. Repeat, incrementing the value in <<tselect>>.
 
-Read back and check that it contains the written value. If not, exit the
-loop.
-
-Read .
-
-If that caused an exception, the debugger must read to discover the
-type. (If is 0, this trigger doesn’t exist. Exit the loop.)
-
-If is 1, this trigger doesn’t exist. Exit the loop.
-
-Otherwise, the selected trigger supports the types discovered in .
-
-Repeat, incrementing the value in .
-
-The above algorithm reads back so that implementations which have
+[NOTE]
+====
+The above algorithm reads back <<tselect>> so that implementations which have
 latexmath:[$2^n$] triggers only need to implement latexmath:[$n$] bits
-of .
+of <<tselect>>.
 
-The algorithm checks and in case the implementation has latexmath:[$m$]
-bits of but fewer than latexmath:[$2^m$] triggers.
+The algorithm checks <<tinfo>> and <<type>> in case the implementation has latexmath:[$m$] bits of <<tselect>> but fewer than latexmath:[$2^m$] triggers.
+====
 
 === Actions
 
-Triggers can be configured to take one of several actions when they
-fire. Table #tab:action[[tab:action]] lists all options.
+Triggers can be configured to take one of several actions when they fire. <<tab:action>> lists all options.
 
-|r|L| Value & Description +
-& Raise a breakpoint exception. (Used when software wants to use the
-trigger module without an external debugger attached.) must contain the
+[[tab:action]]
+.<<action>> encoding
+[%autowidth,align="center",float="center",cols=">,^",options="header"]
+|===
+^| Value | Description
+|0 | Raise a breakpoint exception. (Used when software wants to use the
+trigger module without an external debugger attached.) `xepc` must contain the
 virtual address of the next instruction that must be executed to
-preserve the program flow. +
-& Enter Debug Mode. must contain the virtual address of the next
-instruction that must be executed to preserve the program flow.
+preserve the program flow.
+|1 | Enter Debug Mode. <<dpc>> must contain the virtual address of the next
+instruction that must be executed to preserve the program flow. +
+This action is only legal when the trigger's <<dmode>> is 1. Since the `tdata`
+registers are *WARL*, hardware should clear the action field whenever the
+action field is 1, the new value of <<dmode>> would be 0, and the new value of the action field would be 1. +
+This action can only be supported if `Sdext` is implemented on the hart.
+| 2 | Trace on, described in the trace specification. 
+| 3 | Trace off, described in the trace specification.
+| 4 | Trace notify, described in the trace specification.
+| 5 | Reserved for use by the trace specification.
+| 8 - 9 | Send a signal to TM external trigger output 0 or 1 (respectively).
+| other | Reserved for future use.
+|===
 
-This action is only legal when the trigger’s is 1. Since the `tdata`
-registers are WARL, hardware should clear the action field whenever the
-action field is 1, the new value of would be 0, and the new value of the
-action field would be 1.
-
-This action can only be supported if Sdext is implemented on the hart. +
-& Trace on, described in the trace specification. +
-& Trace off, described in the trace specification. +
-& Trace notify, described in the trace specification. +
-& Reserved for use by the trace specification. +
-– 9 & Send a signal to TM external trigger output 0 or 1
-(respectively). +
-other & Reserved for future use. +
-
+[NOTE]
+====
 Actions 8 and 9 are intended to increment custom event counters, but
 these signals could also be brought to outputs for use by external
 logic.
+====
 
 === Priority
 
@@ -144,7 +140,7 @@ opportunity to handle this case. What happens with trace actions when
 triggers with different actions are also firing is left to the trace
 specification.
 
-[[sec:nativetrigger]]
+[[nativetrigger]]
 === Native Triggers
 
 Triggers can be used for native debugging when . If supported by the
@@ -299,7 +295,7 @@ constant data.
 
 The prefetch instructions don’t match at all.
 
-[[sec:multistate]]
+[[multistate]]
 === Multiple State Change Instructions
 
 An instruction that performs multiple architectural state changes (e.g.,
