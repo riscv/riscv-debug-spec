@@ -146,9 +146,9 @@ specification.
 [[nativetrigger]]
 === Native Triggers
 
-Triggers can be used for native debugging when . If supported by the
+Triggers can be used for native debugging when <<action>>=0. If supported by the
 hart and desired by the debugger, triggers will often be programmed to
-have so that when they fire they cause a breakpoint exception to trap to
+have <<m>>=0 so that when they fire they cause a breakpoint exception to trap to
 a more privileged mode. That breakpoint exception can either be taken in
 M-mode or it can be delegated to a less privileged mode. However, it is
 possible for triggers to fire in the same mode that the resulting
@@ -158,47 +158,38 @@ In these cases such a trigger may cause a breakpoint exception while
 already in a trap handler. This might leave the hart unable to resume
 normal execution because state such as and would be overwritten.
 
-In particular, when :
+[NOTE]
+====
+In particular, when <<action>>=0:
 
-mcontrol and mcontrol6 triggers with can cause a breakpoint exception
+. mcontrol and mcontrol6 triggers with <<m>>=1 can cause a breakpoint exception
 that is taken from M-mode to M-mode (regardless of delegation).
-
-mcontrol and mcontrol6 triggers with can cause a breakpoint exception
-that is taken from S-mode to S-mode if .
-
-mcontrol6 triggers with can cause a breakpoint exception that is taken
-from VS-mode to VS-mode if and .
-
-icount triggers with can cause a breakpoint exception that is taken from
-M-mode to M-mode (regardless of delegation).
-
-icount triggers with can cause a breakpoint exception that is taken from
-S-mode to S-mode if .
-
-icount triggers with can cause a breakpoint exception that is taken from
-VS-mode to VS-mode if and .
-
-etrigger and itrigger triggers will always be taken from a trap handler
+. mcontrol and mcontrol6 triggers with <<s>>=1 can cause a breakpoint exception
+that is taken from S-mode to S-mode if `medeleg` [3]=1.
+. mcontrol6 triggers with <<vs>>=1 can cause a breakpoint exception that is taken from VS-mode to VS-mode if `medeleg` [3]=1 and `hedeleg` [3]=1 .
+. icount triggers with <<m>>=1can cause a breakpoint exception that is taken from M-mode to M-mode (regardless of delegation).
+. icount triggers with <<s>>=1 can cause a breakpoint exception that is taken from S-mode to S-mode if `medeleg` [3]=1 .
+. icount triggers with <<vs>>=1 can cause a breakpoint exception that is taken from VS-mode to VS-mode if `medeleg` [3]=1 and `hedeleg` [3]=1.
+. etrigger and itrigger triggers will always be taken from a trap handler
 before the first instruction of the handler. If etrigger/itrigger is set
 to trigger on exception/interrupt X and if X is delegated to mode Y then
 the trigger will cause a breakpoint exception that is taken from mode Y
 to mode Y unless breakpoint exceptions are delegated to a more
 privileged mode than Y.
-
-tmexttrigger triggers are asynchronous and may occur in any mode and at
+. tmexttrigger triggers are asynchronous and may occur in any mode and at
 any time.
+====
 
-Harts that support triggers with should implement one of the following
-two solutions to solve the problem of reentrancy:
+Harts that support triggers with <<action>>=0 should implement one of the following two solutions to solve the problem of reentrancy:
 
-The hardware prevents triggers with from matching or firing while in
-M-mode and while in is 0. If then it prevents triggers with from
-matching or firing while in S-mode and while in is 0. If and then it
-prevents triggers with from matching or firing while in VS-mode and
-while in is 0.
+. The hardware prevents triggers with <<action>>=0 from matching or firing while in M-mode and while `MIE` in `mstatus` is 0. If `medeleg` [3]=1 then it prevents triggers with <<action>>=0 from
+matching or firing while in S-mode and while `SIE` in `sstatus` is 0. If `medeleg` [3]=1 and `hedeleg` [3]=1 then it
+prevents triggers with <<action>>=0 from matching or firing while in VS-mode and while `SIE` in `vstatus` is 0.
 
-and in is implemented. is hard-wired to 0.
+. <<mte>> and <<mpte>> in <<tcontrol>> is implemented. `medeleg` [3] is hard-wired to 0.
 
+[NOTE]
+====
 The first option has the limitation that interrupts might be disabled at
 times when a user still might want triggers to fire. It has the benefit
 that breakpoints are not required to be handled in M-mode.
@@ -209,7 +200,7 @@ debug feature in the M-mode trap handlers. It can only work if
 breakpoints are not delegated to less privileged modes and therefore
 targets primarily implementations without S-mode.
 
-Because is not accessible to S-mode, the second option can not be
+Because <<tcontrol>> is not accessible to S-mode, the second option can not be
 extended to accommodate delegation without adding additional S-mode and
 VS-mode CSRs.
 
@@ -217,11 +208,12 @@ Both options prevent etrigger and itrigger from having any effect on
 exceptions and interrupts that are handled in M-mode. They also prevent
 triggering during some initial portion of each handler. Debuggers should
 use other mechanisms to debug these cases, such as patching the handler
-or setting a breakpoint on the instruction after is cleared.
+or setting a breakpoint on the instruction after `MIE` is cleared.
+====
 
 === Memory Access Triggers
 
-and both enable triggers on memory accesses. This section describes for
+<<mcontrol>> and <<mcontrol16>> both enable triggers on memory accesses. This section describes for
 both of them how certain corner cases are treated.
 
 ==== A Extension
@@ -229,23 +221,19 @@ both of them how certain corner cases are treated.
 If the A extension is supported, then triggers on loads/stores treat
 them as follows:
 
-`lr` instructions are loads.
-
-Successful `sc` instructions are stores.
-
-It is  whether failing `sc` instructions are stores or not.
-
-Each AMO instruction is a load for the read portion of the operation.
+. `lr` instructions are loads.
+. Successful `sc` instructions are stores.
+. It is UNSPECIFIED whether failing `sc` instructions are stores or not.
+. Each AMO instruction is a load for the read portion of the operation.
 The address is always available to trigger on, although the value loaded
 might not be, depending on the hardware implementation.
-
-Each AMO instruction is a store for the write portion of the operation.
+. Each AMO instruction is a store for the write portion of the operation.
 The address is always available to trigger on, although the value stored
 might not be, depending on the hardware implementation.
 
-If the destination register of any load or AMO is then it is  whether a
+If the destination register of any load or AMO is `zero` then it is UNSPECIFIED whether a
 data load trigger will match. Whether data store triggers match on AMOs
-is .
+is UNSPECIFIED.
 
 ==== Combined Accesses
 
@@ -263,27 +251,26 @@ Cache operations are infrequently performed, and code that uses them can
 have hard-to-find bugs. For the purposes of debug triggers, two classes
 of cache operations must match as stores:
 
-Cache operations that enable software to maintain coherence between
+. Cache operations that enable software to maintain coherence between
 otherwise non-coherent implicit and explicit memory accesses.
+. Cache operations that perform block writes of constant data.
 
-Cache operations that perform block writes of constant data.
-
-Only triggers with and will match. Since cache operations affect
+Only triggers with <<size>>=0 and <<select>>=0 will match. Since cache operations affect
 multiple addresses, there are multiple possible values to compare
 against. Implementations must implement one of the following options.
 From most desirable to least desirable, they are:
 
-Every address from the effective address rounded down to the nearest
+. Every address from the effective address rounded down to the nearest
 cache block boundary (inclusive) to the effective address rounded up to
 the nearest cache block boundary (exclusive) is a compare value.
-
-The effective address rounded down to the nearest cache block boundary
+. The effective address rounded down to the nearest cache block boundary
 is a compare value.
-
-The effective address of the instruction is a compare value.
+. The effective address of the instruction is a compare value.
 
 Cache operations encoded as HINTs do not match debug triggers.
 
+[NOTE]
+====
 The above language intends to capture the trigger behavior with respect
 to the cache operations to be introduced in a forthcoming I/D
 consistency extension.
@@ -291,12 +278,11 @@ consistency extension.
 For RISC-V Base Cache Management Operation ISA Extensions 1.0.1, this
 means the following:
 
-, , and match as if they are stores because they affect consistency.
-
-matches as if it is a store because it performs a block write of
+. `cbo.clean`, `cbo.flush`, and `cbo.inval` match as if they are stores because they affect consistency.
+. `cbo.zero` matches as if it is a store because it performs a block write of
 constant data.
-
-The prefetch instructions don’t match at all.
+. The prefetch instructions don't match at all.
+====
 
 [[multistate]]
 === Multiple State Change Instructions
@@ -312,9 +298,9 @@ Alternatively, it may state that partial execution is not allowed,
 implying that a mid-execution trigger must prevent any architectural
 state changes from occurring.
 
-Debuggers won’t be aware if an instruction has been partially executed.
+Debuggers won't be aware if an instruction has been partially executed.
 When they resume execution, they will execute the same instruction once
-more. Therefore, it’s crucial that partially executing the instruction
+more. Therefore, it's crucial that partially executing the instruction
 and then executing it again leaves the hart in a state closely
 resembling the state it would have been in if the instruction had only
 been executed once.
@@ -335,20 +321,15 @@ the configuration of any trigger besides the one that is currently
 selected.
 
 The combination of these rules means that a debugger cannot simply set a
-trigger by writing , then , etc. The current value of might not be legal
-with the new value of . To help with this situation, it is guaranteed
-that writing 0 to disables the trigger, and leaves it in a state where
-and can be written with any value that makes sense for any trigger type
-supported by this trigger.
+trigger by writing <<tdata1>>, then <<tdata2>>, etc. The current value of <<tdata2>> might not be legal
+with the new value of <<tdata1>>. To help with this situation, it is guaranteed
+that writing 0 to <<tdata1>>disables the trigger, and leaves it in a state where <<tdata2>> and <<tdata3>> can be written with any value that makes sense for any trigger type supported by this trigger.
 
 As a result, a debugger can write any supported trigger as follows:
 
-Write 0 to . (This will result in containing a non-zero value, since the
-register is .)
-
-Write desired values to and .
-
-Write desired value to .
+. Write 0 to <<tdata1>>. (This will result in containing a non-zero value, since the register is *WARL*.)
+. Write desired values to <<tdata2>> and <<tdata3>>.
+. Write desired value to <<tdata1>>.
 
 Code that restores CSR context of triggers that might be configured to
 fire in the current privilege mode must use this same sequence to
