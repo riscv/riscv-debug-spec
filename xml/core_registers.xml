@@ -282,7 +282,7 @@
         trigger module &amp; The address of the next instruction to be
         executed at the time that debug mode was entered. If the trigger is
         {csr-mcontrol} and {mcontrol-timing} is 0 or if the trigger is
-        {csr-mcontrol}Six and {mcontrol6-hit1} is 0, this
+        {csr-mcontrol6} and {mcontrol6-hit1} is 0, this
         corresponds to the address of the instruction which caused the trigger
         to fire. \\
         \hline

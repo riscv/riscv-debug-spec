@@ -75,7 +75,7 @@
 
             <value v="6" name="mcontrol6">
             The trigger is an address/data match trigger. The remaining bits
-            in this register act as described in {csr-mcontrol}Six. This is similar
+            in this register act as described in {csr-mcontrol6}. This is similar
             to a type 2 trigger, but provides additional functionality and
             should be used instead of type 2 in newer implementations.
             </value>
@@ -306,9 +306,9 @@
 
         \begin{commentary}
         This trigger type only supports a subset of features of the newer
-        {csr-mcontrol}Six.  It is expected that new implementations will not
+        {csr-mcontrol6}.  It is expected that new implementations will not
         support this trigger type and that new debuggers will not use it if
-        {csr-mcontrol}Six is available.
+        {csr-mcontrol6} is available.
         \end{commentary}
 
         Address and data trigger implementation are heavily dependent on how
@@ -889,16 +889,16 @@
             different type. It is undefined when exactly such a chain fires.
 
             Because {mcontrol6-chain} affects the next trigger, hardware must zero it in
-            writes to {csr-mcontrol}Six that set {tdata1-dmode} to 0 if the next trigger has
+            writes to {csr-mcontrol6} that set {tdata1-dmode} to 0 if the next trigger has
             {tdata1-dmode} of 1.
-            In addition hardware should ignore writes to {csr-mcontrol}Six that set
+            In addition hardware should ignore writes to {csr-mcontrol6} that set
             {tdata1-dmode} to 1 if the previous trigger has both {tdata1-dmode} of 0 and
             {mcontrol6-chain} of 1. Debuggers must avoid the latter case by checking
-            {mcontrol6-chain} on the previous trigger if they're writing {csr-mcontrol}Six.
+            {mcontrol6-chain} on the previous trigger if they're writing {csr-mcontrol6}.
 
             Implementations that wish to limit the maximum length of a trigger
             chain (eg. to meet timing requirements) may do so by zeroing
-            {mcontrol6-chain} in writes to {csr-mcontrol}Six that would make the chain too long.
+            {mcontrol6-chain} in writes to {csr-mcontrol6} that would make the chain too long.
         </field>
         <field name="match" bits="10:7" access="WARL" reset="0">
             <value v="0" name="equal">
