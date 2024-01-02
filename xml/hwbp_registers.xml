@@ -43,6 +43,27 @@
         If this trigger supports multiple types, then the hardware should
         disable it by changing {tdata1-type} to 15.
 
+        <!-- Just an example of how <diagram> works. This is exactly what is
+        auto-generated, so doesn't actually change the net output. -->
+        <diagram>
+            [bytefield]
+            ----
+            (defattrs :plain [:plain {:font-family "M+ 1p Fallback"}])
+            (def row-height 45)
+            (def row-header-fn nil)
+            (def boxes-per-row 24)
+            (draw-column-headers {:labels ["XLEN-1" "" "" "" "XLEN-4" "" "XLEN-5" "" "XLEN-6" "" "" "" "" "" "" "" "0" "" "" "" "" "" "" ""]})
+            (draw-box "type" {:span 5})
+            (draw-box "dmode" {:span 3})
+            (draw-box "data" {:span 9})
+            (draw-box "" {:span 7 :borders {}})
+            (draw-box "4" {:span 5 :borders {}})
+            (draw-box "1" {:span 3 :borders {}})
+            (draw-box "XLEN - 5" {:span 9 :borders {}})
+            (draw-box "" {:span 7 :borders {}})
+            ----
+        </diagram>
+
         <field name="type" bits="XLEN-1:XLEN-4" access="WARL" reset="Preset">
             <value v="0" name="none">
             There is no trigger at this {csr-tselect}.
