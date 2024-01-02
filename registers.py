@@ -45,6 +45,8 @@ class Register( object ):
         self.address = address
         self.sdesc = sdesc
         self.define = define
+        # Allow user to override our auto-generated register diagram.
+        self.diagram = None
         self.fields = []
 
         self.label = ( short or name ).lower() # TODO: replace spaces etc.
@@ -330,6 +332,9 @@ def parse_xml( path ):
                     f.get( 'access' ), description, f.get( 'sdesc' ),
                     define, values )
             register.add_field( field )
+
+        for diagram in r.findall( 'diagram' ):
+            register.diagram = diagram.text.strip()
 
         register.check()
         registers.add_register( register )
@@ -935,6 +940,8 @@ def write_adoc( fd, registers ):
         fd.write(remove_indent(r.description))
         fd.write("\n")
 
+        if r.diagram:
+            fd.write(f"{remove_indent(r.diagram)}\n")
         if r.fields:
             if registers.prefix == "CSR_":
                 if int(r.address, 0) >= 0xc00:
