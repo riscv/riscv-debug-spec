@@ -118,7 +118,8 @@
 
         See Section~\ref{dmiaccess} for examples of how this is used.
 
-        \begin{commentary}
+        [NOTE]
+        ====
         The still-in-progress status is sticky to accommodate debuggers that
         batch together a number of scans, which must all be executed or stop as
         soon as there's a problem.
@@ -126,7 +127,7 @@
         For instance a series of scans may write a Debug Program and execute
         it.  If one of the writes fails but the execution continues, then the
         Debug Program may hang or have other unexpected side effects.
-        \end{commentary}
+        ====
 
         <field name="address" bits="abits+33:34" access="R/W" reset="0">
             Address used for DMI access. In Update-DR this value is used
