@@ -169,12 +169,13 @@
         value to see which bits were actually set. Debuggers must not change
         \Fhartsel while an abstract command is executing.
 
-        \begin{commentary}
+        [NOTE]
+        ====
         There are separate {dmcontrol-setresethaltreq} and {dmcontrol-clrresethaltreq} bits so that
         it is possible to write {dm-dmcontrol} without changing the halt-on-reset
         request bit for each selected hart, when not all selected harts have
         the same configuration.
-        \end{commentary}
+        ====
 
         On any given write, a debugger may only write 1 to at most one of the
         following bits: {dmcontrol-resumereq}, {dmcontrol-hartreset}, {dmcontrol-ackhavereset},
@@ -442,10 +443,11 @@
         {abstractcs-cmderr} to become 1 (busy) once the command completes
         (busy becomes 0).
 
-        \begin{commentary}
+        [NOTE]
+        ====
             {abstractcs-datacount} must be at least 1 to support RV32 harts, 2 to support
             RV64 harts, or 4 to support RV128 harts.
-        \end{commentary}
+        ====
 
                 <field name="0" bits="31:29" access="R" reset="0" />
         <field name="progbufsize" bits="28:24" access="R" reset="Preset">
@@ -545,14 +547,15 @@
 
         If {abstractcs-cmderr} is non-zero, writes to this register are ignored.
 
-        \begin{commentary}
+        [NOTE]
+        ====
             {abstractcs-cmderr} inhibits starting a new command to accommodate debuggers
             that, for performance reasons, send several commands to be executed
             in a row without checking {abstractcs-cmderr} in between. They can safely do
             so and check {abstractcs-cmderr} at the end without worrying that one command
             failed but then a later command (which might have depended on the
             previous one succeeding) passed.
-        \end{commentary}
+        ====
 
         <field name="cmdtype"    bits="31:24" access="WARZ" reset="0">
             The type determines the overall functionality of this

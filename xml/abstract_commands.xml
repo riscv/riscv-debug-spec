@@ -63,9 +63,10 @@
             \end{tabulary}
         \end{table}
 
-        \begin{commentary}
+        [NOTE]
+        ====
             The encoding of {accessregister-aarsize} was chosen to match {sbcs-sbaccess} in {dm-sbcs}.
-        \end{commentary}
+        ====
 
         This command modifies {\tt arg0} only when a register is read. The
         other {\tt data} registers are not changed.
@@ -203,9 +204,10 @@
         while the hart is running, it must also
         support memory accesses while the hart is halted.
 
-        \begin{commentary}
+        [NOTE]
+        ====
             The encoding of {accessmemory-aamsize} was chosen to match {sbcs-sbaccess} in {dm-sbcs}.
-        \end{commentary}
+        ====
 
         This command modifies {\tt arg0} only when memory is read. It modifies
         {\tt arg1} only if {accessmemory-aampostincrement} is set.  The other {\tt data}

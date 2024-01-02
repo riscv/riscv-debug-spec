@@ -262,12 +262,13 @@
         This register must be implemented if {csr-hcontext} is implemented, and
         is optional otherwise.  It is only accessible in M-mode and Debug mode.
 
-        \begin{commentary}
+        [NOTE]
+        ====
             {mcontext-hcontext} is primarily useful to set triggers on
             hypervisor systems that only fire when a given VM is executing. It
             is also useful in systems where M-Mode implements something like a
             hypervisor directly.
-        \end{commentary}
+        ====
 
         <field name="hcontext" bits="XLEN-1:0" access="WARL" reset="0">
             M-Mode or HS-Mode (using {csr-hcontext}) software can write a context
@@ -288,12 +289,13 @@
         accessible in S/HS-mode, M-mode and Debug Mode.  It is included
         for backward compatibility with version 0.13.
 
-        \begin{commentary}
+        [NOTE]
+        ====
         The encoding of this CSR does not conform to the CSR Address Mapping
         Convention in the Privileged Spec.  It is expected that new
         implementations will not support this encoding and that new
         debuggers will not use this CSR if {csr-scontext} is available.
-        \end{commentary}
+        ====
     </register>
 
     <register name="Match Control" short="mcontrol" address="0x7a1">
@@ -304,12 +306,13 @@
         This trigger type is deprecated.  It is included for backward compatibility
         with version 0.13.
 
-        \begin{commentary}
+        [NOTE]
+        ====
         This trigger type only supports a subset of features of the newer
         {csr-mcontrol6}.  It is expected that new implementations will not
         support this trigger type and that new debuggers will not use it if
         {csr-mcontrol6} is available.
-        \end{commentary}
+        ====
 
         Address and data trigger implementation are heavily dependent on how
         the processor core is implemented. To accommodate various
@@ -699,7 +702,8 @@
         If {csr-textra32} or {csr-textra64} are implemented for this
         trigger, it only matches when the conditions set there are satisfied.
 
-        \begin{commentary}
+        [NOTE]
+        ====
         {mcontrol6-uncertain} and {mcontrol6-uncertain}en exist to
         accommodate systems where not every memory access is fully observed by
         the Trigger Module. Possible examples include data values in far AMOs,
@@ -710,7 +714,7 @@
         can lead to an unusable number of false positives. Users will get a much
         better debug experience if the TM does have perfect visibility into the
         details of every memory access.
-        \end{commentary}
+        ====
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="6" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
@@ -1020,7 +1024,8 @@
         If more than one of the above events occur during a single instruction
         execution, the trigger still only matches once for that instruction.
 
-        \begin{commentary}
+        [NOTE]
+        ====
             For use in single step, icount must match for traps where the
             instruction will not be reexecuted after the handler, such as
             illegal instructions that are emulated by privileged software and
@@ -1031,7 +1036,7 @@
             ultimately retires. Trying to distinguish the two cases leads to
             complex rules, so instead the rule is simply that all traps match.
             See also Section~\ref{stepIcount}.
-        \end{commentary}
+        ====
 
         When {icount-count} is greater than 1 and the trigger matches, then
         {icount-count} is decremented by 1.
@@ -1057,21 +1062,23 @@
         If the trigger fires with {icount-action}=0 then zero is written to the
         {\tt tval} CSR on the breakpoint trap.
 
-        \begin{commentary}
+        [NOTE]
+        ====
         The intent of {icount-pending} is to cleanly handle the case where
         {icount-action} is 0, {icount-m} is 0, {icount-u} is 1,
         {icount-count} is 1, and the U-mode instruction being executed
         causes a trap into M-mode. In that case we want the entire M-mode
         handler to be executed, and the debug trap to be taken before the
         next U-mode instruction.
-        \end{commentary}
+        ====
 
-        \begin{commentary}
+        [NOTE]
+        ====
         This trigger type is intended to be used as a single step for software
         monitor programs or native debug.  Systems that support multiple
         privilege modes that want to debug software running in lower privilege
         modes don't need to support {icount-count} greater than 1.
-        \end{commentary}
+        ====
 
         If {csr-textra32} or {csr-textra64} are implemented for this
         trigger, it only matches when the conditions set there are satisfied.
@@ -1150,13 +1157,14 @@
         In addition the trigger can be enabled for non-maskable interrupts using
         {itrigger-nmi}.
 
-        \begin{commentary}
+        [NOTE]
+        ====
         If XLEN is 32, then it is not possible to set a trigger for interrupts
         with Exception Code larger than 31. A future version of the RISC-V
         Privileged Spec will likely define interrupt Exception Codes 32 through
         47. Some of those numbers are already being used by the RISC-V Advanced
         Interrupt Architecture.
-        \end{commentary}
+        ====
 
         Hardware may only support a subset of interrupts for this trigger.  A
         debugger must read back {csr-tdata2} after writing it to confirm the
@@ -1242,12 +1250,13 @@
         (E.g.\  to trap on an illegal instruction, the debugger sets bit 2 in
         {csr-tdata2}.)
 
-        \begin{commentary}
+        [NOTE]
+        ====
         If XLEN is 32, then it is not possible to set a trigger on Exception
         Codes higher than 31. A future version of the RISC-V Privileged Spec
         will likely define Exception Codes 32 through 47.
         <!-- Source: https://github.com/riscv/riscv-debug-spec/issues/905#issue-1950231166 -->
-        \end{commentary}
+        ====
 
         Hardware may support only a subset of exceptions. A debugger must read
         back {csr-tdata2} after writing it to confirm the requested functionality
@@ -1343,11 +1352,12 @@
         fire (dropping the trigger event) or it may hold the action as pending
         and fire the trigger once it is legal to do so.
 
-        \begin{commentary}
+        [NOTE]
+        ====
             {tmexttrigger-intctl} is intended to be used by the {\tt clicinttrig}
             mechanism from the Core-Local Interrupt Controller (CLIC) RISC-V
             Privileged Architecture Extensions.
-        \end{commentary}
+        ====
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="4" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
         <field name="hit" bits="XLEN-6" access="WARL" reset="0">
@@ -1400,12 +1410,13 @@
         
         Byte masking only applies to {csr-scontext} comparison; i.e when {textra32-sselect} is 1.
 
-        \begin{commentary}
+        [NOTE]
+        ====
         Note that sselect and mhselect filtering apply in all modes, including M-mode
         and S-mode.  If desired, debuggers can use a trigger's mode filtering bits to
         restrict the matching to modes where it considers ASID/VMID/scontext/hcontext
         to be active.
-        \end{commentary}
+        ====
         
         <field name="mhvalue" bits="31:26" access="WARL" reset="0">
             Data used together with {textra32-mhselect}.
