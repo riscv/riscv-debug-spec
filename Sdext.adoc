@@ -158,7 +158,7 @@ time to complete.
 This mechanism cleanly supports a system which supports multiple
 privilege levels, where the OS or a debug stub runs in M-Mode while the
 program being debugged runs in a less privileged mode. Systems that only
-support M-Mode can use {csr-icount}as well, but count must be able to count several instructions (depending on the software implementation). See [[nativestep]].
+support M-Mode can use {csr-icount} as well, but count must be able to count several instructions (depending on the software implementation). See [[nativestep]].
 
 === Reset
 
@@ -172,25 +172,24 @@ instruction is executed.
 
 When a hart halts:
 
-. {dcsr-cause}is updated.
-. <<prv>> and <<v>> are set to reflect current privilege mode.
-. <<dpc>> is set to the next instruction that should be executed.
+. {dcsr-cause} is updated.
+. {dcsr-prv} and {dcsr-v} are set to reflect current privilege mode.
+. {pc} is set to the next instruction that should be executed.
 . If the current instruction can be partially executed and should be
 restarted to complete, then the relevant state for that is updated. E.g.
 if a halt occurs during a partially executed vector instruction, then
-`vstart` is updated, and <<dpc>> is updated to the address of the partially
-executed instruction. This is analogous to how vector instructions
-behave for exceptions.
+`vstart` is updated, and {csr-dpc} is updated to the address of the partially
+executed instruction. This is analogous to how vector instructions behave for exceptions.
 . The hart enters Debug Mode.
 
 === Resume
 
 When a hart resumes:
 
-. `pc` changes to the value stored in <<dpc>>.
+. `pc` changes to the value stored in {csr-dpc}.
 . The current privilege mode and virtualization mode are changed to that
-specified by <<prv>> and <<v>>.
-. If the new privilege mode is less privileged than M-mode, `MPRV` in 'mstatus` is cleared.
+specified by {dcsr-prv} and {dcsr-v}.
+. If the new privilege mode is less privileged than M-mode, `MPRV` in `mstatus` is cleared.
 . The hart is no longer in debug mode.
 
 === XLEN
