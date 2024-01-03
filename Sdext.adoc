@@ -44,8 +44,8 @@ are allowed to be updated. For example, vector load/store instructions
 which raise exceptions may partially update the destination register and
 set `vstart` appropriately.
 . Triggers don't match or fire.
-. If <<stopcount>> is 0 then counters continue. If it is 1 then counters are stopped.
-. If <<stoptime>> is 0 then continues to update. If it is 1 then will not update. It will resynchronize with after leaving Debug Mode.
+. If {dcsr-stopcount} is 0 then counters continue. If it is 1 then counters are stopped.
+. If {dcsr-stoptime}is 0 then continues to update. If it is 1 then will not update. It will resynchronize with after leaving Debug Mode.
 . Instructions that place the hart into a stalled state act as a `nop`.
 This includes `wfi`, `wrs.sto`, and `wrs.nto`.
 . Almost all instructions that change the privilege mode have UNSPECIFIED behavior.
@@ -115,8 +115,8 @@ This method is only available to external debuggers, and is the
 preferred way to single step.
 
 An external debugger can cause a halted hart to execute a single
-instruction or trap and then re-enter Debug Mode by setting <<step>> before
-resuming. If <<step>> is set when a hart resumes then it will single step,
+instruction or trap and then re-enter Debug Mode by setting {dcsr-step}before
+resuming. If {dcsr-step}is set when a hart resumes then it will single step,
 regardless of the reason for resuming.
 
 If control is transferred to a trap handler while executing the
@@ -128,7 +128,7 @@ be executed at all.
 
 If executing or fetching the instruction causes a trigger to fire with
 action=1, Debug Mode is re-entered immediately after that trigger has
-fired. In that case <<cause>> is set to 2 (trigger) instead of 4 (single step).
+fired. In that case {dcsr-cause} is set to 2 (trigger) instead of 4 (single step).
 Whether the instruction is executed or not depends on the specific
 configuration of the trigger.
 
@@ -145,7 +145,7 @@ then instead the instruction is treated as a `nop`. This includes `wfi`,
 [[stepicount]]
 ==== Icount Trigger
 
-Native debuggers won't have access to <<dcsr>>, but can use the <<icount>> trigger by setting <<count>> to 1.
+Native debuggers won't have access to {csr-dcsr}, but can use the {csr-icount} trigger by setting {icount-count} to 1.
 
 This approach does have some limitations:
 
@@ -158,7 +158,7 @@ time to complete.
 This mechanism cleanly supports a system which supports multiple
 privilege levels, where the OS or a debug stub runs in M-Mode while the
 program being debugged runs in a less privileged mode. Systems that only
-support M-Mode can use <<icount>> as well, but count must be able to count several instructions (depending on the software implementation). See [[nativestep]].
+support M-Mode can use {csr-icount}as well, but count must be able to count several instructions (depending on the software implementation). See [[nativestep]].
 
 === Reset
 
@@ -172,7 +172,7 @@ instruction is executed.
 
 When a hart halts:
 
-. <<cause>> is updated.
+. {dcsr-cause}is updated.
 . <<prv>> and <<v>> are set to reflect current privilege mode.
 . <<dpc>> is set to the next instruction that should be executed.
 . If the current instruction can be partially executed and should be
