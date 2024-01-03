@@ -47,11 +47,11 @@
         </field>
         <field name="allresumeack" bits="17" access="R" reset="-">
             This field is 1 when all currently selected harts have their
-            resume ack bit\index{resume ack bit} set.
+            ((resume ack bit)) set.
         </field>
         <field name="anyresumeack" bits="16" access="R" reset="-">
             This field is 1 when any currently selected hart has its
-            resume ack bit\index{resume ack bit} set.
+            ((resume ack bit)) set.
         </field>
         <field name="allnonexistent" bits="15" access="R" reset="-">
             This field is 1 when all currently selected harts do not exist in
@@ -158,8 +158,8 @@
         This register controls the overall Debug Module
         as well as the currently selected harts, as defined in {dmcontrol-hasel}.
 
-\label{hartsel}
-\index{hartsel}
+[[hartsel]]
+(((hartsel)))
         Throughout this document we refer to \Fhartsel, which is {dmcontrol-hartselhi}
         combined with {dmcontrol-hartsello}. While the spec allows for 20 \Fhartsel bits,
         an implementation may choose to implement fewer than that. The actual
@@ -181,13 +181,13 @@
         following bits: {dmcontrol-resumereq}, {dmcontrol-hartreset}, {dmcontrol-ackhavereset},
         {dmcontrol-setresethaltreq}, and {dmcontrol-clrresethaltreq}. The others must be written 0.
 
-\label{resethaltreq}
-\index{resethaltreq}
+[[resethaltreq]]
+(((resethaltreq)))
         \Fresethaltreq is an optional internal bit of per-hart state that cannot be
         read, but can be written with {dmcontrol-setresethaltreq} and {dmcontrol-clrresethaltreq}.
 
-\label{keepalive}
-\index{keepalive}
+[[keepalive]]
+(((keepalive)))
         \Fkeepalive is an optional internal bit of per-hart state. When it is
         set, it suggests that the hardware should attempt to keep the hart
         available for the debugger, e.g. by keeping it from entering a
