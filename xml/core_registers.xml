@@ -155,16 +155,16 @@
         </field>
         <field name="stoptime" bits="9" access="WARL" reset="Preset">
             <value v="0" name="normal">
-            \Rtime continues to reflect \Rmtime.
+            `time` continues to reflect `mtime`.
             </value>
 
             <value v="1" name="freeze">
-            \Rtime is frozen at the time that Debug Mode was entered. When
-            leaving Debug Mode, \Rtime will reflect the latest
-            value of \Rmtime again.
+            `time` is frozen at the time that Debug Mode was entered. When
+            leaving Debug Mode, `time` will reflect the latest
+            value of `mtime` again.
 
             While all harts have {dcsr-stoptime}=1 and are in Debug Mode,
-            \Rmtime is allowed to stop incrementing.
+            `mtime` is allowed to stop incrementing.
             </value>
 
             An implementation may hardwire this bit to 0 or 1.
@@ -213,11 +213,11 @@
         </field>
         <field name="mprven" bits="4" access="WARL" reset="Preset">
             <value v="0" name="disabled">
-            \FcsrMstatusMprv in \Rmstatus is ignored in Debug Mode.
+            \FcsrMstatusMprv in `mstatus` is ignored in Debug Mode.
             </value>
 
             <value v="1" name="enabled">
-            \FcsrMstatusMprv in \Rmstatus takes effect in Debug Mode.
+            \FcsrMstatusMprv in `mstatus` takes effect in Debug Mode.
             </value>
 
             Implementing this bit is optional. It may be tied to either 0 or 1.
@@ -289,7 +289,7 @@
         the hart is running, then the executing program should jump to the
         written address shortly after the write occurs.
 
-        The writability of {csr-dpc} follows the same rules as \Rmepc as defined
+        The writability of {csr-dpc} follows the same rules as `mepc` as defined
         in the Privileged Spec.  In particular, {csr-dpc} must be able to hold
         all valid virtual addresses and the writability of the low bits depends
         on IALIGN.

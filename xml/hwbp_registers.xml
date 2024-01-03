@@ -254,7 +254,7 @@
 
         This register is only accessible in HS-Mode, M-mode and Debug Mode. If
         Smstateen is implemented, then accessibility of in HS-Mode is
-        controlled by \Rmstateenzero[57].
+        controlled by `mstateenzero[57]`.
 
         This register is an alias of the {csr-mcontext} register, providing
         access to the {mcontext-hcontext} field from HS-Mode.
@@ -264,8 +264,8 @@
         This optional register is only accessible in S/HS-mode, VS-mode,
         M-mode and Debug Mode.
 
-        Accessibility of this CSR is controlled by \Rmstateenzero[57] and
-        \Rhstateenzero[57] in the Smstateen extension.  Enabling {csr-scontext}
+        Accessibility of this CSR is controlled by `mstateenzero[57]` and
+        `hstateenzero[57]` in the Smstateen extension.  Enabling {csr-scontext}
         can be a security risk in a virtualized system with a hypervisor that
         does not swap {csr-scontext}.
         <field name="data" bits="XLEN-1:0" access="WARL" reset="0">
@@ -406,7 +406,7 @@
             <value v="0" name="before">
             The action for this trigger will be taken just before the
             instruction that triggered it is retired, but after all preceding
-            instructions are retired. \Rxepc or {csr-dpc} (depending
+            instructions are retired. `xepc` or {csr-dpc} (depending
             on {mcontrol-action}) must be set to the virtual address of the
             instruction that matched.
 
@@ -426,7 +426,7 @@
             The action for this trigger will be taken after the instruction
             that triggered it is retired. It should be taken before the next
             instruction is retired, but it is better to implement triggers imprecisely
-            than to not implement them at all.  \Rxepc or
+            than to not implement them at all.  `xepc` or
             {csr-dpc} (depending on {mcontrol-action}) must be set to
             the virtual address of the next instruction that must be executed to
             preserve the program flow.
@@ -786,14 +786,14 @@
             explicitly allows for instructions to be partially executed, as
             described in Section \ref{sec:multistate}.
 
-            \Rxepc or {csr-dpc} (depending on {mcontrol6-action}) must be set
+            `xepc` or {csr-dpc} (depending on {mcontrol6-action}) must be set
             to the virtual address of the instruction that matched.
             </value>
 
             <value v="2" name="after">
             The trigger fired after the instruction that triggered and at least
             one additional instruction were retired.
-            \Rxepc or {csr-dpc} (depending on {mcontrol6-action}) must be set
+            `xepc` or {csr-dpc} (depending on {mcontrol6-action}) must be set
             to the virtual address of the next instruction that must be executed
             to preserve the program flow.
             </value>
@@ -801,7 +801,7 @@
             <value v="3" name="immediately after">
             The trigger fired just after the instruction that triggered it was
             retired, but before any subsequent instructions were executed.
-            \Rxepc or {csr-dpc} (depending on {mcontrol6-action}) must be set
+            `xepc` or {csr-dpc} (depending on {mcontrol6-action}) must be set
             to the virtual address of the next instruction that must be executed
             to preserve the program flow.
 
@@ -1266,7 +1266,7 @@
         This register is accessible as {csr-tdata1} when {tdata1-type} is 5.
 
         This trigger may fire on up to XLEN of the Exception Codes defined in
-        \Rmcause (described in the Privileged Spec, with Interrupt=0). Those
+        `mcause` (described in the Privileged Spec, with Interrupt=0). Those
         causes are configured by writing the corresponding bit in {csr-tdata2}.
         (E.g.\  to trap on an illegal instruction, the debugger sets bit 2 in
         {csr-tdata2}.)
@@ -1492,10 +1492,10 @@
             <value v="2" name="asid">
             This trigger will only match or fire if:
             \begin{itemize}[noitemsep,nolistsep]
-            \item the mode is VS-mode or VU-mode and ASID in \Rvsatp
+            \item the mode is VS-mode or VU-mode and ASID in `vsatp`
             equals the lower ASIDMAX (defined in the Privileged Spec) bits
             of {textra32-svalue}.
-            \item in all other modes, ASID in \Rsatp equals the lower
+            \item in all other modes, ASID in `satp` equals the lower
             ASIDMAX (defined in the Privileged Spec) bits of
             {textra32-svalue}.
             \end{itemize}
