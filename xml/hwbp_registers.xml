@@ -125,12 +125,12 @@
             If {tdata1-type} is 0, then this bit is hard-wired to 0.
 
             <value v="0" name="both">
-            Both Debug and M-mode can write the {\tt tdata} registers at the
+            Both Debug and M-mode can write the `tdata` registers at the
             selected {csr-tselect}.
             </value>
 
             <value v="1" name="dmode">
-            Only Debug Mode can write the {\tt tdata} registers at the
+            Only Debug Mode can write the `tdata` registers at the
             selected {csr-tselect}.  Writes from other modes are ignored.
             </value>
 
@@ -254,7 +254,7 @@
 
         This register is only accessible in HS-Mode, M-mode and Debug Mode. If
         Smstateen is implemented, then accessibility of in HS-Mode is
-        controlled by \Rmstateenzero[57].
+        controlled by `mstateenzero[57]`.
 
         This register is an alias of the {csr-mcontext} register, providing
         access to the {mcontext-hcontext} field from HS-Mode.
@@ -264,8 +264,8 @@
         This optional register is only accessible in S/HS-mode, VS-mode,
         M-mode and Debug Mode.
 
-        Accessibility of this CSR is controlled by \Rmstateenzero[57] and
-        \Rhstateenzero[57] in the Smstateen extension.  Enabling {csr-scontext}
+        Accessibility of this CSR is controlled by `mstateenzero[57]` and
+        `hstateenzero[57]` in the Smstateen extension.  Enabling {csr-scontext}
         can be a security risk in a virtualized system with a hypervisor that
         does not swap {csr-scontext}.
         <field name="data" bits="XLEN-1:0" access="WARL" reset="0">
@@ -348,7 +348,7 @@
         address triggers.
 
         The Privileged Spec says that breakpoint exceptions that occur on
-        instruction fetches, loads, or stores update the {\tt tval} CSR
+        instruction fetches, loads, or stores update the `tval` CSR
         with either zero or the faulting virtual address.  The faulting
         virtual address for an mcontrol trigger with {mcontrol-action}=0 is the
         address being accessed and which caused that trigger to fire.
@@ -406,7 +406,7 @@
             <value v="0" name="before">
             The action for this trigger will be taken just before the
             instruction that triggered it is retired, but after all preceding
-            instructions are retired. \Rxepc or {csr-dpc} (depending
+            instructions are retired. `xepc` or {csr-dpc} (depending
             on {mcontrol-action}) must be set to the virtual address of the
             instruction that matched.
 
@@ -426,7 +426,7 @@
             The action for this trigger will be taken after the instruction
             that triggered it is retired. It should be taken before the next
             instruction is retired, but it is better to implement triggers imprecisely
-            than to not implement them at all.  \Rxepc or
+            than to not implement them at all.  `xepc` or
             {csr-dpc} (depending on {mcontrol-action}) must be set to
             the virtual address of the next instruction that must be executed to
             preserve the program flow.
@@ -702,7 +702,7 @@
         matched by the same instruction.
 
         The Privileged Spec says that breakpoint exceptions that occur on
-        instruction fetches, loads, or stores update the {\tt tval} CSR
+        instruction fetches, loads, or stores update the `tval` CSR
         with either zero or the faulting virtual address.  The faulting
         virtual address for an mcontrol6 trigger with {mcontrol6-action}=0 is the
         address being accessed and which caused that trigger to fire.
@@ -786,14 +786,14 @@
             explicitly allows for instructions to be partially executed, as
             described in Section \ref{sec:multistate}.
 
-            \Rxepc or {csr-dpc} (depending on {mcontrol6-action}) must be set
+            `xepc` or {csr-dpc} (depending on {mcontrol6-action}) must be set
             to the virtual address of the instruction that matched.
             </value>
 
             <value v="2" name="after">
             The trigger fired after the instruction that triggered and at least
             one additional instruction were retired.
-            \Rxepc or {csr-dpc} (depending on {mcontrol6-action}) must be set
+            `xepc` or {csr-dpc} (depending on {mcontrol6-action}) must be set
             to the virtual address of the next instruction that must be executed
             to preserve the program flow.
             </value>
@@ -801,7 +801,7 @@
             <value v="3" name="immediately after">
             The trigger fired just after the instruction that triggered it was
             retired, but before any subsequent instructions were executed.
-            \Rxepc or {csr-dpc} (depending on {mcontrol6-action}) must be set
+            `xepc` or {csr-dpc} (depending on {mcontrol6-action}) must be set
             to the virtual address of the next instruction that must be executed
             to preserve the program flow.
 
@@ -1081,7 +1081,7 @@
         cleared.
 
         If the trigger fires with {icount-action}=0 then zero is written to the
-        {\tt tval} CSR on the breakpoint trap.
+        `tval` CSR on the breakpoint trap.
 
         [NOTE]
         ====
@@ -1194,7 +1194,7 @@
         When the trigger matches, it fires after the trap occurs, just before
         the first instruction of the trap handler is executed.  If
         {itrigger-action}=0, the standard CSRs are updated for taking the
-        breakpoint trap, and zero is written to the relevant {\tt tval} CSR.  If
+        breakpoint trap, and zero is written to the relevant `tval` CSR.  If
         the breakpoint trap does not go to a higher privilege mode, this will
         lose CSR information for the original trap.  See
         Section~\ref{sec:nativetrigger} for more information about this case.
@@ -1266,7 +1266,7 @@
         This register is accessible as {csr-tdata1} when {tdata1-type} is 5.
 
         This trigger may fire on up to XLEN of the Exception Codes defined in
-        \Rmcause (described in the Privileged Spec, with Interrupt=0). Those
+        `mcause` (described in the Privileged Spec, with Interrupt=0). Those
         causes are configured by writing the corresponding bit in {csr-tdata2}.
         (E.g.\  to trap on an illegal instruction, the debugger sets bit 2 in
         {csr-tdata2}.)
@@ -1286,7 +1286,7 @@
         When the trigger matches, it fires after the trap occurs, just before
         the first instruction of the trap handler is executed.  If
         {etrigger-action}=0, the standard CSRs are updated for taking the
-        breakpoint trap, and zero is written to the relevant {\tt tval} CSR.  If
+        breakpoint trap, and zero is written to the relevant `tval` CSR.  If
         the breakpoint trap does not go to a higher privilege mode, this will
         lose CSR information for the original trap.  See
         Section~\ref{sec:nativetrigger} for more information about this case.
@@ -1363,7 +1363,7 @@
         sequentially).  Unsupported inputs are hardwired to be inactive.
 
         If the trigger fires with {tmexttrigger-action}=0 then zero is written to the
-        {\tt tval} CSR on the breakpoint trap.  This trigger fires
+        `tval` CSR on the breakpoint trap.  This trigger fires
         asynchronously but it is subject to delegation by medeleg[3] like
         the other triggers.
 
@@ -1375,7 +1375,7 @@
 
         [NOTE]
         ====
-            {tmexttrigger-intctl} is intended to be used by the {\tt clicinttrig}
+            {tmexttrigger-intctl} is intended to be used by the `clicinttrig`
             mechanism from the Core-Local Interrupt Controller (CLIC) RISC-V
             Privileged Architecture Extensions.
         ====
@@ -1492,10 +1492,10 @@
             <value v="2" name="asid">
             This trigger will only match or fire if:
             \begin{itemize}[noitemsep,nolistsep]
-            \item the mode is VS-mode or VU-mode and ASID in \Rvsatp
+            \item the mode is VS-mode or VU-mode and ASID in `vsatp`
             equals the lower ASIDMAX (defined in the Privileged Spec) bits
             of {textra32-svalue}.
-            \item in all other modes, ASID in \Rsatp equals the lower
+            \item in all other modes, ASID in `satp` equals the lower
             ASIDMAX (defined in the Privileged Spec) bits of
             {textra32-svalue}.
             \end{itemize}

@@ -295,38 +295,7 @@ increase the values in the version fields.
 Names of registers and their fields are hyperlinks to their definition,
 and are also listed in the index on page <<singlestep>>.
 
-===== Long Name (shortname, ``at 0x123``)
-
-[wavedrom, ,svg]
-....
-{reg: [
-  {bits: 8, name: 'field', type: 8, attr: ['8']},
-  {bits: 24, name: '0',         type: 2, attr: ['24']},
-], config: {bits: 32, hspace:512, vspace:64}}
-....
-
-[%autowidth,options="header",float="center",align="center",cols="^,<,^,<"]
-|===
-| Field | Description | Access | Reset
-| field | Description of what this field is used for. | R/W | 15
-|===
-
-.Register Access Abbreviations
-[%autowidth,options="header",float="center",align="center",cols="<,^"]
-|===
-| R | Read-only.
-| R/W | Read/Write.
-| R/W1C | Read/Write ones to Clear.  Writing 0 to every bit as no effect.
-Writing 1 to every bit clears the field. The result of other writes is
-undefined.
-| WARZ |  Write any, read zero. A debugger may write any value. When read
-this field returns 0.
-| W1 | Write-only. Only writing 1 has an effect. When read the returned
-value should be 0.
-| WARL | Write any, read legal. A debugger may write any value. If a value
-is unsupported, the implementation converts the value to one that is
-supported.
-|===
+include::build/sample_registers.adoc[]
 
 === Background
 

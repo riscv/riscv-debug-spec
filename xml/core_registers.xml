@@ -63,59 +63,59 @@
         <field name="0" bits="27:18" access="R" reset="0" />
         <field name="ebreakvs" bits="17" access="WARL" reset="0">
             <value v="0" name="exception">
-            {\tt ebreak} instructions in VS-mode behave as described in the
+            `ebreak` instructions in VS-mode behave as described in the
             Privileged Spec.
             </value>
 
             <value v="1" name="debug mode">
-            {\tt ebreak} instructions in VS-mode enter Debug Mode.
+            `ebreak` instructions in VS-mode enter Debug Mode.
             </value>
 
             This bit is hardwired to 0 if the hart does not support virtualization mode.
         </field>
         <field name="ebreakvu" bits="16" access="WARL" reset="0">
             <value v="0" name="exception">
-            {\tt ebreak} instructions in VU-mode behave as described in the
+            `ebreak` instructions in VU-mode behave as described in the
             Privileged Spec.
             </value>
 
             <value v="1" name="debug mode">
-            {\tt ebreak} instructions in VU-mode enter Debug Mode.
+            `ebreak` instructions in VU-mode enter Debug Mode.
             </value>
 
             This bit is hardwired to 0 if the hart does not support virtualization mode.
         </field>
         <field name="ebreakm" bits="15" access="R/W" reset="0">
             <value v="0" name="exception">
-            {\tt ebreak} instructions in M-mode behave as described in the
+            `ebreak` instructions in M-mode behave as described in the
             Privileged Spec.
             </value>
 
             <value v="1" name="debug mode">
-            {\tt ebreak} instructions in M-mode enter Debug Mode.
+            `ebreak` instructions in M-mode enter Debug Mode.
             </value>
         </field>
         <field name="0" bits="14" access="R" reset="0" />
         <field name="ebreaks" bits="13" access="WARL" reset="0">
             <value v="0" name="exception">
-            {\tt ebreak} instructions in S-mode behave as described in the
+            `ebreak` instructions in S-mode behave as described in the
             Privileged Spec.
             </value>
 
             <value v="1" name="debug mode">
-            {\tt ebreak} instructions in S-mode enter Debug Mode.
+            `ebreak` instructions in S-mode enter Debug Mode.
             </value>
 
             This bit is hardwired to 0 if the hart does not support S-mode.
         </field>
         <field name="ebreaku" bits="12" access="WARL" reset="0">
             <value v="0" name="exception">
-            {\tt ebreak} instructions in U-mode behave as described in the
+            `ebreak` instructions in U-mode behave as described in the
             Privileged Spec.
             </value>
 
             <value v="1" name="debug mode">
-            {\tt ebreak} instructions in U-mode enter Debug Mode.
+            `ebreak` instructions in U-mode enter Debug Mode.
             </value>
 
             This bit is hardwired to 0 if the hart does not support U-mode.
@@ -145,9 +145,9 @@
 
             <value v="1" name="freeze">
             Don't increment any hart-local counters while in Debug Mode or
-            on {\tt ebreak} instructions that cause entry into Debug Mode.
-            These counters include the {\tt instret} CSR. On single-hart cores
-            {\tt cycle} should be stopped, but on multi-hart cores it must keep
+            on `ebreak` instructions that cause entry into Debug Mode.
+            These counters include the `instret` CSR. On single-hart cores
+            `cycle` should be stopped, but on multi-hart cores it must keep
             incrementing.
             </value>
 
@@ -155,16 +155,16 @@
         </field>
         <field name="stoptime" bits="9" access="WARL" reset="Preset">
             <value v="0" name="normal">
-            \Rtime continues to reflect \Rmtime.
+            `time` continues to reflect `mtime`.
             </value>
 
             <value v="1" name="freeze">
-            \Rtime is frozen at the time that Debug Mode was entered. When
-            leaving Debug Mode, \Rtime will reflect the latest
-            value of \Rmtime again.
+            `time` is frozen at the time that Debug Mode was entered. When
+            leaving Debug Mode, `time` will reflect the latest
+            value of `mtime` again.
 
             While all harts have {dcsr-stoptime}=1 and are in Debug Mode,
-            \Rmtime is allowed to stop incrementing.
+            `mtime` is allowed to stop incrementing.
             </value>
 
             An implementation may hardwire this bit to 0 or 1.
@@ -177,7 +177,7 @@
             priority.  See &lt;&lt;tab:dcsrcausepriority&gt;&gt; for priorities.
 
             <value v="1" name="ebreak">
-            An {\tt ebreak} instruction was executed.
+            An `ebreak` instruction was executed.
             </value>
 
             <value v="2" name="trigger">
@@ -213,11 +213,11 @@
         </field>
         <field name="mprven" bits="4" access="WARL" reset="Preset">
             <value v="0" name="disabled">
-            \FcsrMstatusMprv in \Rmstatus is ignored in Debug Mode.
+            \FcsrMstatusMprv in `mstatus` is ignored in Debug Mode.
             </value>
 
             <value v="1" name="enabled">
-            \FcsrMstatusMprv in \Rmstatus takes effect in Debug Mode.
+            \FcsrMstatusMprv in `mstatus` takes effect in Debug Mode.
             </value>
 
             Implementing this bit is optional. It may be tied to either 0 or 1.
@@ -289,7 +289,7 @@
         the hart is running, then the executing program should jump to the
         written address shortly after the write occurs.
 
-        The writability of {csr-dpc} follows the same rules as \Rmepc as defined
+        The writability of {csr-dpc} follows the same rules as `mepc` as defined
         in the Privileged Spec.  In particular, {csr-dpc} must be able to hold
         all valid virtual addresses and the writability of the low bits depends
         on IALIGN.

@@ -20,18 +20,18 @@
         </field>
         <field name="stickyunavail" bits="23" access="R" reset="Preset">
             <value v="0" name="current">
-            The per-hart {\tt unavail} bits reflect the current state of the hart.
+            The per-hart `unavail` bits reflect the current state of the hart.
             </value>
 
             <value v="1" name="sticky">
-            The per-hart {\tt unavail} bits are sticky. Once they are set, they will
+            The per-hart `unavail` bits are sticky. Once they are set, they will
             not clear until the debugger acknowledges them using {dmcontrol-ackunavail}.
             </value>
         </field>
         <field name="impebreak" bits="22" access="R" reset="Preset">
-            If 1, then there is an implicit {\tt ebreak} instruction at the
+            If 1, then there is an implicit `ebreak` instruction at the
             non-existent word immediately after the Program Buffer. This saves
-            the debugger from having to write the {\tt ebreak} itself, and
+            the debugger from having to write the `ebreak` itself, and
             allows the Program Buffer to be one word smaller.
 
             This must be 1 when {abstractcs-progbufsize} is 1.
@@ -47,11 +47,11 @@
         </field>
         <field name="allresumeack" bits="17" access="R" reset="-">
             This field is 1 when all currently selected harts have their
-            resume ack bit\index{resume ack bit} set.
+            ((resume ack bit)) set.
         </field>
         <field name="anyresumeack" bits="16" access="R" reset="-">
             This field is 1 when any currently selected hart has its
-            resume ack bit\index{resume ack bit} set.
+            ((resume ack bit)) set.
         </field>
         <field name="allnonexistent" bits="15" access="R" reset="-">
             This field is 1 when all currently selected harts do not exist in
@@ -158,13 +158,13 @@
         This register controls the overall Debug Module
         as well as the currently selected harts, as defined in {dmcontrol-hasel}.
 
-\label{hartsel}
-\index{hartsel}
+[[hartsel]]
+(((hartsel)))
         Throughout this document we refer to \Fhartsel, which is {dmcontrol-hartselhi}
         combined with {dmcontrol-hartsello}. While the spec allows for 20 \Fhartsel bits,
         an implementation may choose to implement fewer than that. The actual
-        width of \Fhartsel is called {\tt HARTSELLEN}. It must be at least 0
-        and at most 20. A debugger should discover {\tt HARTSELLEN} by writing
+        width of \Fhartsel is called `HARTSELLEN`. It must be at least 0
+        and at most 20. A debugger should discover `HARTSELLEN` by writing
         all ones to \Fhartsel (assuming the maximum size) and reading back the
         value to see which bits were actually set. Debuggers must not change
         \Fhartsel while an abstract command is executing.
@@ -181,13 +181,13 @@
         following bits: {dmcontrol-resumereq}, {dmcontrol-hartreset}, {dmcontrol-ackhavereset},
         {dmcontrol-setresethaltreq}, and {dmcontrol-clrresethaltreq}. The others must be written 0.
 
-\label{resethaltreq}
-\index{resethaltreq}
+[[resethaltreq]]
+(((resethaltreq)))
         \Fresethaltreq is an optional internal bit of per-hart state that cannot be
         read, but can be written with {dmcontrol-setresethaltreq} and {dmcontrol-clrresethaltreq}.
 
-\label{keepalive}
-\index{keepalive}
+[[keepalive]]
+(((keepalive)))
         \Fkeepalive is an optional internal bit of per-hart state. When it is
         set, it suggests that the hardware should attempt to keep the hart
         available for the debugger, e.g. by keeping it from entering a
@@ -239,7 +239,7 @@
             </value>
 
             <value v="1" name="ack">
-            Clears {\tt havereset} for any selected harts.
+            Clears `havereset` for any selected harts.
             </value>
 
             Writes apply to the new value of \Fhartsel and {dmcontrol-hasel}.
@@ -250,7 +250,7 @@
             </value>
 
             <value v="1" name="ack">
-            Clears {\tt unavail} for any selected harts that are currently available.
+            Clears `unavail` for any selected harts that are currently available.
             </value>
 
             Writes apply to the new value of \Fhartsel and {dmcontrol-hasel}.
@@ -365,12 +365,12 @@
 
       If this register is included, the debugger can do more with
       the Program Buffer by writing programs which
-      explicitly access the {\tt data} and/or {\tt dscratch}
+      explicitly access the `data` and/or `dscratch`
       registers.
 
         <field name="0" bits="31:24" access="R" reset="0" />
         <field name="nscratch" bits="23:20" access="R" reset="Preset">
-            Number of {\tt dscratch} registers available for the debugger
+            Number of `dscratch` registers available for the debugger
             to use during program buffer execution, starting from {csr-dscratch0}.
             The debugger can make no assumptions about the contents of these
             registers between commands.
@@ -378,29 +378,29 @@
         <field name="0" bits="19:17" access="R" reset="0" />
         <field name="dataaccess" bits="16" access="R" reset="Preset">
             <value v="0" name="csr">
-            The {\tt data} registers are shadowed in the hart by CSRs.
+            The `data` registers are shadowed in the hart by CSRs.
             Each CSR is DXLEN bits in size, and corresponds
             to a single argument, per Table~\ref{tab:datareg}.
             </value>
 
             <value v="1" name="memory">
-            The {\tt data} registers are shadowed in the hart's memory map.
+            The `data` registers are shadowed in the hart's memory map.
             Each register takes up 4 bytes in the memory map.
             </value>
         </field>
         <field name="datasize" bits="15:12" access="R" reset="Preset">
             If {hartinfo-dataaccess} is 0: Number of CSRs dedicated to
-            shadowing the {\tt data} registers.
+            shadowing the `data` registers.
 
             If {hartinfo-dataaccess} is 1: Number of 32-bit words in the memory map
-            dedicated to shadowing the {\tt data} registers.
+            dedicated to shadowing the `data` registers.
 
-            Since there are at most 12 {\tt data} registers, the value in this
+            Since there are at most 12 `data` registers, the value in this
             register must be 12 or smaller.
         </field>
         <field name="dataaddr" bits="11:0" access="R" reset="Preset">
             If {hartinfo-dataaccess} is 0: The number of the first CSR dedicated to
-            shadowing the {\tt data} registers.
+            shadowing the `data` registers.
 
             If {hartinfo-dataaccess} is 1: Address of RAM where the data
             registers are shadowed. This address is sign extended giving a
@@ -496,7 +496,7 @@
             <value v="1" name="busy">
             An abstract command was executing while {dm-command},
             {dm-abstractcs}, or {dm-abstractauto} was written, or when one
-            of the {\tt data} or {\tt progbuf} registers was read or written.
+            of the `data` or `progbuf` registers was read or written.
             This status is only written if {abstractcs-cmderr} contains 0.
             </value>
 
@@ -532,7 +532,7 @@
         </field>
         <field name="0" bits="7:4" access="R" reset="0"/>
         <field name="datacount" bits="3:0" access="R" reset="Preset">
-            Number of {\tt data} registers that are implemented as part of the
+            Number of `data` registers that are implemented as part of the
             abstract command interface. Valid sizes are 1 -- 12.
         </field>
     </register>
@@ -583,22 +583,22 @@
 
         <field name="autoexecprogbuf" bits="31:16" access="WARL" reset="0">
             When a bit in this field is 1, read or write accesses to the
-            corresponding {\tt progbuf} word cause the DM to act as if the
+            corresponding `progbuf` word cause the DM to act as if the
             current value in {dm-command} was written there again after the
-            access to {\tt progbuf} completes.
+            access to `progbuf` completes.
         </field>
         <field name="0" bits ="15:12" access="R" reset = "0"/>
         <field name="autoexecdata" bits="11:0" access="WARL" reset="0">
             When a bit in this field is 1, read or write accesses to the
-            corresponding {\tt data} word cause the DM to act as if the current
+            corresponding `data` word cause the DM to act as if the current
             value in {dm-command} was written there again after the
-            access to {\tt data} completes.
+            access to `data` completes.
         </field>
     </register>
 
     <register name="Configuration Structure Pointer 0" short="confstrptr0" address="0x19">
       When {dmstatus-confstrptrvalid} is set, reading this register returns bits 31:0
-      of the configuration structure pointer. Reading the other {\tt confstrptr}
+      of the configuration structure pointer. Reading the other `confstrptr`
       registers returns the upper bits of the address.
 
       When system bus access is implemented, this must be an
@@ -606,7 +606,7 @@
       this must be an address that can be used to access the
       configuration structure from the hart with ID 0.
 
-      If {dmstatus-confstrptrvalid} is 0, then the {\tt confstrptr} registers
+      If {dmstatus-confstrptrvalid} is 0, then the `confstrptr` registers
       hold identifier information which is not
       further specified in this document.
 
@@ -678,7 +678,7 @@
         read from the program buffer through these registers. If reading
         is not supported, then all reads return 0.
 
-        {abstractcs-progbufsize} indicates how many {\tt progbuf} registers are
+        {abstractcs-progbufsize} indicates how many `progbuf` registers are
         implemented starting at {dm-progbuf0}, counting up.
 
         Accessing these registers while an abstract command is executing causes
@@ -917,7 +917,7 @@
             access, the access is not performed and {sbcs-sberror} is set to 4.
         </field>
         <field name="sbautoincrement" bits="16" access="R/W" reset="0">
-            When 1, {\tt sbaddress} is incremented by the access size (in
+            When 1, `sbaddress` is incremented by the access size (in
             bytes) selected in {sbcs-sbaccess} after every system bus access.
         </field>
         <field name="sbreadondata" bits="15" access="R/W" reset="0">
@@ -988,13 +988,13 @@
         is set then writes to this register start the following:
 
             . Set {sbcs-sbbusy}.
-            . Perform a bus read from the new value of {\tt sbaddress}.
+            . Perform a bus read from the new value of `sbaddress`.
             . If the read succeeded and {sbcs-sbautoincrement} is set, increment
-            {\tt sbaddress}.
+            `sbaddress`.
             . Clear {sbcs-sbbusy}.
 
         <field name="address" bits="31:0" access="R/W" reset="0">
-            Accesses bits 31:0 of the physical address in {\tt sbaddress}.
+            Accesses bits 31:0 of the physical address in `sbaddress`.
         </field>
     </register>
 
@@ -1005,7 +1005,7 @@
         {sbcs-sbbusyerror} and don't do anything else.
 
         <field name="address" bits="31:0" access="R/W" reset="0">
-            Accesses bits 63:32 of the physical address in {\tt sbaddress} (if
+            Accesses bits 63:32 of the physical address in `sbaddress` (if
             the system address bus is that wide).
         </field>
     </register>
@@ -1017,7 +1017,7 @@
         {sbcs-sbbusyerror} and don't do anything else.
 
         <field name="address" bits="31:0" access="R/W" reset="0">
-            Accesses bits 95:64 of the physical address in {\tt sbaddress} (if
+            Accesses bits 95:64 of the physical address in `sbaddress` (if
             the system address bus is that wide).
         </field>
     </register>
@@ -1029,17 +1029,17 @@
         {sbcs-sbbusyerror} and don't do anything else.
 
         <field name="address" bits="31:0" access="R/W" reset="0">
-            Accesses bits 127:96 of the physical address in {\tt sbaddress} (if
+            Accesses bits 127:96 of the physical address in `sbaddress` (if
             the system address bus is that wide).
         </field>
     </register>
 
     <register name="System Bus Data 31:0" short="sbdata0" address="0x3c">
-        If all of the {\tt sbaccess} bits in {dm-sbcs} are 0, then this register
+        If all of the `sbaccess` bits in {dm-sbcs} are 0, then this register
         is not present.
 
-        Any successful system bus read updates {\tt sbdata}. If the width of
-        the read access is less than the width of {\tt sbdata}, the contents of
+        Any successful system bus read updates `sbdata`. If the width of
+        the read access is less than the width of `sbdata`, the contents of
         the remaining high bits may take on any value.
 
         If either {sbcs-sberror} or {sbcs-sbbusyerror} isn't 0 then accesses do nothing.
@@ -1050,9 +1050,9 @@
         Writes to this register start the following:
 
             . Set {sbcs-sbbusy}.
-            . Perform a bus write of the new value of {\tt sbdata} to {\tt sbaddress}.
+            . Perform a bus write of the new value of `sbdata` to `sbaddress`.
             . If the write succeeded and {sbcs-sbautoincrement} is set,
-            increment {\tt sbaddress}.
+            increment `sbaddress`.
             . Clear {sbcs-sbbusy}.
 
         Reads from this register start the following:
@@ -1062,18 +1062,18 @@
             . If {sbcs-sbreadondata} is set:
                 // TODO: This doesn't work right, but it does work in asiidoclive
                 .. Perform a system bus read from the address contained in
-                        {\tt sbaddress}, placing the result in {\tt sbdata}.
+                        `sbaddress`, placing the result in `sbdata`.
                 .. If {sbcs-sbautoincrement} is set and the read was
-                        successful, increment {\tt sbaddress}.
+                        successful, increment `sbaddress`.
             . Clear {sbcs-sbbusy}.
 
-        Only {dm-sbdata0} has this behavior. The other {\tt sbdata} registers
+        Only {dm-sbdata0} has this behavior. The other `sbdata` registers
         have no side effects. On systems that have buses wider than 32 bits, a
         debugger should access {dm-sbdata0} after accessing the other {\tt
         sbdata} registers.
 
         <field name="data" bits="31:0" access="R/W" reset="0">
-            Accesses bits 31:0 of {\tt sbdata}.
+            Accesses bits 31:0 of `sbdata`.
         </field>
     </register>
 
@@ -1085,7 +1085,7 @@
         anything else.
 
         <field name="data" bits="31:0" access="R/W" reset="0">
-            Accesses bits 63:32 of {\tt sbdata} (if the system bus is that
+            Accesses bits 63:32 of `sbdata` (if the system bus is that
             wide).
         </field>
     </register>
@@ -1097,7 +1097,7 @@
         anything else.
 
         <field name="data" bits="31:0" access="R/W" reset="0">
-            Accesses bits 95:64 of {\tt sbdata} (if the system bus is that
+            Accesses bits 95:64 of `sbdata` (if the system bus is that
             wide).
         </field>
     </register>
@@ -1109,7 +1109,7 @@
         anything else.
 
         <field name="data" bits="31:0" access="R/W" reset="0">
-            Accesses bits 127:96 of {\tt sbdata} (if the system bus is that
+            Accesses bits 127:96 of `sbdata` (if the system bus is that
             wide).
         </field>
     </register>
@@ -1120,7 +1120,7 @@
     </register>
 
     <register name="Custom Features 0" short="custom0" address="0x70">
-        The optional {dm-custom}Zero through {dm-custom}Fifteen registers may
+        The optional {dm-custom0} through {dm-custom15} registers may
         be used for non-standard features. Future versions of the debug spec
         will not use these addresses.
     </register>

@@ -377,7 +377,14 @@ def toLatexIdentifier( *args ):
     return text
 
 def toAdocIdentifier( *args ):
-    text = "-".join( (a or "").lower().rstrip("_") for a in args )
+    text = "-".join(
+        filter(
+            lambda a: a,
+            [(a or "")
+                .lower()
+                .rstrip("_")
+                for a in args]
+        ))
     text = re.sub( "\s+", "", text )
     return text
 

@@ -88,3 +88,6 @@ include::debugger_implementation.adoc[]
 //include::future.adoc[]
 //include::index.adoc[]
 //include::bibliography.adoc[]
+
+[index]
+== Index
