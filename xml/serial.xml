@@ -52,9 +52,9 @@
         This register provides access to the write data queue of the serial port
         selected by \FdmiSercsSerial in \RdmiSercs.
 
-        If the {\tt error} bit is not set and the queue is not full, a write to this register
+        If the `error` bit is not set and the queue is not full, a write to this register
         adds the written data to the core-to-debugger queue.
-        Otherwise the {\tt error} bit is set and the write returns error.
+        Otherwise the `error` bit is set and the write returns error.
 
         A read to this register returns the last data written.
 
@@ -67,9 +67,9 @@
         This register provides access to the read data queues of the serial port
         selected by \FdmiSercsSerial in \RdmiSercs.
 
-        If the {\tt error} bit is not set and the queue is not empty, a read from this register reads the
+        If the `error` bit is not set and the queue is not empty, a read from this register reads the
         oldest entry in the debugger-to-core queue, and removes that entry from the queue.
-        Otherwise the {\tt error} bit is set and the read returns error.
+        Otherwise the `error` bit is set and the read returns error.
 
         <field name="data" bits="31:0" access="R" reset="0" />
     </register>
