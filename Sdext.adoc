@@ -31,8 +31,8 @@ Mode and the following apply:
 an exception is mentioned in this list.
 . All operations are executed with machine mode privilege, except that
 additional Debug Mode CSRs are accessible and in may be ignored
-according to <<mprven>>. Full permission checks, or a relaxed set of permission
-checks, will apply according to <<relaxedpriv>>.
+according to {dcsr-mprven}. Full permission checks, or a relaxed set of permission
+checks, will apply according to {abstractcs-relaxedpriv}.
 . All interrupts (including NMI) are masked.
 . Traps don't take place. Instead, they end execution of the program
 buffer and the hart remains in Debug Mode. Because they do not trap to
@@ -48,7 +48,7 @@ set `vstart` appropriately.
 . If <<stoptime>> is 0 then continues to update. If it is 1 then will not update. It will resynchronize with after leaving Debug Mode.
 . Instructions that place the hart into a stalled state act as a `nop`.
 This includes `wfi`, `wrs.sto`, and `wrs.nto`.
-. Almost all instructions that change the privilege mode have  behavior.
+. Almost all instructions that change the privilege mode have UNSPECIFIED behavior.
 This includes `ecall`, `mret`, `sret`, and `uret`. (To change the
 privilege mode, the debugger can write and in ). The only exception is
 `ebreak`, which ends execution of the Program Buffer when executed.
@@ -67,12 +67,12 @@ as illegal instructions.
 
 [NOTE]
 ====
-When <<mprven>>, the external debugger can set MPRV and MPP appropriately to have
+When {dcsr-mprven}, the external debugger can set MPRV and MPP appropriately to have
 hardware perform memory accesses with the appropriate endianness,
-address translation, permission checks, and PMP/PMA checks (subject to <<relaxedpriv>>). This is also the only way to access all of physical memory when
-34-bit physical addresses are supported on a Sv32 hart. If hardware ties <<mprven>> to 0 then the external debugger is expected to simulate all the effects
+address translation, permission checks, and PMP/PMA checks (subject to {abstractcs-relaxedpriv}). This is also the only way to access all of physical memory when
+34-bit physical addresses are supported on a Sv32 hart. If hardware ties {dcsr-mprven} to 0 then the external debugger is expected to simulate all the effects
 of MPRV, including any extensions that affect memory accesses. For these
-reasons it is recommended to tie <<mprven>> to 1.
+reasons it is recommended to tie {dcsr-mprven} to 1.
 ====
 
 === Load-Reserved/Store-Conditional Instructions
