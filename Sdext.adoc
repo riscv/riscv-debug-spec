@@ -115,8 +115,8 @@ This method is only available to external debuggers, and is the
 preferred way to single step.
 
 An external debugger can cause a halted hart to execute a single
-instruction or trap and then re-enter Debug Mode by setting {dcsr-step}before
-resuming. If {dcsr-step}is set when a hart resumes then it will single step,
+instruction or trap and then re-enter Debug Mode by setting {dcsr-step} before
+resuming. If {dcsr-step} is set when a hart resumes then it will single step,
 regardless of the reason for resuming.
 
 If control is transferred to a trap handler while executing the
