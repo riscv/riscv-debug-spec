@@ -116,7 +116,7 @@
         In Capture-DR, the DTM updates {sbdata0-data} with the result from that
         operation, updating {dmi-op} if the current {dmi-op} isn't sticky.
 
-        See Section~\ref{dmiaccess} for examples of how this is used.
+        See xref:dmiaccess[] for examples of how this is used.
 
         [NOTE]
         ====

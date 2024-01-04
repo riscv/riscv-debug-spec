@@ -231,7 +231,7 @@
         </field>
         <field name="step" bits="2" access="R/W" reset="0">
             When set and not in Debug Mode, the hart will only execute a single
-            instruction and then enter Debug Mode. See Section~\ref{stepBit}
+            instruction and then enter Debug Mode. See xref:stepbit[]
             for details.
 
             The debugger must not change the value of this bit while the hart
