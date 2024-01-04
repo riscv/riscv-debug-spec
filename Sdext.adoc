@@ -174,7 +174,7 @@ When a hart halts:
 
 . {dcsr-cause} is updated.
 . {dcsr-prv} and {dcsr-v} are set to reflect current privilege mode.
-. {pc} is set to the next instruction that should be executed.
+. {csr-dpc} is set to the next instruction that should be executed.
 . If the current instruction can be partially executed and should be
 restarted to complete, then the relevant state for that is updated. E.g.
 if a halt occurs during a partially executed vector instruction, then
@@ -195,7 +195,7 @@ specified by {dcsr-prv} and {dcsr-v}.
 === XLEN
 
 While in Debug Mode, XLEN is DXLEN. It is up to the debugger to
-determine the XLEN during normal program execution (by looking at 'misa') and
+determine the XLEN during normal program execution (by looking at `misa`) and
 to clearly communicate this to the user.
 
 [[debreg]]
