@@ -413,7 +413,7 @@
 
     <register name="Hart Array Window Select" short="hawindowsel" address="0x14">
       This register selects which of the 32-bit portion of the hart array mask
-      register (see Section~\ref{hartarraymask}) is accessible in {dm-hawindow}.
+      register (see xref:hartarraymask[]) is accessible in {dm-hawindow}.
 
       <field name="0" bits="31:15" access="R" reset="0" />
       <field name="hawindowsel" bits="14:0" access="WARL" reset="0">
@@ -425,7 +425,7 @@
 
     <register name="Hart Array Window " short="hawindow" address="0x15">
       This register provides R/W access to a 32-bit portion of the
-      hart array mask register (see Section~\ref{hartarraymask}).
+      hart array mask register (see xref:hartarraymask[]).
       The position of the window is determined by {dm-hawindowsel}. I.e. bit 0
       refers to hart ${dm-hawindowsel} * 32$, while bit 31 refers to hart
       ${dm-hawindowsel} * 32 + 31$.
