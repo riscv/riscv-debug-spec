@@ -517,7 +517,7 @@
         </field>
         <field name="action" bits="15:12" access="WARL" reset="0">
             The action to take when the trigger fires. The values are explained
-            in Table~\ref{tab:action}.
+            in xref:tab:action[].
 
             <value v="0" name="breakpoint" />
             <value v="1" name="debug mode" />
@@ -882,7 +882,7 @@
         </field>
         <field name="action" bits="15:12" access="WARL" reset="0">
             The action to take when the trigger fires. The values are explained
-            in Table~\ref{tab:action}.
+            in xref:tab:action[].
 
             <value v="0" name="breakpoint" />
             <value v="1" name="debug mode" />
@@ -1151,7 +1151,7 @@
 
         <field name="action" bits="5:0" access="WARL" reset="0">
             The action to take when the trigger fires. The values are explained
-            in Table~\ref{tab:action}.
+            in xref:tab:action[].
 
             <value v="0" name="breakpoint" />
             <value v="1" name="debug mode" />
@@ -1247,7 +1247,7 @@
         </field>
         <field name="action" bits="5:0" access="WARL" reset="0">
             The action to take when the trigger fires. The values are explained
-            in Table~\ref{tab:action}.
+            in xref:tab:action[].
 
             <value v="0" name="breakpoint" />
             <value v="1" name="debug mode" />
@@ -1336,7 +1336,7 @@
         </field>
         <field name="action" bits="5:0" access="WARL" reset="0">
             The action to take when the trigger fires. The values are explained
-            in Table~\ref{tab:action}.
+            in xref:tab:action[].
 
             <value v="0" name="breakpoint" />
             <value v="1" name="debug mode" />
@@ -1399,7 +1399,7 @@
         </field>
         <field name="action" bits="5:0" access="WARL" reset="0">
             The action to take when the trigger fires. The values are explained
-            in Table~\ref{tab:action}.
+            in xref:tab:action[].
 
             <value v="0" name="breakpoint" />
             <value v="1" name="debug mode" />
