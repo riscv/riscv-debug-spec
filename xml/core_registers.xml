@@ -255,7 +255,7 @@
 
         [[tab:dpc]]
         .Virtual address in DPC.
-        [%autowidth,align="center",float="center",cols="&kt;,^",options="header"]
+        [%autowidth,align="center",float="center",cols="&gt;,^",options="header"]
         |===
         | Cause  | Virtual Address in DPC
         | `ebreak` | Address of the `ebreak` instruction
