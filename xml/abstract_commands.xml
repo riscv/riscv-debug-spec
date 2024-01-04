@@ -39,7 +39,7 @@
         mode code currently running. (E.g. `fflags` might not be accessible
         when `mstatus`.$FS$ is 0.) If this is the case, the debugger is
         responsible for changing state to make the registers accessible. The
-        Core Debug Registers (Section~\ref{debreg}) should be accessible if
+        Core Debug Registers (xref:debreg[]) should be accessible if
         abstract CSR access is implemented.
 
         \begin{table}[htp]
