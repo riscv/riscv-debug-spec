@@ -45,7 +45,7 @@ which raise exceptions may partially update the destination register and
 set `vstart` appropriately.
 . Triggers don't match or fire.
 . If {dcsr-stopcount} is 0 then counters continue. If it is 1 then counters are stopped.
-. If {dcsr-stoptime}is 0 then continues to update. If it is 1 then will not update. It will resynchronize with after leaving Debug Mode.
+. If {dcsr-stoptime} is 0 then continues to update. If it is 1 then will not update. It will resynchronize with after leaving Debug Mode.
 . Instructions that place the hart into a stalled state act as a `nop`.
 This includes `wfi`, `wrs.sto`, and `wrs.nto`.
 . Almost all instructions that change the privilege mode have UNSPECIFIED behavior.
