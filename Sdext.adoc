@@ -50,7 +50,7 @@ set `vstart` appropriately.
 This includes `wfi`, `wrs.sto`, and `wrs.nto`.
 . Almost all instructions that change the privilege mode have UNSPECIFIED behavior.
 This includes `ecall`, `mret`, `sret`, and `uret`. (To change the
-privilege mode, the debugger can write and in ). The only exception is
+privilege mode, the debugger can write {dcsr-prv} and {dcsr-v} in {csr-dcsr}). The only exception is
 `ebreak`, which ends execution of the Program Buffer when executed.
 . All control transfer instructions may act as illegal instructions if
 their destination is in the Program Buffer. If one such instruction acts
