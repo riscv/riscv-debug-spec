@@ -417,7 +417,7 @@
             memory-mapped I/O addresses.
 
             If an instruction matches this trigger and the instruction performs
-            multiple memory accesses, it is \unspecified which memory accesses
+            multiple memory accesses, it is UNSPECIFIED which memory accesses
             have completed before the trigger fires.
             </value>
 
@@ -936,7 +936,7 @@
             containing 0 in {csr-tdata2}.
             {csr-tdata2} is WARL and if bits $maskmax6-1$:0 are written with all
             ones then bit $maskmax6-1$ will be set to 0 while the values of bits $maskmax6-2$:0
-            are \unspecified.
+            are UNSPECIFIED.
             Legal values for {csr-tdata2} require $M + maskmax6 \geq XLEN$ and $M\gt0$.
             See above for how to determine maskmax6.
             </value>
