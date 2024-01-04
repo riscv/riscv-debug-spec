@@ -19,7 +19,7 @@
         Trigger Module registers. It is optional if no triggers are implemented.  The
         set of accessible triggers must start at 0, and be contiguous.
 
-        This register is \warl.
+        This register is *WARL*.
         Writes of values greater than or equal to the number of supported
         triggers may result in a different value in this register than what was
         written or may point to a trigger where {tdata1-type}=0.
@@ -242,8 +242,7 @@
                 Triggers do match/fire while the hart is in M-mode.
             </value>
 
-            When any trap into M-mode is taken, {tcontrol-mte} is set to 0. When {\tt
-            mret} is executed, {tcontrol-mte} is set to the value of {tcontrol-mpte}.
+            When any trap into M-mode is taken, {tcontrol-mte} is set to 0. When `mret` is executed, {tcontrol-mte} is set to the value of {tcontrol-mpte}.
         </field>
         <field name="0" bits="2:0" access="R" reset="0" />
     </register>
