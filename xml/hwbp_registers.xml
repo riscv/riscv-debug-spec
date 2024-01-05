@@ -1485,14 +1485,14 @@
 
             <value v="2" name="asid">
             This trigger will only match or fire if:
-            \begin{itemize}[noitemsep,nolistsep]
-            \item the mode is VS-mode or VU-mode and ASID in `vsatp`
+
+            * the mode is VS-mode or VU-mode and ASID in `vsatp`
             equals the lower ASIDMAX (defined in the Privileged Spec) bits
             of {textra32-svalue}.
-            \item in all other modes, ASID in `satp` equals the lower
+            
+            * in all other modes, ASID in `satp` equals the lower
             ASIDMAX (defined in the Privileged Spec) bits of
             {textra32-svalue}.
-            \end{itemize}
             </value>
 
             This field should be tied to 0 when S-mode is not supported.
