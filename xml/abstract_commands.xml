@@ -42,26 +42,16 @@
         Core Debug Registers (xref:debreg[]) should be accessible if
         abstract CSR access is implemented.
 
-        \begin{table}[htp]
-            \centering
-            \caption{Abstract Register Numbers}
-            \label{tab:regno}
-            \begin{tabulary}{\textwidth}{|r|l|}
-                \hline
-                Numbers &amp; Group Description \\
-                \hline
-                0x0000 -- 0x0fff &amp; CSRs. The ``PC'' can be accessed here through {csr-dpc}.
-                \\
-                \hline
-                0x1000 -- 0x101f &amp; GPRs \\
-                \hline
-                0x1020 -- 0x103f &amp; Floating point registers \\
-                \hline
-                0xc000 -- 0xffff &amp; Reserved for non-standard extensions and internal
-                use. \\
-                \hline
-            \end{tabulary}
-        \end{table}
+        [[tab:regno]]
+        .Abstract Register Numbers
+        [%autowidth,align="center",float="center",cols="&gt;,&lt;",options="header"]
+        |===
+        | Numbers | Group Description
+        | 0x0000 -- 0x0fff | CSRs. The ``PC'' can be accessed here through {csr-dpc}.
+        | 0x1000 -- 0x101f | GPRs
+        | 0x1020 -- 0x103f | Floating point registers
+        | 0xc000 -- 0xffff | Reserved for non-standard extensions and internal use.
+        |===
 
         [NOTE]
         ====
