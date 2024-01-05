@@ -32,13 +32,13 @@ functionality.
 
 *CSR*:: Control and Status Register.
 
-*DM*:: Debug Module (see Chapter <<dm>>).
+*DM*:: Debug Module (see <<dm>>).
 
-*DMI*:: Debug Module Interface (see Section <<dmi>>).
+*DMI*:: Debug Module Interface (see <<dmi>>).
 
 *DR*:: JTAG Data Register.
 
-*DTM*:: Debug Transport Module (see Section <<dtm>>).
+*DTM*:: Debug Transport Module (see <<dtm>>).
 
 *DXLEN*:: Debug XLEN, which is the widest XLEN a hart supports, ignoring the current value of in .
 
@@ -58,7 +58,7 @@ functionality.
 
 *legacy feature*:: A legacy feature should only be implemented to support legacy hardware that is present in a system.
 
-*Minimal RISC-V Debug Specification*:: A subset of the full Debug Specification that allows for very small implementations. See Chapter <<dm>>.
+*Minimal RISC-V Debug Specification*:: A subset of the full Debug Specification that allows for very small implementations. See <<dm>>.
 
 *NAPOT*:: Naturally Aligned Power-Of-Two.
 
@@ -68,13 +68,13 @@ functionality.
 
 *recommended feature*:: A recommended feature is not required for debug to work correctly, but  it is so useful that it should not be omitted without good reason.
 
-*SBA*:: System Bus Access (see Section <<systembusaccess>>).
+*SBA*:: System Bus Access (see <<systembusaccess>>).
 
 *specialized feature*:: A specialized feature, that only makes sense in the context of some specific hardware.
 
 *TAP*:: Test Access Port, defined in IEEE 1149.1.
 
-*TM*:: Trigger Module (see Section <<trigger>>).
+*TM*:: Trigger Module (see <<trigger>>).
 
 *virtual address*:: An address as a hart sees it. If the hart is using address translation this may be different from the physical address. If there is no translation then it will be the same.
 
@@ -295,38 +295,7 @@ increase the values in the version fields.
 Names of registers and their fields are hyperlinks to their definition,
 and are also listed in the index on page <<singlestep>>.
 
-===== Long Name (shortname, ``at 0x123``)
-
-[wavedrom, ,svg]
-....
-{reg: [
-  {bits: 8, name: 'field', type: 8, attr: ['8']},
-  {bits: 24, name: '0',         type: 2, attr: ['24']},
-], config: {bits: 32, hspace:512, vspace:64}}
-....
-
-[%autowidth,options="header",float="center",align="center",cols="^,<,^,<"]
-|===
-| Field | Description | Access | Reset
-| field | Description of what this field is used for. | R/W | 15
-|===
-
-.Register Access Abbreviations
-[%autowidth,options="header",float="center",align="center",cols="<,^"]
-|===
-| R | Read-only.
-| R/W | Read/Write.
-| R/W1C | Read/Write ones to Clear.  Writing 0 to every bit as no effect.
-Writing 1 to every bit clears the field. The result of other writes is
-undefined.
-| WARZ |  Write any, read zero. A debugger may write any value. When read
-this field returns 0.
-| W1 | Write-only. Only writing 1 has an effect. When read the returned
-value should be 0.
-| WARL | Write any, read legal. A debugger may write any value. If a value
-is unsupported, the implementation converts the value to one that is
-supported.
-|===
+include::build/sample_registers.adoc[]
 
 === Background
 

@@ -12,43 +12,35 @@
         Users can write this register to change the privilege mode that
         the hart will run in when it resumes.
 
-        This register contains \FcsrDcsrPrv and \FcsrDcsrV from \RcsrDcsr, but in a place that the user
-        is expected to access. The user should not access \RcsrDcsr directly,
+        This register contains {dcsr-prv} and {dcsr-v} from {csr-dcsr}, but in a place that the user
+        is expected to access. The user should not access {csr-dcsr} directly,
         because doing so might interfere with the debugger.
 
-        \begin{table}
-        \centering
-        \caption{Privilege Mode and Virtualization Mode Encoding}
-        \label{tab:privmode}
-        \begin{tabular}{|c|c|c|l|l|}
-        \hline
-        H extension &amp; \multirow{2}{*}{v} &amp; \multirow{2}{*}{prv} &amp; \multirow{2}{*}{Abbreviation} &amp; \multirow{2}{*}{Name} \\
-        supported   &amp;                    &amp;                      &amp;                               &amp;                       \\
-        \hline
-        No &amp; 0 &amp; 0 &amp; U-mode &amp; User mode \\
-        No &amp; 0 &amp; 1 &amp; S-mode &amp; Supervisor mode \\
-        No &amp; 0 &amp; 3 &amp; M-mode &amp; Machine mode \\
-        \hline
-        Yes &amp; 0 &amp; 0 &amp; U-mode &amp; User mode \\
-        Yes &amp; 0 &amp; 1 &amp; HS-mode &amp; Hypervisor-enabled supervisor mode \\
-        Yes &amp; 0 &amp; 3 &amp; M-mode &amp; Machine mode \\
-        Yes &amp; 1 &amp; 0 &amp; VU-mode &amp; Virtual user mode \\
-        Yes &amp; 1 &amp; 1 &amp; VS-mode &amp; Virtual supervisor mode \\
-        \hline
-        \end{tabular}
-        \end{table}
+        [[tab:privmode]] 
+        .Privilege Mode and Virtualization Mode Encoding
+        [%autowidth,align="center",float="center",cols="^,^,^,&lt;,&lt;",options="header"]
+        |===
+        | H extension supported |v |prv |Abbreviation |Name
+        | No | 0 | 0 | U-mode | User mode 
+        | No | 0 | 1 | S-mode | Supervisor mode
+        | No | 0 | 3 | M-mode | Machine mode
+        | Yes | 0 | 0 | U-mode | User mode
+        | Yes | 0 | 1 | HS-mode | Hypervisor-enabled supervisor mode
+        | Yes | 0 | 3 | M-mode | Machine mode
+        | Yes | 1 | 0 | VU-mode | Virtual user mode
+        | Yes | 1 | 1 | VS-mode | Virtual supervisor mode
+        |===
 
         <field name="v" bits="2" access="WARL" reset="0">
           Contains the virtualization mode the hart was operating in when Debug
-          Mode was entered. The encoding is described in Table \ref{tab:privmode},
+          Mode was entered. The encoding is described in &lt;&lt;tab:privmode&gt;&gt;,
           and matches the virtualization mode encoding from the Privileged Spec.
           A user can write this value to change the hart's virtualization mode
           when exiting Debug Mode.
         </field>
         <field name="prv" bits="1:0" access="R/W" reset="0">
             Contains the privilege mode the hart was operating in when Debug
-            Mode was entered. The encoding is described in Table
-            \ref{tab:privmode}, and matches the privilege mode encoding from
+            Mode was entered. The encoding is described in &lt;&lt;tab:privmode&gt;&gt;, and matches the privilege mode encoding from
             the Privileged Spec. A user can write this
             value to change the hart's privilege mode when exiting Debug Mode.
         </field>

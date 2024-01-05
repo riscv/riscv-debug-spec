@@ -32,6 +32,8 @@ are BYPASS and IDCODE, but this specification leaves IR space for many
 other standard JTAG instructions. Unimplemented instructions must select
 the BYPASS register.
 
+include::build/jtag_registers.adoc[]
+
 === JTAG Connector
 
 ==== Recommended JTAG Connector

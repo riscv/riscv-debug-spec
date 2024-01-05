@@ -1,0 +1,15 @@
+/## Access Memory Command 
+
+[wavedrom, ,svg, float="center", align="center"]
+....
+{reg: [
+  {bits: 14, name: '0', type: 8, attr: ['14']},
+  {bits: 2, name: 'target-specific', type: 2, attr: ['2']},
+  {bits: 1, name: 'write', type: 2, attr: ['1']},
+  {bits: 2, name: '0', type: 2, attr: ['2']},
+  {bits: 1, name: 'aampostincrement', type: 2, attr: ['1']},
+  {bits: 3, name: 'aamsize', type: 2, attr: ['3']},
+  {bits: 1, name: 'aamvirtual', type: 2, attr: ['1']},
+  {bits: 8, name: 'cmdtype', type: 2, attr: ['8']},
+], config: {bits: 32, hspace: 320, fontsize: 8, lanes: 8}}
+....

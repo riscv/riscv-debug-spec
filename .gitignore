@@ -17,7 +17,7 @@
 *_registers.h
 serial.*
 abstract_commands.*
-debug_defines.*
+build/*.adoc
 
 # Changelogs
 changelog.tex
@@ -25,3 +25,5 @@ vc.tex
 
 # Resulting PDFs
 riscv-debug-workgroup-notes.pdf
+
+.vscode

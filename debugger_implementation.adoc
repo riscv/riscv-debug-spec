@@ -472,7 +472,7 @@ tricky to get right. To single step, the debug stub would execute
 something like:
 
 ....
-    li    t0, \FcsrIcountCount=4, \FcsrIcountAction=0, \FcsrIcountM=1
+    li    t0, {icount-count}=4, {icount-action}=0, {icount-m}=1
     csrw  tdata1, t0    /* Write the trigger. */
     lw    t0, 8(sp)     /* Restore t0, count decrements to 3 */
     lw    sp, 0(sp)     /* Restore sp, count decrements to 2 */

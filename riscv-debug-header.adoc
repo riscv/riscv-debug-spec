@@ -9,13 +9,11 @@
 :url-riscv: http://riscv.org
 :doctype: book
 :colophon:
-:pdf-theme: ../docs-resources/themes/riscv-pdf.yml
-:pdf-fontsdir: ../docs-resources/fonts/
+:pdf-theme: ./docs-resources/themes/riscv-pdf.yml
+:pdf-fontsdir: ./docs-resources/fonts/
 :preface-title: Preface
-:toc: preamble
-:toclevels: 4 
 :appendix-caption: Appendix
-:imagesdir: ../docs-resources/images
+:imagesdir: ./docs-resources/images
 :title-logo-image: image:risc-v_logo.png[pdfwidth=3.25in,align=center]
 //:page-background-image: image:draft.png[opacity=20%]
 //:title-page-background-image: none
@@ -24,7 +22,7 @@
 // Settings:
 :experimental:
 :reproducible:
-:imagesoutdir: ../docs-resources/images
+:imagesoutdir: ./docs-resources/images
 //:bibtex-file: ../docs-resources/resources/riscv-spec.bib
 //:bibtex-order: alphabetical
 //:bibtex-style: apa
@@ -33,9 +31,10 @@
 :icons: font
 :lang: en
 :listing-caption: Example
+:toc: left
+:toclevels: 4 
 :sectnums:
 :sectnumlevels: 4
-//:toc: left
 :source-highlighter: pygments
 ifdef::backend-pdf[]
 :source-highlighter: rouge
@@ -68,6 +67,15 @@ Andy Wright, Bryan Wyatt, and Florian Zaruba.
 
 _This document is released under a Creative Commons Attribution 4.0 International License._
 
+// Include macros for registers and fields
+include::build/abstract_commands-def.adoc[]
+include::build/core_registers-def.adoc[]
+include::build/dm_registers-def.adoc[]
+include::build/hwbp_registers-def.adoc[]
+include::build/jtag_registers-def.adoc[]
+include::build/sample_registers-def.adoc[]
+include::build/sw_registers-def.adoc[]
+
 include::introduction.adoc[]
 include::overview.adoc[]
 include::debug_module.adoc[]
@@ -80,3 +88,6 @@ include::debugger_implementation.adoc[]
 //include::future.adoc[]
 //include::index.adoc[]
 //include::bibliography.adoc[]
+
+[index]
+== Index
