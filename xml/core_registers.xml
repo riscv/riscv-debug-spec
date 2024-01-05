@@ -264,7 +264,7 @@
         | trigger module | The address of the next instruction to be executed at the time that debug mode was entered. If the trigger is {csr-mcontrol} and {mcontrol-timing} is 0 or if the trigger is
         {csr-mcontrol6} and `hit1` is 0, this corresponds to the address of the instruction which caused the trigger to fire.
         | halt request | Address of the next instruction to be executed at the time that debug mode was entered.
-        |=== 
+        |===
 
         Executing the Program Buffer may cause the value of {csr-dpc} to become
         UNSPECIFIED. If that is the case, it must be possible to read/write
