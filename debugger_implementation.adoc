@@ -98,13 +98,13 @@ Write `mstatus` using abstract command:
 | Write | {dm-command} | {accessregister-aarsize}latexmath:[$=2$], {accessregister-transfer}, {accessregister-write}, {accessregister-regno} = 0x300 | Write `mstatus` 
 |===
 
-Write using abstract command:
+Write `mstatus` using abstract command:
 
-[cols="^,>,<,<",options="header",]
+[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
 |===
-|Op |Address |Value |Comment
-|Write | |new value |
-|Write | |latexmath:[$=2$], , , = 0x300 |Write
+| Op | Address | Value | Comment 
+| Write | {dm-data0} | new value | 
+| Write | {dm-command} | {accessregister-aarsize}=2, {accessregister-transfer}, {accessregister-write}, {accessregister-regno} = 0x300 | Write `mstatus` 
 |===
 
 [[deb:regprogbuf]]
@@ -114,31 +114,28 @@ Abstract commands are used to exchange data with GPRs. Using this
 mechanism, other registers can be accessed by moving their value
 into/out of GPRs.
 
-Write using program buffer:
+Write `mstatus` using program buffer:
 
-[cols="^,>,<,<",options="header",]
-|===
-|Op |Address |Value |Comment
-|Write | |`csrw s0, MSTATUS` |
-
-|Write |`progbuf1` |`ebreak` |
-
-|Write | |new value |
-
-|Write | |latexmath:[$=2$], , , , = 0x1008 |Write , then execute program
-buffer
+[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
+|=== 
+|Op | Address | Value & Comment 
+|Write | {dm-progbuf0} | `csrw s0, MSTATUS` &|
+|Write | `progbuf1` | `ebreak` |
+|Write | {dm-data0} | new value |
+|Write |{dm-command}| {accessregister-aarsize}latexmath:[$=2$], {accessregister-postexec}, {accessregister-transfer}, {accessregister-write}, {accessregister-regno} = 0x1008 |
+Write `s0`, then execute program buffer
 |===
 
-Read using program buffer:
+Read `one` using program buffer:
 
-[cols="^,>,<,<",options="header",]
+[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
 |===
-|Op |Address |Value |Comment
-|Write | |`fmv.x.s s0, f1` |
-|Write |`progbuf1` |`ebreak` |
-|Write | | |Execute program buffer
-|Write | |, = 0x1008 |read
-|Read | |- |Returns the value that was in
+| Op | Address | Value | Comment 
+| Write | {dm-progbuf0}& {`fmv.x.s s0, f1`} | 
+| Write | `progbuf1` | `ebreak` | 
+| Write | {dm-command} | {accessregister-postexec} | Execute program buffer 
+| Write | {dm-command} | {accessregister-transfer}, {accessregister-regno} = 0x1008 | read `s0` 
+| Read | {dm-data0}& - | Returns the value that was in \Fone 
 |===
 
 ==== Reading Memory
@@ -150,26 +147,27 @@ With system bus access, addresses are physical system bus addresses.
 
 Read a word from memory using system bus access:
 
-[cols="^,>,<,<",options="header",]
+[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
 |===
-|Op |Address |Value |Comment
-|Write | |latexmath:[$=2$], |Setup
-|Write | |address |
-|Read | |- |Value read from memory
+| Op | Address | Value | Comment 
+| Write | {dm-sbcs} | {sbcs-sbaccess}$=2$, {sbcs-sbreadonaddr} | Setup 
+| Write | {dm-sbaddress0} | address | 
+| Read | {dm-sbdata0} | - | Value read from memory 
 |===
 
 Read block of memory using system bus access:
 
-[cols=">,>,<,<",options="header",]
+[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
 |===
-|Op |Address |Value |Comment
-|Write | |latexmath:[$=2$], , , |Turn on autoread and autoincrement
-|Write | |address |Writing address triggers read and increment
-|Read | |- |Value read from memory
-|Read | |- |Next value read from memory
-|... |... |... |...
-|Write | |0 |Disable autoread
-|Read | |- |Get last value read from memory.
+| Op | Address | Value | Comment 
+| Write | {dm-sbcs} | {sbcs-sbaccess}latexmath:[$=2$], {sbcs-sbreadonaddr}, {sbcs-sbreadondata}, {sbcs-sbautoincrement}
+|Turn on autoread and autoincrement 
+| Write | {dm-sbaddress0} | address | Writing address triggers read and increment 
+| Read | {dm-sbdata0} | - | Value read from memory 
+| Read | {dm-sbdata0} | - | Next value read from memory 
+| ... | ... | ... | ... 
+| Write | {dm-sbcs} | 0 | Disable autoread 
+| Read | {dm-sbdata0} | - | Get last value read from memory. 
 |===
 
 [[deb:mrprogbuf]]
