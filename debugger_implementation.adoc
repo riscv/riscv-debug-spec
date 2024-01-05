@@ -11,7 +11,7 @@ register/abstract command mentioned in this document.
 
 This section details how an external debugger might use the described
 debug interface to perform some common operations on RISC-V cores using
-the JTAG DTM described in Section #sec:jtagdtm[[sec:jtagdtm]]. All these
+the JTAG DTM described in <<sec:jtagdtm>>. All these
 examples assume a 32-bit core but it should be easy to adapt the
 examples to 64- or 128-bit cores.
 
@@ -26,17 +26,17 @@ explicit checks for status bits.
 [[dmiaccess]]
 ==== Debug Module Interface Access
 
-To read an arbitrary Debug Module register, select , and scan in a value
-with set to 1, and set to the desired register address. In Update-DR the
+To read an arbitrary Debug Module register, select {dtm-dmi}, and scan in a value
+with {dmi-op} set to 1, and {dmi-address} set to the desired register address. In Update-DR the
 operation will start, and in Capture-DR its results will be captured
-into . If the operation didn’t complete in time, will be 3 and the value
-in must be ignored. The busy condition must be cleared by writing in ,
+into {dmi-data}. If the operation didn't complete in time, {dmi-op} will be 3 and the value
+in {dmi-data} must be ignored. The busy condition must be cleared by writing {dtmcs-dmireset} in {dtm-dtmcs},
 and then the second scan scan must be performed again. This process must
-be repeated until returns 0. In later operations the debugger should
+be repeated until {dmi-op} returns 0. In later operations the debugger should
 allow for more time between Update-DR and Capture-DR.
 
-To write an arbitrary Debug Bus register, select , and scan in a value
-with set to 2, and and set to the desired register address and data
+To write an arbitrary Debug Bus register, select {dtm-dmi}, and scan in a value
+with {dmi-op} set to 2, and {dmi-address} and {dmi-data} set to the desired register address and data
 respectively. From then on everything happens exactly as with a read,
 except that a write is performed instead of the read.
 
@@ -46,27 +46,27 @@ the inefficiency in typical JTAG use.
 ==== Checking for Halted Harts
 
 A user will want to know as quickly as possible when a hart is halted
-(e.g. due to a breakpoint). To efficiently determine which harts are
+(e.g. due to a breakpoint). To efficiently determine which harts are
 halted when there are many harts, the debugger uses the `haltsum`
-registers. Assuming the maximum number of harts exist, first it checks .
-For each bit set there, it writes , and checks . This process repeats
-through and . Depending on how many harts exist, the process should
+registers. Assuming the maximum number of harts exist, first it checks {dm-haltsum3} .
+For each bit set there, it writes <<dm-dmcontrol, hartsel>>, and checks {dm-haltsum2}. This process repeats
+through {dm-haltsum1} and {dm-haltsum0}. Depending on how many harts exist, the process should
 start at one of the lower `haltsum` registers.
 
 [[deb:halt]]
 ==== Halting
 
-To halt one or more harts, the debugger selects them, sets , and then
-waits for to indicate the harts are halted. Then it can clear to 0, or
+To halt one or more harts, the debugger selects them, sets {dmcontrol-haltreq}, and then
+waits for {dmstatus-allhalted} to indicate the harts are halted. Then it can clear {dmcontrol-haltreq} to 0, or
 leave it high to catch a hart that resets while halted.
 
 ==== Running
 
 First, the debugger should restore any registers that it has
-overwritten. Then it can let the selected harts run by setting . Once is
+overwritten. Then it can let the selected harts run by setting {dmcontrol-resumereq}. Once {dmstatus-allresumeack} is
 set, the debugger knows the selected harts have resumed. Harts might
 halt very quickly after resuming (e.g. by hitting a software breakpoint)
-so the debugger cannot use /to check whether the hart resumed.
+so the debugger cannot use {dmstatus-allhalted}/{dmstatus-anyhalted} to check whether the hart resumed.
 
 ==== Single Step
 
