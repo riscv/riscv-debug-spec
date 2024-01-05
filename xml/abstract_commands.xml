@@ -42,26 +42,16 @@
         Core Debug Registers (xref:debreg[]) should be accessible if
         abstract CSR access is implemented.
 
-        \begin{table}[htp]
-            \centering
-            \caption{Abstract Register Numbers}
-            \label{tab:regno}
-            \begin{tabulary}{\textwidth}{|r|l|}
-                \hline
-                Numbers &amp; Group Description \\
-                \hline
-                0x0000 -- 0x0fff &amp; CSRs. The ``PC'' can be accessed here through {csr-dpc}.
-                \\
-                \hline
-                0x1000 -- 0x101f &amp; GPRs \\
-                \hline
-                0x1020 -- 0x103f &amp; Floating point registers \\
-                \hline
-                0xc000 -- 0xffff &amp; Reserved for non-standard extensions and internal
-                use. \\
-                \hline
-            \end{tabulary}
-        \end{table}
+        [[tab:regno]]
+        .Abstract Register Numbers
+        [%autowidth,align="center",float="center",cols="&gt;,&lt;",options="header"]
+        |===
+        | Numbers | Group Description
+        | 0x0000 -- 0x0fff | CSRs. The ``PC'' can be accessed here through {csr-dpc}.
+        | 0x1000 -- 0x101f | GPRs
+        | 0x1020 -- 0x103f | Floating point registers
+        | 0xc000 -- 0xffff | Reserved for non-standard extensions and internal use.
+        |===
 
         [NOTE]
         ====
@@ -92,7 +82,7 @@
             then the access must fail. If a register is accessible, then reads of {accessregister-aarsize}
             less than or equal to the register's actual size must be supported.
             Writing less than the full register may be supported, but what
-            happens to the high bits in that case is \unspecified.
+            happens to the high bits in that case is UNSPECIFIED.
 
             This field controls the Argument Width as referenced in
             Table~\ref{tab:datareg}.
@@ -105,7 +95,7 @@
             <value v="1" name="enabled">
             After a successful register access, {accessregister-regno} is
             incremented. Incrementing past the highest supported value
-            causes {accessregister-regno} to become \unspecified.  Supporting
+            causes {accessregister-regno} to become UNSPECIFIED.  Supporting
             this variant is optional. It is undefined whether the increment
             happens when {accessregister-transfer} is 0.
             </value>
@@ -268,7 +258,7 @@
             <value v="0" name="arg0">
             Copy data from the memory location specified in `arg1` into
             the low bits of `arg0`. The value of the remaining bits of
-            `arg0` are \unspecified.
+            `arg0` are UNSPECIFIED.
             </value>
 
             <value v="1" name="memory">

@@ -117,7 +117,7 @@
             The remaining bits in this register, except for {tdata1-dmode},
             are ignored.
             </value>
-            
+
             Other values are reserved for future use.
 
         </field>
@@ -668,7 +668,7 @@
         implementations, execute, load, and store address/data triggers may fire at
         whatever point in time is most convenient for the implementation.
 
-        Table~\ref{tab:hwbp_timing} suggests timings for the best user experience.
+        &lt;&lt;tab:hwbp_timing&gt;&gt; suggests timings for the best user experience.
         The underlying principle is that firing just before the instruction
         gives a user more insight, so is preferable. However, depending on the
         instruction and conditions, it might not be possible to evaluate the
@@ -676,26 +676,21 @@
         better to let the instruction retire before the trigger fires, to avoid
         extra memory accesses which might affect the state of the system.
 
-        \begin{table}[H]
-        \centering
-        \caption{Suggested Trigger Timings}
-        \label{tab:hwbp_timing}
-        \begin{tabular}{|r|l|}
-        \hline
-        Match Type                  &amp; Suggested Trigger Timing \\
-        \hline
-        Execute Address             &amp; Before \\
-        Execute Instruction         &amp; Before \\
-        Execute Address+Instruction &amp; Before \\
-        Load Address                &amp; Before \\
-        Load Data                   &amp; After \\
-        Load Address+Data           &amp; After \\
-        Store Address               &amp; Before \\
-        Store Data                  &amp; Before \\
-        Store Address+Data          &amp; Before \\
-        \hline
-        \end{tabular}
-        \end{table}
+        [[tab:hwbp_timing]]
+        .Suggested Trigger Timings
+        [%autowidth,align="center",float="center",cols="&gt;,&lt;",options="header"]
+        |===
+        | Match Type | Suggested Trigger Timing
+        | Execute Address             | Before
+        | Execute Instruction         | Before
+        | Execute Address+Instruction | Before
+        | Load Address                | Before
+        | Load Data                   | After
+        | Load Address+Data           | After
+        | Store Address               | Before
+        | Store Data                  | Before
+        | Store Address+Data          | Before
+        |===
 
         A chain of triggers must only fire if every trigger in the chain was
         matched by the same instruction.
@@ -934,10 +929,10 @@
             `M` bits of {csr-tdata2}.
             `M` is `XLEN-1` minus the index of the least-significant bit
             containing 0 in {csr-tdata2}.
-            {csr-tdata2} is WARL and if bits `M`askmax6-1$:0 are written with all
-            ones then bit `M`askmax6-1$ will be set to 0 while the values of bits `M`askmax6-2$:0
+            {csr-tdata2} is *WARL* and if bits `Maskmax6-1:0` are written with all
+            ones then bit `Maskmax6-1` will be set to 0 while the values of bits `Maskmax6-2:0`
             are UNSPECIFIED.
-            Legal values for {csr-tdata2} require `M` + maskmax6 ≥ `XLEN` and `M`\gt0$.
+            Legal values for {csr-tdata2} require M + `maskmax6` ≥ `XLEN` and `M` &gt; 0.
             See above for how to determine maskmax6.
             </value>
 
@@ -955,30 +950,30 @@
             Matches when latexmath:[$\frac{XLEN}{2}-{1:0}] of any compare value
             equals latexmath:[$\frac{XLEN}{2}-{1:0}] of {csr-tdata2} after
             latexmath:[$\frac{XLEN}{2}-{1:0}] of the compare value is ANDed with
-            `XLEN-1`:$\frac{XLEN}{2}$ of {csr-tdata2}.
+            `XLEN-1`:latexmath:[$\frac{XLEN}{2}$] of {csr-tdata2}.
             </value>
 
             <value v="5" name="mask high">
-            Matches when `XLEN-1`:$\frac{XLEN}{2}$ of any compare
+            Matches when `XLEN-1`:latexmath:[$\frac{XLEN}{2}$] of any compare
             value equals latexmath:[$\frac{XLEN}{2}-{1:0}] of {csr-tdata2} after
-            `XLEN-1`:$\frac{XLEN}{2}$ of the compare value is ANDed with
-            `XLEN-1`:$\frac{XLEN}{2}$ of {csr-tdata2}.
+            `XLEN-1`:latexmath:[$\frac{XLEN}{2}$] of the compare value is ANDed with
+            `XLEN-1`:latexmath:[$\frac{XLEN}{2}$] of {csr-tdata2}.
             </value>
 
             <value v="8" name="not equal">
-            Matches when {mcontrol6-match}`=0` would not match.
+            Matches when {mcontrol6-match} `=0` would not match.
             </value>
 
             <value v="9" name="not napot">
-            Matches when {mcontrol6-match}$=1$ would not match.
+            Matches when {mcontrol6-match} `=1` would not match.
             </value>
 
             <value v="12" name="not mask low">
-            Matches when {mcontrol6-match}$=4$ would not match.
+            Matches when {mcontrol6-match} `=4` would not match.
             </value>
 
             <value v="13" name="not mask high">
-            Matches when {mcontrol6-match}$=5$ would not match.
+            Matches when {mcontrol6-match} `=5` would not match.
             </value>
 
             Other values are reserved for future use.
@@ -1267,7 +1262,7 @@
         This trigger may fire on up to XLEN of the Exception Codes defined in
         `mcause` (described in the Privileged Spec, with Interrupt=0). Those
         causes are configured by writing the corresponding bit in {csr-tdata2}.
-        (E.g.\  to trap on an illegal instruction, the debugger sets bit 2 in
+        (E.g.  to trap on an illegal instruction, the debugger sets bit 2 in
         {csr-tdata2}.)
 
         [NOTE]
@@ -1427,7 +1422,7 @@
         the concatenation of different ID contexts such as process ID and thread ID.
         The user can then program byte compares based on {textra32-sbytemask}
         to include one or more of the contexts in the compare.
-        
+
         Byte masking only applies to {csr-scontext} comparison; i.e when {textra32-sselect} is 1.
 
         [NOTE]
@@ -1437,7 +1432,7 @@
         restrict the matching to modes where it considers ASID/VMID/scontext/hcontext
         to be active.
         ====
-        
+
         <field name="mhvalue" bits="31:26" access="WARL" reset="0">
             Data used together with {textra32-mhselect}.
         </field>
@@ -1451,13 +1446,13 @@
             {csr-mcontext}/{csr-hcontext} equal {textra32-mhvalue}.
             </value>
 
-            1, 5 (mcontext\_select): This trigger will only match or fire if the
+            1, 5 (mcontext_select): This trigger will only match or fire if the
             low bits of
-            {csr-mcontext}/{csr-hcontext} equal \{{textra32-mhvalue}, mhselect[2]\}.
+            {csr-mcontext}/{csr-hcontext} equal {{textra32-mhvalue}, mhselect[2]}.
 
-            2, 6 (vmid\_select): This trigger will only match or fire if VMID in
+            2, 6 (vmid_select): This trigger will only match or fire if VMID in
             hgatp equals the lower VMIDMAX
-            (defined in the Privileged Spec) bits of \{{textra32-mhvalue}, mhselect[2]\}.
+            (defined in the Privileged Spec) bits of {{textra32-mhvalue}, mhselect[2]}.
 
             3, 7 (reserved): Reserved.
 
@@ -1465,7 +1460,7 @@
         </field>
 
         <field name="0" bits="22:20" access="R" reset="0" />
-        
+
         <field name="sbytemask" bits="19:18" access="WARL" reset="0">
             When the least significant bit of this field is 1, it causes bits 7:0
             in the comparison to be ignored, when {textra32-sselect}=1.
@@ -1490,14 +1485,14 @@
 
             <value v="2" name="asid">
             This trigger will only match or fire if:
-            \begin{itemize}[noitemsep,nolistsep]
-            \item the mode is VS-mode or VU-mode and ASID in `vsatp`
+
+            * the mode is VS-mode or VU-mode and ASID in `vsatp`
             equals the lower ASIDMAX (defined in the Privileged Spec) bits
             of {textra32-svalue}.
-            \item in all other modes, ASID in `satp` equals the lower
+
+            * in all other modes, ASID in `satp` equals the lower
             ASIDMAX (defined in the Privileged Spec) bits of
             {textra32-svalue}.
-            \end{itemize}
             </value>
 
             This field should be tied to 0 when S-mode is not supported.
@@ -1519,9 +1514,9 @@
         can program the {csr-scontext} value to be the concatenation of different ID contexts
         such as process ID and thread ID.  The user can then program byte compares based on
         {textra64-sbytemask} to include one or more of the contexts in the compare.
-        
+
         Byte masking only applies to {csr-scontext} comparison; i.e when {textra64-sselect} is 1.
-        
+
         <field name="mhvalue" bits="63:51" access="WARL" reset="0">
         </field>
         <field name="mhselect" bits="50:48" access="WARL" reset="0">

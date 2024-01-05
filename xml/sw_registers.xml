@@ -16,12 +16,12 @@
         is expected to access. The user should not access {csr-dcsr} directly,
         because doing so might interfere with the debugger.
 
-        [[tab:privmode]] 
+        [[tab:privmode]]
         .Privilege Mode and Virtualization Mode Encoding
         [%autowidth,align="center",float="center",cols="^,^,^,&lt;,&lt;",options="header"]
         |===
         | H extension supported |v |prv |Abbreviation |Name
-        | No | 0 | 0 | U-mode | User mode 
+        | No | 0 | 0 | U-mode | User mode
         | No | 0 | 1 | S-mode | Supervisor mode
         | No | 0 | 3 | M-mode | Machine mode
         | Yes | 0 | 0 | U-mode | User mode
