@@ -929,10 +929,10 @@
             `M` bits of {csr-tdata2}.
             `M` is `XLEN-1` minus the index of the least-significant bit
             containing 0 in {csr-tdata2}.
-            {csr-tdata2} is WARL and if bits `M`askmax6-1$:0 are written with all
-            ones then bit `M`askmax6-1$ will be set to 0 while the values of bits `M`askmax6-2$:0
+            {csr-tdata2} is *WARL* and if bits `Maskmax6-1:0` are written with all
+            ones then bit `Maskmax6-1` will be set to 0 while the values of bits `Maskmax6-2:0`
             are UNSPECIFIED.
-            Legal values for {csr-tdata2} require `M` + maskmax6 ≥ `XLEN` and `M`\gt0$.
+            Legal values for {csr-tdata2} require M + `maskmax6` ≥ `XLEN` and `M` &gt; 0.
             See above for how to determine maskmax6.
             </value>
 
@@ -950,30 +950,30 @@
             Matches when latexmath:[$\frac{XLEN}{2}-{1:0}] of any compare value
             equals latexmath:[$\frac{XLEN}{2}-{1:0}] of {csr-tdata2} after
             latexmath:[$\frac{XLEN}{2}-{1:0}] of the compare value is ANDed with
-            `XLEN-1`:$\frac{XLEN}{2}$ of {csr-tdata2}.
+            `XLEN-1`:latexmath:[$\frac{XLEN}{2}$] of {csr-tdata2}.
             </value>
 
             <value v="5" name="mask high">
-            Matches when `XLEN-1`:$\frac{XLEN}{2}$ of any compare
+            Matches when `XLEN-1`:latexmath:[$\frac{XLEN}{2}$] of any compare
             value equals latexmath:[$\frac{XLEN}{2}-{1:0}] of {csr-tdata2} after
-            `XLEN-1`:$\frac{XLEN}{2}$ of the compare value is ANDed with
-            `XLEN-1`:$\frac{XLEN}{2}$ of {csr-tdata2}.
+            `XLEN-1`:latexmath:[$\frac{XLEN}{2}$] of the compare value is ANDed with
+            `XLEN-1`:latexmath:[$\frac{XLEN}{2}$] of {csr-tdata2}.
             </value>
 
             <value v="8" name="not equal">
-            Matches when {mcontrol6-match}`=0` would not match.
+            Matches when {mcontrol6-match} `=0` would not match.
             </value>
 
             <value v="9" name="not napot">
-            Matches when {mcontrol6-match}$=1$ would not match.
+            Matches when {mcontrol6-match} `=1` would not match.
             </value>
 
             <value v="12" name="not mask low">
-            Matches when {mcontrol6-match}$=4$ would not match.
+            Matches when {mcontrol6-match} `=4` would not match.
             </value>
 
             <value v="13" name="not mask high">
-            Matches when {mcontrol6-match}$=5$ would not match.
+            Matches when {mcontrol6-match} `=5` would not match.
             </value>
 
             Other values are reserved for future use.
