@@ -37,7 +37,7 @@ Access Memory command mechanisms.
 .. Implement the Program Buffer.
 .. Implement abstract access to all registers that are visible to software
 running on the hart including all the registers that are present on the
-hart and listed in <<regno>>.
+hart and listed in xref:tab:regno[].
 .. Implement abstract access to at least all GPRs, <<descr>>, and <<dpc>>, and advertise the implementation as conforming to the "Minimal RISC-V Debug
 Specification", instead of the "RISC-V Debug Specification".
 

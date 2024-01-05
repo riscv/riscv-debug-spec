@@ -10,7 +10,7 @@
         <field name="0" bits="31:25" access="R" reset="0" />
         <field name="ndmresetpending" bits="24" access="R" reset="-">
             <value v="0" name="false">
-            Unimplemented, or {dmcontrol-ndmreset} is zero and no ndmreset is currently 
+            Unimplemented, or {dmcontrol-ndmreset} is zero and no ndmreset is currently
             in progress.
             </value>
 
@@ -418,7 +418,7 @@
       <field name="0" bits="31:15" access="R" reset="0" />
       <field name="hawindowsel" bits="14:0" access="WARL" reset="0">
           The high bits of this field may be tied to 0, depending on how large
-          the array mask register is.  E.g.\ on a hardware platform with 48 harts only bit 0
+          the array mask register is.  E.g. on a hardware platform with 48 harts only bit 0
           of this field may actually be writable.
       </field>
     </register>
@@ -477,7 +477,7 @@
            <value v="0" name="full checks">
            Full permission checks apply.
            </value>
-           
+
            <value v="1" name="relaxed checks">
            Relaxed permission checks apply.
            </value>
@@ -509,7 +509,7 @@
 
             <value v="3" name="exception">
             An exception occurred while executing the command
-            (e.g.\ while executing the Program Buffer).
+            (e.g. while executing the Program Buffer).
             </value>
 
             <value v="4" name="halt/resume">
@@ -518,7 +518,7 @@
             </value>
 
             <value v="5" name="bus">
-            The abstract command failed due to a bus error (e.g.\ 
+            The abstract command failed due to a bus error (e.g.
             alignment, access size, or timeout).
             </value>
 
@@ -703,7 +703,7 @@
     <register name="Program Buffer 13" short="progbuf13" address="0x2d" />
     <register name="Program Buffer 14" short="progbuf14" address="0x2e" />
     <register name="Program Buffer 15" short="progbuf15" address="0x2f" />
- 
+
     <!-- =============== authentication =============== -->
 
     <register name="Authentication Data" short="authdata" address="0x30">
