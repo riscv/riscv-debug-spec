@@ -151,7 +151,7 @@
             are undefined.
 
             This operation leaves the values in {dmi-address} and {dmi-data}
-            \unspecified.
+            UNSPECIFIED.
             </value>
 
             <value v="1" name="read">
@@ -166,7 +166,7 @@
             Write {dmi-data} to {dmi-address}.
 
             This operation leaves the values in {dmi-address} and {dmi-data}
-            \unspecified.
+            UNSPECIFIED.
             </value>
 
             <value v="3" name="reserved">
