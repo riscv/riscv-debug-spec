@@ -994,6 +994,7 @@ def write_adoc_index( fd, registers ):
         ("Name", "6")]
     if any(r.sdesc for r in registers.registers):
         columns.append(("Description", "6"))
+    columns.append(("Section", "2"))
 
     fd.write(f"[[{toAdocIdentifier(registers.prefix, registers.label)}]]\n")
     fd.write('[cols="' + ",".join(c[1] for c in columns) + '",options="header"]\n')
@@ -1002,14 +1003,16 @@ def write_adoc_index( fd, registers ):
 
     for r in sorted( registers.registers,
             key=cmp_to_key(lambda a, b: compare_address(a.address, b.address))):
+        identifier = toAdocIdentifier(registers.prefix, r.short or r.name)
         if r.short:
-            name = "%s (`%s`)" % (r.name, r.short)
+            name = "%s ({%s})" % (r.name, identifier)
         else:
-            name = r.name
+            name = "{%s}" % identifier
+        link = f"xref:{identifier}[]"
         if r.sdesc:
-            fd.write("|%s |%s |%s\n" % ( r.address, name, r.sdesc ))
+            fd.write("|%s |%s |%s| %s\n" % ( r.address, name, r.sdesc, link ))
         else:
-            fd.write("|%s |%s\n" % ( r.address, name ))
+            fd.write("|%s |%s| %s\n" % ( r.address, name, link ))
     fd.write("|===\n")
 
 def main():
