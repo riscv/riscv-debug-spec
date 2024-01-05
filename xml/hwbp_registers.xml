@@ -1446,13 +1446,13 @@
             {csr-mcontext}/{csr-hcontext} equal {textra32-mhvalue}.
             </value>
 
-            1, 5 (mcontext\_select): This trigger will only match or fire if the
+            1, 5 (mcontext_select): This trigger will only match or fire if the
             low bits of
-            {csr-mcontext}/{csr-hcontext} equal \{{textra32-mhvalue}, mhselect[2]\}.
+            {csr-mcontext}/{csr-hcontext} equal {{textra32-mhvalue}, mhselect[2]}.
 
-            2, 6 (vmid\_select): This trigger will only match or fire if VMID in
+            2, 6 (vmid_select): This trigger will only match or fire if VMID in
             hgatp equals the lower VMIDMAX
-            (defined in the Privileged Spec) bits of \{{textra32-mhvalue}, mhselect[2]\}.
+            (defined in the Privileged Spec) bits of {{textra32-mhvalue}, mhselect[2]}.
 
             3, 7 (reserved): Reserved.
 
