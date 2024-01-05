@@ -80,14 +80,22 @@ instruction before re-entering Debug Mode.
 
 [[deb:abstractreg]]
 ===== Using Abstract Command
+Read `s0` using abstract command:
 
-Read using abstract command:
-
-[cols="^,>,<,<",options="header",]
+[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
+|===    
+| Op | Address | Value | Comment    
+| Write | {dm-command} | {accessregister-aarsize}latexmath:[$=2$], {accessregister-transfer}, {accessregister-regno} = 0x1008 | Read `s0`
+| Read | {dm-data0} | - | Returns value that was in `s0` 
 |===
-|Op |Address |Value |Comment
-|Write | |latexmath:[$=2$], , = 0x1008 |Read
-|Read | |- |Returns value that was in
+
+Write `mstatus` using abstract command:
+
+[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
+|===
+| Op | Address | Value | Comment 
+| Write | {dm-data0} | new value | 
+| Write | {dm-command} | {accessregister-aarsize}latexmath:[$=2$], {accessregister-transfer}, {accessregister-write}, {accessregister-regno} = 0x300 | Write `mstatus` 
 |===
 
 Write using abstract command:
