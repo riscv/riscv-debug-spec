@@ -668,7 +668,7 @@
         implementations, execute, load, and store address/data triggers may fire at
         whatever point in time is most convenient for the implementation.
 
-        Table~\ref{tab:hwbp_timing} suggests timings for the best user experience.
+        &lt;&lt;tab:hwbp_timing&gt;&gt; suggests timings for the best user experience.
         The underlying principle is that firing just before the instruction
         gives a user more insight, so is preferable. However, depending on the
         instruction and conditions, it might not be possible to evaluate the
@@ -676,26 +676,21 @@
         better to let the instruction retire before the trigger fires, to avoid
         extra memory accesses which might affect the state of the system.
 
-        \begin{table}[H]
-        \centering
-        \caption{Suggested Trigger Timings}
-        \label{tab:hwbp_timing}
-        \begin{tabular}{|r|l|}
-        \hline
-        Match Type                  &amp; Suggested Trigger Timing \\
-        \hline
-        Execute Address             &amp; Before \\
-        Execute Instruction         &amp; Before \\
-        Execute Address+Instruction &amp; Before \\
-        Load Address                &amp; Before \\
-        Load Data                   &amp; After \\
-        Load Address+Data           &amp; After \\
-        Store Address               &amp; Before \\
-        Store Data                  &amp; Before \\
-        Store Address+Data          &amp; Before \\
-        \hline
-        \end{tabular}
-        \end{table}
+        [[tab:hwbp_timing]]
+        .Suggested Trigger Timings
+        [%autowidth,align="center",float="center",cols="&gt;,&lt;",options="header"]
+        |===
+        | Match Type | Suggested Trigger Timing
+        | Execute Address             | Before 
+        | Execute Instruction         | Before 
+        | Execute Address+Instruction | Before 
+        | Load Address                | Before 
+        | Load Data                   | After 
+        | Load Address+Data           | After 
+        | Store Address               | Before 
+        | Store Data                  | Before 
+        | Store Address+Data          | Before 
+        |===
 
         A chain of triggers must only fire if every trigger in the chain was
         matched by the same instruction.
