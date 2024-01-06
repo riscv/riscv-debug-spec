@@ -173,40 +173,39 @@ Read block of memory using system bus access:
 [[deb:mrprogbuf]]
 ===== Using Program Buffer
 
-Through the Program Buffer, the hart performs the memory accesses.
-Addresses are physical or virtual (depending on and other system
+Through the Program Buffer, the hart performs the memory accesses. Addresses
+are physical or virtual (depending on {dcsr-mprven} and other system
 configuration).
 
 Read a word from memory using program buffer:
 
-[cols="^,>,<,<",options="header",]
+[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
 |===
-|Op |Address |Value |Comment
-|Write | |`lw s0, 0(s0)` |
-|Write |`progbuf1` |`ebreak` |
-|Write | |address |
-|Write | |, , , = 0x1008 |Write , then execute program buffer
-|Write | |= 0x1008 |Read
-|Read | |- |Value read from memory
+| Op | Address | Value | Comment 
+| Write | {dm-progbuf0}& {\tt lw s0, 0(s0)} | 
+| Write | `progbuf1` | `ebreak` | 
+| Write | {dm-data0}& address | 
+| Write | {dm-command} | {accessregister-transfer}, {accessregister-write}, {accessregister-postexec}, {accessregister-regno} = 0x1008 | Write `s0`, then execute program buffer 
+| Write | {dm-command} | {accessregister-regno} = 0x1008 | Read `s0` 
+| Read | {dm-data0} | - | Value read from memory 
 |===
-
 Read block of memory using program buffer:
 
-[cols="^,>,<,<",options="header",]
+[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
 |===
-|Op |Address |Value |Comment
-|Write | |`lw s1, 0(s0)` |
-|Write |`progbuf1` |`addi s0, s0, 4` |
-|Write |`progbuf2` |`ebreak` |
-|Write | |address |
-|Write | |, , , = 0x1008 |Write , then execute program buffer
-|Write | |, = 0x1009 |Read , then execute program buffer
-|Write | | |Set
-|Read | |- |Get value read from memory, then execute program buffer
-|Read | |- |Get next value read from memory, then execute program buffer
-|... |... |... |...
-|Write | |0 |Clear
-|Read | |- |Get last value read from memory.
+| Op | Address | Value | Comment 
+| Write | {dm-progbuf0}& {\tt lw s1, 0(s0)} | 
+| Write | `progbuf1` | `addi s0, s1, 4` | 
+| Write | `progbuf2` | `ebreak` | 
+| Write | {dm-data0}& address | 
+| Write | {dm-command} | {accessregister-transfer}, {accessregister-write}, {accessregister-postexec}, {accessregister-regno} = 0x1008 | Write `s0`, then execute program buffer 
+| Write | {dm-command} | {accessregister-postexec}, {accessregister-regno} = 0x1009 | Read `s1`, then execute program buffer 
+| Write | {dm-abstractauto} | {abstractauto-autoexecdata}[0] | Set {abstractauto-autoexecdata}[0] 
+| Read | {dm-data0} | - | Get value read from memory, then execute program buffer 
+| Read | {dm-data0} | - | Get next value read from memory, then execute program buffer 
+| ... | ... | ... | ... 
+| Write | {dm-abstractauto} | 0 | Clear {abstractauto-autoexecdata}[0] 
+| Read | {dm-data0} | - | Get last value read from memory. 
 |===
 
 [[deb:mrabstract]]
@@ -217,26 +216,26 @@ although the actual implementation may differ.
 
 Read a word from memory using abstract memory access:
 
-[cols="^,>,<,<",options="header",]
+[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
 |===
-|Op |Address |Value |Comment
-|Write | |address |
-|Write | |cmdtype=2, |
-|Read | |- |Value read from memory
+| Op | Address | Value | Comment 
+| Write | `data1` | address | 
+| Write | {dm-command} | cmdtype=2, {accessmemory-aamsize}latex,ath:[$=2$] | 
+| Read | {dm-data0} | - | Value read from memory 
 |===
 
 Read block of memory using abstract memory access:
 
-[cols="^,>,<,<",options="header",]
+[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
 |===
-|Op |Address |Value |Comment
-|Write | |1 |Re-execute the command when is accessed
-|Write | |address |
-|Write | |cmdtype=2, , |
-|Read | |- |Read value, and trigger reading of next address
-|... |... |... |...
-|Write | |0 |Disable auto-exec
-|Read | |- |Get last value read from memory.
+| Op | Address | Value | Comment 
+| Write | {dm-abstractauto} | 1 | Re-execute the command when {dm-data0}is accessed 
+| Write | `data1` | address | 
+| Write | {dm-command} | cmdtype=2, {accessmemory-aamsize}latexmath:[$=2$], {accessmemory-aampostincrement}latexmath:[$=1$] | 
+| Read | {dm-data0} | - | Read value, and trigger reading of next address 
+| ... | ... | ... | ... 
+| Write | {dm-abstractauto} | 0 | Disable auto-exec 
+| Read | {dm-data0} | - | Get last value read from memory. 
 |===
 
 [[writemem]]
@@ -249,64 +248,64 @@ With system bus access, addresses are physical system bus addresses.
 
 Write a word to memory using system bus access:
 
-[cols="^,>,<,<",options="header",]
+[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
 |===
-|Op |Address |Value |Comment
-|Write | |latexmath:[$=2$] |Configure access size
-|Write | |address |
-|Write | |value |
+| Op | Address | Value | Comment 
+| Write | {dm-sbcs} | {sbcs-sbaccess}latexmath:[$=2$] | Configure access size 
+| Write | {dm-sbaddress0} | address | 
+| Write | {dm-sbdata0} | value | 
 |===
 
 Write a block of memory using system bus access:
 
-[cols="^,>,<,<",options="header",]
+[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
 |===
-|Op |Address |Value |Comment
-|Write | |latexmath:[$=2$], |Turn on autoincrement
-|Write | |address |
-|Write | |value0 |
-|Write | |value1 |
-|... |... |... |...
-|Write | |valueN |
+| Op | Address | Value | Comment 
+| Write | {dm-sbcs} | {sbcs-sbaccess}latexmath:[$2$], {sbcs-sbautoincrement} | Turn on autoincrement 
+| Write | {dm-sbaddress0} | address | 
+| Write | {dm-sbdata0} | value0 | 
+| Write | {dm-sbdata0} | value1 | 
+| ... | ... | ... | ... 
+| Write | {dm-sbdata0} | valueN | 
 |===
 
 [[deb:mrprogbuf]]
 ===== Using Program Buffer
 
-Through the Program Buffer, the hart performs the memory accesses.
-Addresses are physical or virtual (depending on and other system
+TThrough the Program Buffer, the hart performs the memory accesses. Addresses
+are physical or virtual (depending on {dcsr-mprven} and other system
 configuration).
 
 Write a word to memory using program buffer:
 
-[cols="^,>,<,<",options="header",]
+[[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
 |===
-|Op |Address |Value |Comment
-|Write | |`sw s1, 0(s0)` |
-|Write |`progbuf1` |`ebreak` |
-|Write | |address |
-|Write | |, , = 0x1008 |Write
-|Write | |value |
-|Write | |, , , = 0x1009 |Write , then execute program buffer
+| Op | Address | Value | Comment 
+| Write | {dm-progbuf0}& {\tt sw s1, 0(s0)} | 
+| Write | `progbuf1` | `ebreak` | 
+| Write | {dm-data0}& address | 
+| Write | {dm-command} | {accessregister-transfer}, {accessregister-write}, {accessregister-regno} = 0x1008 | Write `s0` 
+| Write | {dm-data0}& value | 
+| Write | {dm-command} | {accessregister-transfer}, {accessregister-write}, {accessregister-postexec}, {accessregister-regno} = 0x1009 | Write `s1`, then execute program buffer 
 |===
 
 Write block of memory using program buffer:
 
-[cols="^,>,<,<",options="header",]
+[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
 |===
-|Op |Address |Value |Comment
-|Write | |`sw s1, 0(s0)` |
-|Write |`progbuf1` |`addi s0, s0, 4` |
-|Write |`progbuf2` |`ebreak` |
-|Write | |address |
-|Write | |, , = 0x1008 |Write
-|Write | |value0 |
-|Write | |, , , = 0x1009 |Write , then execute program buffer
-|Write | | |Set
-|Write | |value1 |
-|... |... |... |...
-|Write | |valueN |
-|Write | |0 |Clear
+| Op | Address | Value | Comment 
+| Write | {dm-progbuf0}& {\tt sw s1, 0(s0)} | 
+| Write | `progbuf1` | `addi s0, s1, 4` | 
+| Write | `progbuf2` | `ebreak` | 
+| Write | {dm-data0}& address | 
+| Write | {dm-command} | {accessregister-transfer}, {accessregister-write}, {accessregister-regno} = 0x1008 | Write `s0` 
+| Write | {dm-data0}& value0 | 
+| Write | {dm-command} | {accessregister-transfer}, {accessregister-write}, {accessregister-postexec}, {accessregister-regno} = 0x1009 | Write `s1`, then execute program buffer 
+| Write | {dm-abstractauto} | {abstractauto-autoexecdata}[0] | Set {abstractauto-autoexecdata}[0] 
+| Write | {dm-data0}& value1 | 
+| ... | ... | ... | ... 
+| Write | {dm-data0}& valueN | 
+| Write | {dm-abstractauto} | 0 | Clear {abstractauto-autoexecdata}[0] 
 |===
 
 [[deb:mwabstract]]
@@ -317,28 +316,28 @@ although the actual implementation may differ.
 
 Write a word to memory using abstract memory access:
 
-[cols="^,>,<,<",options="header",]
+[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
 |===
-|Op |Address |Value |Comment
-|Write | |address |
-|Write | |value |
-|Write | |cmdtype=2, , write=1 |
+| Op | Address | Value | Comment 
+| Write | `data1` | address | 
+| Write | {dm-data0} | value | 
+| Write | {dm-command} | cmdtype=2, {accessmemory-aamsize}=2, write=1 | 
 |===
 
 Write a block of memory using abstract memory access:
 
-[cols="^,>,<,<",options="header",]
+[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
 |===
-|Op |Address |Value |Comment
-|Write | |address |
-|Write | |value0 |
-|Write | |cmdtype=2, , write=1, |
-|Write | |1 |Re-execute the command when is accessed
-|Write | |value1 |
-|Write | |value2 |
-|... |... |... |...
-|Write | |valueN |
-|Write | |0 |Disable auto-exec
+| Op | Address | Value | Comment 
+| Write | `data1` | address | 
+| Write | {dm-data0}& value0 | 
+| Write | {dm-command} | cmdtype=2, {accessmemory-aamsize}=2, write=1, {accessmemory-aampostincrement}=1 | 
+| Write | {dm-abstractauto} | 1 | Re-execute the command when {dm-data0}is accessed 
+| Write | {dm-data0} | value1 | 
+| Write | {dm-data0} | value2 | 
+| ... | ... | ... | ... 
+| Write | {dm-data0} | valueN | 
+| Write | {dm-abstractauto} | 0 | Disable auto-exec 
 |===
 
 ==== Triggers
@@ -353,64 +352,74 @@ to see if that configuration is supported. All examples assume XLEN=32.
 Enter Debug Mode when the instruction at 0x80001234 is executed, to be
 used as an instruction breakpoint in ROM:
 
-|r|r|L| & 0x6980105c & type=6, dmode=1, action=1, select=0, match=0,
-m=1, s=1, u=1, vs=1, vu=1, execute=1 +
-& 0x80001234 & address +
+|[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
+|===
+| `csr-tdata2` | 0x6980105c | type=6, dmode=1, action=1, select=0, match=0, m=1, s=1, u=1, vs=1, vu=1, execute=1 
+| `csr-tdata2` | 0x80001234 | address 
+|
+|===
 
 Enter Debug Mode when performing a load at address 0x80007f80 in M-mode
 or S-mode or U-mode:
 
-|r|r|L| & 0x68001059 & type=6, dmode=1, action=1, select=0, match=0,
-m=1, s=1, u=1, load=1 +
-& 0x80007f80 & address +
+[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
+|===
+| `csr-tdata2` | 0x68001059 | type=6, dmode=1, action=1, select=0, match=0, m=1, s=1, u=1, load=1 
+| `csr-tdata2` | 0x80007f80 | address 
+|===
 
 Enter Debug Mode when storing to an address between 0x80007c80 and
 0x80007cef (inclusive) in VS-mode or VU-mode when hgatp.VMID=1:
 
-|r|r|L| & 0x69801902 & type=6, dmode=1, action=1, chain=1, select=0,
-match=2, vs=1, vu=1, store=1 +
-& 0x80007c80 & start address (inclusive) +
-& 0x03000000 & mhselect=6, mhvalue=0 +
-& 0x69801182 & type=6, dmode=1, action=1, select=0, match=3, vs=1, vu=1,
-store=1 +
-& 0x80007cf0 & end address (exclusive) +
-& 0x03000000 & mhselect=6, mhvalue=0 +
+[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
+|===
+| `csr-tdata2` 0 | 0x69801902 | type=6, dmode=1, action=1, chain=1, select=0, match=2, vs=1, vu=1, store=1 
+| `csr-tdata2` 0 | 0x80007c80 | start address (inclusive) 
+| 'csr-textra32` 0 | 0x03000000 | mhselect=6, mhvalue=0 
+| `csr-tdata2` 1 | 0x69801182 | type=6, dmode=1, action=1, select=0, match=3, vs=1, vu=1, store=1 
+| `csr-tdata2` 1 | 0x80007cf0 | end address (exclusive) 
+| 'csr-textra32` 1 | 0x03000000 | mhselect=6, mhvalue=0 
+|===
 
 Enter Debug Mode when storing to an address between 0x81230000 and
 0x8123ffff (inclusive):
 
-|r|r|L| & 0x698010da & type=6, dmode=1, action=1, select=0, match=1,
-m=1, s=1, u=1, vs=1, vu=1, store=1 +
-& 0x81237fff & 16 upper bits to match exactly, then 0, then all ones. +
+[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
+|===
+| `csr-tdata2` | 0x698010da | type=6, dmode=1, action=1, select=0, match=1, m=1, s=1, u=1, vs=1, vu=1, store=1 
+| `csr-tdata2` | 0x81237fff | 16 upper bits to match exactly, then 0, then all ones. 
+|===
 
 Enter Debug Mode when loading from an address between 0x86753090 and
 0x8675309f or between 0x96753090 and 0x9675309f (inclusive):
 
-|r|r|L| & 0x69801a59 & type=6, dmode=1, action=1, chain=1, match=4, m=1,
-s=1, u=1, vs=1, vu=1, load=1 +
-& 0xfff03090 & Mask for low half, then match for low half +
-& 0x698012d9 & type=6, dmode=1, action=1, match=5, m=1, s=1, u=1, vs=1,
-vu=1, load=1 +
-& 0xefff8675 & Mask for high half, then match for high half +
+
+[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
+|===
+| `csr-tdata2` 0 | 0x69801a59 | type=6, dmode=1, action=1, chain=1, match=4, m=1, s=1, u=1, vs=1, vu=1, load=1 
+| `csr-tdata2` 0 | 0xfff03090 | Mask for low half, then match for low half 
+| `csr-tdata2` 1 | 0x698012d9 | type=6, dmode=1, action=1, match=5, m=1, s=1, u=1, vs=1, vu=1, load=1 
+| `csr-tdata2` 1 | 0xefff8675 | Mask for high half, then match for high half 
+|===
 
 ==== Handling Exceptions
 
 Generally the debugger can avoid exceptions by being careful with the
-programs it writes. Sometimes they are unavoidable though, e.g. if the
+programs it writes. Sometimes they are unavoidable though, e.g. if the
 user asks to access memory or a CSR that is not implemented. A typical
-debugger will not know enough about the hardware platform to know what’s
+debugger will not know enough about the hardware platform to know what's
 going to happen, and must attempt the access to determine the outcome.
 
-When an exception occurs while executing the Program Buffer, becomes
+When an exception occurs while executing the Program Buffer, {dm-command} becomes
 set. The debugger can check this field to see whether a program
-encountered an exception. If there was an exception, it’s left to the
+encountered an exception. If there was an exception, it's left to the
 debugger to know what must have caused it.
 
 [[quickaccess]]
 ==== Quick Access
 
 There are a variety of instructions to transfer data between GPRs and
-the ` data` registers. They are either loads/stores or CSR reads/writes.
+the `data` registers. They are either loads/stores or CSR reads/writes.
 The specific addresses also vary. This is all specified in . The
 examples here use the pseudo-op `transfer dest, src` to represent all
 these options.
@@ -418,20 +427,20 @@ these options.
 Halt the hart for a minimum amount of time to perform a single memory
 write:
 
-[cols="^,>,<,<",options="header",]
+[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
 |===
-|Op |Address |Value |Comment
-|Write | |`transfer arg2, s0` |Save
-|Write |`progbuf1` |`transfer s0, arg0` |Read first argument (address)
-|Write |`progbuf2` |`transfer arg0, s1` |Save
-|Write |`progbuf3` |`transfer s1, arg1` |Read second argument (data)
-|Write |`progbuf4` |`sw s1, 0(s0)` |
-|Write |`progbuf5` |`transfer s1, arg0` |Restore
-|Write |`progbuf6` |`transfer s0, arg2` |Restore
-|Write |`progbuf7` |`ebreak` |
-|Write | |address |
-|Write |`data1` |data |
-|Write | |0x10000000 |Perform quick access
+| Op | Address | Value | Comment 
+| Write | {dm-progbuf0}& `transfer arg2, s0`` | Save `s0` 
+| Write | `progbuf1` | `transfer s0, arg0` | Read first argument (address) 
+| Write | `progbuf2` | `transfer arg0, s1 | Save `s1` 
+| Write | `progbuf3` | `transfer s1, arg1` | Read second argument (data) 
+| Write | `progbuf4` | `sw s1, 0(s0)` | 
+| Write | `progbuf5` | `transfer s1, arg0` | Restore `s1` 
+| Write | `progbuf6` | `transfer s0, arg2` | Restore `s0` 
+| Write | `progbuf7` | `ebreak` | 
+| Write | {dm-data0} | address | 
+| Write | `data1` | data | 
+| Write | {dm-command} | 0x10000000 | Perform quick access 
 |===
 
 This shows an example of setting the bit in to enable a hardware
