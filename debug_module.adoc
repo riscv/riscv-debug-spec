@@ -387,12 +387,12 @@ Each abstract command is a 32-bit value. The top 8 bits contain which
 determines the kind of command. {command-cmdtype} lists all commands.
 
 .Meaning of {command-cmdtype}
-[%autowidth,float="center",align="center",cols=">,<,<",options="header"]
+[%autowidth,float="center",align="center",cols=">,<",options="header"]
 |===
-| {command-cmdtype} | Command | Page
-| 0 | Access Register Command |
-| 1 | Quick Access |
-| 2 | Access Memory Command |
+| {command-cmdtype} | Command 
+| 0 | <<ac-accessregister, Access Register Command>>
+| 1 | <<ac-quickaccess, Quick Access>>
+| 2 | <<ac-accessmemory, Access Memory Command>>
 |===
 
 include::build/abstract_commands.adoc[]
