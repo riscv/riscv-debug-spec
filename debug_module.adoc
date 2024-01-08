@@ -1,4 +1,4 @@
-[[]]
+[[dm]]
 == Debug Module (DM) (non-ISA extension)
 
 The Debug Module implements a translation interface between abstract
@@ -43,7 +43,7 @@ Specification", instead of the "RISC-V Debug Specification".
 
 A single DM can debug up to latexmath:[$2^{20}$] harts.
 
-[[i]]
+[[dmi]]
 === Debug Module Interface (DMI)
 
 Debug Modules are subordinates on a bus called the Debug Module
@@ -81,10 +81,10 @@ and then clears it. The actual reset may start as soon as the bit is
 asserted, but may start an arbitrarily long time after the bit is
 deasserted. The reset itself may also take an arbitrarily long time.
 While the reset is on-going, harts are either in the running state,
-indicating it’s possible to perform some abstract commands during this
-time, or in the unavailable state, indicating it’s not possible to
+indicating it's possible to perform some abstract commands during this
+time, or in the unavailable state, indicating it's not possible to
 perform any abstract commands during this time. Once a hart's reset is
-complete, `havereset` becomes set. When a hart comes out of reset and <<haltreq>> or <<resethaltreq>> 
+complete, `havereset` becomes set. When a hart comes out of reset and {dmcontrol-haltreq} or <<resethaltreq>> 
 are set, the hart will immediately enter Debug Mode (halted state).
 Otherwise, if the hart was initially running it will execute normally
 (running state) and if the hart was initially halted it should now be
@@ -97,7 +97,7 @@ has actually begun.
 ====
 
 The Debug Module's own state and registers should only be reset at
-power-up and while <<dmactive>> in <<dmcontrol>> is 0. If there is another mechanism to reset the DM, this mechanism must also reset all the harts accessible to the DM.
+power-up and while {dmcontrol-dmactive} in <<dmcontrol>> is 0. If there is another mechanism to reset the DM, this mechanism must also reset all the harts accessible to the DM.
 
 Due to clock and power domain crossing issues, it might not be possible
 to perform arbitrary DMI accesses across hardware platform reset. While <<ndmreset>>  or any external reset is asserted, the only supported DM operations are reading and writing <<dmcontrol>>. The behavior of other accesses is undefined.
@@ -106,7 +106,7 @@ When harts have been reset, they must set a sticky `havereset` state
 bit. The conceptual `havereset` state bits can be read for selected
 harts in <<anyhavereset>> and <<allhavereset>> in <<dmstatus>>. These bits must be set regardless of the cause of the
 reset. The `havereset` bits for the selected harts can be cleared by
-writing 1 to <<ackhavereset>> in <<dmcontrol>>. The `havereset` bits might or might not be cleared when <<dmactive>> is low.
+writing 1 to <<ackhavereset>> in <<dmcontrol>>. The `havereset` bits might or might not be cleared when {dmcontrol-dmactive} is low.
 
 [[selectingharts]]
 === Selecting Harts
@@ -152,7 +152,7 @@ to the hart selected by <<hartsel>>.
 
 Every hart that can be selected is in exactly one of the following four
 DM states: non-existent, unavailable, running, or halted. Which state
-the selected harts are in is reflected by <<allnonexistent>>, <<anynonexistent>>, <<allunavail>>, <<anyunavail>>, <<allrunning>>, <<anyrunning>>, <<allhalted>>, and <<anyhalted>>.
+the selected harts are in is reflected by <<allnonexistent>>, <<anynonexistent>>, {dmstatus-allunavail}, {dmstatus-anyunavail}, <<allrunning>>, <<anyrunning>>, <<allhalted>>, and <<anyhalted>>.
 
 Harts are nonexistent if they will never be part of this hardware
 platform, no matter how long a user waits. E.g. in a simple single-hart
@@ -187,7 +187,7 @@ Which states a hart that is reset goes through is implementation
 dependent. Harts may be unavailable while reset is asserted, and some
 time after reset is deasserted. They might transition to running for
 some time after reset is deasserted. Finally they end up either running
-or halted, depending on <<haltreq>> and <<resethaltreq>>.
+or halted, depending on {dmcontrol-haltreq} and <<resethaltreq>>.
 
 [[runcontrol]]
 === Run Control
@@ -199,7 +199,7 @@ to 0, except for resume ack, which may reset to either 0 or 1. The DM
 receives halted, running, and havereset signals from each hart. The
 debugger can observe the state of resume ack in <<allresumeack>> and <<anyresumeack>>, and the state of halted, running, and havereset signals in <<allhalted>>, <<anyhalted>>, <<allrunning>>, <<anyrunning>>, <<allhavereset>>, and <<anyhavereset>>. The state of the other bits cannot be observed directly.
 
-When a debugger writes 1 to <<haltreq>>, each selected hart's halt request bit is
+When a debugger writes 1 to {dmcontrol-haltreq}, each selected hart's halt request bit is
 set. When a running hart, or a hart just coming out of reset, sees its
 halt request bit high, it responds by halting, deasserting its running
 signal, and asserting its halted signal. Halted harts ignore their halt
@@ -223,7 +223,7 @@ is true regardless of the reset's cause. The hart's halt-on-reset
 request bit remains set until cleared by the debugger writing 1 to <<clrresethaltreq>> while the hart is selected, or by DM reset.
 
 If the DM is reset while a hart is halted, it is UNSPECIFIED whether that hart
-resumes. Debuggers should use <<resumereq>> to explicitly resume harts before clearing <<dmactive>> and disconnecting.
+resumes. Debuggers should use <<resumereq>> to explicitly resume harts before clearing {dmcontrol-dmactive} and disconnecting.
 
 [[hrgroups]]
 === Halt Groups, Resume Groups, and External Triggers
@@ -363,14 +363,14 @@ failed, the debugger has to look at the state of the DM (e.g. contents
 of <<data0>>) or hart (e.g. contents of a register modified by a Program Buffer program) to determine which one failed.
 ====
 
-Before starting an abstract command, a debugger must ensure that <<haltreq>>, <<resumereq>>, and <<ackhavereset>> are all 0.
+Before starting an abstract command, a debugger must ensure that {dmcontrol-haltreq}, <<resumereq>>, and <<ackhavereset>> are all 0.
 
-While an abstract command is executing (<<busy>> in <abstractcs>> is high), a debugger must not change <<hartset>>, and must not write 1 to <<haltreq>>, <<resumereq>>, <<ackhavereset>>, <<setresethaltreq>>, or <<clrresethaltreq>>.
+While an abstract command is executing (<<busy>> in <abstractcs>> is high), a debugger must not change <<hartset>>, and must not write 1 to {dmcontrol-haltreq}, <<resumereq>>, <<ackhavereset>>, <<setresethaltreq>>, or <<clrresethaltreq>>.
 
 If an abstract command does not complete in the expected time and
 appears to be hung, the debugger can try to reset the hart (using <<hartreset>> or <<ndmreset>>).
 If that doesn't clear <<busy>>, then it can try resetting the Debug Module
-(using <<dmactive>>).
+(using {dmcontrol-dmactive}).
 
 If an abstract command is started while the selected hart is unavailable
 or if a hart becomes unavailable while executing an abstract command,
@@ -469,11 +469,11 @@ accesses. <<sbdatabits>> shows which bits in `sbdata` are used for each access s
 [%autowidth,align="center",float="center",cols=">,<",options="header"]
 |===
 |Access Size | Data Bits
-| 8 | <<sbdata0>> bits 7:0
-| 16 | <<sbdata0>> bits 15:0
-| 32 | <<sbdata0>>
-| 64 | <<sbdata1>>, <<sbdata0>>
-| 128 | <<sbdata3>>, <<sbdata2>>, <<sbdata1>>, <<sbdata0>>
+| 8 | {dm-sbdata0} bits 7:0
+| 16 | {dm-sbdata0} bits 15:0
+| 32 | {dm-sbdata0}
+| 64 | <<sbdata1>>, {dm-sbdata0}
+| 128 | <<sbdata3>>, <<sbdata2>>, <<sbdata1>>, {dm-sbdata0}
 |===
 
 Depending on the microarchitecture, data accessed through System Bus
@@ -535,8 +535,8 @@ be ignored, with the following mandatory exceptions:
 
 . <<authenticated>> in <<dmstatus>> is readable.
 . <<authbusy>> in <<dmstatus>> is readable.
-. <<version>> in <<dmstatus>> is readable.
-. <<dmactive>> in <<dmcontrol>> is readable and writable.
+. {tinfo-version} in <<dmstatus>> is readable.
+. {dmcontrol-dmactive} in <<dmcontrol>> is readable and writable.
 . <<authdata>> is readable and writable.
 
 Implementations where it's not possible to unlock the DM by using <<authdata>> should not implement that register.
@@ -547,18 +547,18 @@ To detect the version of the Debug Module with a minimum of side
 effects, use the following procedure:
 
 . Read <<dmcontrol>>.
-. If <<dmactive>> is 0 or <<ndmreset>> is 1:
-.. Write <<dmcontrol>>, preserving <<hartreset>>, <<hasel>>, <<hartsello>>, and <<hartselhi>> from the value that was read, setting <<dmactive>>, and clearing all the other bits.
-.. Read <<dmstatus>>until <<dmactive>> is high.
-. Read <<dmstatus>>, which contains <<version>>.
+. If {dmcontrol-dmactive} is 0 or <<ndmreset>> is 1:
+.. Write <<dmcontrol>>, preserving <<hartreset>>, <<hasel>>, <<hartsello>>, and <<hartselhi>> from the value that was read, setting {dmcontrol-dmactive}, and clearing all the other bits.
+.. Read <<dmstatus>>until {dmcontrol-dmactive} is high.
+. Read <<dmstatus>>, which contains {tinfo-version}.
 
 If it was necessary to clear <<ndmreset>>, this might have the following  
 side effects:
 
-. <<haltreq>> is cleared, potentially preventing a halt request made by a previous debugger from taking effect.
+. {dmcontrol-haltreq} is cleared, potentially preventing a halt request made by a previous debugger from taking effect.
 . <<resumereq>> is cleared, potentially preventing a resume request made by a previous debugger from taking effect.
 . <<ndmreset>> is deasserted, releasing the hardware platform from reset if a previous debugger had set it.
-. <<dmactive>> is asserted, releasing the DM from reset. This in itself is not
+. {dmcontrol-dmactive} is asserted, releasing the DM from reset. This in itself is not
 observable by any harts.
 
 This procedure is guaranteed to work in future versions of this spec.
