@@ -394,57 +394,57 @@ Enter Debug Mode when loading from an address between 0x86753090 and
 ==== Handling Exceptions
 
 Generally the debugger can avoid exceptions by being careful with the
-programs it writes. Sometimes they are unavoidable though, e.g. if the
+programs it writes. Sometimes they are unavoidable though, e.g. if the
 user asks to access memory or a CSR that is not implemented. A typical
-debugger will not know enough about the hardware platform to know what’s
+debugger will not know enough about the hardware platform to know what's
 going to happen, and must attempt the access to determine the outcome.
 
-When an exception occurs while executing the Program Buffer, becomes
+When an exception occurs while executing the Program Buffer, {dm-command} becomes
 set. The debugger can check this field to see whether a program
-encountered an exception. If there was an exception, it’s left to the
+encountered an exception. If there was an exception, it's left to the
 debugger to know what must have caused it.
 
 [[quickaccess]]
 ==== Quick Access
 
 There are a variety of instructions to transfer data between GPRs and
-the ` data` registers. They are either loads/stores or CSR reads/writes.
-The specific addresses also vary. This is all specified in . The
+the `data` registers. They are either loads/stores or CSR reads/writes.
+The specific addresses also vary. This is all specified in {dm-hartinfo}. The
 examples here use the pseudo-op `transfer dest, src` to represent all
 these options.
 
 Halt the hart for a minimum amount of time to perform a single memory
 write:
 
-[cols="^,>,<,<",options="header",]
+[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
 |===
-|Op |Address |Value |Comment
-|Write | |`transfer arg2, s0` |Save
-|Write |`progbuf1` |`transfer s0, arg0` |Read first argument (address)
-|Write |`progbuf2` |`transfer arg0, s1` |Save
-|Write |`progbuf3` |`transfer s1, arg1` |Read second argument (data)
-|Write |`progbuf4` |`sw s1, 0(s0)` |
-|Write |`progbuf5` |`transfer s1, arg0` |Restore
-|Write |`progbuf6` |`transfer s0, arg2` |Restore
-|Write |`progbuf7` |`ebreak` |
-|Write | |address |
-|Write |`data1` |data |
-|Write | |0x10000000 |Perform quick access
+| Op | Address | Value | Comment 
+| Write | {dm-progbuf0} | `transfer arg2, s0` | Save `s0` 
+| Write | `progbuf1` | `transfer s0, arg0` | Read first argument (address) 
+| Write | `progbuf2` | `transfer arg0, s1` | Save `s1` 
+| Write | `progbuf3` | `transfer s1, arg1` | Read second argument (data) 
+| Write | `progbuf4` | `sw s1, 0(s0)` | 
+| Write | `progbuf5` | `transfer s1, arg0` | Restore `s1` 
+| Write | `progbuf6` | `transfer s0, arg2` | Restore `s0` 
+| Write | `progbuf7` | `ebreak` | 
+| Write | {dm-data0} | address | 
+| Write | `data1` | data | 
+| Write | {dm-command} | 0x10000000 | Perform quick access 
 |===
 
-This shows an example of setting the bit in to enable a hardware
+This shows an example of setting the {mcontrol-m} bit in to enable a hardware
 breakpoint in M-mode. Similar quick access instructions could have been
 used previously to configure the trigger that is being enabled here:
 
-[cols="^,>,<,<",options="header",]
+[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
 |===
-|Op |Address |Value |Comment
-|Write | |`transfer arg0, s0` |Save
-|Write |`progbuf1` |`li s0, (1 << 6)` |Form the mask for bit
-|Write |`progbuf2` |`csrrs x0, , s0` |Apply the mask to
-|Write |`progbuf3` |`transfer s0, arg2` |Restore
-|Write |`progbuf4` |`ebreak` |
-|Write | |0x10000000 |Perform quick access
+| Op | Address | Value | Comment 
+| Write | {dm-progbuf0} |  `transfer arg0, s0` | Save `s0` 
+| Write | `progbuf1` | `li s0, (1 << 6)` | Form the mask for {mcontrol-m} bit 
+| Write | `progbuf2` | `csrrs x0, {csr-tdata1}, s0` | Apply the mask to {csr-mcontrol} 
+| Write | `progbuf3` | `transfer s0, arg2` | Restore `s0` 
+| Write | `progbuf4` | `ebreak` | 
+| Write | {dm-command} | 0x10000000 | Perform quick access 
 |===
 
 === Native Debugger Implementation
@@ -455,22 +455,23 @@ This section describes how some common tasks might be achieved.
 [[nativestep]]
 ==== Single Step
 
-Single step is straightforward if the OS or a debug stub runs in M-Mode
-while the program being debugged runs in a less privileged mode. When a
-step is required, the OS or debug stub writes , , before returning
-control to the lower user program with an `mret` instruction.
+Single step is straightforward if the OS or a debug stub runs in M-Mode while the
+program being debugged runs in a less privileged mode. When a step is required,
+the OS or debug stub writes {icount-count}=1, {icount-action}=0,
+{icount-m}=0 before returning control to the lower user program with an
+`mret` instruction.
 
 Stepping code running in the same privilege mode as the debugger is more
 complicated, depending on what other debug features are implemented.
 
-If hardware implements and , then stepping through non-trap code which
-doesn’t allow for nested interrupts is also straightforward.
+If hardware implements {tcontrol-mpte} and {tcontrol-mte}, then stepping
+through non-trap code which doesn't allow for nested interrupts is also
+straightforward.
 
-If hardware automatically prevents triggers from matching when entering
-a trap handler as described in
-Section #sec:nativetrigger[[sec:nativetrigger]], then a carefully
-written trap handler can ensure that interrupts are disabled whenever
-the icount trigger must not match.
+If hardware automatically prevents {mcontrol6-action}=0 triggers from
+matching when entering a trap handler as described in
+<<nativetrigger>>, then a carefully written trap handler can
+ensure that interrupts are disabled whenever the icount trigger must not match.
 
 If neither of these features exist, then single step is doable, but
 tricky to get right. To single step, the debug stub would execute
@@ -484,7 +485,7 @@ something like:
     mret                /* Return to program being debugged. count decrements to 1 */
 ....
 
-There is an additional problem with using to single step. An instruction
+There is an additional problem with using {csr-icount} to single step. An instruction
 may cause an exception into a more privileged mode where the trigger is
 not enabled. The exception handler might address the cause of the
 exception, and then restart the instruction. Examples of this include
@@ -499,12 +500,15 @@ an instruction, and then step again. This way the users see the expected
 behavior of stepping over the instruction. Ideally the debugger would
 notify the user that an exception handler executed the first time.
 
-The debugger should perform this extra step when the PC doesn’t change
+The debugger should perform this extra step when the PC doesn't change
 during a regular step.
 
+[NOTE]
+====
 It is safe to perform an extra step when the PC changes, because every
 RISC-V instruction either changes the PC or has side effects when
 repeated, but never both.
+====
 
 To avoid an infinite loop if the exception handler does not address the
 cause of the exception, the debugger must execute no more than a single
