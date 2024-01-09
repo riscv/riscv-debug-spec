@@ -799,8 +799,8 @@
         This register might not be present if fewer than 2 harts are connected
         to this DM.
 
-        The LSB reflects the halt status of hart \{hartsel[19:5],5'h0\}, and the
-        MSB reflects halt status of hart \{hartsel[19:5],5'h1f\}.
+        The LSB reflects the halt status of hart {hartsel[19:5],5'h0}, and the
+        MSB reflects halt status of hart {hartsel[19:5],5'h1f}.
 
         <field name="haltsum0" bits="31:0" access="R" reset="0" />
     </register>
@@ -813,10 +813,10 @@
         This register might not be present if fewer than 33 harts are connected
         to this DM.
 
-        The LSB reflects the halt status of harts \{hartsel[19:10],10'h0\}
-        through \{hartsel[19:10],10'h1f\}.
-        The MSB reflects the halt status of harts \{hartsel[19:10],10'h3e0\}
-        through \{hartsel[19:10],10'h3ff\}.
+        The LSB reflects the halt status of harts {hartsel[19:10],10'h0}
+        through {hartsel[19:10],10'h1f}.
+        The MSB reflects the halt status of harts {hartsel[19:10],10'h3e0}
+        through {hartsel[19:10],10'h3ff}.
 
         <field name="haltsum1" bits="31:0" access="R" reset="0" />
     </register>
@@ -829,10 +829,10 @@
         This register might not be present if fewer than 1025 harts are connected
         to this DM.
 
-        The LSB reflects the halt status of harts \{hartsel[19:15],15'h0\}
-        through \{hartsel[19:15],15'h3ff\}.
-        The MSB reflects the halt status of harts \{hartsel[19:15],15'h7c00\}
-        through \{hartsel[19:15],15'h7fff\}.
+        The LSB reflects the halt status of harts {hartsel[19:15],15'h0}
+        through {hartsel[19:15],15'h3ff}.
+        The MSB reflects the halt status of harts {hartsel[19:15],15'h7c00}
+        through {hartsel[19:15],15'h7fff}.
 
         <field name="haltsum2" bits="31:0" access="R" reset="0" />
     </register>
@@ -1057,7 +1057,7 @@
 
         Reads from this register start the following:
 
-            . ``Return'' the data.
+            . "Return" the data.
             . Set {sbcs-sbbusy}.
             . If {sbcs-sbreadondata} is set:
                 // TODO: This doesn't work right, but it does work in asiidoclive
