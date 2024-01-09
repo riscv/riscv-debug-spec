@@ -407,7 +407,7 @@ commands only may choose to omit the Program Buffer.
 
 A debugger can write a small program to the Program Buffer, and then
 execute it exactly once with the Access Register Abstract Command,
-setting the <<postexec>> bit in {dm-command}. The debugger can write whatever program it likes
+setting the {accessregister-postexec} bit in {dm-command}. The debugger can write whatever program it likes
 (including jumps out of the Program Buffer), but the program must end
 with `ebreak` or `c.ebreak`. An implementation may support an implicit
 `ebreak` that is executed when a hart runs off the end of the Program
@@ -422,16 +422,16 @@ are executed, the hart remains in Debug Mode, and {abstractcs-cmderr} is set to 
 terminate with an `ebreak` instruction, the hart will remain in Debug
 Mode and the debugger will lose control of the hart.
 
-If <<progbufsize>> is 1 then the following apply:
+If {abstractcs-progbufsize} is 1 then the following apply:
 
-. <<impebreak>> must be 1.
+. {dmstatus-impebreak} must be 1.
 . If the debugger writes a compressed instruction into the Program Buffer,
 it must be placed into the lower 16 bits and accompanied by a compressed
 `nop` in the upper 16 bits.
 
 [NOTE]
 ====
-This requirement on the debugger for the case of <<progbufsize>> equal to 1 is to
+This requirement on the debugger for the case of {abstractcs-progbufsize} equal to 1 is to
 accommodate hardware designs that prefer to stuff instructions directly
 into the pipeline when halted, instead of having the Program Buffer
 exist in the address space somewhere.
@@ -472,8 +472,8 @@ accesses. <<sbdatabits>> shows which bits in `sbdata` are used for each access s
 | 8 | {dm-sbdata0} bits 7:0
 | 16 | {dm-sbdata0} bits 15:0
 | 32 | {dm-sbdata0}
-| 64 | <<sbdata1>>, {dm-sbdata0}
-| 128 | <<sbdata3>>, <<sbdata2>>, <<sbdata1>>, {dm-sbdata0}
+| 64 | {dm-sbdata1}, {dm-sbdata0}
+| 128 | {dm-sbdata3}, {dm-sbdata2}, {dm-sbdata1}, {dm-sbdata0}
 |===
 
 Depending on the microarchitecture, data accessed through System Bus
@@ -492,10 +492,9 @@ improve performance when accessing memory. Third, it may provide access
 to devices that a hart does not have access to.
 ====
 
-//[[abstract_sm]]
-//.Run/Halt Debug State Machine for single-hart hardware platforms. As only a small amount of state is visible to the debugger, the states and transitions are conceptual.
-
-//FIXME::image:images/abstract_commands.svg[]
+[[abstract_sm]]
+.Run/Halt Debug State Machine for single-hart hardware platforms. As only a small amount of state is visible to the debugger, the states and transitions are conceptual.
+image::abstract_commands.svg[]
 
 === Minimally Intrusive Debugging
 
@@ -510,7 +509,7 @@ without halting the hart.
 Second, the Quick Access abstract command can be used to halt a hart,
 quickly execute the contents of the Program Buffer, and let the hart run
 again. Combined with instructions that allow Program Buffer code to
-access the `data` registers, as described in <<hartinfo>>, this can be used to
+access the `data` registers, as described in {dm-hartinfo}, this can be used to
 quickly perform a memory or register access. For some hardware platforms
 this will be too intrusive, but many hardware platforms that can't be
 halted can bear an occasional hiccup of a hundred or less cycles.
@@ -527,19 +526,19 @@ Debug Module that can be used to be permanently disable it. Since this
 is technology specific, it is not further addressed in this spec.
 
 Another option is to allow the DM to be unlocked only by users who have
-an access key. Between <<authenticated>>, <<authbusy>>, and <<authdata>> arbitrarily complex authentication
-mechanism can be supported. When <<authenticated>> is clear, the DM must not interact with
+an access key. Between {dmstatus-authenticated}, {dmstatus-authbusy}, and {dm-authdata} arbitrarily complex authentication
+mechanism can be supported. When {dmstatus-authenticated} is clear, the DM must not interact with
 the rest of the hardware platform, nor expose details about the harts
 connected to the DM. All DM registers should read 0, while writes should
 be ignored, with the following mandatory exceptions:
 
-. <<authenticated>> in {dm-dmstatus} is readable.
-. <<authbusy>> in {dm-dmstatus} is readable.
+. {dmstatus-authenticated} in {dm-dmstatus} is readable.
+. {dmstatus-authbusy} in {dm-dmstatus} is readable.
 . {tinfo-version} in {dm-dmstatus} is readable.
 . {dmcontrol-dmactive} in {dm-dmcontrol} is readable and writable.
-. <<authdata>> is readable and writable.
+. {dm-authdata} is readable and writable.
 
-Implementations where it's not possible to unlock the DM by using <<authdata>> should not implement that register.
+Implementations where it's not possible to unlock the DM by using {dm-authdata} should not implement that register.
 
 === Version Detection
 
@@ -548,7 +547,7 @@ effects, use the following procedure:
 
 . Read {dm-dmcontrol}.
 . If {dmcontrol-dmactive} is 0 or {dmcontrol-ndmreset} is 1:
-.. Write {dm-dmcontrol}, preserving {dmcontrol-hartreset}, {dmcontrol-hasel}, <<hartsello>>, and <<hartselhi>> from the value that was read, setting {dmcontrol-dmactive}, and clearing all the other bits.
+.. Write {dm-dmcontrol}, preserving {dmcontrol-hartreset}, {dmcontrol-hasel}, {dmcontrol-hartsello}, and {dmcontrol-hartselhi} from the value that was read, setting {dmcontrol-dmactive}, and clearing all the other bits.
 .. Read {dm-dmstatus}until {dmcontrol-dmactive} is high.
 . Read {dm-dmstatus}, which contains {tinfo-version}.
 
@@ -562,7 +561,7 @@ side effects:
 observable by any harts.
 
 This procedure is guaranteed to work in future versions of this spec.
-The meaning of the {dm-dmcontrol} bits where {dmcontrol-hartreset}, {dmcontrol-hasel}, <<hartsello>>, and <<hardselhi>> currently reside might change,
+The meaning of the {dm-dmcontrol} bits where {dmcontrol-hartreset}, {dmcontrol-hasel}, {dmcontrol-hartsello}, and {dmcontrol-hartselhi} currently reside might change,
 but preserving them will have no side effects. Clearing the bits of {dm-dmcontrol} not explicitly mentioned here will have no side effects beyond the ones mentioned above.
 
 [[debbus]]
