@@ -923,6 +923,8 @@ def write_bytefield( fd, register ):
             rows[-1].append(f)
             offset = f.columnWidth()
 
+    # Provide separation from a previous ordered list.
+    fd.write("\n")
     for row in rows:
         write_bytefield_row(fd, row)
 
