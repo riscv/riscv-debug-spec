@@ -410,7 +410,10 @@ def write_adoc_definitions( fd, registers ):
         regid = r.short or r.label
         if r.define:
             macroName = toAdocIdentifier( registers.prefix, regid )
-            fd.write( f":{macroName}: <<{macroName},{r.short or r.label}>>\n" )
+            if r.fields or r.description:
+                fd.write( f":{macroName}: <<{macroName},{r.short or r.label}>>\n" )
+            else:
+                fd.write( f":{macroName}: {r.short or r.label}\n" )
         for f in r.fields:
             if f.define:
                 macroName = toAdocIdentifier( regid, f.name )
@@ -1008,7 +1011,10 @@ def write_adoc_index( fd, registers ):
             name = "%s ({%s})" % (r.name, identifier)
         else:
             name = "{%s}" % identifier
-        link = f"xref:{identifier}[]"
+        if r.fields or r.description:
+            link = f"xref:{identifier}[]"
+        else:
+            link = ""
         if r.sdesc:
             fd.write("|%s |%s |%s| %s\n" % ( r.address, name, r.sdesc, link ))
         else:
