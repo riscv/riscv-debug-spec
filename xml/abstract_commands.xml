@@ -217,7 +217,7 @@
 
             <value v="1" name="virtual">
             Addresses are virtual, and translated the way they would be from
-            M-mode, with \FcsrMstatusMprv set.
+            M-mode, with `MPRV` set.
             </value>
 
             Debug Modules on systems without address translation (i.e. virtual addresses equal physical)
