@@ -160,14 +160,14 @@
 
 [[hartsel]]
 (((hartsel)))
-        Throughout this document we refer to \Fhartsel, which is {dmcontrol-hartselhi}
-        combined with {dmcontrol-hartsello}. While the spec allows for 20 \Fhartsel bits,
+        Throughout this document we refer to {hartsel}, which is {dmcontrol-hartselhi}
+        combined with {dmcontrol-hartsello}. While the spec allows for 20 {hartsel} bits,
         an implementation may choose to implement fewer than that. The actual
-        width of \Fhartsel is called `HARTSELLEN`. It must be at least 0
+        width of {hartsel} is called `HARTSELLEN`. It must be at least 0
         and at most 20. A debugger should discover `HARTSELLEN` by writing
-        all ones to \Fhartsel (assuming the maximum size) and reading back the
+        all ones to {hartsel} (assuming the maximum size) and reading back the
         value to see which bits were actually set. Debuggers must not change
-        \Fhartsel while an abstract command is executing.
+        {hartsel} while an abstract command is executing.
 
         [NOTE]
         ====
@@ -188,7 +188,7 @@
 
 [[keepalive]]
 (((keepalive)))
-        \Fkeepalive is an optional internal bit of per-hart state. When it is
+        {keepalive} is an optional internal bit of per-hart state. When it is
         set, it suggests that the hardware should attempt to keep the hart
         available for the debugger, e.g. by keeping it from entering a
         low-power state once powered on. Even if the bit is implemented,
@@ -208,7 +208,7 @@
             harts. Running harts will halt whenever their halt request bit is
             set.
 
-            Writes apply to the new value of \Fhartsel and {dmcontrol-hasel}.
+            Writes apply to the new value of {hartsel} and {dmcontrol-hasel}.
         </field>
         <field name="resumereq" bits="30" access="W1" reset="-">
             Writing 1 causes the currently selected harts to resume once, if
@@ -217,7 +217,7 @@
 
             {dmcontrol-resumereq} is ignored if {dmcontrol-haltreq} is set.
 
-            Writes apply to the new value of \Fhartsel and {dmcontrol-hasel}.
+            Writes apply to the new value of {hartsel} and {dmcontrol-hasel}.
         </field>
         <field name="hartreset" bits="29" access="WARL" reset="0">
             This optional field writes the reset bit for all the currently
@@ -231,7 +231,7 @@
             after writing 1 the debugger can read the register back to see if
             the feature is supported.
 
-            Writes apply to the new value of \Fhartsel and {dmcontrol-hasel}.
+            Writes apply to the new value of {hartsel} and {dmcontrol-hasel}.
         </field>
         <field name="ackhavereset" bits="28" access="W1" reset="-">
             <value v="0" name="nop">
@@ -242,7 +242,7 @@
             Clears `havereset` for any selected harts.
             </value>
 
-            Writes apply to the new value of \Fhartsel and {dmcontrol-hasel}.
+            Writes apply to the new value of {hartsel} and {dmcontrol-hasel}.
         </field>
         <field name="ackunavail" bits="27" access="W1" reset="-">
             <value v="0" name="nop">
@@ -253,18 +253,18 @@
             Clears `unavail` for any selected harts that are currently available.
             </value>
 
-            Writes apply to the new value of \Fhartsel and {dmcontrol-hasel}.
+            Writes apply to the new value of {hartsel} and {dmcontrol-hasel}.
         </field>
         <field name="hasel" bits="26" access="WARL" reset="0">
             Selects the definition of currently selected harts.
 
             <value v="0" name="single">
-            There is a single currently selected hart, that is selected by \Fhartsel.
+            There is a single currently selected hart, that is selected by {hartsel}.
             </value>
 
             <value v="1" name="multiple">
             There may be multiple currently selected harts -- the hart
-            selected by \Fhartsel, plus those selected by the hart array mask
+            selected by {hartsel}, plus those selected by the hart array mask
             register.
             </value>
 
@@ -274,25 +274,25 @@
             is supported.
         </field>
         <field name="hartsello" bits="25:16" access="WARL" reset="0">
-            The low 10 bits of \Fhartsel: the DM-specific index of the hart to
+            The low 10 bits of {hartsel}: the DM-specific index of the hart to
             select. This hart is always part of the currently selected harts.
         </field>
         <field name="hartselhi" bits="15:6" access="WARL" reset="0">
-            The high 10 bits of \Fhartsel: the DM-specific index of the hart to
+            The high 10 bits of {hartsel}: the DM-specific index of the hart to
             select. This hart is always part of the currently selected harts.
         </field>
         <field name="setkeepalive" bits="5" access="W1" reset="-">
-            This optional field sets \Fkeepalive for all currently selected
+            This optional field sets {keepalive} for all currently selected
             harts, unless {dmcontrol-clrkeepalive} is simultaneously set to
             1.
 
-            Writes apply to the new value of \Fhartsel and {dmcontrol-hasel}.
+            Writes apply to the new value of {hartsel} and {dmcontrol-hasel}.
         </field>
         <field name="clrkeepalive" bits="4" access="W1" reset="-">
-            This optional field clears \Fkeepalive for all currently selected
+            This optional field clears {keepalive} for all currently selected
             harts.
 
-            Writes apply to the new value of \Fhartsel and {dmcontrol-hasel}.
+            Writes apply to the new value of {hartsel} and {dmcontrol-hasel}.
         </field>
         <field name="setresethaltreq" bits="3" access="W1" reset="-">
             This optional field writes the halt-on-reset request bit for all
@@ -302,7 +302,7 @@
             of its reset. The halt-on-reset request bit is not automatically
             cleared. The debugger must write to {dmcontrol-clrresethaltreq} to clear it.
 
-            Writes apply to the new value of \Fhartsel and {dmcontrol-hasel}.
+            Writes apply to the new value of {hartsel} and {dmcontrol-hasel}.
 
             If {dmstatus-hasresethaltreq} is 0, this field is not implemented.
         </field>
@@ -310,7 +310,7 @@
             This optional field clears the halt-on-reset request bit for all
             currently selected harts.
 
-            Writes apply to the new value of \Fhartsel and {dmcontrol-hasel}.
+            Writes apply to the new value of {hartsel} and {dmcontrol-hasel}.
         </field>
         <!-- Fields that apply to the entire DM. -->
         <field name="ndmreset" bits="1" access="R/W" reset="0">
@@ -358,7 +358,7 @@
 
     <register name="Hart Info" short="hartinfo" address="0x12">
       This register gives information about the hart currently
-      selected by \Fhartsel.
+      selected by {hartsel}.
 
       This register is optional. If it is not present it should
       read all-zero.
@@ -748,7 +748,7 @@
         </field>
         <field name="group" bits="6:2" access="WARL" reset="preset">
             When {dmcs2-hgselect} is 0, contains the group of the hart
-            specified by \Fhartsel.
+            specified by {hartsel}.
 
             When {dmcs2-hgselect} is 1, contains the group of the DM external
             trigger selected by {dmcs2-dmexttrigger}.

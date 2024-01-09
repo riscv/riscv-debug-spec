@@ -81,6 +81,10 @@ include::build/jtag_registers-def.adoc[]
 include::build/sample_registers-def.adoc[]
 include::build/sw_registers-def.adoc[]
 
+// Manual macros
+:hartsel: <<hartsel,hartsel>>
+:keepalive: <<keepalive,keepalive>>
+
 include::introduction.adoc[]
 include::overview.adoc[]
 include::debug_module.adoc[]
