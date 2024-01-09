@@ -336,12 +336,12 @@ If the command takes arguments, the debugger must write them to the
 `data` registers before writing to {dm-command}. If a command returns results, the
 Debug Module must ensure they are placed in the `data` registers before {abstractcs-busy}
 is cleared. Which `data` registers are used for the arguments is
-described in <<datareg>>. In all cases the
+described in <<tab:datareg>>. In all cases the
 least-significant word is placed in the lowest-numbered `data` register.
 The argument width depends on the command being executed, and is DXLEN
 where not explicitly specified.
 
-[[datareg]]
+[[tab:datareg]]
 .Use of Data Registers
 [%autowidth,float="center",align="center",cols="^,<,<,<",options="header"]
 |===
