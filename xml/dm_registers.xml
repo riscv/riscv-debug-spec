@@ -643,7 +643,7 @@
         {dm-data0} through {dm-data11} are registers that may
         be read or changed by abstract commands. {abstractcs-datacount} indicates how many
         of them are implemented, starting at {dm-data0}, counting up.
-        Table~\ref{tab:datareg} shows how abstract commands use these
+        &lt;&lt;tab:datareg&gt;&gt; shows how abstract commands use these
         registers.
 
         Accessing these registers while an abstract command is executing causes
