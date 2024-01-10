@@ -1,9 +1,0 @@
-//## Quick Access
-
-[wavedrom, ,svg, float="center", align="center"]
-....
-{reg: [
-  {bits: 24, name: '0', type: 8, attr: ['24']},
-  {bits: 8, name: 'cmdtype', type: 2, attr: ['8']},
-], config: {bits: 32, hspace: 320, fontsize: 8}}
-....
