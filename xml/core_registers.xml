@@ -193,7 +193,7 @@
             </value>
 
             <value v="5" name="resethaltreq">
-            The hart halted directly out of reset due to \Fresethaltreq. It
+            The hart halted directly out of reset due to {resethaltreq} It
             is also acceptable to report 3 when this happens.
             </value>
 
