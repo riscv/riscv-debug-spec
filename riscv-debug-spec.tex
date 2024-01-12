@@ -82,8 +82,6 @@
 
 \input{vc.tex}
 
-\newcommand{\versionnum}{1.0\ifrelease\else-\releasename\fi}
-
 \begin{document}
 
 \title{RISC-V Debug Specification\\
@@ -92,7 +90,7 @@ Version \versionnum\\
 }
 \author{Editors: \\
 Paul Donahue \textless pdonahue@ventanamicro.com\textgreater, Ventana Micro Systems \\
-Tim Newsome \textless tim@sifive.com\textgreater, SiFive, Inc.}
+Tim Newsome \textless tim@casualhacker.net\textgreater}
 \date{\GITAuthorDate}
 \maketitle
 
@@ -132,11 +130,13 @@ Tim Newsome \textless tim@sifive.com\textgreater, SiFive, Inc.}
 
 \ifrelease
 \else
+\ifdefstring{\releasename}{Frozen}{}{
     \chapter{Change Log}
 
     \begin{versionhistory}
         \input{changelog.tex}
     \end{versionhistory}
+}
 \fi
 
 \end{document}
