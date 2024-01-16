@@ -1032,7 +1032,7 @@
 
             .  An instruction retires after having been fetched in a privilege
                 mode where the trigger is enabled.
-                This explicitly includes {\em x}\/RET instructions.
+                This explicitly includes all RET instructions from various modes.
             . A trap is taken from a privilege mode where the trigger is enabled.
                 This explicitly includes traps taken due to interrupts.
 

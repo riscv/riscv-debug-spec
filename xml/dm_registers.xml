@@ -405,7 +405,7 @@
             If {hartinfo-dataaccess} is 1: Address of RAM where the data
             registers are shadowed. This address is sign extended giving a
             range of -2048 to 2047, easily addressed with a load or store using
-            \Xzero as the address register.
+            `x0` as the address register.
         </field>
     </register>
 
@@ -1067,8 +1067,8 @@
 
         Only {dm-sbdata0} has this behavior. The other `sbdata` registers
         have no side effects. On systems that have buses wider than 32 bits, a
-        debugger should access {dm-sbdata0} after accessing the other {\tt
-        sbdata} registers.
+        debugger should access {dm-sbdata0} after accessing the other `sbdata`
+        registers.
 
         <field name="data" bits="31:0" access="R/W" reset="0">
             Accesses bits 31:0 of `sbdata`.

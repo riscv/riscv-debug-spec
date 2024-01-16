@@ -85,7 +85,7 @@
             happens to the high bits in that case is UNSPECIFIED.
 
             This field controls the Argument Width as referenced in
-            Table~\ref{tab:datareg}.
+            xref:tab:datareg[].
         </field>
         <field name="aarpostincrement" bits="19">
             <value v="0" name="disabled">
@@ -138,7 +138,7 @@
         </field>
         <field name="regno" bits="15:0">
           Number of the register to access, as described in
-          Table~\ref{tab:regno}.
+          xref:tab:regno[].
           {csr-dpc} may be used as an alias for PC if this command is
           supported on a non-halted hart.
         </field>
