@@ -213,11 +213,11 @@
         </field>
         <field name="mprven" bits="4" access="WARL" reset="Preset">
             <value v="0" name="disabled">
-            \FcsrMstatusMprv in `mstatus` is ignored in Debug Mode.
+            `mprv` in `mstatus` is ignored in Debug Mode.
             </value>
 
             <value v="1" name="enabled">
-            \FcsrMstatusMprv in `mstatus` takes effect in Debug Mode.
+            `mprv` in `mstatus` takes effect in Debug Mode.
             </value>
 
             Implementing this bit is optional. It may be tied to either 0 or 1.
