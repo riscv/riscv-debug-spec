@@ -967,7 +967,7 @@ def write_adoc( fd, registers ):
 
             write_bytefield( fd, r )
 
-        columns = [("<2", "Field", lambda f: f.name)]
+        columns = [("<2", "Field", lambda f: f"(({f.name}))")]
         columns += [("<3", "Description", lambda f: f.latex_description())]
         if not registers.skip_access:
             columns += [("^1", "Access", lambda f: f"*{f.access}*")]
