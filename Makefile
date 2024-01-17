@@ -2,6 +2,7 @@ CC=$(RISCV)/bin/riscv64-unknown-elf-gcc
 
 DRAFT=riscv-debug-draft
 STABLE=riscv-debug-stable
+FROZEN=riscv-debug-frozen
 RELEASE=riscv-debug-release
 NOTES=riscv-debug-workgroup-notes
 
@@ -28,15 +29,16 @@ INCLUDES_TEX += jtagdtm.tex
 INCLUDES_TEX += implementations.tex
 INCLUDES_TEX += debugger_implementation.tex
 INCLUDES_TEX += riscv-debug-spec.tex
-INCLUDES_TEX += future.tex
 
 FIGURES = fig/*
 
-all:	stable $(NOTES).pdf
+all:	frozen $(NOTES).pdf
 
 draft:	$(DRAFT).pdf
 
 stable:	$(STABLE).pdf
+
+frozen:	$(FROZEN).pdf
 
 release:	$(RELEASE).pdf
 
