@@ -12,8 +12,9 @@
         Users can write this register to change the privilege mode that
         the hart will run in when it resumes.
 
-        This register contains \FcsrDcsrPrv and \FcsrDcsrV from \RcsrDcsr, but in a place that the user
-        is expected to access. The user should not access \RcsrDcsr directly,
+        This register contains \FcsrDcsrPrv, \FcsrDcsrV, and \FcsrDcsrElp from
+        \RcsrDcsr, but in a place that the user is expected to access.
+        The user should not access \RcsrDcsr directly,
         because doing so might interfere with the debugger.
 
         \begin{table}
@@ -38,6 +39,28 @@
         \end{tabular}
         \end{table}
 
+        \begin{table}
+        \centering
+        \caption{Expected Landing Pad Encoding}
+        \label{tab:elpmode}
+        \begin{tabular}{|c|l|}
+        \hline
+        elp &amp; Name \\
+        \hline
+        0 &amp; {\tt NO\_LP\_EXPECTED} \\
+        \hline
+        1 &amp; {\tt LP\_EXPECTED} \\
+        \hline
+        \end{tabular}
+        \end{table}
+
+        <field name="elp" bits="3" access="WARL" reset="0">
+          Contains the ELP state the hart was operating in when Debug
+          Mode was entered. The encoding is described in Table \ref{tab:elpmode},
+          and matches the expected landing pad encoding in the Zicfilp specification.
+          A user can write this value to change the hart's ELP state
+          when exiting Debug Mode.
+        </field>
         <field name="v" bits="2" access="WARL" reset="0">
           Contains the virtualization mode the hart was operating in when Debug
           Mode was entered. The encoding is described in Table \ref{tab:privmode},
