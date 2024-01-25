@@ -2,10 +2,10 @@
 = The RISC-V Debug Specification
 :description: RISC-V Debug Specification
 :company: RISC-V.org
-:authors: Editors: Paul Donahue <pdonahue@ventanamicro.com>, Ventana Micro Systems, Tim Newsome <tim@sifive.com>, SiFive, Inc.
-:revdate: Revised 20231107
-:revnumber: 20231107
-//:revremark: Pre-release version
+:authors: Editors: Paul Donahue <pdonahue@ventanamicro.com>, Ventana Micro Systems, Tim Newsome <tim@casualhacker.net>
+:revdate: Revised 2024-01-25
+:revnumber: 1.0.0-rc0
+:revremark: Frozen
 :url-riscv: http://riscv.org
 :doctype: book
 :colophon:
