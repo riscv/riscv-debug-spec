@@ -52,7 +52,12 @@ endif::[]
 
 [WARNING]
 ====
-This stable specification might change before being accepted as standard. We're trying to only make backwards-compatible changes, but sometimes it's unavoidable to change a corner case. If you implement this document, please keep an eye on https://github.com/riscv/riscv-debug-spec[the github repository] for changes that might affect your implementation.
+*This specification is Frozen.*
+
+Change is extremely unlikely. A high threshold will be used, and a change
+will only occur because of some truly critical issue being identified during
+the public review cycle. Any other desired or needed changes can be the
+subject of a follow-on new extension.
 ====
 
 Contributors to all versions of the spec in alphabetical order (please
