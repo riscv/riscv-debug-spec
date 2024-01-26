@@ -166,7 +166,7 @@ https://github.com/riscv/riscv-debug-spec/pull/405[#405]
 https://github.com/riscv/riscv-debug-spec/pull/414[#414]
 . Address triggers ({csr-mcontrol}) may fire on any accessed address.
 https://github.com/riscv/riscv-debug-spec/pull/421[#421]
-. All trigger registers (<<tab:trigger>>) are optional. https://github.com/riscv/riscv-debug-spec/pull/431[#431]
+. All Trigger Module registers (<<tab:trigger>>) are optional. https://github.com/riscv/riscv-debug-spec/pull/431[#431]
 . When extending IR, {dtm-bypass} still is all ones.
 https://github.com/riscv/riscv-debug-spec/pull/437[#437]
 . {dcsr-ebreaks} and {dcsr-ebreaku} are WARL. https://github.com/riscv/riscv-debug-spec/pull/458[#458]
