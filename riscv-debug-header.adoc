@@ -2,7 +2,7 @@
 = The RISC-V Debug Specification
 :description: RISC-V Debug Specification
 :company: RISC-V.org
-:authors: Editors: Paul Donahue <pdonahue@ventanamicro.com>, Ventana Micro Systems, Tim Newsome <tim@casualhacker.net>
+:authors: Editors: Paul Donahue <pdonahue@ventanamicro.com>, Ventana Micro Systems, Tim Newsome <tim@casualhacker.net>, Individual Member
 :revdate: Revised 2024-01-25
 :revnumber: 1.0.0-rc0
 :revremark: Frozen
