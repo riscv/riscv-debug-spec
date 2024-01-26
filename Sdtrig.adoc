@@ -308,7 +308,8 @@ been executed once.
 === Trigger Module Registers
 
 These registers are CSRs, accessible using the RISC-V `csr` opcodes and
-optionally also using abstract debug commands.
+optionally also using abstract debug commands. They are the only mechanism
+to access the triggers.
 
 Almost all trigger functionality is optional. All `tdata` registers
 follow write-any-read-legal semantics. If a debugger writes an
