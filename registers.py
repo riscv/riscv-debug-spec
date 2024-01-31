@@ -1001,7 +1001,6 @@ def write_adoc_index( fd, registers ):
         columns.append(("Description", "6"))
     columns.append(("Section", "2"))
 
-    fd.write(f"[[{toAdocIdentifier(registers.prefix, registers.label)}]]\n")
     fd.write('[cols="' + ",".join(c[1] for c in columns) + '",options="header"]\n')
     fd.write("|===\n")
     fd.write("|" + " |".join(c[0] for c in columns) + "\n")

@@ -449,6 +449,10 @@ what it can do with the program buffer.
 passed through by a hart during run/halt debugging as influenced by the
 different fields of {dm-dmcontrol}, {dm-abstractcs}, <<abstractauto>>, and {dm-command}.
 
+[[abstract_sm]]
+.Run/Halt Debug State Machine for single-hart hardware platforms. As only a small amount of state is visible to the debugger, the states and transitions are conceptual.
+image::./fig/abstract_commands.png[]
+
 [[systembusaccess]]
 === System Bus Access
 
@@ -491,10 +495,6 @@ access memory in a running system with minimal impact. Second, it may
 improve performance when accessing memory. Third, it may provide access
 to devices that a hart does not have access to.
 ====
-
-[[abstract_sm]]
-.Run/Halt Debug State Machine for single-hart hardware platforms. As only a small amount of state is visible to the debugger, the states and transitions are conceptual.
-image::abstract_commands.svg[]
 
 === Minimally Intrusive Debugging
 
