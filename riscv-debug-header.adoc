@@ -22,7 +22,7 @@
 // Settings:
 :experimental:
 :reproducible:
-:imagesoutdir: ./docs-resources/images
+:imagesoutdir: ./build/images
 //:bibtex-file: ../docs-resources/resources/riscv-spec.bib
 //:bibtex-order: alphabetical
 //:bibtex-style: apa

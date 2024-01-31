@@ -1,7 +1,6 @@
 # Generated files
 build/*.adoc
-stem-*.svg
-build/*.svg
+build/images
 build/.asciidoctor
 build/*.pdf
 
