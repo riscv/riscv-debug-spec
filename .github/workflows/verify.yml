@@ -13,7 +13,7 @@ jobs:
     steps:
     # Step 0: Install build requirements
     - name: Install Build Requirements
-      run: sudo apt install --fix-missing -y python3-sympy
+      run: sudo apt install -y python3-sympy
 
     # Step 1: Checkout the repository
     - name: Checkout repository
