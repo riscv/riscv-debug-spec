@@ -860,7 +860,6 @@ def write_bytefield_row( fd, fields ):
     padding = max(0, 24 - totalWidth)
     fd.write("[bytefield]\n")
     fd.write("----\n")
-    fd.write('(defattrs :plain [:plain {:font-family "M+ 1p Fallback"}])\n')
     fd.write("(def row-height 45)\n")
     fd.write("(def row-header-fn nil)\n")
     fd.write(f"(def boxes-per-row {totalWidth + padding})\n")
@@ -887,10 +886,10 @@ def write_bytefield_row( fd, fields ):
         columnOffset += columnWidth
     # remove whitespace to save space
     headers = [h.replace(" ", "") for h in headers]
-    fd.write('(draw-column-headers {:labels [%s]})\n' % " ".join(f'"{h}"' for h in reversed(headers)))
+    fd.write('(draw-column-headers {:font-size 15 :height 16 :labels [%s]})\n' % " ".join(f'"{h}"' for h in reversed(headers)))
 
     for f in fields:
-        fd.write('(draw-box "%s" {:span %s})\n' % ( f.name, f.columnWidth() ))
+        fd.write('(draw-box (text "%s" {:font-size 20}) {:span %s})\n' % ( f.name, f.columnWidth() ))
     if padding:
         fd.write('(draw-box "" {:span %s :borders {}})\n' % ( padding ))
 
