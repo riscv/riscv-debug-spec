@@ -101,5 +101,9 @@ include::debugger_implementation.adoc[]
 //include::index.adoc[]
 //include::bibliography.adoc[]
 
+// The link target for referencing the index
+[[index]]
+// The index
 [index]
+// The title for the index
 == Index
