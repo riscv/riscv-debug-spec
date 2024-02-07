@@ -293,7 +293,7 @@ increase the values in the version fields.
 ====
 
 Names of registers and their fields are hyperlinks to their definition,
-and are also listed in the index on page <<singlestep>>.
+and are also listed in the <<index>>.
 
 include::build/sample_registers.adoc[]
 

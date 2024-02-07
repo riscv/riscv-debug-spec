@@ -949,7 +949,7 @@ def write_adoc( fd, registers ):
                 fd.write(f"==={sub} ((`{r.name}`))\n")
         fd.write("\n")
         fd.write(remove_indent(r.description))
-        fd.write("\n")
+        fd.write("\n\n")
 
         if r.diagram:
             fd.write(f"{remove_indent(r.diagram)}\n")
