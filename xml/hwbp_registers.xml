@@ -1412,9 +1412,9 @@
         This register is accessible as {csr-tdata3} when {tdata1-type} is 2, 3, 4,
         5, or 6 and XLEN=32.
 
-        All functionality in this register is optional. The $value$ bits may
-        tie any number of upper bits to 0. The $select$ bits may only support
-        0 (ignore).
+        All functionality in this register is optional.  Any number of upper
+        bits of {textra32-mhvalue} and {textra32-svalue} may be tied to 0.
+        {textra32-mhselect} and {textra32-sselect} may only support 0 (ignore).
 
         Byte-granular comparison of {csr-scontext} to {textra32-svalue}
         allows {csr-scontext} to be defined to include more than one element of comparison.
