@@ -453,7 +453,7 @@
 
             <value v="0" name="any">
             The trigger will attempt to match against an access of any size.
-            The behavior is only well-defined if `select`=0, or if the access
+            The behavior is only well-defined if {mcontrol-select}=0, or if the access
             size is XLEN.
             </value>
 
@@ -569,8 +569,8 @@
             `M` bits of {csr-tdata2}.
             `M` is `XLEN-1` minus the index of the least-significant
             bit containing 0 in {csr-tdata2}. Debuggers should only write values
-            to {csr-tdata2} such that `M` + `{mcontrol-maskmax}` ≥ `XLEN`
-            and `M` &gt; 0$ , otherwise it's undefined on what conditions the
+            to {csr-tdata2} such that `M` + {mcontrol-maskmax} ≥ `XLEN`
+            and `M` &gt; 0, otherwise it's undefined on what conditions the
             trigger will match.
             </value>
 
@@ -825,8 +825,8 @@
         <field name="size" bits="18:16" access="WARL" reset="0">
             <value v="0" name="any">
             The trigger will attempt to match against an access of any size.
-            The behavior is only well-defined if $select=0$, or if the access
-            size is XLEN.
+            The behavior is only well-defined if {mcontrol6-select}=0, or if the
+            access size is XLEN.
             </value>
 
             <value v="1" name="8bit">
@@ -929,8 +929,8 @@
             `M` bits of {csr-tdata2}.
             `M` is `XLEN-1` minus the index of the least-significant bit
             containing 0 in {csr-tdata2}.
-            {csr-tdata2} is *WARL* and if bits `Maskmax6-1:0` are written with all
-            ones then bit `Maskmax6-1` will be set to 0 while the values of bits `Maskmax6-2:0`
+            {csr-tdata2} is *WARL* and if bits `maskmax6-1:0` are written with all
+            ones then bit `maskmax6-1` will be set to 0 while the values of bits `maskmax6-2:0`
             are UNSPECIFIED.
             Legal values for {csr-tdata2} require M + `maskmax6` ≥ `XLEN` and `M` &gt; 0.
             See above for how to determine maskmax6.
@@ -1412,9 +1412,9 @@
         This register is accessible as {csr-tdata3} when {tdata1-type} is 2, 3, 4,
         5, or 6 and XLEN=32.
 
-        All functionality in this register is optional. The $value$ bits may
-        tie any number of upper bits to 0. The $select$ bits may only support
-        0 (ignore).
+        All functionality in this register is optional.  Any number of upper
+        bits of {textra32-mhvalue} and {textra32-svalue} may be tied to 0.
+        {textra32-mhselect} and {textra32-sselect} may only support 0 (ignore).
 
         Byte-granular comparison of {csr-scontext} to {textra32-svalue}
         allows {csr-scontext} to be defined to include more than one element of comparison.
