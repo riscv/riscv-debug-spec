@@ -213,19 +213,31 @@ class Field( object ):
 
     def columnWidth( self ):
         """Return the width of the column in boxes."""
-        charWidth = .33
+        offsetCharWidth = .18
+        nameCharWidth = .33
         xlen_symbol = sympy.symbols('XLEN')
+        lengthCharWidth = .22
         try:
             # Pretend XLEN=32. This makes 32-bit registers with just a single
             # field be wide, while registers with XLEN-32 width be narrow.
             length = int(self.length().subs(xlen_symbol, 32))
         except TypeError:
             length = 20
+        if self.length() == 1:
+            bitText = f"{self.lowBit}"
+        else:
+            bitText = f"{self.highBit} {self.lowBit}"
         width = math.ceil(max(
+            # Minimum length
             1,
+            # Make fields with more bits take up more space visually
             1 + math.log(max(length, 0.1), 1.7),
-            len( str( self.length() )) * charWidth,
-            len( self.name ) * charWidth))
+            # Wide enough to accommodate the string showing the field length
+            len( str( self.length() )) * lengthCharWidth,
+            # Wide enough to accommodate the high/low bit strings
+            len( bitText ) * offsetCharWidth,
+            # Wide enough to accommodate the name of the field
+            len( self.name ) * nameCharWidth))
         # Make longer widths odd, so we can center the bit.
         if width > 1 and width % 2 == 0:
             width += 1
