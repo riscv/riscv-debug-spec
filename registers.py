@@ -898,7 +898,7 @@ def write_bytefield_row( fd, fields ):
         columnOffset += columnWidth
     # remove whitespace to save space
     headers = [h.replace(" ", "") for h in headers]
-    fd.write('(draw-column-headers {:font-size 15 :height 16 :labels [%s]})\n' % " ".join(f'"{h}"' for h in reversed(headers)))
+    fd.write('(draw-column-headers {:font-size 15 :height 17 :labels [%s]})\n' % " ".join(f'"{h}"' for h in reversed(headers)))
 
     for f in fields:
         fd.write('(draw-box (text "%s" {:font-size 20}) {:span %s})\n' % ( f.name, f.columnWidth() ))
