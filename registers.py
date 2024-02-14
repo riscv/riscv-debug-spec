@@ -213,7 +213,7 @@ class Field( object ):
 
     def columnWidth( self ):
         """Return the width of the column in boxes."""
-        offsetCharWidth = .18
+        offsetCharWidth = .26
         nameCharWidth = .33
         xlen_symbol = sympy.symbols('XLEN')
         lengthCharWidth = .22
@@ -226,7 +226,9 @@ class Field( object ):
         if self.length() == 1:
             bitText = f"{self.lowBit}"
         else:
-            bitText = f"{self.highBit} {self.lowBit}"
+            # There is no dash in what we're displaying, but we want some space
+            # for separation between the two values.
+            bitText = f"{self.highBit} - {self.lowBit}"
         width = math.ceil(max(
             # Minimum length
             1,
@@ -891,10 +893,22 @@ def write_bytefield_row( fd, fields ):
             else:
                 headers.append(f.lowBit)
         else:
-            assert columnWidth >= 2
-            headers.append(f.lowBit)
-            headers += [""] * (columnWidth - 2)
-            headers.append(f.highBit)
+            # If low/high bit need more than 2 characters, place them one in
+            # from the end so they don't overflow into the neighboring field.
+            # Really this should be done with right/left alignment, but
+            # bytefield doesn't seem to support that.
+            if len(f.lowBit) > 2:
+                start = ["", f.lowBit]
+            else:
+                start = [f.lowBit]
+            if len(f.highBit) > 2:
+                end = [f.highBit, ""]
+            else:
+                end = [f.highBit]
+            assert columnWidth >= len(start) + len(end)
+            headers += start
+            headers += [""] * (columnWidth - len(start) - len(end))
+            headers += end
         columnOffset += columnWidth
     # remove whitespace to save space
     headers = [h.replace(" ", "") for h in headers]
