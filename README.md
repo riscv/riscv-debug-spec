@@ -1,11 +1,10 @@
 RISC-V Debug Specification
 ==========================
 
-The current master branch is v1.0.0-frozen.
-
 You may be looking for one of the following pre-built PDFs:
-* [Latest frozen](https://github.com/riscv/riscv-debug-spec/blob/master/riscv-debug-frozen.pdf)
+* [Latest release candidate](https://github.com/riscv/riscv-debug-spec/releases)
 * [Latest release](https://github.com/riscv/riscv-debug-spec/blob/release/riscv-debug-release.pdf)
+  (This is outdated at this point, and only of historical interest.)
 
 Build Instructions
 ------------------

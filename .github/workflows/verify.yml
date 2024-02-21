@@ -1,13 +1,38 @@
 name: Verify Build
-on: [push]
+
+on:
+  pull_request:
+  push:
+    branches:
+      - asciidoc
+
 jobs:
-    Build:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v2
-            - run: sudo apt-get update
-            - run: >
-                sudo apt-get install python3-sympy texlive-latex-base \
-                        texlive-latex-recommended texlive-latex-extra \
-                        texlive-fonts-extra texlive-science
-            - run: make draft stable release chisel
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 0: Install build requirements
+    - name: Install Build Requirements
+      run: sudo apt update && sudo apt install -y python3-sympy
+
+    # Step 1: Checkout the repository
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
+
+    # Step 2: Pull the latest RISC-V Docs container image
+    - name: Pull Container
+      run: docker pull riscvintl/riscv-docs-base-container-image:latest
+
+    # Step 3: Build Files
+    - name: Build Files
+      run: cd ./build && make
+
+    # Step 4: Upload the built PDF files as a single artifact
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: Build Artifacts
+        path: ${{ github.workspace }}/build/*.pdf
+        retention-days: 30

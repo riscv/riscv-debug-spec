@@ -30,8 +30,8 @@
         <field name="errinfo" bits="20:18" access="R" reset="4">
             This optional field may provide additional detail about an error
             that occurred when communicating with a DM. It is updated whenever
-            \FdtmDmiOp is updated by the hardware or when 1 is written to
-            \FdtmDtmcsDmireset.
+            {dmi-op} is updated by the hardware or when 1 is written to
+            {dtmcs-dmireset}.
 
             <value v="0" name="not implemented">
                 This field is not implemented.
@@ -67,15 +67,15 @@
         </field>
         <field name="dmireset" bits="16" access="W1" reset="-">
             Writing 1 to this bit clears the sticky error state and resets
-            \FdtmDtmcsErrinfo, but does not affect outstanding DMI transactions.
+            {dtmcs-errinfo}, but does not affect outstanding DMI transactions.
         </field>
         <field name="0" bits="15" access="R" reset="0" />
         <field name="idle" bits="14:12" access="R" reset="Preset">
             This is a hint to the debugger of the minimum number of
             cycles a debugger should spend in
             Run-Test/Idle after every DMI scan to avoid a `busy'
-            return code (\FdtmDtmcsDmistat of 3). A debugger must still
-            check \FdtmDtmcsDmistat when necessary.
+            return code ({dtmcs-dmistat} of 3). A debugger must still
+            check {dtmcs-dmistat} when necessary.
 
             0: It is not necessary to enter Run-Test/Idle at all.
 
@@ -86,10 +86,10 @@
             And so on.
         </field>
         <field name="dmistat" bits="11:10" access="R" reset="0">
-            Read-only alias of \FdtmDmiOp.
+            Read-only alias of {dmi-op}.
         </field>
         <field name="abits" bits="9:4" access="R" reset="Preset">
-            The size of \FdmSbaddressZeroAddress in \RdtmDmi.
+            The size of {sbaddress0-address} in {dtm-dmi}.
         </field>
         <field name="version" bits="3:0" access="R" reset="1">
             <value v="0" name="0.11">
@@ -110,15 +110,16 @@
         sdesc="For Debugging">
         This register allows access to the Debug Module Interface (DMI).
 
-        In Update-DR, the DTM starts the operation specified in \FdtmDmiOp unless the
-        current status reported in \FdtmDmiOp is sticky.
+        In Update-DR, the DTM starts the operation specified in {dmi-op} unless the
+        current status reported in {dmi-op} is sticky.
 
-        In Capture-DR, the DTM updates \FdmSbdataZeroData with the result from that
-        operation, updating \FdtmDmiOp if the current \FdtmDmiOp isn't sticky.
+        In Capture-DR, the DTM updates {sbdata0-data} with the result from that
+        operation, updating {dmi-op} if the current {dmi-op} isn't sticky.
 
-        See Section~\ref{dmiaccess} for examples of how this is used.
+        See xref:dmiaccess[] for examples of how this is used.
 
-        \begin{commentary}
+        [NOTE]
+        ====
         The still-in-progress status is sticky to accommodate debuggers that
         batch together a number of scans, which must all be executed or stop as
         soon as there's a problem.
@@ -126,12 +127,12 @@
         For instance a series of scans may write a Debug Program and execute
         it.  If one of the writes fails but the execution continues, then the
         Debug Program may hang or have other unexpected side effects.
-        \end{commentary}
+        ====
 
         <field name="address" bits="abits+33:34" access="R/W" reset="0">
             Address used for DMI access. In Update-DR this value is used
             to access the DM over the DMI.
-            \FdtmDmiOp defines what this register contains after every possible
+            {dmi-op} defines what this register contains after every possible
             operation.
         </field>
         <field name="data" bits="33:2" access="R/W" reset="0">
@@ -142,30 +143,30 @@
             When the debugger writes this field, it has the following meaning:
 
             <value v="0" name="nop">
-            Ignore \FdmSbdataZeroData and \FdmSbaddressZeroAddress.
+            Ignore {sbdata0-data} and {sbaddress0-address}.
 
             Don't send anything over the DMI during Update-DR.
             This operation should never result in a busy or error response.
             The address and data reported in the following Capture-DR
             are undefined.
 
-            This operation leaves the values in \FdtmDmiAddress and \FdtmDmiData
-            \unspecified.
+            This operation leaves the values in {dmi-address} and {dmi-data}
+            UNSPECIFIED.
             </value>
 
             <value v="1" name="read">
-            Read from \FdtmDmiAddress.
+            Read from {dmi-address}.
 
-            When this operation succeeds, \FdtmDmiAddress contains the address
-            that was read from, and \FdtmDmiData contains the value that was
+            When this operation succeeds, {dmi-address} contains the address
+            that was read from, and {dmi-data} contains the value that was
             read.
             </value>
 
             <value v="2" name="write">
-            Write \FdtmDmiData to \FdtmDmiAddress.
+            Write {dmi-data} to {dmi-address}.
 
-            This operation leaves the values in \FdtmDmiAddress and \FdtmDmiData
-            \unspecified.
+            This operation leaves the values in {dmi-address} and {dmi-data}
+            UNSPECIFIED.
             </value>
 
             <value v="3" name="reserved">
@@ -183,9 +184,9 @@
             </value>
 
             <value v="2" name="failed" duplicate="1">
-            A previous operation failed.  The data scanned into \RdtmDmi in
+            A previous operation failed.  The data scanned into {dtm-dmi} in
             this access will be ignored.  This status is sticky and can be
-            cleared by writing \FdtmDtmcsDmireset in \RdtmDtmcs.
+            cleared by writing {dtmcs-dmireset} in {dtm-dtmcs}.
 
             This indicates that the DM itself or the DMI responded with an error.
             There are no specified cases in which the DM would
@@ -193,14 +194,14 @@
             returning errors.
 
             If a debugger sees this status, there might be additional
-            information in \FdtmDtmcsErrinfo.
+            information in {dtmcs-errinfo}.
             </value>
 
             <value v="3" name="busy" duplicate="1">
             An operation was attempted while a DMI request is still in
-            progress. The data scanned into \RdtmDmi in this access will be
+            progress. The data scanned into {dtm-dmi} in this access will be
             ignored. This status is sticky and can be cleared by writing
-            \FdtmDtmcsDmireset in \RdtmDtmcs. If a debugger sees this status, it
+            {dtmcs-dmireset} in {dtm-dtmcs}. If a debugger sees this status, it
             needs to give the target more TCK edges between Update-DR and
             Capture-DR. The simplest way to do that is to add extra transitions
             in Run-Test/Idle.

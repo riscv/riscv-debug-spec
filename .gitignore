@@ -1,27 +1,7 @@
-# LaTeX intermediate files
-*.aux
-*.idx
-*.ilg
-*.ind
-*.lof
-*.log
-*.out
-*.toc
-*.lot
-*.hst
-*.ver
-
 # Generated files
-*_registers.tex
-*_registers.tex.inc
-*_registers.h
-serial.*
-abstract_commands.*
-debug_defines.*
+build/*.adoc
+build/images
+build/.asciidoctor
+build/*.pdf
 
-# Changelogs
-changelog.tex
-vc.tex
-
-# Resulting PDFs
-riscv-debug-workgroup-notes.pdf
+.vscode

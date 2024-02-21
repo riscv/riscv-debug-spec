@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from datetime import datetime
 import sys
 import xml.etree.ElementTree
 import argparse
@@ -44,6 +45,8 @@ class Register( object ):
         self.address = address
         self.sdesc = sdesc
         self.define = define
+        # Allow user to override our auto-generated register diagram.
+        self.diagram = None
         self.fields = []
 
         self.label = ( short or name ).lower() # TODO: replace spaces etc.
@@ -209,13 +212,38 @@ class Field( object ):
         return sympy.simplify(self.lowBit).atoms(sympy.Symbol) | sympy.simplify(self.highBit).atoms(sympy.Symbol)
 
     def columnWidth( self ):
-        text = str( self.length() )
-        if text.isdigit():
-            l = int( text )
+        """Return the width of the column in boxes."""
+        offsetCharWidth = .26
+        nameCharWidth = .33
+        xlen_symbol = sympy.symbols('XLEN')
+        lengthCharWidth = .22
+        try:
+            # Pretend XLEN=32. This makes 32-bit registers with just a single
+            # field be wide, while registers with XLEN-32 width be narrow.
+            length = int(self.length().subs(xlen_symbol, 32))
+        except TypeError:
+            length = 20
+        if self.length() == 1:
+            bitText = f"{self.lowBit}"
         else:
-            # Fancier would be to assume XLEN is 32 or something.
-            l = 20
-        return max( l, len( self.name ), len( self.lowBit + self.highBit ) * 1.2 )
+            # There is no dash in what we're displaying, but we want some space
+            # for separation between the two values.
+            bitText = f"{self.highBit} - {self.lowBit}"
+        width = math.ceil(max(
+            # Minimum length
+            1,
+            # Make fields with more bits take up more space visually
+            1 + math.log(max(length, 0.1), 1.7),
+            # Wide enough to accommodate the string showing the field length
+            len( str( self.length() )) * lengthCharWidth,
+            # Wide enough to accommodate the high/low bit strings
+            len( bitText ) * offsetCharWidth,
+            # Wide enough to accommodate the name of the field
+            len( self.name ) * nameCharWidth))
+        # Make longer widths odd, so we can center the bit.
+        if width > 1 and width % 2 == 0:
+            width += 1
+        return width
 
     def latex_description(self):
         result = [self.description]
@@ -319,6 +347,9 @@ def parse_xml( path ):
                     define, values )
             register.add_field( field )
 
+        for diagram in r.findall( 'diagram' ):
+            register.diagram = diagram.text.strip()
+
         register.check()
         registers.add_register( register )
     return registers
@@ -359,6 +390,18 @@ def toLatexIdentifier( *args ):
         text += arg
     return text
 
+def toAdocIdentifier( *args ):
+    text = "-".join(
+        filter(
+            lambda a: a,
+            [(a or "")
+                .lower()
+                .rstrip("_")
+                for a in args]
+        ))
+    text = re.sub( "\s+", "", text )
+    return text
+
 def toCIdentifier( text ):
     return re.sub( "[^\w]", "_", text )
 
@@ -375,6 +418,20 @@ def write_definitions( fd, registers ):
                         toLatexIdentifier( registers.prefix, regid, f.name ),
                         toLatexIdentifier( registers.prefix, regid, f.name ),
                         f.name ) )
+
+def write_adoc_definitions( fd, registers ):
+    for r in registers.registers:
+        regid = r.short or r.label
+        if r.define:
+            macroName = toAdocIdentifier( registers.prefix, regid )
+            if r.fields or r.description:
+                fd.write( f":{macroName}: <<{macroName},{r.short or r.label}>>\n" )
+            else:
+                fd.write( f":{macroName}: {r.short or r.label}\n" )
+        for f in r.fields:
+            if f.define:
+                macroName = toAdocIdentifier( regid, f.name )
+                fd.write( f":{macroName}: <<{macroName},{f.name}>>\n" )
 
 class Macro:
     def __init__(self, name, expressionText):
@@ -797,6 +854,199 @@ def print_latex_register( registers ):
         print("\\end{register}")
         print()
 
+def remove_indent( text ):
+    return "\n".join( line.lstrip() for line in text.splitlines() )
+
+
+def add_continuations(text):
+    lines = text.splitlines()
+    result = []
+    for i in range(len(lines)):
+        current_line = lines[i].rstrip()
+        if len(current_line) > 0 and i < len(lines) - 1 and lines[i + 1].strip() != "":
+            current_line += " +"
+        result.append(current_line)
+    return "\n".join(result)
+
+def write_bytefield_row( fd, fields ):
+    # Have a minimum width, otherwise small registers look huge.
+    totalWidth = sum( f.columnWidth() for f in fields )
+    padding = max(0, 24 - totalWidth)
+    fd.write("[bytefield]\n")
+    fd.write("----\n")
+    fd.write("(def row-height 45)\n")
+    fd.write("(def row-header-fn nil)\n")
+    fd.write(f"(def boxes-per-row {totalWidth + padding})\n")
+    # TODO: column headers
+
+    headers = [""] * padding
+    columnOffset = 0
+    for f in reversed(fields):
+        columnWidth = f.columnWidth()
+        if f.length() == 1:
+            if columnWidth > 1:
+                before = columnWidth // 2
+                after = columnWidth - before - 1
+                headers += [""] * before
+                headers.append(f.lowBit)
+                headers += [""] * after
+            else:
+                headers.append(f.lowBit)
+        else:
+            # If low/high bit need more than 2 characters, place them one in
+            # from the end so they don't overflow into the neighboring field.
+            # Really this should be done with right/left alignment, but
+            # bytefield doesn't seem to support that.
+            if len(f.lowBit) > 2:
+                start = ["", f.lowBit]
+            else:
+                start = [f.lowBit]
+            if len(f.highBit) > 2:
+                end = [f.highBit, ""]
+            else:
+                end = [f.highBit]
+            assert columnWidth >= len(start) + len(end)
+            headers += start
+            headers += [""] * (columnWidth - len(start) - len(end))
+            headers += end
+        columnOffset += columnWidth
+    # remove whitespace to save space
+    headers = [h.replace(" ", "") for h in headers]
+    fd.write('(draw-column-headers {:font-size 15 :height 17 :labels [%s]})\n' % " ".join(f'"{h}"' for h in reversed(headers)))
+
+    for f in fields:
+        fd.write('(draw-box (text "%s" {:font-size 20}) {:span %s})\n' % ( f.name, f.columnWidth() ))
+    if padding:
+        fd.write('(draw-box "" {:span %s :borders {}})\n' % ( padding ))
+
+    for f in fields:
+        fd.write('(draw-box "%s" {:span %s :borders {}})\n' % ( f.length(), f.columnWidth() ))
+    if padding:
+        fd.write('(draw-box "" {:span %s :borders {}})\n' % ( padding ))
+
+    fd.write("----\n")
+
+def write_bytefield( fd, register ):
+    """Return a bytefield representation of the register."""
+    totalWidth = sum( f.columnWidth() for f in register.fields )
+
+    maxWidth = 40
+    if totalWidth > maxWidth:
+        rowCount = math.ceil(totalWidth / maxWidth)
+    else:
+        rowCount = 1
+
+    rowWidth = totalWidth / rowCount
+    rows = [[]]
+    offset = 0
+    for f in register.fields:
+        if rowWidth - offset > f.columnWidth() / 2 or len(rows) >= rowCount:
+            rows[-1].append(f)
+            offset += f.columnWidth()
+        else:
+            rows.append([])
+            rows[-1].append(f)
+            offset = f.columnWidth()
+
+    # Provide separation from a previous ordered list.
+    fd.write("\n")
+    for row in rows:
+        write_bytefield_row(fd, row)
+
+def write_adoc( fd, registers ):
+    sub = "=" * registers.depth
+    for r in registers.registers:
+        if not r.fields and not r.description:
+            continue
+
+        if r.label and r.define:
+            fd.write("[[%s]]\n" % toAdocIdentifier(registers.prefix, r.label))
+        if r.short:
+            # TODO: Check that (((foo))) renders as ((foo)) inside parens
+            if r.address:
+                fd.write(f"==={sub} {r.name} ((({r.short})), at {r.address})\n")
+            else:
+                fd.write(f"==={sub} {r.name} ((({r.short})))\n")
+            # TODO: confirm that index works
+        else:
+            if r.address:
+                fd.write(f"==={sub} ((`{r.name}`)) (at {r.address})\n")
+            else:
+                fd.write(f"==={sub} ((`{r.name}`))\n")
+        fd.write("\n")
+        fd.write(remove_indent(r.description))
+        fd.write("\n\n")
+
+        if r.diagram:
+            fd.write(f"{remove_indent(r.diagram)}\n")
+        if r.fields:
+            if registers.prefix == "CSR_":
+                if int(r.address, 0) >= 0xc00:
+                    fd.write("This CSR is read-only.\n")
+                elif all(f.access in ('R', '0') for f in r.fields):
+                    fd.write("Writing this read/write CSR has no effect.\n")
+                else:
+                    fd.write("This CSR is read/write.\n")
+            elif all(f.access in ('R', '0') for f in r.fields):
+                fd.write("This entire register is read-only.\n")
+
+            write_bytefield( fd, r )
+
+        columns = [("<2", "Field", lambda f: f"(({f.name}))")]
+        columns += [("<6", "Description", lambda f: f.latex_description())]
+        if not registers.skip_access:
+            columns += [("^1", "Access", lambda f: f"*{f.access}*")]
+        if not registers.skip_reset:
+            columns += [("^1", "Reset", lambda f: f.reset)]
+
+        if any( f.description for f in r.fields ):
+            cols = ",".join(c[0] for c in columns)
+            fd.write(f'[float="center",align="center",cols="{cols}",options="header"]\n')
+            fd.write("|===\n")
+
+            fd.write("|" + " |".join(c[1] for c in columns) + "\n")
+
+            for f in r.fields:
+                if f.description or f.values:
+                    identifier = toAdocIdentifier(r.short or r.label, f.name)
+                    fd.write(f"|[[{identifier}]] `{columns[0][2](f)}`\n")
+                    for c in columns[1:]:
+                        fd.write("a|" + remove_indent( c[2](f) ) + "\n")
+
+            fd.write("|===\n")
+        fd.write("\n")
+
+def write_adoc_index( fd, registers ):
+    fd.write(remove_indent(registers.description))
+
+    columns = [
+        ("Address", "1"),
+        ("Name", "6")]
+    if any(r.sdesc for r in registers.registers):
+        columns.append(("Description", "6"))
+    columns.append(("Section", "2"))
+
+    fd.write('[cols="' + ",".join(c[1] for c in columns) + '",options="header"]\n')
+    fd.write("|===\n")
+    fd.write("|" + " |".join(c[0] for c in columns) + "\n")
+
+    for r in sorted( registers.registers,
+            key=cmp_to_key(lambda a, b: compare_address(a.address, b.address))):
+        identifier = toAdocIdentifier(registers.prefix, r.short or r.name)
+        if r.short:
+            name = "%s ({%s})" % (r.name, identifier)
+        else:
+            name = "{%s}" % identifier
+        if r.fields or r.description:
+            link = f"xref:{identifier}[]"
+        else:
+            link = ""
+        if r.sdesc:
+            fd.write("|%s |%s |%s| %s\n" % ( r.address, name, r.sdesc, link ))
+        else:
+            fd.write("|%s |%s| %s\n" % ( r.address, name, link ))
+    fd.write("|===\n")
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument( 'path' )
@@ -805,6 +1055,10 @@ def main():
             'start/end positions.' )
     parser.add_argument( '--custom', action='store_true',
             help='Use custom LaTeX.' )
+    parser.add_argument( '--adoc',
+            help='Write asciidoc registers to the named file.' )
+    parser.add_argument( '--adoc-definitions',
+            help='Write asciidoc register style definitions to the named file.' )
     parser.add_argument( '--definitions',
             help='Write register style definitions to the named file.' )
     parser.add_argument( '--cheader',
@@ -833,12 +1087,37 @@ def main():
         write_cheader( open( parsed.cheader, "w" ), registers )
     if parsed.chisel:
         write_chisel( open( parsed.chisel, "w" ), registers )
-    if not registers.skip_index:
+    if not registers.skip_index and not parsed.adoc:
         print_latex_index( registers )
     if parsed.register:
         assert(0)
         print_latex_register( registers )
     if parsed.custom:
         print_latex_custom( registers )
+    if parsed.adoc:
+        with open( parsed.adoc, "w" ) as fd:
+            fd.write(f"// Auto-generated on {datetime.now()} from {parsed.path}\n")
+            if not registers.skip_index:
+                write_adoc_index( fd, registers )
+            write_adoc( fd, registers )
+    if parsed.adoc_definitions:
+        with open( parsed.adoc_definitions, "w" ) as fd:
+            fd.write(f"// Auto-generated on {datetime.now()} from {parsed.path}\n")
+            write_adoc_definitions( fd, registers )
+
+    #sed_convert(registers)
+
+def sed_convert( registers ):
+    for r in registers.registers:
+        regid = r.short or r.label
+        if r.define:
+            latex = "\\\\R" + toLatexIdentifier( registers.prefix, regid )
+            adoc = "{" + toAdocIdentifier( registers.prefix, regid ) + "}"
+            print(f"s/{latex}/{adoc}/g")
+        for f in r.fields:
+            if f.define:
+                latex = "\\\\F" + toLatexIdentifier( registers.prefix, regid, f.name )
+                adoc = "{" + toAdocIdentifier( regid, f.name ) + "}"
+                print(f"s/{latex}/{adoc}/g")
 
 sys.exit( main() )

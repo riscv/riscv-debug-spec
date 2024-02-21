@@ -2,58 +2,49 @@
     These registers are only accessible from Debug Mode.
 
     <register name="Debug Control and Status" short="dcsr" address="0x7b0">
-        Upon entry into Debug Mode, \FcsrDcsrV and \FcsrDcsrPrv are updated
-        with the privilege level the hart was previously in, and \FcsrDcsrCause
+        Upon entry into Debug Mode, {dcsr-v} and {dcsr-prv} are updated
+        with the privilege level the hart was previously in, and {dcsr-cause}
         is updated with the reason for Debug Mode entry.  Other than these
-        fields and \FcsrDcsrNmip, the other fields of \RcsrDcsr are only
+        fields and {dcsr-nmip}, the other fields of {csr-dcsr} are only
         writable by the external debugger.
 
-        \begin{steps}{Table~\ref{tab:dcsrcausepriority} shows the priorities of
+        &lt;&lt;tab:dcsrcausepriority&gt;&gt; shows the priorities of
         reasons for entering Debug Mode.  Implementations should implement
         priorities as shown in the table. For compatibility with old versions of this spec, resethaltreq and haltreq are
-        allowed to be at different positions than shown as long as:}
-        \item resethaltreq is higher priority than haltreq
-        \item the relative order of the other four causes is maintained
-        \end{steps}
+        allowed to be at different positions than shown as long as:
 
-        \begin{table}[H]
-        \centering
-        \caption{Priority of reasons for entering Debug Mode from highest to lowest.}
-        \label{tab:dcsrcausepriority}
-        \begin{tabular}{|c|c|}
-        \hline
-        \FcsrDcsrCause encoding &amp; Cause \\
-        \hline
-        5 &amp; resethaltreq \\
-        \hline
-        6 &amp; halt group \\
-        \hline
-        3 &amp; haltreq \\
-        \hline
-        2 &amp; trigger (See table~\ref{tab:priority} for detailed priority) \\
-        \hline
-        1 &amp; ebreak \\
-        \hline
-        4 &amp; step \\
-        \hline
-        \end{tabular}
-        \end{table}
+        . resethaltreq is higher priority than haltreq
+        . the relative order of the other four causes is maintained
 
-        \begin{commentary}
+        [[tab:dcsrcausepriority]]
+        .Priority of reasons for entering Debug Mode from highest to lowest.
+        [%autowidth,align="center",float="center",cols="^,^",options="header"]
+        |===
+        | {dcsr-cause} encoding | Cause
+        | 5 | resethaltreq
+        | 6 | halt group
+        | 3 | haltreq
+        | 2 | trigger (See &lt;&lt;tab:priority&gt;&gt; for detailed priority)
+        | 1 | ebreak
+        | 4 | step
+        |===
+
+        [NOTE]
+        ====
         Note that mcontrol/mcontrol6 triggers which fire after the
         instruction which hit the trigger are considered
         to be high priority causes on the subsequent instruction.  Therefore,
         an execute trigger with timing=after on an ebreak instruction is lower
         priority than the ebreak itself because the trigger will fire after the
         ebreak instruction.  For the same reason, if a single instruction is
-        stepped with both icount and \FcsrDcsrStep then the \FcsrDcsrStep has
-        priority.  See table~\ref{tab:priority} for the relative priorities of
+        stepped with both icount and {dcsr-step} then the {dcsr-step} has
+        priority.  See &lt;&lt;tab:priority&gt;&gt; for the relative priorities of
         triggers with respect to the ebreak instruction.
 
-        Most multi-hart implementations will probably hardwire \FcsrDcsrStoptime
+        Most multi-hart implementations will probably hardwire {dcsr-stoptime}
         to 0, as the implementation can get complicated and the benefit is
         small.
-        \end{commentary}
+        ====
 
         <field name="debugver" bits="31:28" access="R" reset="Preset">
             <value v="0" name="none">
@@ -72,59 +63,59 @@
         <field name="0" bits="27:18" access="R" reset="0" />
         <field name="ebreakvs" bits="17" access="WARL" reset="0">
             <value v="0" name="exception">
-            {\tt ebreak} instructions in VS-mode behave as described in the
+            `ebreak` instructions in VS-mode behave as described in the
             Privileged Spec.
             </value>
 
             <value v="1" name="debug mode">
-            {\tt ebreak} instructions in VS-mode enter Debug Mode.
+            `ebreak` instructions in VS-mode enter Debug Mode.
             </value>
 
             This bit is hardwired to 0 if the hart does not support virtualization mode.
         </field>
         <field name="ebreakvu" bits="16" access="WARL" reset="0">
             <value v="0" name="exception">
-            {\tt ebreak} instructions in VU-mode behave as described in the
+            `ebreak` instructions in VU-mode behave as described in the
             Privileged Spec.
             </value>
 
             <value v="1" name="debug mode">
-            {\tt ebreak} instructions in VU-mode enter Debug Mode.
+            `ebreak` instructions in VU-mode enter Debug Mode.
             </value>
 
             This bit is hardwired to 0 if the hart does not support virtualization mode.
         </field>
         <field name="ebreakm" bits="15" access="R/W" reset="0">
             <value v="0" name="exception">
-            {\tt ebreak} instructions in M-mode behave as described in the
+            `ebreak` instructions in M-mode behave as described in the
             Privileged Spec.
             </value>
 
             <value v="1" name="debug mode">
-            {\tt ebreak} instructions in M-mode enter Debug Mode.
+            `ebreak` instructions in M-mode enter Debug Mode.
             </value>
         </field>
         <field name="0" bits="14" access="R" reset="0" />
         <field name="ebreaks" bits="13" access="WARL" reset="0">
             <value v="0" name="exception">
-            {\tt ebreak} instructions in S-mode behave as described in the
+            `ebreak` instructions in S-mode behave as described in the
             Privileged Spec.
             </value>
 
             <value v="1" name="debug mode">
-            {\tt ebreak} instructions in S-mode enter Debug Mode.
+            `ebreak` instructions in S-mode enter Debug Mode.
             </value>
 
             This bit is hardwired to 0 if the hart does not support S-mode.
         </field>
         <field name="ebreaku" bits="12" access="WARL" reset="0">
             <value v="0" name="exception">
-            {\tt ebreak} instructions in U-mode behave as described in the
+            `ebreak` instructions in U-mode behave as described in the
             Privileged Spec.
             </value>
 
             <value v="1" name="debug mode">
-            {\tt ebreak} instructions in U-mode enter Debug Mode.
+            `ebreak` instructions in U-mode enter Debug Mode.
             </value>
 
             This bit is hardwired to 0 if the hart does not support U-mode.
@@ -132,13 +123,13 @@
         <field name="stepie" bits="11" access="WARL" reset="0">
             <value v="0" name="interrupts disabled">
             Interrupts (including NMI) are disabled during single stepping
-            with \FcsrDcsrStep set.
+            with {dcsr-step} set.
             This value should be supported.
             </value>
 
             <value v="1" name="interrupts enabled">
             Interrupts (including NMI) are enabled during single stepping
-            with \FcsrDcsrStep set.
+            with {dcsr-step} set.
             </value>
 
             Implementations may hard wire this bit to 0.
@@ -154,9 +145,9 @@
 
             <value v="1" name="freeze">
             Don't increment any hart-local counters while in Debug Mode or
-            on {\tt ebreak} instructions that cause entry into Debug Mode.
-            These counters include the {\tt instret} CSR. On single-hart cores
-            {\tt cycle} should be stopped, but on multi-hart cores it must keep
+            on `ebreak` instructions that cause entry into Debug Mode.
+            These counters include the `instret` CSR. On single-hart cores
+            `cycle` should be stopped, but on multi-hart cores it must keep
             incrementing.
             </value>
 
@@ -164,16 +155,16 @@
         </field>
         <field name="stoptime" bits="9" access="WARL" reset="Preset">
             <value v="0" name="normal">
-            \Rtime continues to reflect \Rmtime.
+            `time` continues to reflect `mtime`.
             </value>
 
             <value v="1" name="freeze">
-            \Rtime is frozen at the time that Debug Mode was entered. When
-            leaving Debug Mode, \Rtime will reflect the latest
-            value of \Rmtime again.
+            `time` is frozen at the time that Debug Mode was entered. When
+            leaving Debug Mode, `time` will reflect the latest
+            value of `mtime` again.
 
-            While all harts have \FcsrDcsrStoptime=1 and are in Debug Mode,
-            \Rmtime is allowed to stop incrementing.
+            While all harts have {dcsr-stoptime}=1 and are in Debug Mode,
+            `mtime` is allowed to stop incrementing.
             </value>
 
             An implementation may hardwire this bit to 0 or 1.
@@ -182,11 +173,11 @@
             Explains why Debug Mode was entered.
 
             When there are multiple reasons to enter Debug Mode in a single
-            cycle, hardware should set \FcsrDcsrCause to the cause with the highest
-            priority.  See table~\ref{tab:dcsrcausepriority} for priorities.
+            cycle, hardware should set {dcsr-cause} to the cause with the highest
+            priority.  See &lt;&lt;tab:dcsrcausepriority&gt;&gt; for priorities.
 
             <value v="1" name="ebreak">
-            An {\tt ebreak} instruction was executed.
+            An `ebreak` instruction was executed.
             </value>
 
             <value v="2" name="trigger">
@@ -194,15 +185,15 @@
             </value>
 
             <value v="3" name="haltreq">
-            The debugger requested entry to Debug Mode using \FdmDmcontrolHaltreq.
+            The debugger requested entry to Debug Mode using {dmcontrol-haltreq}.
             </value>
 
             <value v="4" name="step">
-            The hart single stepped because \FcsrDcsrStep was set.
+            The hart single stepped because {dcsr-step} was set.
             </value>
 
             <value v="5" name="resethaltreq">
-            The hart halted directly out of reset due to \Fresethaltreq. It
+            The hart halted directly out of reset due to {resethaltreq} It
             is also acceptable to report 3 when this happens.
             </value>
 
@@ -215,19 +206,18 @@
         </field>
         <field name="v" bits="5" access="WARL" reset="0">
           Extends the prv field with the virtualization mode the hart was operating
-          in when Debug Mode was entered. The encoding is described in Table
-          \ref{tab:privmode}.
+          in when Debug Mode was entered. The encoding is described in &lt;&lt;tab:privmode&gt;&gt;.
           A debugger can change this value to change the hart's virtualization mode
           when exiting Debug Mode.
           This bit is hardwired to 0 on harts that do not support virtualization mode.
         </field>
         <field name="mprven" bits="4" access="WARL" reset="Preset">
             <value v="0" name="disabled">
-            \FcsrMstatusMprv in \Rmstatus is ignored in Debug Mode.
+            `mprv` in `mstatus` is ignored in Debug Mode.
             </value>
 
             <value v="1" name="enabled">
-            \FcsrMstatusMprv in \Rmstatus takes effect in Debug Mode.
+            `mprv` in `mstatus` takes effect in Debug Mode.
             </value>
 
             Implementing this bit is optional. It may be tied to either 0 or 1.
@@ -241,7 +231,7 @@
         </field>
         <field name="step" bits="2" access="R/W" reset="0">
             When set and not in Debug Mode, the hart will only execute a single
-            instruction and then enter Debug Mode. See Section~\ref{stepBit}
+            instruction and then enter Debug Mode. See xref:stepbit[]
             for details.
 
             The debugger must not change the value of this bit while the hart
@@ -249,8 +239,7 @@
         </field>
         <field name="prv" bits="1:0" access="WARL" reset="3">
             Contains the privilege mode the hart was operating in when Debug
-            Mode was entered. The encoding is described in Table
-            \ref{tab:privmode}.  A debugger can change this value to change
+            Mode was entered. The encoding is described in &lt;&lt;tab:privmode&gt;&gt;.  A debugger can change this value to change
             the hart's privilege mode when exiting Debug Mode.
 
             Not all privilege modes are supported on all harts. If the
@@ -260,80 +249,66 @@
     </register>
 
     <register name="Debug PC" short="dpc" address="0x7b1">
-        Upon entry to debug mode, \RcsrDpc is updated with the virtual address of
+        Upon entry to debug mode, {csr-dpc} is updated with the virtual address of
         the next instruction to be executed. The behavior is described in more
-        detail in Table~\ref{tab:dpc}.
+        detail in &lt;&lt;tab:dpc&gt;&gt;.
 
-        \begin{table}[H]
-        \centering
-        \caption{Virtual address in DPC upon Debug Mode Entry}
-        \label{tab:dpc}
-        \begin{tabular}{|l|L|}
-        \hline
-        Cause &amp; Virtual Address in DPC \\
-        \hline
-        {\tt ebreak} &amp; Address of the {\tt ebreak} instruction \\
-        \hline
-        single step &amp; Address of the instruction that would be executed
-        next if no debugging was going on. Ie. $\Rpc+4$ for 32-bit instructions
-        that don't change program flow, the destination PC on taken
-        jumps/branches, etc. \\
-        \hline
-        trigger module &amp; The address of the next instruction to be
-        executed at the time that debug mode was entered. If the trigger is
-        \RcsrMcontrol and \FcsrMcontrolTiming is 0 or if the trigger is
-        \RcsrMcontrolSix and \FcsrMcontrolSixHitOne is 0, this
-        corresponds to the address of the instruction which caused the trigger
-        to fire. \\
-        \hline
-        halt request &amp; Address of the next instruction to be
-        executed at the time that debug mode was entered \\
-        \hline
-        \end{tabular}
-        \end{table}
+        [[tab:dpc]]
+        .Virtual address in DPC.
+        [%autowidth,align="center",float="center",cols="&gt;,^",options="header"]
+        |===
+        | Cause  | Virtual Address in DPC
+        | `ebreak` | Address of the `ebreak` instruction
+        | single step | Address of the instruction that would be executed next if no debugging was going on. Ie. `pc` + 4 for
+        32-bit instructions that don't change program flow, the destination PC on taken jumps/branches, etc.
+        | trigger module | The address of the next instruction to be executed at the time that debug mode was entered. If the trigger is {csr-mcontrol} and {mcontrol-timing} is 0 or if the trigger is
+        {csr-mcontrol6} and `hit1` is 0, this corresponds to the address of the instruction which caused the trigger to fire.
+        | halt request | Address of the next instruction to be executed at the time that debug mode was entered.
+        |===
 
-        Executing the Program Buffer may cause the value of \RcsrDpc to become
-        \unspecified. If that is the case, it must be possible to read/write
-        \RcsrDpc using an abstract command with \FacAccessregisterPostexec not
-        set.  The debugger must attempt to save \RcsrDpc between halting and
-        executing a Program Buffer, and then restore \RcsrDpc before leaving
+        Executing the Program Buffer may cause the value of {csr-dpc} to become
+        UNSPECIFIED. If that is the case, it must be possible to read/write
+        {csr-dpc} using an abstract command with {accessregister-postexec} not
+        set.  The debugger must attempt to save {csr-dpc} between halting and
+        executing a Program Buffer, and then restore {csr-dpc} before leaving
         Debug Mode.
 
-        \begin{commentary}
-            Allowing \RcsrDpc to become \unspecified\ upon Program Buffer
+        [NOTE]
+        ====
+            Allowing {csr-dpc} to become UNSPECIFIED upon Program Buffer
             execution allows for direct implementations that don't have a
             separate PC register, and do need to use the PC when executing the
             Program Buffer.
-        \end{commentary}
+        ====
 
-        If the Access Register abstract command supports reading \RcsrDpc while
+        If the Access Register abstract command supports reading {csr-dpc} while
         the hart is running, then the value read should be the address of a
         recently executed instruction.
 
-        If the Access Register abstract command supports writing \RcsrDpc while
+        If the Access Register abstract command supports writing {csr-dpc} while
         the hart is running, then the executing program should jump to the
         written address shortly after the write occurs.
 
-        The writability of \RcsrDpc follows the same rules as \Rmepc as defined
-        in the Privileged Spec.  In particular, \RcsrDpc must be able to hold
+        The writability of {csr-dpc} follows the same rules as `mepc` as defined
+        in the Privileged Spec.  In particular, {csr-dpc} must be able to hold
         all valid virtual addresses and the writability of the low bits depends
         on IALIGN.
 
         When resuming, the hart's PC is updated to the virtual address stored in
-        \RcsrDpc. A debugger may write \RcsrDpc to change where the hart resumes.
+        {csr-dpc}. A debugger may write {csr-dpc} to change where the hart resumes.
         <field name="dpc" bits="DXLEN-1:0" access="R/W" reset="0" />
     </register>
 
     <register name="Debug Scratch Register 0" short="dscratch0" address="0x7b2">
         Optional scratch register that can be used by implementations that need
-        it. A debugger must not write to this register unless \RdmHartinfo
+        it. A debugger must not write to this register unless {dm-hartinfo}
         explicitly mentions it (the Debug Module may use this register internally).
         <field name="dscratch0" bits="DXLEN-1:0" access="R/W" reset="0" />
     </register>
 
     <register name="Debug Scratch Register 1" short="dscratch1" address="0x7b3">
         Optional scratch register that can be used by implementations that need
-        it. A debugger must not write to this register unless \RdmHartinfo
+        it. A debugger must not write to this register unless {dm-hartinfo}
         explicitly mentions it (the Debug Module may use this register internally).
         <field name="dscratch1" bits="DXLEN-1:0" access="R/W" reset="0" />
     </register>

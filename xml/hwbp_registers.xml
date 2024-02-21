@@ -1,5 +1,5 @@
 <registers name="Trigger Module Registers" prefix="CSR_" label="trigger">
-    The Trigger Module registers, except \RcsrMscontext, \RcsrScontext, and \RcsrHcontext, are only accessible in machine
+    The Trigger Module registers, except {csr-mscontext}, {csr-scontext}, and {csr-hcontext}, are only accessible in machine
     and Debug Mode to prevent untrusted user code from causing entry into Debug
     Mode without the OS's permission.
 
@@ -7,9 +7,9 @@
     Mode. On systems where those values of XLEN can differ, this is handled
     as follows.
     Fields retain their values regardless of XLEN, which only affects where
-    in the register these fields appear (e.g. \FcsrTdataOneType). Some fields
+    in the register these fields appear (e.g. {tdata1-type}). Some fields
     are wider when XLEN is 64 than when it is 32 (e.g.
-    \FcsrTextraThirtytwoSvalue). The high bits in such fields retain their
+    {textra32-svalue}). The high bits in such fields retain their
     value but are not readable when XLEN is 32.
     A modification of a register when XLEN is 32 clears any inaccessible bits
     in that register.
@@ -19,13 +19,13 @@
         Trigger Module registers. It is optional if no triggers are implemented.  The
         set of accessible triggers must start at 0, and be contiguous.
 
-        This register is \warl.
+        This register is *WARL*.
         Writes of values greater than or equal to the number of supported
         triggers may result in a different value in this register than what was
-        written or may point to a trigger where \FcsrTdataOneType=0.
+        written or may point to a trigger where {tdata1-type}=0.
         To verify that what they wrote is a valid index, debuggers can
-        read back the value and check that \RcsrTselect holds what they wrote
-        and read \RcsrTdataOne to see that \FcsrTdataOneType is non-zero.
+        read back the value and check that {csr-tselect} holds what they wrote
+        and read {csr-tdata1} to see that {tdata1-type} is non-zero.
 
         Since triggers can be used both by Debug Mode and M-mode, the external
         debugger must restore this register if it modifies it.
@@ -34,18 +34,39 @@
     </register>
 
     <register name="Trigger Data 1" short="tdata1" address="0x7a1">
-        This register provides access to the trigger selected by \RcsrTselect.
+        This register provides access to the trigger selected by {csr-tselect}.
         The reset values listed here apply to every underlying trigger.
 
         This register is optional if no triggers are implemented.
 
         Writing 0 to this register must result in a trigger that is disabled.
         If this trigger supports multiple types, then the hardware should
-        disable it by changing \FcsrTdataOneType to 15.
+        disable it by changing {tdata1-type} to 15.
+
+        <!-- Just an example of how <diagram> works. This is exactly what is
+        auto-generated, so doesn't actually change the net output. -->
+        <diagram>
+            [bytefield]
+            ----
+            (defattrs :plain [:plain {:font-family "M+ 1p Fallback"}])
+            (def row-height 45)
+            (def row-header-fn nil)
+            (def boxes-per-row 24)
+            (draw-column-headers {:labels ["XLEN-1" "" "" "" "XLEN-4" "" "XLEN-5" "" "XLEN-6" "" "" "" "" "" "" "" "0" "" "" "" "" "" "" ""]})
+            (draw-box "type" {:span 5})
+            (draw-box "dmode" {:span 3})
+            (draw-box "data" {:span 9})
+            (draw-box "" {:span 7 :borders {}})
+            (draw-box "4" {:span 5 :borders {}})
+            (draw-box "1" {:span 3 :borders {}})
+            (draw-box "XLEN - 5" {:span 9 :borders {}})
+            (draw-box "" {:span 7 :borders {}})
+            ----
+        </diagram>
 
         <field name="type" bits="XLEN-1:XLEN-4" access="WARL" reset="Preset">
             <value v="0" name="none">
-            There is no trigger at this \RcsrTselect.
+            There is no trigger at this {csr-tselect}.
             </value>
 
             <value v="1" name="legacy">
@@ -55,34 +76,34 @@
 
             <value v="2" name="mcontrol">
             The trigger is an address/data match trigger. The remaining bits
-            in this register act as described in \RcsrMcontrol.
+            in this register act as described in {csr-mcontrol}.
             </value>
 
             <value v="3" name="icount">
             The trigger is an instruction count trigger. The remaining bits
-            in this register act as described in \RcsrIcount.
+            in this register act as described in {csr-icount}.
             </value>
 
             <value v="4" name="itrigger">
             The trigger is an interrupt trigger. The remaining bits
-            in this register act as described in \RcsrItrigger.
+            in this register act as described in {csr-itrigger}.
             </value>
 
             <value v="5" name="etrigger">
             The trigger is an exception trigger. The remaining bits
-            in this register act as described in \RcsrEtrigger.
+            in this register act as described in {csr-etrigger}.
             </value>
 
             <value v="6" name="mcontrol6">
             The trigger is an address/data match trigger. The remaining bits
-            in this register act as described in \RcsrMcontrolSix. This is similar
+            in this register act as described in {csr-mcontrol6}. This is similar
             to a type 2 trigger, but provides additional functionality and
             should be used instead of type 2 in newer implementations.
             </value>
 
             <value v="7" name="tmexttrigger">
             The trigger is a trigger source external to the TM.  The
-            remaining bits in this register act as described in \RcsrTmexttrigger.
+            remaining bits in this register act as described in {csr-tmexttrigger}.
             </value>
 
             <value range="12:14" name="custom">
@@ -90,45 +111,45 @@
             </value>
 
             <value v="15" name="disabled">
-            This trigger is disabled. In this state, \RcsrTdataTwo and
-            \RcsrTdataThree can be written with any value that is supported for
+            This trigger is disabled. In this state, {csr-tdata2} and
+            {csr-tdata3} can be written with any value that is supported for
             any of the types this trigger implements.
-            The remaining bits in this register, except for \FcsrTdataOneDmode,
+            The remaining bits in this register, except for {tdata1-dmode},
             are ignored.
             </value>
-            
+
             Other values are reserved for future use.
 
         </field>
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0">
-            If \FcsrTdataOneType is 0, then this bit is hard-wired to 0.
+            If {tdata1-type} is 0, then this bit is hard-wired to 0.
 
             <value v="0" name="both">
-            Both Debug and M-mode can write the {\tt tdata} registers at the
-            selected \RcsrTselect.
+            Both Debug and M-mode can write the `tdata` registers at the
+            selected {csr-tselect}.
             </value>
 
             <value v="1" name="dmode">
-            Only Debug Mode can write the {\tt tdata} registers at the
-            selected \RcsrTselect.  Writes from other modes are ignored.
+            Only Debug Mode can write the `tdata` registers at the
+            selected {csr-tselect}.  Writes from other modes are ignored.
             </value>
 
             This bit is only writable from Debug Mode.
             In ordinary use, external debuggers will always set this bit when
             configuring a trigger.
             When clearing this bit, debuggers should also set the action field
-            (whose location depends on \FcsrTdataOneType) to something other
+            (whose location depends on {tdata1-type}) to something other
             than 1.
         </field>
         <field name="data" bits="XLEN-6:0" access="WARL" reset="Preset">
-            If \FcsrTdataOneType is 0, then this field is hard-wired to 0.
+            If {tdata1-type} is 0, then this field is hard-wired to 0.
 
             Trigger-specific data.
         </field>
     </register>
 
     <register name="Trigger Data 2" short="tdata2" address="0x7a2">
-        This register provides access to the trigger selected by \RcsrTselect.
+        This register provides access to the trigger selected by {csr-tselect}.
         The reset values listed here apply to every underlying trigger.
 
         Trigger-specific data. It is optional if no implemented triggers use
@@ -142,7 +163,7 @@
     </register>
 
     <register name="Trigger Data 3" short="tdata3" address="0x7a3">
-        This register provides access to the trigger selected by \RcsrTselect.
+        This register provides access to the trigger selected by {csr-tselect}.
         The reset values listed here apply to every underlying trigger.
 
         Trigger-specific data. It is optional if no implemented triggers use
@@ -156,13 +177,13 @@
     </register>
 
     <register name="Trigger Info" short="tinfo" address="0x7a4">
-        This register provides access to the trigger selected by \RcsrTselect.
+        This register provides access to the trigger selected by {csr-tselect}.
         The reset values listed here apply to every underlying trigger.
 
         This register is optional if no triggers are implemented, or if
-        \FcsrTdataOneType is not writable and \FcsrTinfoVersion would be 0. In
+        {tdata1-type} is not writable and {tinfo-version} would be 0. In
         this case the debugger can read the only supported type from
-        \RcsrTdataOne.
+        {csr-tdata1}.
 
         <field name="0" bits="XLEN-1:32" access="R" reset="0" />
         <field name="version" bits="31:24" access="R" reset="Preset">
@@ -171,14 +192,12 @@
                 Supports triggers as described in this spec at commit 5a5c078,
                 made on February 2, 2023.
 
-                \begin{steps}{In these older versions:}
-                \item \RcsrMcontrolSix has a timing bit identical to
-                    \FcsrMcontrolTiming
-                \item \FcsrMcontrolSixHitZero behaves just as \FcsrMcontrolHit.
-                \item \FcsrMcontrolSixHitOne is read-only 0.
-                \item Encodings for \FcsrMcontrolSixSize for access sizes larger
-                than 64 bits are different.
-                \end{steps}
+                In these older versions:
+
+                . {csr-mcontrol6} has a timing bit identical to {mcontrol-timing}
+                . {mcontrol6-hit0} behaves just as {mcontrol-hit}.
+                . {mcontrol6-hit1} is read-only 0.
+                . Encodings for {mcontrol6-size} for access sizes larger than 64 bits are different.
             </value>
             <value v="1" name="1">
                 Supports triggers as described in the ratified version 1.0 of
@@ -187,7 +206,7 @@
         </field>
         <field name="0" bits="23:16" access="R" reset="0" />
         <field name="info" bits="15:0" access="R" reset="Preset">
-            One bit for each possible \FcsrTdataOneType enumerated in \RcsrTdataOne. Bit N
+            One bit for each possible {tdata1-type} enumerated in {csr-tdata1}. Bit N
             corresponds to type N. If the bit is set, then that type is
             supported by the currently selected trigger.
 
@@ -204,12 +223,12 @@
         <field name="mpte" bits="7" access="WARL" reset="0">
             M-mode previous trigger enable field.
 
-            \FcsrTcontrolMpte and \FcsrTcontrolMte provide one solution to a problem
+            {tcontrol-mpte} and {tcontrol-mte} provide one solution to a problem
             regarding triggers with action=0 firing in M-mode trap handlers. See
-            Section~\ref{sec:nativetrigger} for more details.
+            xref:nativetrigger[] for more details.
 
-            When any trap into M-mode is taken, \FcsrTcontrolMpte is set to the value of
-            \FcsrTcontrolMte.
+            When any trap into M-mode is taken, {tcontrol-mpte} is set to the value of
+            {tcontrol-mte}.
         </field>
         <field name="0" bits="6:4" access="R" reset="0" />
         <field name="mte" bits="3" access="WARL" reset="0">
@@ -223,32 +242,31 @@
                 Triggers do match/fire while the hart is in M-mode.
             </value>
 
-            When any trap into M-mode is taken, \FcsrTcontrolMte is set to 0. When {\tt
-            mret} is executed, \FcsrTcontrolMte is set to the value of \FcsrTcontrolMpte.
+            When any trap into M-mode is taken, {tcontrol-mte} is set to 0. When `mret` is executed, {tcontrol-mte} is set to the value of {tcontrol-mpte}.
         </field>
         <field name="0" bits="2:0" access="R" reset="0" />
     </register>
 
     <register name="Hypervisor Context" short="hcontext" address="0x6a8">
         This optional register may be implemented only if the H extension is
-        implemented. If it is implemented, \RcsrMcontext must also be implemented.
+        implemented. If it is implemented, {csr-mcontext} must also be implemented.
 
         This register is only accessible in HS-Mode, M-mode and Debug Mode. If
         Smstateen is implemented, then accessibility of in HS-Mode is
-        controlled by \Rmstateenzero[57].
+        controlled by `mstateenzero[57]`.
 
-        This register is an alias of the \RcsrMcontext register, providing
-        access to the \FcsrMcontextHcontext field from HS-Mode.
+        This register is an alias of the {csr-mcontext} register, providing
+        access to the {mcontext-hcontext} field from HS-Mode.
     </register>
 
     <register name="Supervisor Context" short="scontext" address="0x5a8">
         This optional register is only accessible in S/HS-mode, VS-mode,
         M-mode and Debug Mode.
 
-        Accessibility of this CSR is controlled by \Rmstateenzero[57] and
-        \Rhstateenzero[57] in the Smstateen extension.  Enabling \RcsrScontext
+        Accessibility of this CSR is controlled by `mstateenzero[57]` and
+        `hstateenzero[57]` in the Smstateen extension.  Enabling {csr-scontext}
         can be a security risk in a virtualized system with a hypervisor that
-        does not swap \RcsrScontext.
+        does not swap {csr-scontext}.
         <field name="data" bits="XLEN-1:0" access="WARL" reset="0">
             Supervisor mode software can write a context number to this
             register, which can be used to set triggers that only fire in that
@@ -261,97 +279,100 @@
     </register>
 
     <register name="Machine Context" short="mcontext" address="0x7a8">
-        This register must be implemented if \RcsrHcontext is implemented, and
+        This register must be implemented if {csr-hcontext} is implemented, and
         is optional otherwise.  It is only accessible in M-mode and Debug mode.
 
-        \begin{commentary}
-            \FcsrMcontextHcontext is primarily useful to set triggers on
+        [NOTE]
+        ====
+            {mcontext-hcontext} is primarily useful to set triggers on
             hypervisor systems that only fire when a given VM is executing. It
             is also useful in systems where M-Mode implements something like a
             hypervisor directly.
-        \end{commentary}
+        ====
 
         <field name="hcontext" bits="XLEN-1:0" access="WARL" reset="0">
-            M-Mode or HS-Mode (using \RcsrHcontext) software can write a context
+            M-Mode or HS-Mode (using {csr-hcontext}) software can write a context
             number to this register, which can be used to set triggers that only
             fire in that specific context.
 
             An implementation may tie any number of upper bits in this field to
             0. If the H extension is not implemented, it's recommended to implement
             no more than 6 bits on RV32 and 13 on RV64 (as visible through the
-            \RcsrMcontext register).  If the H extension is implemented,
+            {csr-mcontext} register).  If the H extension is implemented,
             it's recommended to implement no more than 7 bits on RV32
             and 14 on RV64.
         </field>
     </register>
 
     <register name="Machine Supervisor Context" short="mscontext" address="0x7aa">
-        This optional register is an alias for \RcsrScontext.  It is only
+        This optional register is an alias for {csr-scontext}.  It is only
         accessible in S/HS-mode, M-mode and Debug Mode.  It is included
         for backward compatibility with version 0.13.
 
-        \begin{commentary}
+        [NOTE]
+        ====
         The encoding of this CSR does not conform to the CSR Address Mapping
         Convention in the Privileged Spec.  It is expected that new
         implementations will not support this encoding and that new
-        debuggers will not use this CSR if \RcsrScontext is available.
-        \end{commentary}
+        debuggers will not use this CSR if {csr-scontext} is available.
+        ====
     </register>
 
     <register name="Match Control" short="mcontrol" address="0x7a1">
-        This register provides access to the trigger selected by \RcsrTselect.
+        This register provides access to the trigger selected by {csr-tselect}.
         The reset values listed here apply to every underlying trigger.
 
-        This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 2.
+        This register is accessible as {csr-tdata1} when {tdata1-type} is 2.
         This trigger type is deprecated.  It is included for backward compatibility
         with version 0.13.
 
-        \begin{commentary}
+        [NOTE]
+        ====
         This trigger type only supports a subset of features of the newer
-        \RcsrMcontrolSix.  It is expected that new implementations will not
+        {csr-mcontrol6}.  It is expected that new implementations will not
         support this trigger type and that new debuggers will not use it if
-        \RcsrMcontrolSix is available.
-        \end{commentary}
+        {csr-mcontrol6} is available.
+        ====
 
         Address and data trigger implementation are heavily dependent on how
         the processor core is implemented. To accommodate various
         implementations, execute, load, and store address/data triggers may fire at
         whatever point in time is most convenient for the implementation.
-        The debugger may request specific timings as described in \FcsrMcontrolTiming.
-        Table~\ref{tab:hwbp_timing} suggests timings for the best user experience.
+        The debugger may request specific timings as described in {mcontrol-timing}.
+        &lt;&lt;tab:hwbp_timing&gt;&gt; suggests timings for the best user experience.
 
-        A chain of triggers that don't all have the same \FcsrMcontrolTiming
+        A chain of triggers that don't all have the same {mcontrol-timing}
         value will never fire. That means to implement the suggestions in
-        Table~\ref{tab:hwbp_timing}, both timings should be supported on load
+        &lt;&lt;tab:hwbp_timing&gt;&gt;, both timings should be supported on load
         address triggers.
 
         The Privileged Spec says that breakpoint exceptions that occur on
-        instruction fetches, loads, or stores update the {\tt tval} CSR
+        instruction fetches, loads, or stores update the `tval` CSR
         with either zero or the faulting virtual address.  The faulting
-        virtual address for an mcontrol trigger with \FcsrMcontrolAction=0 is the
+        virtual address for an mcontrol trigger with {mcontrol-action}=0 is the
         address being accessed and which caused that trigger to fire.
         If multiple mcontrol triggers are chained then the faulting
         virtual address is the address which caused any of the chained
         triggers to fire.
 
-        If \RcsrTextraThirtytwo or \RcsrTextraSixtyfour are implemented for this
+        If {csr-textra32} or {csr-textra64} are implemented for this
         trigger, it only matches when the conditions set there are satisfied.
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="2" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
         <field name="maskmax" bits="XLEN-6:XLEN-11" access="R" reset="Preset">
             Specifies the largest naturally aligned powers-of-two (NAPOT) range
-            supported by the hardware when \FcsrMcontrolMatch is 1. The value is the
+            supported by the hardware when {mcontrol-match} is 1. The value is the
             logarithm base 2 of the number of bytes in that range.
-            A value of 0 indicates \FcsrMcontrolMatch 1 is not supported.
+            A value of 0 indicates {mcontrol-match} 1 is not supported.
             A value of 63 corresponds to the maximum NAPOT range, which is
-            $2^{63}$ bytes in size.
+            2^63^ bytes in size.
         </field>
         <field name="0" bits="XLEN-12:23" access="R" reset="0" />
         <field name="sizehi" bits="22:21" access="WARL" reset="0">
             This field only exists when XLEN is at least 64.
             It contains the 2 high bits of the access size. The low bits
-            come from \FcsrMcontrolSizelo. See \FcsrMcontrolSizelo for how this
+            come from {mcontrol-sizelo}. See {mcontrol-sizelo} for how this
             is used.
         </field>
         <field name="hit" bits="20" access="WARL" reset="0">
@@ -384,19 +405,19 @@
             <value v="0" name="before">
             The action for this trigger will be taken just before the
             instruction that triggered it is retired, but after all preceding
-            instructions are retired. \Rxepc or \RcsrDpc (depending
-            on \FcsrMcontrolAction) must be set to the virtual address of the
+            instructions are retired. `xepc` or {csr-dpc} (depending
+            on {mcontrol-action}) must be set to the virtual address of the
             instruction that matched.
 
-            If this is combined with \FcsrMcontrolLoad and
-            \FcsrMcontrolSelect=1 then a memory access will be
+            If this is combined with {mcontrol-load} and
+            {mcontrol-select}=1 then a memory access will be
             performed (including any side effects of performing such an access) even
             though the load will not update its destination register. Debuggers
             should consider this when setting such breakpoints on, for example,
             memory-mapped I/O addresses.
 
             If an instruction matches this trigger and the instruction performs
-            multiple memory accesses, it is \unspecified which memory accesses
+            multiple memory accesses, it is UNSPECIFIED which memory accesses
             have completed before the trigger fires.
             </value>
 
@@ -404,35 +425,35 @@
             The action for this trigger will be taken after the instruction
             that triggered it is retired. It should be taken before the next
             instruction is retired, but it is better to implement triggers imprecisely
-            than to not implement them at all.  \Rxepc or
-            \RcsrDpc (depending on \FcsrMcontrolAction) must be set to
+            than to not implement them at all.  `xepc` or
+            {csr-dpc} (depending on {mcontrol-action}) must be set to
             the virtual address of the next instruction that must be executed to
             preserve the program flow.
             </value>
 
             Most hardware will only implement one timing or the other, possibly
-            dependent on \FcsrMcontrolSelect, \FcsrMcontrolExecute,
-            \FcsrMcontrolLoad, and \FcsrMcontrolStore. This bit
+            dependent on {mcontrol-select}, {mcontrol-execute},
+            {mcontrol-load}, and {mcontrol-s}tore. This bit
             primarily exists for the hardware to communicate to the debugger
             what will happen. Hardware may implement the bit fully writable, in
             which case the debugger has a little more control.
 
-            Data load triggers with \FcsrMcontrolTiming of 0 will result in the same load
+            Data load triggers with {mcontrol-timing} of 0 will result in the same load
             happening again when the debugger lets the hart run. For data load
             triggers, debuggers must first attempt to set the breakpoint with
-            \FcsrMcontrolTiming of 1.
+            {mcontrol-timing} of 1.
 
-            If a trigger with \FcsrMcontrolTiming of 0 matches, it is
+            If a trigger with {mcontrol-timing} of 0 matches, it is
             implementation-dependent whether that prevents a trigger with
-            \FcsrMcontrolTiming of 1 matching as well.
+            {mcontrol-timing} of 1 matching as well.
         </field>
         <field name="sizelo" bits="17:16" access="WARL" reset="0">
             This field contains the 2 low bits of the access size. The high bits come
-            from \FcsrMcontrolSizehi. The combined value is interpreted as follows:
+            from {mcontrol-sizehi}. The combined value is interpreted as follows:
 
             <value v="0" name="any">
             The trigger will attempt to match against an access of any size.
-            The behavior is only well-defined if $|select|=0$, or if the access
+            The behavior is only well-defined if {mcontrol-select}=0, or if the access
             size is XLEN.
             </value>
 
@@ -478,24 +499,24 @@
 
             An implementation must support the value of 0, but all other values
             are optional. When an implementation supports address triggers
-            (\FcsrMcontrolSelect=0), it is recommended that those triggers
+            ({mcontrol-select}=0), it is recommended that those triggers
             support every access size that the hart supports, as well as for
             every instruction size that the hart supports.
 
             Implementations such as RV32D or RV64V are able to perform loads
             and stores that are wider than XLEN. Custom extensions may also
             support instructions that are wider than XLEN. Because
-            \RcsrTdataTwo is of size XLEN, there is a known limitation that
-            data value triggers (\FcsrMcontrolSelect=1) can only be supported
+            {csr-tdata2} is of size XLEN, there is a known limitation that
+            data value triggers ({mcontrol-select}=1) can only be supported
             for access sizes up to XLEN bits.  When an implementation supports
-            data value triggers (\FcsrMcontrolSelect=1), it is recommended
+            data value triggers ({mcontrol-select}=1), it is recommended
             that those triggers support every access size up to XLEN that the
             hart supports, as well as for every instruction length up to XLEN
             that the hart supports.
         </field>
         <field name="action" bits="15:12" access="WARL" reset="0">
             The action to take when the trigger fires. The values are explained
-            in Table~\ref{tab:action}.
+            in xref:tab:action[].
 
             <value v="0" name="breakpoint" />
             <value v="1" name="debug mode" />
@@ -515,10 +536,10 @@
             the next index from matching.
             </value>
 
-            A trigger chain starts on the first trigger with $|chain|=1$ after
-            a trigger with $|chain|=0$, or simply on the first trigger if that
-            has $|chain|=1$. It ends on the first trigger after that which has
-            $|chain|=0$. This final trigger is part of the chain. The action
+            A trigger chain starts on the first trigger with `chain`=1 after
+            a trigger with `chain`=0, or simply on the first trigger if that
+            has `chain`=1. It ends on the first trigger after that which has
+            `chain`=0. This final trigger is part of the chain. The action
             on all but the final trigger is ignored.  The action on that final
             trigger will be taken if and only if all the triggers in the chain
             match at the same time.
@@ -526,80 +547,80 @@
             Debuggers should not terminate a chain with a trigger with a
             different type. It is undefined when exactly such a chain fires.
 
-            Because \FcsrMcontrolChain affects the next trigger, hardware must zero it in
-            writes to \RcsrMcontrol that set \FcsrTdataOneDmode to 0 if the next trigger has
-            \FcsrTdataOneDmode of 1.
-            In addition hardware should ignore writes to \RcsrMcontrol that set
-            \FcsrTdataOneDmode to 1 if the previous trigger has both \FcsrTdataOneDmode of 0 and
-            \FcsrMcontrolChain of 1. Debuggers must avoid the latter case by checking
-            \FcsrMcontrolChain on the previous trigger if they're writing \RcsrMcontrol.
+            Because {mcontrol-chain} affects the next trigger, hardware must zero it in
+            writes to {csr-mcontrol} that set {tdata1-dmode} to 0 if the next trigger has
+            {tdata1-dmode} of 1.
+            In addition hardware should ignore writes to {csr-mcontrol} that set
+            {tdata1-dmode} to 1 if the previous trigger has both {tdata1-dmode} of 0 and
+            {mcontrol-chain} of 1. Debuggers must avoid the latter case by checking
+            {mcontrol-chain} on the previous trigger if they're writing {csr-mcontrol}.
 
             Implementations that wish to limit the maximum length of a trigger
             chain (eg. to meet timing requirements) may do so by zeroing
-            \FcsrMcontrolChain in writes to \RcsrMcontrol that would make the chain too long.
+            {mcontrol-chain} in writes to {csr-mcontrol} that would make the chain too long.
         </field>
         <field name="match" bits="10:7" access="WARL" reset="0">
             <value v="0" name="equal">
-            Matches when any compare value equals \RcsrTdataTwo.
+            Matches when any compare value equals {csr-tdata2}.
             </value>
 
             <value v="1" name="napot">
-            Matches when the top $M$ bits of any compare value match the top
-            $M$ bits of \RcsrTdataTwo.
-            $M$ is $|XLEN|-1$ minus the index of the least-significant
-            bit containing 0 in \RcsrTdataTwo. Debuggers should only write values
-            to \RcsrTdataTwo such that $M + $\FcsrMcontrolMaskmax$ \geq |XLEN|$
-            and $M\gt0$ , otherwise it's undefined on what conditions the
+            Matches when the top `M` bits of any compare value match the top
+            `M` bits of {csr-tdata2}.
+            `M` is `XLEN-1` minus the index of the least-significant
+            bit containing 0 in {csr-tdata2}. Debuggers should only write values
+            to {csr-tdata2} such that `M` + {mcontrol-maskmax} ≥ `XLEN`
+            and `M` &gt; 0, otherwise it's undefined on what conditions the
             trigger will match.
             </value>
 
             <value v="2" name="ge">
             Matches when any compare value is greater than (unsigned) or
-            equal to \RcsrTdataTwo.
+            equal to {csr-tdata2}.
             </value>
 
             <value v="3" name="lt">
             Matches when any compare value is less than (unsigned)
-            \RcsrTdataTwo.
+            {csr-tdata2}.
             </value>
 
             <value v="4" name="mask low">
-            Matches when $\frac{|XLEN|}{2}-1$:$0$ of any compare value
-            equals $\frac{|XLEN|}{2}-1$:$0$ of \RcsrTdataTwo after
-            $\frac{|XLEN|}{2}-1$:$0$ of the compare value is ANDed with
-            $|XLEN|-1$:$\frac{|XLEN|}{2}$ of \RcsrTdataTwo.
+            Matches when latexmath:[$\frac{XLEN}{2}-{1:0}] of any compare value
+            equals latexmath:[$\frac{XLEN}{2}-{1:0}] of {csr-tdata2} after
+            latexmath:[$\frac{XLEN}{2}-{1:0}] of the compare value is ANDed with
+            `XLEN-1`:latexmath:[$\frac{XLEN}{2}$] of {csr-tdata2}.
             </value>
 
             <value v="5" name="mask high">
-            Matches when $|XLEN|-1$:$\frac{|XLEN|}{2}$ of any compare
-            value equals $\frac{|XLEN|}{2}-1$:$0$ of \RcsrTdataTwo after
-            $|XLEN|-1$:$\frac{|XLEN|}{2}$ of the compare value is ANDed with
-            $|XLEN|-1$:$\frac{|XLEN|}{2}$ of \RcsrTdataTwo.
+            Matches when `XLEN-1`:latexmath:[$\frac{XLEN}{2}$] of any compare
+            value equals latexmath:[$\frac{XLEN}{2}-{1:0}] of {csr-tdata2} after
+            `XLEN-1`:latexmath:[$\frac{XLEN}{2}$] of the compare value is ANDed with
+            `XLEN-1`:latexmath:[$\frac{XLEN}{2}$] of {csr-tdata2}.
             </value>
 
             <value v="8" name="not equal">
-            Matches when \FcsrMcontrolMatch$=0$ would not match.
+            Matches when {mcontrol-match}=0 would not match.
             </value>
 
             <value v="9" name="not napot">
-            Matches when \FcsrMcontrolMatch$=1$ would not match.
+            Matches when {mcontrol-match}=1 would not match.
             </value>
 
             <value v="12" name="not mask low">
-            Matches when \FcsrMcontrolMatch$=4$ would not match.
+            Matches when {mcontrol-match}=4 would not match.
             </value>
 
             <value v="13" name="not mask high">
-            Matches when \FcsrMcontrolMatch$=5$ would not match.
+            Matches when {mcontrol-match}=5 would not match.
             </value>
 
             Other values are reserved for future use.
 
             All comparisons only look at the lower XLEN (in the current mode)
-            bits of the compare values and of \RcsrTdataTwo.
-            When \FcsrMcontrolSelect=1 and access size is N, this is further
+            bits of the compare values and of {csr-tdata2}.
+            When {mcontrol-select}=1 and access size is N, this is further
             reduced, and comparisons only look at the lower N bits of the
-            compare values and of \RcsrTdataTwo.
+            compare values and of {csr-tdata2}.
         </field>
         <field name="m" bits="6" access="WARL" reset="0">
             When set, enable this trigger in M-mode.
@@ -630,13 +651,13 @@
     </register>
 
     <register name="Match Control Type 6" short="mcontrol6" address="0x7a1">
-        This register provides access to the trigger selected by \RcsrTselect.
+        This register provides access to the trigger selected by {csr-tselect}.
         The reset values listed here apply to every underlying trigger.
 
-        This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 6.
+        This register is accessible as {csr-tdata1} when {tdata1-type} is 6.
 
         Implementing this trigger as described here requires that
-        \FcsrTinfoVersion is 1 or higher, which in turn means \RcsrTinfo must
+        {tinfo-version} is 1 or higher, which in turn means {csr-tinfo} must
         be implemented.
 
         This replaces mcontrol in newer implementations and serves to provide additional
@@ -647,7 +668,7 @@
         implementations, execute, load, and store address/data triggers may fire at
         whatever point in time is most convenient for the implementation.
 
-        Table~\ref{tab:hwbp_timing} suggests timings for the best user experience.
+        &lt;&lt;tab:hwbp_timing&gt;&gt; suggests timings for the best user experience.
         The underlying principle is that firing just before the instruction
         gives a user more insight, so is preferable. However, depending on the
         instruction and conditions, it might not be possible to evaluate the
@@ -655,54 +676,50 @@
         better to let the instruction retire before the trigger fires, to avoid
         extra memory accesses which might affect the state of the system.
 
-        \begin{table}[H]
-        \centering
-        \caption{Suggested Trigger Timings}
-        \label{tab:hwbp_timing}
-        \begin{tabular}{|r|l|}
-        \hline
-        Match Type                  &amp; Suggested Trigger Timing \\
-        \hline
-        Execute Address             &amp; Before \\
-        Execute Instruction         &amp; Before \\
-        Execute Address+Instruction &amp; Before \\
-        Load Address                &amp; Before \\
-        Load Data                   &amp; After \\
-        Load Address+Data           &amp; After \\
-        Store Address               &amp; Before \\
-        Store Data                  &amp; Before \\
-        Store Address+Data          &amp; Before \\
-        \hline
-        \end{tabular}
-        \end{table}
+        [[tab:hwbp_timing]]
+        .Suggested Trigger Timings
+        [%autowidth,align="center",float="center",cols="&gt;,&lt;",options="header"]
+        |===
+        | Match Type | Suggested Trigger Timing
+        | Execute Address             | Before
+        | Execute Instruction         | Before
+        | Execute Address+Instruction | Before
+        | Load Address                | Before
+        | Load Data                   | After
+        | Load Address+Data           | After
+        | Store Address               | Before
+        | Store Data                  | Before
+        | Store Address+Data          | Before
+        |===
 
         A chain of triggers must only fire if every trigger in the chain was
         matched by the same instruction.
 
         The Privileged Spec says that breakpoint exceptions that occur on
-        instruction fetches, loads, or stores update the {\tt tval} CSR
+        instruction fetches, loads, or stores update the `tval` CSR
         with either zero or the faulting virtual address.  The faulting
-        virtual address for an mcontrol6 trigger with \FcsrMcontrolSixAction=0 is the
+        virtual address for an mcontrol6 trigger with {mcontrol6-action}=0 is the
         address being accessed and which caused that trigger to fire.
         If multiple mcontrol6 triggers are chained then the faulting
         virtual address is the address which caused any of the chained
         triggers to fire.
 
-        \begin{steps}{In implementations that support \FcsrMcontrolSixMatch mode 1 (NAPOT), not all
-        NAPOT ranges may be supported.  All NAPOT ranges between $2^{1}$ and $2^{maskmax6}$
-        are supported where maskmax6 $\geq$ 1.  The value of maskmax6 can be determined
-        by the debugger via the following sequence:}
-        \item Set \FcsrMcontrolSixMatch=1.
-        \item Read \FcsrMcontrolSixMatch. If it is not 1 then NAPOT matching is not supported.
-        \item Write all ones to \RcsrTdataTwo.
-        \item Read \RcsrTdataTwo. The value of maskmax6 is the index of the most significant 0 bit plus 1.
-        \end{steps}
+        In implementations that support {mcontrol6-match} mode 1 (NAPOT), not all
+        NAPOT ranges may be supported.  All NAPOT ranges between stem:[2^1] and stem:[2^{maskmax6}]
+        are supported where stem:[{maskmax6} ≥ 1].  The value of maskmax6 can be determined
+        by the debugger via the following sequence:
 
-        If \RcsrTextraThirtytwo or \RcsrTextraSixtyfour are implemented for this
+        . Set {mcontrol6-match}=1.
+        . Read {mcontrol6-match}. If it is not 1 then NAPOT matching is not supported.
+        . Write all ones to {csr-tdata2}.
+        . Read {csr-tdata2}. The value of maskmax6 is the index of the most significant 0 bit plus 1.
+
+        If {csr-textra32} or {csr-textra64} are implemented for this
         trigger, it only matches when the conditions set there are satisfied.
 
-        \begin{commentary}
-        \FcsrMcontrolSixUncertain and \FcsrMcontrolSixUncertainen exist to
+        [NOTE]
+        ====
+        {mcontrol6-uncertain} and {mcontrol6-uncertain}en exist to
         accommodate systems where not every memory access is fully observed by
         the Trigger Module. Possible examples include data values in far AMOs,
         and the address/data/size of accesses by instructions that perform
@@ -712,7 +729,7 @@
         can lead to an unusable number of false positives. Users will get a much
         better debug experience if the TM does have perfect visibility into the
         details of every memory access.
-        \end{commentary}
+        ====
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="6" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
@@ -744,8 +761,8 @@
             virtualization mode.
         </field>
         <field name="hit0" bits="22" access="WARL" reset="0">
-            If they are implemented, \FcsrMcontrolSixHitOne (MSB) and
-            \FcsrMcontrolSixHitZero (LSB) combine into a single 2-bit field.
+            If they are implemented, {mcontrol6-hit1} (MSB) and
+            {mcontrol6-hit0} (LSB) combine into a single 2-bit field.
             The TM updates this field when the trigger fires. After the debugger
             has seen the update, it will normally write 0 to this field to so it
             can see future changes.
@@ -761,16 +778,16 @@
             The trigger fired before the instruction that matched it was
             retired, but after all preceding instructions are retired. This
             explicitly allows for instructions to be partially executed, as
-            described in Section \ref{sec:multistate}.
+            described in xref:multistate[].
 
-            \Rxepc or \RcsrDpc (depending on \FcsrMcontrolSixAction) must be set
+            `xepc` or {csr-dpc} (depending on {mcontrol6-action}) must be set
             to the virtual address of the instruction that matched.
             </value>
 
             <value v="2" name="after">
             The trigger fired after the instruction that triggered and at least
             one additional instruction were retired.
-            \Rxepc or \RcsrDpc (depending on \FcsrMcontrolSixAction) must be set
+            `xepc` or {csr-dpc} (depending on {mcontrol6-action}) must be set
             to the virtual address of the next instruction that must be executed
             to preserve the program flow.
             </value>
@@ -778,7 +795,7 @@
             <value v="3" name="immediately after">
             The trigger fired just after the instruction that triggered it was
             retired, but before any subsequent instructions were executed.
-            \Rxepc or \RcsrDpc (depending on \FcsrMcontrolSixAction) must be set
+            `xepc` or {csr-dpc} (depending on {mcontrol6-action}) must be set
             to the virtual address of the next instruction that must be executed
             to preserve the program flow.
 
@@ -808,8 +825,8 @@
         <field name="size" bits="18:16" access="WARL" reset="0">
             <value v="0" name="any">
             The trigger will attempt to match against an access of any size.
-            The behavior is only well-defined if $|select|=0$, or if the access
-            size is XLEN.
+            The behavior is only well-defined if {mcontrol6-select}=0, or if the
+            access size is XLEN.
             </value>
 
             <value v="1" name="8bit">
@@ -842,24 +859,24 @@
 
             An implementation must support the value of 0, but all other values
             are optional. When an implementation supports address triggers
-            (\FcsrMcontrolSixSelect=0), it is recommended that those triggers
+            ({mcontrol6-select}=0), it is recommended that those triggers
             support every access size that the hart supports, as well as for
             every instruction size that the hart supports.
 
             Implementations such as RV32D or RV64V are able to perform loads
             and stores that are wider than XLEN. Custom extensions may also
             support instructions that are wider than XLEN. Because
-            \RcsrTdataTwo is of size XLEN, there is a known limitation that
-            data value triggers (\FcsrMcontrolSixSelect=1) can only be supported
+            {csr-tdata2} is of size XLEN, there is a known limitation that
+            data value triggers ({mcontrol6-select}=1) can only be supported
             for access sizes up to XLEN bits.  When an implementation supports
-            data value triggers (\FcsrMcontrolSixSelect=1), it is recommended
+            data value triggers ({mcontrol6-select}=1), it is recommended
             that those triggers support every access size up to XLEN that the
             hart supports, as well as for every instruction length up to XLEN
             that the hart supports.
         </field>
         <field name="action" bits="15:12" access="WARL" reset="0">
             The action to take when the trigger fires. The values are explained
-            in Table~\ref{tab:action}.
+            in xref:tab:action[].
 
             <value v="0" name="breakpoint" />
             <value v="1" name="debug mode" />
@@ -879,10 +896,10 @@
             the next index from matching.
             </value>
 
-            A trigger chain starts on the first trigger with $|chain|=1$ after
-            a trigger with $|chain|=0$, or simply on the first trigger if that
-            has $|chain|=1$. It ends on the first trigger after that which has
-            $|chain|=0$. This final trigger is part of the chain. The action
+            A trigger chain starts on the first trigger with `chain`=1 after
+            a trigger with `chain`=0, or simply on the first trigger if that
+            has `chain`=1. It ends on the first trigger after that which has
+            `chain`=0. This final trigger is part of the chain. The action
             on all but the final trigger is ignored.  The action on that final
             trigger will be taken if and only if all the triggers in the chain
             match at the same time.
@@ -890,82 +907,82 @@
             Debuggers should not terminate a chain with a trigger with a
             different type. It is undefined when exactly such a chain fires.
 
-            Because \FcsrMcontrolSixChain affects the next trigger, hardware must zero it in
-            writes to \RcsrMcontrolSix that set \FcsrTdataOneDmode to 0 if the next trigger has
-            \FcsrTdataOneDmode of 1.
-            In addition hardware should ignore writes to \RcsrMcontrolSix that set
-            \FcsrTdataOneDmode to 1 if the previous trigger has both \FcsrTdataOneDmode of 0 and
-            \FcsrMcontrolSixChain of 1. Debuggers must avoid the latter case by checking
-            \FcsrMcontrolSixChain on the previous trigger if they're writing \RcsrMcontrolSix.
+            Because {mcontrol6-chain} affects the next trigger, hardware must zero it in
+            writes to {csr-mcontrol6} that set {tdata1-dmode} to 0 if the next trigger has
+            {tdata1-dmode} of 1.
+            In addition hardware should ignore writes to {csr-mcontrol6} that set
+            {tdata1-dmode} to 1 if the previous trigger has both {tdata1-dmode} of 0 and
+            {mcontrol6-chain} of 1. Debuggers must avoid the latter case by checking
+            {mcontrol6-chain} on the previous trigger if they're writing {csr-mcontrol6}.
 
             Implementations that wish to limit the maximum length of a trigger
             chain (eg. to meet timing requirements) may do so by zeroing
-            \FcsrMcontrolSixChain in writes to \RcsrMcontrolSix that would make the chain too long.
+            {mcontrol6-chain} in writes to {csr-mcontrol6} that would make the chain too long.
         </field>
         <field name="match" bits="10:7" access="WARL" reset="0">
             <value v="0" name="equal">
-            Matches when any compare value equals \RcsrTdataTwo.
+            Matches when any compare value equals {csr-tdata2}.
             </value>
 
             <value v="1" name="napot">
-            Matches when the top $M$ bits of any compare value match the top
-            $M$ bits of \RcsrTdataTwo.
-            $M$ is $|XLEN|-1$ minus the index of the least-significant bit
-            containing 0 in \RcsrTdataTwo.
-            \RcsrTdataTwo is WARL and if bits $|maskmax6|-1$:0 are written with all
-            ones then bit $|maskmax6|-1$ will be set to 0 while the values of bits $|maskmax6|-2$:0
-            are \unspecified.
-            Legal values for \RcsrTdataTwo require $M + |maskmax6| \geq |XLEN|$ and $M\gt0$.
+            Matches when the top `M` bits of any compare value match the top
+            `M` bits of {csr-tdata2}.
+            `M` is `XLEN-1` minus the index of the least-significant bit
+            containing 0 in {csr-tdata2}.
+            {csr-tdata2} is *WARL* and if bits `maskmax6-1:0` are written with all
+            ones then bit `maskmax6-1` will be set to 0 while the values of bits `maskmax6-2:0`
+            are UNSPECIFIED.
+            Legal values for {csr-tdata2} require M + `maskmax6` ≥ `XLEN` and `M` &gt; 0.
             See above for how to determine maskmax6.
             </value>
 
             <value v="2" name="ge">
             Matches when any compare value is greater than (unsigned) or
-            equal to \RcsrTdataTwo.
+            equal to {csr-tdata2}.
             </value>
 
             <value v="3" name="lt">
             Matches when any compare value is less than (unsigned)
-            \RcsrTdataTwo.
+            {csr-tdata2}.
             </value>
 
             <value v="4" name="mask low">
-            Matches when $\frac{|XLEN|}{2}-1$:$0$ of any compare value
-            equals $\frac{|XLEN|}{2}-1$:$0$ of \RcsrTdataTwo after
-            $\frac{|XLEN|}{2}-1$:$0$ of the compare value is ANDed with
-            $|XLEN|-1$:$\frac{|XLEN|}{2}$ of \RcsrTdataTwo.
+            Matches when latexmath:[$\frac{XLEN}{2}-{1:0}] of any compare value
+            equals latexmath:[$\frac{XLEN}{2}-{1:0}] of {csr-tdata2} after
+            latexmath:[$\frac{XLEN}{2}-{1:0}] of the compare value is ANDed with
+            `XLEN-1`:latexmath:[$\frac{XLEN}{2}$] of {csr-tdata2}.
             </value>
 
             <value v="5" name="mask high">
-            Matches when $|XLEN|-1$:$\frac{|XLEN|}{2}$ of any compare
-            value equals $\frac{|XLEN|}{2}-1$:$0$ of \RcsrTdataTwo after
-            $|XLEN|-1$:$\frac{|XLEN|}{2}$ of the compare value is ANDed with
-            $|XLEN|-1$:$\frac{|XLEN|}{2}$ of \RcsrTdataTwo.
+            Matches when `XLEN-1`:latexmath:[$\frac{XLEN}{2}$] of any compare
+            value equals latexmath:[$\frac{XLEN}{2}-{1:0}] of {csr-tdata2} after
+            `XLEN-1`:latexmath:[$\frac{XLEN}{2}$] of the compare value is ANDed with
+            `XLEN-1`:latexmath:[$\frac{XLEN}{2}$] of {csr-tdata2}.
             </value>
 
             <value v="8" name="not equal">
-            Matches when \FcsrMcontrolSixMatch$=0$ would not match.
+            Matches when {mcontrol6-match} `=0` would not match.
             </value>
 
             <value v="9" name="not napot">
-            Matches when \FcsrMcontrolSixMatch$=1$ would not match.
+            Matches when {mcontrol6-match} `=1` would not match.
             </value>
 
             <value v="12" name="not mask low">
-            Matches when \FcsrMcontrolSixMatch$=4$ would not match.
+            Matches when {mcontrol6-match} `=4` would not match.
             </value>
 
             <value v="13" name="not mask high">
-            Matches when \FcsrMcontrolSixMatch$=5$ would not match.
+            Matches when {mcontrol6-match} `=5` would not match.
             </value>
 
             Other values are reserved for future use.
 
             All comparisons only look at the lower XLEN (in the current mode)
-            bits of the compare values and of \RcsrTdataTwo.
-            When \FcsrMcontrolSelect=1 and access size is N, this is further
+            bits of the compare values and of {csr-tdata2}.
+            When {mcontrol-select}=1 and access size is N, this is further
             reduced, and comparisons only look at the lower N bits of the
-            compare values and of \RcsrTdataTwo.
+            compare values and of {csr-tdata2}.
         </field>
         <field name="m" bits="6" access="WARL" reset="0">
             When set, enable this trigger in M-mode.
@@ -1006,24 +1023,24 @@
     </register>
 
     <register name="Instruction Count" short="icount" address="0x7a1">
-        This register provides access to the trigger selected by \RcsrTselect.
+        This register provides access to the trigger selected by {csr-tselect}.
         The reset values listed here apply to every underlying trigger.
 
-        This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 3.
+        This register is accessible as {csr-tdata1} when {tdata1-type} is 3.
 
-        \begin{steps}{This trigger matches when:}
-            \item
-                An instruction retires after having been fetched in a privilege
+        This trigger matches when:
+
+            .  An instruction retires after having been fetched in a privilege
                 mode where the trigger is enabled.
-                This explicitly includes {\em x}\/RET instructions.
-            \item A trap is taken from a privilege mode where the trigger is enabled.
+                This explicitly includes all RET instructions from various modes.
+            . A trap is taken from a privilege mode where the trigger is enabled.
                 This explicitly includes traps taken due to interrupts.
-        \end{steps}
 
         If more than one of the above events occur during a single instruction
         execution, the trigger still only matches once for that instruction.
 
-        \begin{commentary}
+        [NOTE]
+        ====
             For use in single step, icount must match for traps where the
             instruction will not be reexecuted after the handler, such as
             illegal instructions that are emulated by privileged software and
@@ -1033,50 +1050,52 @@
             the page tables and returns to the faulting instruction which
             ultimately retires. Trying to distinguish the two cases leads to
             complex rules, so instead the rule is simply that all traps match.
-            See also Section~\ref{stepIcount}.
-        \end{commentary}
+            See also xref:stepicount[].
+        ====
 
-        When \FcsrIcountCount is greater than 1 and the trigger matches, then
-        \FcsrIcountCount is decremented by 1.
+        When {icount-count} is greater than 1 and the trigger matches, then
+        {icount-count} is decremented by 1.
 
-        When \FcsrIcountCount is 1 and the trigger matches, then \FcsrIcountPending
-        becomes set. In addition \FcsrIcountCount will become 0 unless it is
+        When {icount-count} is 1 and the trigger matches, then {icount-pending}
+        becomes set. In addition {icount-count} will become 0 unless it is
         hard-wired to 1.
 
         The only exception to the above is when the instruction the trigger matched on is a
-        write to the icount trigger. In that case \FcsrIcountPending might or might
-        not become set if \FcsrIcountCount was 1. Afterwards \FcsrIcountCount
+        write to the icount trigger. In that case {icount-pending} might or might
+        not become set if {icount-count} was 1. Afterwards {icount-count}
         contains the newly written value.
 
-        When \FcsrIcountCount is 0 it stays at 0 until explicitly written.
+        When {icount-count} is 0 it stays at 0 until explicitly written.
 
-        When \FcsrIcountPending is set, the trigger fires just
+        When {icount-pending} is set, the trigger fires just
         before any further instructions are executed in a mode where the
-        trigger is enabled. As the trigger fires, \FcsrIcountPending is
-        cleared. In addition, if \FcsrIcountCount is hard-wired to 1 then \FcsrIcountM,
-        \FcsrIcountS, \FcsrIcountU, \FcsrIcountVs, and \FcsrIcountVu are all
+        trigger is enabled. As the trigger fires, {icount-pending} is
+        cleared. In addition, if {icount-count} is hard-wired to 1 then {icount-m},
+        {icount-s}, {icount-u}, {icount-vs}, and {icount-vu} are all
         cleared.
 
-        If the trigger fires with \FcsrIcountAction=0 then zero is written to the
-        {\tt tval} CSR on the breakpoint trap.
+        If the trigger fires with {icount-action}=0 then zero is written to the
+        `tval` CSR on the breakpoint trap.
 
-        \begin{commentary}
-        The intent of \FcsrIcountPending is to cleanly handle the case where
-        \FcsrIcountAction is 0, \FcsrIcountM is 0, \FcsrIcountU is 1,
-        \FcsrIcountCount is 1, and the U-mode instruction being executed
+        [NOTE]
+        ====
+        The intent of {icount-pending} is to cleanly handle the case where
+        {icount-action} is 0, {icount-m} is 0, {icount-u} is 1,
+        {icount-count} is 1, and the U-mode instruction being executed
         causes a trap into M-mode. In that case we want the entire M-mode
         handler to be executed, and the debug trap to be taken before the
         next U-mode instruction.
-        \end{commentary}
+        ====
 
-        \begin{commentary}
+        [NOTE]
+        ====
         This trigger type is intended to be used as a single step for software
         monitor programs or native debug.  Systems that support multiple
         privilege modes that want to debug software running in lower privilege
-        modes don't need to support \FcsrIcountCount greater than 1.
-        \end{commentary}
+        modes don't need to support {icount-count} greater than 1.
+        ====
 
-        If \RcsrTextraThirtytwo or \RcsrTextraSixtyfour are implemented for this
+        If {csr-textra32} or {csr-textra64} are implemented for this
         trigger, it only matches when the conditions set there are satisfied.
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="3" />
@@ -1101,7 +1120,7 @@
             and writing it has no effect.
         </field>
         <field name="count" bits="23:10" access="WARL" reset="1">
-            The trigger will generally fire after \FcsrIcountCount instructions
+            The trigger will generally fire after {icount-count} instructions
             in enabled modes have been executed. See above for the precise behavior.
         </field>
 
@@ -1109,7 +1128,7 @@
             When set, enable this trigger in M-mode.
         </field>
         <field name="pending" bits="8" access="R/W" reset="0">
-            This bit becomes set when \FcsrIcountCount is decremented from 1
+            This bit becomes set when {icount-count} is decremented from 1
             to 0. It is cleared when the trigger fires, which will happen just
             before executing the next instruction in one of the enabled modes.
         </field>
@@ -1126,7 +1145,7 @@
 
         <field name="action" bits="5:0" access="WARL" reset="0">
             The action to take when the trigger fires. The values are explained
-            in Table~\ref{tab:action}.
+            in xref:tab:action[].
 
             <value v="0" name="breakpoint" />
             <value v="1" name="debug mode" />
@@ -1139,41 +1158,42 @@
     </register>
 
     <register name="Interrupt Trigger" short="itrigger" address="0x7a1">
-        This register provides access to the trigger selected by \RcsrTselect.
+        This register provides access to the trigger selected by {csr-tselect}.
         The reset values listed here apply to every underlying trigger.
 
-        This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 4.
+        This register is accessible as {csr-tdata1} when {tdata1-type} is 4.
 
         This trigger can fire when an interrupt trap is taken.
 
         It can be enabled for individual interrupt numbers by setting the bit
-        corresponding to the interrupt number in \RcsrTdataTwo. The interrupt
+        corresponding to the interrupt number in {csr-tdata2}. The interrupt
         number is interpreted in the mode that the trap handler executes in.
         (E.g. virtualized interrupt numbers are not the same in every mode.)
         In addition the trigger can be enabled for non-maskable interrupts using
-        \FcsrItriggerNmi.
+        {itrigger-nmi}.
 
-        \begin{commentary}
+        [NOTE]
+        ====
         If XLEN is 32, then it is not possible to set a trigger for interrupts
         with Exception Code larger than 31. A future version of the RISC-V
         Privileged Spec will likely define interrupt Exception Codes 32 through
         47. Some of those numbers are already being used by the RISC-V Advanced
         Interrupt Architecture.
-        \end{commentary}
+        ====
 
         Hardware may only support a subset of interrupts for this trigger.  A
-        debugger must read back \RcsrTdataTwo after writing it to confirm the
+        debugger must read back {csr-tdata2} after writing it to confirm the
         requested functionality is actually supported.
 
         When the trigger matches, it fires after the trap occurs, just before
         the first instruction of the trap handler is executed.  If
-        \FcsrItriggerAction=0, the standard CSRs are updated for taking the
-        breakpoint trap, and zero is written to the relevant {\tt tval} CSR.  If
+        {itrigger-action}=0, the standard CSRs are updated for taking the
+        breakpoint trap, and zero is written to the relevant `tval` CSR.  If
         the breakpoint trap does not go to a higher privilege mode, this will
         lose CSR information for the original trap.  See
-        Section~\ref{sec:nativetrigger} for more information about this case.
+        xref:nativetrigger[] for more information about this case.
 
-        If \RcsrTextraThirtytwo or \RcsrTextraSixtyfour are implemented for this
+        If {csr-textra32} or {csr-textra64} are implemented for this
         trigger, it only matches when the conditions set there are satisfied.
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="4" />
@@ -1221,7 +1241,7 @@
         </field>
         <field name="action" bits="5:0" access="WARL" reset="0">
             The action to take when the trigger fires. The values are explained
-            in Table~\ref{tab:action}.
+            in xref:tab:action[].
 
             <value v="0" name="breakpoint" />
             <value v="1" name="debug mode" />
@@ -1234,37 +1254,38 @@
     </register>
 
     <register name="Exception Trigger" short="etrigger" address="0x7a1">
-        This register provides access to the trigger selected by \RcsrTselect.
+        This register provides access to the trigger selected by {csr-tselect}.
         The reset values listed here apply to every underlying trigger.
 
-        This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 5.
+        This register is accessible as {csr-tdata1} when {tdata1-type} is 5.
 
         This trigger may fire on up to XLEN of the Exception Codes defined in
-        \Rmcause (described in the Privileged Spec, with Interrupt=0). Those
-        causes are configured by writing the corresponding bit in \RcsrTdataTwo.
-        (E.g.\  to trap on an illegal instruction, the debugger sets bit 2 in
-        \RcsrTdataTwo.)
+        `mcause` (described in the Privileged Spec, with Interrupt=0). Those
+        causes are configured by writing the corresponding bit in {csr-tdata2}.
+        (E.g.  to trap on an illegal instruction, the debugger sets bit 2 in
+        {csr-tdata2}.)
 
-        \begin{commentary}
+        [NOTE]
+        ====
         If XLEN is 32, then it is not possible to set a trigger on Exception
         Codes higher than 31. A future version of the RISC-V Privileged Spec
         will likely define Exception Codes 32 through 47.
         <!-- Source: https://github.com/riscv/riscv-debug-spec/issues/905#issue-1950231166 -->
-        \end{commentary}
+        ====
 
         Hardware may support only a subset of exceptions. A debugger must read
-        back \RcsrTdataTwo after writing it to confirm the requested functionality
+        back {csr-tdata2} after writing it to confirm the requested functionality
         is actually supported.
 
         When the trigger matches, it fires after the trap occurs, just before
         the first instruction of the trap handler is executed.  If
-        \FcsrEtriggerAction=0, the standard CSRs are updated for taking the
-        breakpoint trap, and zero is written to the relevant {\tt tval} CSR.  If
+        {etrigger-action}=0, the standard CSRs are updated for taking the
+        breakpoint trap, and zero is written to the relevant `tval` CSR.  If
         the breakpoint trap does not go to a higher privilege mode, this will
         lose CSR information for the original trap.  See
-        Section~\ref{sec:nativetrigger} for more information about this case.
+        xref:nativetrigger[] for more information about this case.
 
-        If \RcsrTextraThirtytwo or \RcsrTextraSixtyfour are implemented for this
+        If {csr-textra32} or {csr-textra64} are implemented for this
         trigger, it only matches when the conditions set there are satisfied.
 
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="5" />
@@ -1309,7 +1330,7 @@
         </field>
         <field name="action" bits="5:0" access="WARL" reset="0">
             The action to take when the trigger fires. The values are explained
-            in Table~\ref{tab:action}.
+            in xref:tab:action[].
 
             <value v="0" name="breakpoint" />
             <value v="1" name="debug mode" />
@@ -1322,10 +1343,10 @@
     </register>
 
     <register name="External Trigger" short="tmexttrigger" address="0x7a1">
-        This register provides access to the trigger selected by \RcsrTselect.
+        This register provides access to the trigger selected by {csr-tselect}.
         The reset values listed here apply to every underlying trigger.
 
-        This register is accessible as \RcsrTdataOne when \FcsrTdataOneType is 7.
+        This register is accessible as {csr-tdata1} when {tdata1-type} is 7.
 
         This trigger fires when any selected TM external trigger input
         signals.  Up to 16 TM external
@@ -1335,22 +1356,23 @@
         (starting with TM external trigger input 0 and continuing
         sequentially).  Unsupported inputs are hardwired to be inactive.
 
-        If the trigger fires with \FcsrTmexttriggerAction=0 then zero is written to the
-        {\tt tval} CSR on the breakpoint trap.  This trigger fires
+        If the trigger fires with {tmexttrigger-action}=0 then zero is written to the
+        `tval` CSR on the breakpoint trap.  This trigger fires
         asynchronously but it is subject to delegation by medeleg[3] like
         the other triggers.
 
         The TM external trigger input can signal when the trigger is prevented
-        from firing due to one of the mechanisms in section ~\ref{sec:nativetrigger}.
+        from firing due to one of the mechanisms in xref:nativetrigger[].
         An implementation may either ignore the signal altogether when it cannot
         fire (dropping the trigger event) or it may hold the action as pending
         and fire the trigger once it is legal to do so.
 
-        \begin{commentary}
-            \FcsrTmexttriggerIntctl is intended to be used by the {\tt clicinttrig}
+        [NOTE]
+        ====
+            {tmexttrigger-intctl} is intended to be used by the `clicinttrig`
             mechanism from the Core-Local Interrupt Controller (CLIC) RISC-V
             Privileged Architecture Extensions.
-        \end{commentary}
+        ====
         <field name="type" bits="XLEN-1:XLEN-4" access="R" reset="4" />
         <field name="dmode" bits="XLEN-5" access="WARL" reset="0" />
         <field name="hit" bits="XLEN-6" access="WARL" reset="0">
@@ -1371,7 +1393,7 @@
         </field>
         <field name="action" bits="5:0" access="WARL" reset="0">
             The action to take when the trigger fires. The values are explained
-            in Table~\ref{tab:action}.
+            in xref:tab:action[].
 
             <value v="0" name="breakpoint" />
             <value v="1" name="debug mode" />
@@ -1384,52 +1406,53 @@
     </register>
 
     <register name="Trigger Extra (RV32)" short="textra32" address="0x7a3">
-        This register provides access to the trigger selected by \RcsrTselect.
+        This register provides access to the trigger selected by {csr-tselect}.
         The reset values listed here apply to every underlying trigger.
 
-        This register is accessible as \RcsrTdataThree when \FcsrTdataOneType is 2, 3, 4,
+        This register is accessible as {csr-tdata3} when {tdata1-type} is 2, 3, 4,
         5, or 6 and XLEN=32.
 
-        All functionality in this register is optional. The $|value|$ bits may
-        tie any number of upper bits to 0. The $|select|$ bits may only support
-        0 (ignore).
+        All functionality in this register is optional.  Any number of upper
+        bits of {textra32-mhvalue} and {textra32-svalue} may be tied to 0.
+        {textra32-mhselect} and {textra32-sselect} may only support 0 (ignore).
 
-        Byte-granular comparison of \RcsrScontext to \FcsrTextraThirtytwoSvalue
-        allows \RcsrScontext to be defined to include more than one element of comparison.
-        For example, software instrumentation can program the \RcsrScontext value to be
+        Byte-granular comparison of {csr-scontext} to {textra32-svalue}
+        allows {csr-scontext} to be defined to include more than one element of comparison.
+        For example, software instrumentation can program the {csr-scontext} value to be
         the concatenation of different ID contexts such as process ID and thread ID.
-        The user can then program byte compares based on \FcsrTextraThirtytwoSbytemask
+        The user can then program byte compares based on {textra32-sbytemask}
         to include one or more of the contexts in the compare.
-        
-        Byte masking only applies to \RcsrScontext comparison; i.e when \FcsrTextraThirtytwoSselect is 1.
 
-        \begin{commentary}
+        Byte masking only applies to {csr-scontext} comparison; i.e when {textra32-sselect} is 1.
+
+        [NOTE]
+        ====
         Note that sselect and mhselect filtering apply in all modes, including M-mode
         and S-mode.  If desired, debuggers can use a trigger's mode filtering bits to
         restrict the matching to modes where it considers ASID/VMID/scontext/hcontext
         to be active.
-        \end{commentary}
-        
+        ====
+
         <field name="mhvalue" bits="31:26" access="WARL" reset="0">
-            Data used together with \FcsrTextraThirtytwoMhselect.
+            Data used together with {textra32-mhselect}.
         </field>
         <field name="mhselect" bits="25:23" access="WARL" reset="0">
             <value v="0" name="ignore">
-            Ignore \FcsrTextraThirtytwoMhvalue.
+            Ignore {textra32-mhvalue}.
             </value>
 
             <value v="4" name="mcontext">
             This trigger will only match or fire if the low bits of
-            \RcsrMcontext/\RcsrHcontext equal \FcsrTextraThirtytwoMhvalue.
+            {csr-mcontext}/{csr-hcontext} equal {textra32-mhvalue}.
             </value>
 
-            1, 5 (mcontext\_select): This trigger will only match or fire if the
+            1, 5 (mcontext_select): This trigger will only match or fire if the
             low bits of
-            \RcsrMcontext/\RcsrHcontext equal \{\FcsrTextraThirtytwoMhvalue, mhselect[2]\}.
+            {csr-mcontext}/{csr-hcontext} equal {{textra32-mhvalue}, mhselect[2]}.
 
-            2, 6 (vmid\_select): This trigger will only match or fire if VMID in
+            2, 6 (vmid_select): This trigger will only match or fire if VMID in
             hgatp equals the lower VMIDMAX
-            (defined in the Privileged Spec) bits of \{\FcsrTextraThirtytwoMhvalue, mhselect[2]\}.
+            (defined in the Privileged Spec) bits of {{textra32-mhvalue}, mhselect[2]}.
 
             3, 7 (reserved): Reserved.
 
@@ -1437,39 +1460,39 @@
         </field>
 
         <field name="0" bits="22:20" access="R" reset="0" />
-        
+
         <field name="sbytemask" bits="19:18" access="WARL" reset="0">
             When the least significant bit of this field is 1, it causes bits 7:0
-            in the comparison to be ignored, when \FcsrTextraThirtytwoSselect=1.
+            in the comparison to be ignored, when {textra32-sselect}=1.
             When the next most significant bit of this field is 1, it causes bits 15:8
-            to be ignored in the comparison, when \FcsrTextraThirtytwoSselect=1.
+            to be ignored in the comparison, when {textra32-sselect}=1.
         </field>
 
         <field name="svalue" bits="17:2" access="WARL" reset="0">
-            Data used together with \FcsrTextraThirtytwoSselect.
+            Data used together with {textra32-sselect}.
 
             This field should be tied to 0 when S-mode is not supported.
         </field>
         <field name="sselect" bits="1:0" access="WARL" reset="0">
             <value v="0" name="ignore">
-            Ignore \FcsrTextraThirtytwoSvalue.
+            Ignore {textra32-svalue}.
             </value>
 
             <value v="1" name="scontext">
             This trigger will only match or fire if the low bits of
-            \RcsrScontext equal \FcsrTextraThirtytwoSvalue.
+            {csr-scontext} equal {textra32-svalue}.
             </value>
 
             <value v="2" name="asid">
             This trigger will only match or fire if:
-            \begin{itemize}[noitemsep,nolistsep]
-            \item the mode is VS-mode or VU-mode and ASID in \Rvsatp
+
+            * the mode is VS-mode or VU-mode and ASID in `vsatp`
             equals the lower ASIDMAX (defined in the Privileged Spec) bits
-            of \FcsrTextraThirtytwoSvalue.
-            \item in all other modes, ASID in \Rsatp equals the lower
+            of {textra32-svalue}.
+
+            * in all other modes, ASID in `satp` equals the lower
             ASIDMAX (defined in the Privileged Spec) bits of
-            \FcsrTextraThirtytwoSvalue.
-            \end{itemize}
+            {textra32-svalue}.
             </value>
 
             This field should be tied to 0 when S-mode is not supported.
@@ -1478,22 +1501,22 @@
     </register>
 
     <register name="Trigger Extra (RV64)" short="textra64" address="0x7a3">
-        This register provides access to the trigger selected by \RcsrTselect.
+        This register provides access to the trigger selected by {csr-tselect}.
         The reset values listed here apply to every underlying trigger.
 
-        This register is accessible as \RcsrTdataThree when \FcsrTdataOneType is 2, 3, 4,
+        This register is accessible as {csr-tdata3} when {tdata1-type} is 2, 3, 4,
         5, or 6 and XLEN=64. The fields are defined
-        above, in \RcsrTextraThirtytwo.
+        above, in {csr-textra32}.
 
-        Byte-granular comparison of \RcsrScontext to \FcsrTextraSixtyfourSvalue in
-        \RcsrTextraSixtyfour allows \RcsrScontext to be defined to include
+        Byte-granular comparison of {csr-scontext} to {textra64-svalue} in
+        {csr-textra64} allows {csr-scontext} to be defined to include
         more than one element of comparison.  For example, software instrumentation
-        can program the \RcsrScontext value to be the concatenation of different ID contexts
+        can program the {csr-scontext} value to be the concatenation of different ID contexts
         such as process ID and thread ID.  The user can then program byte compares based on
-        \FcsrTextraSixtyfourSbytemask to include one or more of the contexts in the compare.
-        
-        Byte masking only applies to \RcsrScontext comparison; i.e when \FcsrTextraSixtyfourSselect is 1.
-        
+        {textra64-sbytemask} to include one or more of the contexts in the compare.
+
+        Byte masking only applies to {csr-scontext} comparison; i.e when {textra64-sselect} is 1.
+
         <field name="mhvalue" bits="63:51" access="WARL" reset="0">
         </field>
         <field name="mhselect" bits="50:48" access="WARL" reset="0">
@@ -1503,7 +1526,7 @@
 
         <field name="sbytemask" bits="40:36" access="WARL" reset="0">
             When the least significant bit of this field is 1, it causes bits 7:0
-            in the comparison to be ignored, when \FcsrTextraSixtyfourSselect=1.
+            in the comparison to be ignored, when {textra64-sselect}=1.
             Likewise, the second bit controls the comparison of bits 15:8,
             third bit controls the comparison of bits 23:16,
             fourth bit controls the comparison of bits 31:24, and
