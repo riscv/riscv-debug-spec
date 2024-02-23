@@ -310,7 +310,7 @@ def parse_bits( field ):
 
 def parse_spdx( path ):
     with open( path ) as f:
-        data = f.read(65536)
+        data = f.read(4096)
         return set(re.findall(r"SPDX-License-Identifier:\s*(.+)$", data, re.MULTILINE))
 
 def parse_xml( path ):
