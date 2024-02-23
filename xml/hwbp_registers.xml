@@ -1,13 +1,11 @@
+<!-- SPDX-License-Identifier: BSD-2-Clause OR CC-BY-4.0 -->
+
 <!--
-This file is dual-licensed. You may choose to use this file under the terms of either the:
+This file is dual-licensed. You may choose to use this file under the terms of
+either of the above licenses.
 
-1. SPDX-License-Identifier: BSD-2-Clause
-
-OR
-
-2. SPDX-License-Identifier: CC-BY-4.0
-
-Note: This dual licensing does not apply to other files that may be part of the same project unless stated otherwise.
+Note: This dual licensing does not apply to other files that may be part of the
+same project unless stated otherwise.
 -->
 
 <registers name="Trigger Module Registers" prefix="CSR_" label="trigger">
