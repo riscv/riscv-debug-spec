@@ -311,7 +311,7 @@ def parse_bits( field ):
 def parse_spdx( path ):
     with open( path ) as f:
         data = f.read(4096)
-        return set(re.findall(r"SPDX-License-Identifier:\s*(.+)$", data, re.MULTILINE))
+        return set(re.findall(r"SPDX-License-Identifier:\s*(.+?)\s*(?:-->.*)?$", data, re.MULTILINE))
 
 def parse_xml( path ):
     licenses = parse_spdx(path)
@@ -1078,6 +1078,8 @@ def main():
     parser.add_argument( '--chisel',
             help='Write Scala Classes to the named file.' )
     parser.add_argument( '--cgetters', dest='xml_paths', nargs='+')
+    parser.add_argument( '--create',
+            help='Line included in the output described how the file was created.' )
     parsed = parser.parse_args()
 
     if (parsed.xml_paths):
@@ -1086,11 +1088,15 @@ def main():
         # Assert every license list is the same
         assert all(license_lists[0] == license_list for license_list in license_lists), \
                 "All XML files must have the same SPDX-License-Identifier"
-        fd_h = open( parsed.path + ".h", "a" )
+        fd_h = open( parsed.path + ".h", "w" )
         write_c_licenses( fd_h, license_lists[0] )
+        if (parsed.create):
+            fd_h.write(f"/* {parsed.create} */\n\n")
         fd_h.write("#ifndef DEBUG_DEFINES_H\n#define DEBUG_DEFINES_H\n")
-        fd_c = open( parsed.path + ".c", "a" )
+        fd_c = open( parsed.path + ".c", "w" )
         write_c_licenses( fd_c, license_lists[0] )
+        if (parsed.create):
+            fd_c.write(f"/* {parsed.create} */\n\n")
         fd_c.write(f'#include "{parsed.path}.h"\n#include <stddef.h>\n#include <assert.h>\n')
         for registers in registers_list:
             write_cheader( fd_h, registers )
