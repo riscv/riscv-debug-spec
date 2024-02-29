@@ -1017,7 +1017,7 @@ def write_adoc( fd, registers ):
         fd.write("\n")
 
 def write_adoc_index( fd, registers ):
-    fd.write(remove_indent(registers.description))
+    fd.write(remove_indent(registers.description) + "\n")
 
     columns = [
         ("Address", "1"),
