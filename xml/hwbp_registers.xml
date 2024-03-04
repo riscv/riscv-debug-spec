@@ -1401,6 +1401,10 @@ same project unless stated otherwise.
         This register is accessible as {csr-tdata3} when {tdata1-type} is 2, 3, 4,
         5, or 6 and XLEN=32.
 
+        If DXLEN &gt;= 64, then this register provides access to the low bits of
+        each field defined in {csr-textra64}. Writes to this register will clear
+        the high bits of the corresponding fields in {csr-textra64}.
+
         All functionality in this register is optional.  Any number of upper
         bits of {textra32-mhvalue} and {textra32-svalue} may be tied to 0.
         {textra32-mhselect} and {textra32-sselect} may only support 0 (ignore).
@@ -1494,8 +1498,9 @@ same project unless stated otherwise.
         The reset values listed here apply to every underlying trigger.
 
         This register is accessible as {csr-tdata3} when {tdata1-type} is 2, 3, 4,
-        5, or 6 and XLEN=64. The fields are defined
-        above, in {csr-textra32}.
+        5, or 6 and XLEN=64. The function of the fields are defined
+        above, in {csr-textra32}. This register retains its value when XLEN
+        changes. When XLEN=32 some of the bits can be accessed through {csr-textra32}.
 
         Byte-granular comparison of {csr-scontext} to {textra64-svalue} in
         {csr-textra64} allows {csr-scontext} to be defined to include
