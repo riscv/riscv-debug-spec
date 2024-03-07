@@ -1,3 +1,13 @@
+<!-- SPDX-License-Identifier: BSD-2-Clause OR CC-BY-4.0 -->
+
+<!--
+This file is dual-licensed. You may choose to use this file under the terms of
+either of the above licenses.
+
+Note: This dual licensing does not apply to other files that may be part of the
+same project unless stated otherwise.
+-->
+
 <registers name="Trigger Module Registers" prefix="CSR_" label="trigger">
     The Trigger Module registers, except {csr-mscontext}, {csr-scontext}, and {csr-hcontext}, are only accessible in machine
     and Debug Mode to prevent untrusted user code from causing entry into Debug
