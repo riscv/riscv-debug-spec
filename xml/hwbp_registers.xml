@@ -277,14 +277,15 @@ same project unless stated otherwise.
         `hstateenzero[57]` in the Smstateen extension.  Enabling {csr-scontext}
         can be a security risk in a virtualized system with a hypervisor that
         does not swap {csr-scontext}.
-        <field name="data" bits="XLEN-1:0" access="WARL" reset="0">
+        <field name="0" bits="XLEN-1:32" access="R" reset="0" />
+        <field name="data" bits="31:0" access="WARL" reset="0">
             Supervisor mode software can write a context number to this
             register, which can be used to set triggers that only fire in that
             specific context.
 
             An implementation may tie any number of high bits in this field to
-            0. It's recommended to implement no more than 16 bits on RV32, and
-            34 on RV64.
+            0. It's recommended to implement 16 bits on RV32 and 32 bits on
+            RV64.
         </field>
     </register>
 
@@ -300,17 +301,18 @@ same project unless stated otherwise.
             hypervisor directly.
         ====
 
-        <field name="hcontext" bits="XLEN-1:0" access="WARL" reset="0">
+        <field name="0" bits="XLEN-1:14" access="R" reset="0" />
+        <field name="hcontext" bits="13:0" access="WARL" reset="0">
             M-Mode or HS-Mode (using {csr-hcontext}) software can write a context
             number to this register, which can be used to set triggers that only
             fire in that specific context.
 
             An implementation may tie any number of upper bits in this field to
             0. If the H extension is not implemented, it's recommended to implement
-            no more than 6 bits on RV32 and 13 on RV64 (as visible through the
+            6 bits on RV32 and 13 bits on RV64 (as visible through the
             {csr-mcontext} register).  If the H extension is implemented,
-            it's recommended to implement no more than 7 bits on RV32
-            and 14 on RV64.
+            it's recommended to implement 7 bits on RV32
+            and 14 bits on RV64.
         </field>
     </register>
 
@@ -1537,17 +1539,17 @@ same project unless stated otherwise.
         <field name="mhselect" bits="50:48" access="WARL" reset="0">
         </field>
 
-        <field name="0" bits="47:41" access="R" reset="0" />
+        <field name="0" bits="47:40" access="R" reset="0" />
 
-        <field name="sbytemask" bits="40:36" access="WARL" reset="0">
+        <field name="sbytemask" bits="39:36" access="WARL" reset="0">
             When the least significant bit of this field is 1, it causes bits 7:0
             in the comparison to be ignored, when {textra64-sselect}=1.
             Likewise, the second bit controls the comparison of bits 15:8,
             third bit controls the comparison of bits 23:16,
-            fourth bit controls the comparison of bits 31:24, and
-            fifth bit controls the comparison of bits 33:32.
+            and fourth bit controls the comparison of bits 31:24.
         </field>
-        <field name="svalue" bits="35:2" access="WARL" reset="0">
+        <field name="0" bits="35:34" access="R" reset="0" />
+        <field name="svalue" bits="33:2" access="WARL" reset="0">
         </field>
         <field name="sselect" bits="1:0" access="WARL" reset="0">
         </field>
