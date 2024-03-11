@@ -13,8 +13,8 @@ same project unless stated otherwise.
     and Debug Mode to prevent untrusted user code from causing entry into Debug
     Mode without the OS's permission.
 
-    In this section XLEN means MXLEN when in M-mode, and DXLEN when in Debug
-    Mode. On systems where those values of XLEN can differ, this is handled
+    In this section XLEN refers to the effective XLEN in the current execution
+    mode. On systems where XLEN values can differ between modes, this is handled
     as follows.
     Fields retain their values regardless of XLEN, which only affects where
     in the register these fields appear (e.g. {tdata1-type}). Some fields
