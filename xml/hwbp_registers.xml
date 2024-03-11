@@ -729,7 +729,7 @@ same project unless stated otherwise.
 
         [NOTE]
         ====
-        {mcontrol6-uncertain} and {mcontrol6-uncertain}en exist to
+        {mcontrol6-uncertain} and {mcontrol6-uncertainen} exist to
         accommodate systems where not every memory access is fully observed by
         the Trigger Module. Possible examples include data values in far AMOs,
         and the address/data/size of accesses by instructions that perform

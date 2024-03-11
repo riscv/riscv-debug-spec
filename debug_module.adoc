@@ -146,7 +146,7 @@ simultaneously. The state of the hart array mask register is not
 affected by setting or clearing {dmcontrol-hasel}.
 
 Execution of Abstract Commands ignores this mechanism and only applies
-to the hart selected by {dmstatus-hartsello}.
+to the hart selected by {hartsel}.
 
 === Hart DM States
 
