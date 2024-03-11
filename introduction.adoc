@@ -40,7 +40,8 @@ functionality.
 
 *DTM*:: Debug Transport Module (see <<dtm>>).
 
-*DXLEN*:: Debug XLEN, which is the widest XLEN a hart supports, ignoring the current value of in .
+*DXLEN*:: Debug XLEN, which is the widest XLEN a hart supports, ignoring the
+current value of `mxl` in `misa`.
 
 *essential feature*:: An essential feature must be present in order for debug to work correctly.
 
