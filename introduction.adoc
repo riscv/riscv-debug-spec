@@ -252,6 +252,16 @@ https://github.com/riscv/riscv-debug-spec/pull/731[#731]
 https://github.com/riscv/riscv-debug-spec/pull/723[#723].
 https://github.com/riscv/riscv-debug-spec/pull/880[#880]
 
+===== Incompatible Changes Between 1.0.0-rc1 and 1.0.0-rc2
+
+Backwards-incompatible changes between 1.0.0-rc1 and 1.0.0-rc2.
+
+. https://github.com/riscv/riscv-debug-spec/pull/981[#981] made
+{csr-scontext}.{scontext-data}, {csr-mcontext}.{mcontext-hcontext},
+{textra64-sbytemask}, and {csr-textra64}.`svalue` narrower. This avoids confusion
+about the contents of {csr-scontext} and {csr-mcontext} when XLEN is reduced and
+increased again.
+
 === About This Document
 
 ==== Structure
