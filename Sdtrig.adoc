@@ -118,7 +118,7 @@ Instruction address misaligned +
 Environment call +
 Environment break +
 Load/Store/AMO address breakpoint
-.>| mcontrol/mcontrol6 load/store address/data before
+.>| mcontrol/mcontrol6 load/store address before, store data before
 || 4, 6 | Optionally: Load/Store/AMO address misaligned |
 || 13, 15, 21, 23, 5, 7 | During address translation for an explicit
 memory access: First encountered page fault, guest-page fault, or access
