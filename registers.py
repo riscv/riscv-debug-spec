@@ -15,7 +15,7 @@ from functools import reduce
 
 class Registers( object ):
     def __init__( self, name, label, prefix, description, skip_index,
-            skip_access, skip_reset, depth ):
+            skip_access, skip_reset, depth, licenses ):
         self.name = name
         self.label = label
         self.prefix = prefix or ""
@@ -24,6 +24,7 @@ class Registers( object ):
         self.skip_access = skip_access
         self.skip_reset = skip_reset
         self.depth = depth
+        self.licenses = licenses
         self.registers = []
 
     def add_register( self, register ):
@@ -307,7 +308,13 @@ def parse_bits( field ):
     else:
         assert False, text
 
+def parse_spdx( path ):
+    with open( path ) as f:
+        data = f.read(4096)
+        return set(re.findall(r"SPDX-License-Identifier:\s*(.+?)\s*(?:-->.*)?$", data, re.MULTILINE))
+
 def parse_xml( path ):
+    licenses = parse_spdx(path)
     e = xml.etree.ElementTree.parse( path ).getroot()
     if e.text:
         description = e.text.strip()
@@ -318,7 +325,8 @@ def parse_xml( path ):
             int( e.get( 'skip_index', 0 ) ),
             int( e.get( 'skip_access', 0 ) ),
             int( e.get( 'skip_reset', 0 ) ),
-            int( e.get( 'depth', 1 )))
+            int( e.get( 'depth', 1 )),
+            licenses)
     for r in e.findall( 'register' ):
         name = r.get( 'name' )
         short = r.get( 'short' )
@@ -479,6 +487,10 @@ def sympy_to_c(expression, sym_to_c = lambda s: f"({s})", unsigned=True):
             return f"{args[0]} > {args[1]} ? {[args[0]] + [args[2:]]} : {args[1:]}"
         return c_max(args)
     raise Exception("Unsupported sympy object %r of type %r" % (expression, type(expression)))
+
+def write_c_licenses( fd, licenses ):
+    for license in licenses:
+        fd.write(f"/* SPDX-License-Identifier: {license} */\n")
 
 def write_cheader( fd, registers ):
     definitions = []
@@ -1017,7 +1029,7 @@ def write_adoc( fd, registers ):
         fd.write("\n")
 
 def write_adoc_index( fd, registers ):
-    fd.write(remove_indent(registers.description))
+    fd.write(remove_indent(registers.description) + "\n")
 
     columns = [
         ("Address", "1"),
@@ -1066,14 +1078,26 @@ def main():
     parser.add_argument( '--chisel',
             help='Write Scala Classes to the named file.' )
     parser.add_argument( '--cgetters', dest='xml_paths', nargs='+')
+    parser.add_argument( '--create',
+            help='Line included in the output described how the file was created.' )
     parsed = parser.parse_args()
 
     if (parsed.xml_paths):
-        fd_h = open( parsed.path + ".h", "a" )
-        fd_h.write("#ifndef DEBUG_DEFINES_H\n#define DEBUG_DEFINES_H\n")
-        fd_c = open( parsed.path + ".c", "a" )
-        fd_c.write(f'#include "{parsed.path}.h"\n#include <stddef.h>\n#include <assert.h>\n')
         registers_list = [parse_xml( xml_path ) for xml_path in parsed.xml_paths]
+        license_lists = [registers.licenses for registers in registers_list]
+        # Assert every license list is the same
+        assert all(license_lists[0] == license_list for license_list in license_lists), \
+                "All XML files must have the same SPDX-License-Identifier"
+        fd_h = open( parsed.path + ".h", "w" )
+        write_c_licenses( fd_h, license_lists[0] )
+        if (parsed.create):
+            fd_h.write(f"/* {parsed.create} */\n\n")
+        fd_h.write("#ifndef DEBUG_DEFINES_H\n#define DEBUG_DEFINES_H\n")
+        fd_c = open( parsed.path + ".c", "w" )
+        write_c_licenses( fd_c, license_lists[0] )
+        if (parsed.create):
+            fd_c.write(f"/* {parsed.create} */\n\n")
+        fd_c.write(f'#include "{parsed.path}.h"\n#include <stddef.h>\n#include <assert.h>\n')
         for registers in registers_list:
             write_cheader( fd_h, registers )
         print_cgetters(registers_list, fd_h, fd_c)
@@ -1084,7 +1108,9 @@ def main():
     if parsed.definitions:
         write_definitions( open( parsed.definitions, "w" ), registers )
     if parsed.cheader:
-        write_cheader( open( parsed.cheader, "w" ), registers )
+        with open( parsed.cheader, "w" ) as fd:
+            write_c_licenses( fd, registers.licenses )
+            write_cheader( fd, registers )
     if parsed.chisel:
         write_chisel( open( parsed.chisel, "w" ), registers )
     if not registers.skip_index and not parsed.adoc:

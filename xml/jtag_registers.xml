@@ -1,3 +1,13 @@
+<!-- SPDX-License-Identifier: BSD-2-Clause OR CC-BY-4.0 -->
+
+<!--
+This file is dual-licensed. You may choose to use this file under the terms of
+either of the above licenses.
+
+Note: This dual licensing does not apply to other files that may be part of the
+same project unless stated otherwise.
+-->
+
 <registers name="JTAG DTM TAP Registers" label="table:jtag_registers" prefix="DTM_">
     <!-- JTAG standard registers, everything starting with 0 -->
     <register name="BYPASS" address="0x00" sdesc="JTAG recommends this encoding"/>
