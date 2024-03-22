@@ -194,12 +194,6 @@ specified by {dcsr-prv} and {dcsr-v}.
 . If the new privilege mode is less privileged than M-mode, `MPRV` in `mstatus` is cleared.
 . The hart is no longer in debug mode.
 
-=== XLEN
-
-While in Debug Mode, XLEN is DXLEN. It is up to the debugger to
-determine the XLEN during normal program execution (by looking at `misa`) and
-to clearly communicate this to the user.
-
 [[debreg]]
 === Core Debug Registers
 

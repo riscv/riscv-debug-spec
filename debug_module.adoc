@@ -100,7 +100,10 @@ The Debug Module's own state and registers should only be reset at
 power-up and while {dmcontrol-dmactive} in {dm-dmcontrol} is 0. If there is another mechanism to reset the DM, this mechanism must also reset all the harts accessible to the DM.
 
 Due to clock and power domain crossing issues, it might not be possible
-to perform arbitrary DMI accesses across hardware platform reset. While {dmcontrol-ndmreset}  or any external reset is asserted, the only supported DM operations are reading and writing {dm-dmcontrol}. The behavior of other accesses is undefined.
+to perform arbitrary DMI accesses across hardware platform reset. While
+{dmcontrol-ndmreset}  or any external reset is asserted, the only supported DM
+operations are reading/writing {dm-dmcontrol} and reading
+{dmstatus-ndmresetpending}. The behavior of other accesses is undefined.
 
 When harts have been reset, they must set a sticky `havereset` state
 bit. The conceptual `havereset` state bits can be read for selected

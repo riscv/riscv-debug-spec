@@ -4,7 +4,7 @@
 :company: RISC-V.org
 :authors: Tim Newsome, Paul Donahue (Ventana Micro Systems)
 :revdate: Revised 2024-01-25
-:revnumber: 1.0.0-rc1
+:revnumber: 1.0.0-rc2
 :revremark: Frozen
 :url-riscv: http://riscv.org
 :doctype: book
