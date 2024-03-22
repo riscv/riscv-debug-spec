@@ -989,9 +989,7 @@ def write_adoc( fd, registers ):
         fd.write(remove_indent(r.description))
         fd.write("\n\n")
 
-        if r.diagram:
-            fd.write(f"{remove_indent(r.diagram)}\n")
-        if r.fields:
+        if r.fields or r.diagram:
             if registers.prefix == "CSR_":
                 if int(r.address, 0) >= 0xc00:
                     fd.write("This CSR is read-only.\n")
@@ -1002,7 +1000,10 @@ def write_adoc( fd, registers ):
             elif all(f.access in ('R', '0') for f in r.fields):
                 fd.write("This entire register is read-only.\n")
 
-            write_bytefield( fd, r )
+            if r.diagram:
+                fd.write(f"{remove_indent(r.diagram)}\n")
+            else:
+                write_bytefield( fd, r )
 
         columns = [("<2", "Field", lambda f: f"(({f.name}))")]
         columns += [("<6", "Description", lambda f: f.latex_description())]
