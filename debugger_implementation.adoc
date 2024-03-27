@@ -82,7 +82,7 @@ instruction before re-entering Debug Mode.
 ===== Using Abstract Command
 Read `s0` using abstract command:
 
-[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
+[align="center",float="center",cols="^3,^3,^10,<10",options="header"]
 |===    
 | Op | Address | Value | Comment    
 | Write | {dm-command} | {accessregister-aarsize}latexmath:[$=2$], {accessregister-transfer}, {accessregister-regno} = 0x1008 | Read `s0`
@@ -91,7 +91,7 @@ Read `s0` using abstract command:
 
 Write `mstatus` using abstract command:
 
-[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
+[align="center",float="center",cols="^3,^3,^10,<10",options="header"]
 |===
 | Op | Address | Value | Comment 
 | Write | {dm-data0} | new value | 
@@ -107,19 +107,18 @@ into/out of GPRs.
 
 Write `mstatus` using program buffer:
 
-[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
-|=== 
-|Op | Address | Value | Comment 
-|Write | {dm-progbuf0} | `csrw s0, MSTATUS` &|
-|Write | `progbuf1` | `ebreak` |
-|Write | {dm-data0} | new value |
-|Write |{dm-command}| {accessregister-aarsize}latexmath:[$=2$], {accessregister-postexec}, {accessregister-transfer}, {accessregister-write}, {accessregister-regno} = 0x1008 |
-Write `s0`, then execute program buffer
+[align="center",float="center",cols="^3,^3,^10,<10",options="header"]
+|===
+| Op | Address | Value | Comment 
+| Write | {dm-progbuf0} | `csrw s0, MSTATUS` |
+| Write | `progbuf1` | `ebreak` |
+| Write | {dm-data0} | new value |
+| Write | {dm-command} | {accessregister-aarsize}latexmath:[$=2$], {accessregister-postexec}, {accessregister-transfer}, {accessregister-write}, {accessregister-regno} = 0x1008 | Write `s0`, then execute program buffer
 |===
 
 Read `f1` using program buffer:
 
-[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
+[align="center",float="center",cols="^3,^3,^10,<10",options="header"]
 |===
 | Op | Address | Value | Comment 
 | Write | {dm-progbuf0} | {`fmv.x.s s0, f1`} | 
@@ -138,7 +137,7 @@ With system bus access, addresses are physical system bus addresses.
 
 Read a word from memory using system bus access:
 
-[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
+[align="center",float="center",cols="^3,^3,^10,<10",options="header"]
 |===
 | Op | Address | Value | Comment 
 | Write | {dm-sbcs} | {sbcs-sbaccess}latexmath:[$=2$], {sbcs-sbreadonaddr} | Setup 
@@ -148,7 +147,7 @@ Read a word from memory using system bus access:
 
 Read block of memory using system bus access:
 
-[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
+[align="center",float="center",cols="^3,^3,^10,<10",options="header"]
 |===
 | Op | Address | Value | Comment 
 | Write | {dm-sbcs} | {sbcs-sbaccess}latexmath:[$=2$], {sbcs-sbreadonaddr}, {sbcs-sbreadondata}, {sbcs-sbautoincrement} | Turn on autoread and autoincrement 
@@ -169,7 +168,7 @@ configuration).
 
 Read a word from memory using program buffer:
 
-[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
+[align="center",float="center",cols="^3,^3,^10,<10",options="header"]
 |===
 | Op | Address | Value | Comment 
 | Write | {dm-progbuf0} | `lw s0, 0(s0)` | 
@@ -182,7 +181,7 @@ Read a word from memory using program buffer:
 
 Read block of memory using program buffer:
 
-[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
+[align="center",float="center",cols="^3,^3,^10,<10",options="header"]
 |===
 | Op | Address | Value | Comment 
 | Write | {dm-progbuf0} | `lw s1, 0(s0)` | 
@@ -207,7 +206,7 @@ although the actual implementation may differ.
 
 Read a word from memory using abstract memory access:
 
-[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
+[align="center",float="center",cols="^3,^3,^10,<10",options="header"]
 |===
 | Op | Address | Value | Comment 
 | Write | `data1` | address | 
@@ -217,7 +216,7 @@ Read a word from memory using abstract memory access:
 
 Read block of memory using abstract memory access:
 
-[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
+[align="center",float="center",cols="^3,^3,^10,<10",options="header"]
 |===
 | Op | Address | Value | Comment 
 | Write | {dm-abstractauto} | 1 | Re-execute the command when {dm-data0} is accessed 
@@ -239,7 +238,7 @@ With system bus access, addresses are physical system bus addresses.
 
 Write a word to memory using system bus access:
 
-[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
+[align="center",float="center",cols="^3,^3,^10,<10",options="header"]
 |===
 | Op | Address | Value | Comment 
 | Write | {dm-sbcs} | {sbcs-sbaccess}latexmath:[$=2$] | Configure access size 
@@ -249,7 +248,7 @@ Write a word to memory using system bus access:
 
 Write a block of memory using system bus access:
 
-[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
+[align="center",float="center",cols="^3,^3,^10,<10",options="header"]
 |===
 | Op | Address | Value | Comment 
 | Write | {dm-sbcs} | {sbcs-sbaccess}latexmath:[$=2$], {sbcs-sbautoincrement} | Turn on autoincrement 
@@ -269,7 +268,7 @@ configuration).
 
 Write a word to memory using program buffer:
 
-[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
+[align="center",float="center",cols="^3,^3,^10,<10",options="header"]
 |===
 | Op | Address | Value | Comment 
 | Write | {dm-progbuf0} | `sw s1, 0(s0)` | 
@@ -282,7 +281,7 @@ Write a word to memory using program buffer:
 
 Write block of memory using program buffer:
 
-[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
+[align="center",float="center",cols="^3,^3,^10,<10",options="header"]
 |===
 | Op | Address | Value | Comment 
 | Write | {dm-progbuf0} | `sw s1, 0(s0)` | 
@@ -307,7 +306,7 @@ although the actual implementation may differ.
 
 Write a word to memory using abstract memory access:
 
-[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
+[align="center",float="center",cols="^3,^3,^10,<10",options="header"]
 |===
 | Op | Address | Value | Comment 
 | Write | `data1` | address | 
@@ -317,7 +316,7 @@ Write a word to memory using abstract memory access:
 
 Write a block of memory using abstract memory access:
 
-[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
+[align="center",float="center",cols="^3,^3,^10,<10",options="header"]
 |===
 | Op | Address | Value | Comment 
 | Write | `data1` | address | 
@@ -416,7 +415,7 @@ these options.
 Halt the hart for a minimum amount of time to perform a single memory
 write:
 
-[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
+[align="center",float="center",cols="^3,^3,^10,<10",options="header"]
 |===
 | Op | Address | Value | Comment 
 | Write | {dm-progbuf0} | `transfer arg2, s0` | Save `s0` 
@@ -436,7 +435,7 @@ This shows an example of setting the {mcontrol-m} bit in to enable a hardware
 breakpoint in M-mode. Similar quick access instructions could have been
 used previously to configure the trigger that is being enabled here:
 
-[%autowidth,align="center",float="center",cols="^,^,^,^",options="header"]
+[align="center",float="center",cols="^3,^3,^10,<10",options="header"]
 |===
 | Op | Address | Value | Comment 
 | Write | {dm-progbuf0} |  `transfer arg0, s0` | Save `s0` 
