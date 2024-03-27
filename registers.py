@@ -1005,12 +1005,12 @@ def write_adoc( fd, registers ):
             else:
                 write_bytefield( fd, r )
 
-        columns = [("<2", "Field", lambda f: f"(({f.name}))")]
-        columns += [("<6", "Description", lambda f: f.latex_description())]
+        columns = [("<23", "Field", lambda f: f"(({f.name}))")]
+        columns += [("<61", "Description", lambda f: f.latex_description())]
         if not registers.skip_access:
-            columns += [("^1", "Access", lambda f: f"*{f.access}*")]
+            columns += [("^10", "Access", lambda f: f"*{f.access}*")]
         if not registers.skip_reset:
-            columns += [("^1", "Reset", lambda f: f.reset)]
+            columns += [("^10", "Reset", lambda f: f.reset)]
 
         if any( f.description for f in r.fields ):
             cols = ",".join(c[0] for c in columns)
