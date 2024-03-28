@@ -54,7 +54,7 @@ same project unless stated otherwise.
 
         [[tab:regno]]
         .Abstract Register Numbers
-        [%autowidth,align="center",float="center",cols="&gt;,&lt;",options="header"]
+        [%autowidth,align="center",float="center",cols="&lt;,&lt;",options="header"]
         |===
         | Numbers | Group Description
         | 0x0000 -- 0x0fff | CSRs. The ``PC'' can be accessed here through {csr-dpc}.
