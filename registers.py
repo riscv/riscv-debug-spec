@@ -405,6 +405,8 @@ def toAdocIdentifier( *args ):
             [(a or "")
                 .lower()
                 .rstrip("_")
+                .rstrip(")")
+                .replace("(", "_")
                 for a in args]
         ))
     text = re.sub( "\s+", "", text )
