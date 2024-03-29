@@ -88,6 +88,7 @@ include::build/sw_registers-def.adoc[]
 // Manual macros
 :hartsel: <<hartsel,hartsel>>
 :keepalive: <<keepalive,keepalive>>
+:resethaltreq: <<resethaltreq,resethaltreq>>
 
 include::introduction.adoc[]
 include::overview.adoc[]
