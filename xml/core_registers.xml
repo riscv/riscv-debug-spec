@@ -8,7 +8,7 @@ Note: This dual licensing does not apply to other files that may be part of the
 same project unless stated otherwise.
 -->
 
-<registers name="Core Debug Registers" prefix="CSR_">
+<registers name="Core Debug Registers" prefix="CSR_" label="core">
     These registers are only accessible from Debug Mode.
 
     <register name="Debug Control and Status" short="dcsr" address="0x7b0">

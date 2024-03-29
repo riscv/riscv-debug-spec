@@ -8,7 +8,7 @@ Note: This dual licensing does not apply to other files that may be part of the
 same project unless stated otherwise.
 -->
 
-<registers name="Virtual Core Debug Registers" prefix="VIRT_">
+<registers name="Virtual Core Debug Registers" prefix="VIRT_" label="virtual">
     A virtual register is one that doesn't exist directly in the hardware, but
     that the debugger exposes as if it does. Debug software should implement
     them, but hardware can skip this section. Virtual registers exist to give
