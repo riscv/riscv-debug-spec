@@ -193,7 +193,7 @@ same project unless stated otherwise.
 
 [[resethaltreq]]
 (((resethaltreq)))
-        {resethaltreq}is an optional internal bit of per-hart state that cannot be
+        {resethaltreq} is an optional internal bit of per-hart state that cannot be
         read, but can be written with {dmcontrol-setresethaltreq} and {dmcontrol-clrresethaltreq}.
 
 [[keepalive]]
