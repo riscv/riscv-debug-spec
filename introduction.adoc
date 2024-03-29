@@ -185,7 +185,7 @@ https://github.com/riscv/riscv-debug-spec/pull/503[#503]
 https://github.com/riscv/riscv-debug-spec/pull/504[#504]
 . Hardware should clear trigger action when {tdata1-dmode} is cleared and action is 1.
 https://github.com/riscv/riscv-debug-spec/pull/501[#501]
-. Change quick access exceptions to halt the target in <<Quickaccess>>.
+. Change quick access exceptions to halt the target in <<ac-quickaccess>>.
 https://github.com/riscv/riscv-debug-spec/pull/585[#585]
 . Writing 0 to {csr-tdata1} forces a state where {csr-tdata2} and {csr-tdata3} are writable.
 https://github.com/riscv/riscv-debug-spec/pull/598[#598]
