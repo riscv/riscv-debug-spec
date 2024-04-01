@@ -405,6 +405,8 @@ def toAdocIdentifier( *args ):
             [(a or "")
                 .lower()
                 .rstrip("_")
+                .rstrip(")")
+                .replace("(", "_")
                 for a in args]
         ))
     text = re.sub( "\s+", "", text )
@@ -1039,6 +1041,8 @@ def write_adoc_index( fd, registers ):
         columns.append(("Description", "6"))
     columns.append(("Section", "2"))
 
+    fd.write(f"[[tab:{registers.label}]]\n")
+    fd.write(f".{registers.name}\n")
     fd.write('[cols="' + ",".join(c[1] for c in columns) + '",options="header"]\n')
     fd.write("|===\n")
     fd.write("|" + " |".join(c[0] for c in columns) + "\n")
