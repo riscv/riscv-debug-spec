@@ -70,7 +70,19 @@ same project unless stated otherwise.
             available version of this spec.
             </value>
         </field>
-        <field name="0" bits="27:18" access="R" reset="0" />
+        <field name="0" bits="27:21" access="R" reset="0" />
+        <field name="extcause" bits="20:18" access="R" reset="0">
+            When {dcsr-cause} is 7, this optional field contains the value of a
+            more specific halt reason than "other." Otherwise it contains 0.
+
+            <value v="0" name="none">
+            There is no more specific halt reason, probably because the hardware
+            does not implement this field.
+            </value>
+
+            Other values are reserved for future versions of this spec, or for
+            use by other RISC-V extensions.
+        </field>
         <field name="ebreakvs" bits="17" access="WARL" reset="0">
             <value v="0" name="exception">
             `ebreak` instructions in VS-mode behave as described in the
@@ -212,7 +224,10 @@ same project unless stated otherwise.
             Harts may report 3 for this cause instead.
             </value>
 
-            Other values are reserved for future use.
+            <value v="7" name="other">
+            The hart halted for a reason other than the ones mentioned above.
+            {dcsr-extcause} may contain a more specific reason.
+            </value>
         </field>
         <field name="v" bits="5" access="WARL" reset="0">
           Extends the prv field with the virtualization mode the hart was operating
