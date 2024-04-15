@@ -78,7 +78,35 @@ same project unless stated otherwise.
             All values are reserved for future versions of this spec, or for use
             by other RISC-V extensions.
         </field>
-        <field name="0" bits="23:18" access="R" reset="0" />
+        <field name="0" bits="23:20" access="R" reset="0" />
+        <field name="cetrig" bits="19" access="R/W" reset="0">
+            This bit is part of ((Smdbltrp)) and only exists when that extension
+            is implemented.
+
+            <value v="0" name="disabled">
+                A hart in a critical error state does not enter Debug Mode but
+                instead asserts the critical-error signal to the platform.
+            </value>
+
+            <value v="1" name="enabled">
+                A hart in a critical error state enters Debug Mode instead of
+                asserting the critical-error signal to the platform. Upon such
+                entry into Debug Mode, the cause field is set to 7, and the
+                extcause field is set to 0, indicating a critical error
+                triggered the Debug Mode entry.  This cause has the highest
+                priority among all reasons for entering Debug Mode. Resuming
+                from Debug Mode following an entry from the critical error state
+                returns the hart to the critical error state.
+            </value>
+
+            [NOTE]
+            ====
+                When {dcsr-cetrig} is enabled, resuming from Debug Mode
+                following an entry due to a critical error will result in an
+                immediate re-entry into Debug Mode due to the critical error.
+            ====
+        </field>
+        <field name="0" bits="18" access="R" reset="0" />
         <field name="ebreakvs" bits="17" access="WARL" reset="0">
             <value v="0" name="exception">
             `ebreak` instructions in VS-mode behave as described in the
