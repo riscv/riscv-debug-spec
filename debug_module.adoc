@@ -548,8 +548,8 @@ effects, use the following procedure:
 . Read {dm-dmcontrol}.
 . If {dmcontrol-dmactive} is 0 or {dmcontrol-ndmreset} is 1:
 .. Write {dm-dmcontrol}, preserving {dmcontrol-hartreset}, {dmcontrol-hasel}, {dmcontrol-hartsello}, and {dmcontrol-hartselhi} from the value that was read, setting {dmcontrol-dmactive}, and clearing all the other bits.
-.. Read {dm-dmstatus}until {dmcontrol-dmactive} is high.
-. Read {dm-dmstatus}, which contains {tinfo-version}.
+.. Read {dm-dmcontrol} until {dmcontrol-dmactive} is high.
+. Read {dm-dmstatus}, which contains {dmstatus-version}.
 
 If it was necessary to clear {dmcontrol-ndmreset}, this might have the following  
 side effects:
