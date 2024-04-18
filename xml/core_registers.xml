@@ -75,8 +75,13 @@ same project unless stated otherwise.
             When {dcsr-cause} is 7, this optional field contains the value of a
             more specific halt reason than "other." Otherwise it contains 0.
 
-            All values are reserved for future versions of this spec, or for use
-            by other RISC-V extensions.
+            <value v="0" name="critical error">
+                The hart entered a critical error state. Part of the
+                ((Smdbltrp)) extension.
+            </value>
+
+            All other values are reserved for future versions of this spec, or
+            for use by other RISC-V extensions.
         </field>
         <field name="0" bits="23:20" access="R" reset="0" />
         <field name="cetrig" bits="19" access="R/W" reset="0">
