@@ -115,7 +115,7 @@ Up to latexmath:[$2^{20}$] harts can be connected to a single DM.
 Commands issued to the DM only apply to the currently selected harts.
 
 To enumerate all the harts, a debugger must first determine `HARTSELLEN`
-by writing all ones to (assuming the maximum size) and reading back the
+by writing all ones to {hartsel} (assuming the maximum size) and reading back the
 value to see which bits were actually set. Then it selects each hart
 starting from 0 until either {dmstatus-anynonexistent} in {dm-dmstatus} is 1, or the highest index (depending on `HARTSELLEN`) is reached.
 
