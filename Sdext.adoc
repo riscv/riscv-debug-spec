@@ -30,7 +30,7 @@ Mode and the following apply:
 . All implemented instructions operate just as they do in M-mode, unless
 an exception is mentioned in this list.
 . All operations are executed with machine mode privilege, except that
-additional Debug Mode CSRs are accessible and in may be ignored
+additional Debug Mode CSRs are accessible and `mprv` in `mstatus` may be ignored
 according to {dcsr-mprven}. Full permission checks, or a relaxed set of permission
 checks, will apply according to {abstractcs-relaxedpriv}.
 . All interrupts (including NMI) are masked.
