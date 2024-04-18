@@ -32,7 +32,7 @@ interrupt to the selected harts. This interrupt causes each hart to
 enter Debug Mode and jump to a defined memory region that is serviced by
 the DM and is only accessible to the harts in Debug Mode. Accesses to
 this memory should be uncached to avoid side effects from debugging
-operations. When taking this jump, is saved to {csr-dpc} and {dcsr-cause} is updated in {csr-dcsr}. This
+operations. When taking this jump, `pc` is saved to {csr-dpc} and {dcsr-cause} is updated in {csr-dcsr}. This
 jump is similar to a trap but it is not architecturally considered a
 trap, so for instance doesn't count as a trap for trigger behavior.
 
