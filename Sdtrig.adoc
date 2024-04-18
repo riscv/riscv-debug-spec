@@ -52,7 +52,7 @@ Triggers can be configured to take one of several actions when they fire. <<tab:
 
 [[tab:action]]
 .{mcontrol-action} encoding
-[%autowidth,align="center",float="center",cols=">,^",options="header"]
+[align="center",float="center",cols=">1,<10",options="header"]
 |===
 ^| Value | Description
 |0 | Raise a breakpoint exception. (Used when software wants to use the trigger module without an external debugger attached.) `xepc` must contain the virtual address of the next instruction that must be executed to preserve the program flow.
