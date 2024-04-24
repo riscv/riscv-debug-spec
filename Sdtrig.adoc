@@ -57,7 +57,9 @@ Triggers can be configured to take one of several actions when they fire. <<tab:
 ^| Value | Description
 |0 | Raise a breakpoint exception. (Used when software wants to use the trigger module without an external debugger attached.) `xepc` must contain the virtual address of the next instruction that must be executed to preserve the program flow.
 |1 | Enter Debug Mode. {csr-dpc} must contain the virtual address of the next instruction that must be executed to preserve the program flow. +
-This action is only legal when the trigger's {mcontrol-dmode} is 1. Since the `tdata` registers are *WARL*, hardware should clear the action field whenever the action field is 1, the new value of {mcontrol-dmode} would be 0, and the new value of  he action field would be 1. +
+This action is only legal when the trigger's {mcontrol-dmode} is 1.  Since
+{csr-tdata1} is WARL, hardware must prevent it from containing {tdata1-dmode}=0
+and action=1. +
 This action can only be supported if `Sdext` is implemented on the hart.
 | 2 | Trace on, described in the trace specification. 
 | 3 | Trace off, described in the trace specification.
