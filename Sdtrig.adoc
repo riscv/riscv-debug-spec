@@ -156,7 +156,7 @@ exception will be handled in.
 
 In these cases such a trigger may cause a breakpoint exception while
 already in a trap handler. This might leave the hart unable to resume
-normal execution because state such as and would be overwritten.
+normal execution because state such as `mcause` and `mepc` would be overwritten.
 
 [NOTE]
 ====
