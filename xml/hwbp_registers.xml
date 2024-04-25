@@ -422,7 +422,7 @@ same project unless stated otherwise.
 
             Most hardware will only implement one timing or the other, possibly
             dependent on {mcontrol-select}, {mcontrol-execute},
-            {mcontrol-load}, and {mcontrol-s}tore. This bit
+            {mcontrol-load}, and {mcontrol-store}. This bit
             primarily exists for the hardware to communicate to the debugger
             what will happen. Hardware may implement the bit fully writable, in
             which case the debugger has a little more control.
