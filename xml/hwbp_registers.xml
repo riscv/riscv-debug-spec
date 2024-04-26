@@ -333,7 +333,7 @@ same project unless stated otherwise.
         A chain of triggers that don't all have the same {mcontrol-timing}
         value will never fire. That means to implement the suggestions in
         &lt;&lt;tab:hwbp_timing&gt;&gt;, both timings should be supported on load
-        address triggers.
+        address triggers that can be chained with a load data trigger.
 
         The Privileged Spec says that breakpoint exceptions that occur on
         instruction fetches, loads, or stores update the `tval` CSR
