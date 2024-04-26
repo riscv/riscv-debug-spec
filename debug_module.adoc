@@ -119,8 +119,8 @@ by writing all ones to {hartsel} (assuming the maximum size) and reading back th
 value to see which bits were actually set. Then it selects each hart
 starting from 0 until either {dmstatus-anynonexistent} in {dm-dmstatus} is 1, or the highest index (depending on `HARTSELLEN`) is reached.
 
-The debugger can discover the mapping between hart indices and by using
-the interface to read , or by reading the hardware platform's
+The debugger can discover the mapping between hart indices and `mhartid` by using
+the interface to read `mhartid`, or by reading the hardware platform's
 configuration structure.
 
 ==== Selecting a Single Hart
