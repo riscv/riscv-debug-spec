@@ -3,7 +3,7 @@
 
 This chapter describes the Sdtrig ISA extension, which can be
 implemented independently of functionality described in the other
-chapters. It consists exclusively of the Trigger Module (TM).
+chapters. It consists exclusively of the Trigger Module \(TM).
 
 Triggers can cause a breakpoint exception, entry into Debug Mode, or a
 trace action without having to execute a special instruction. This makes
