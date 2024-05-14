@@ -151,7 +151,7 @@ This approach does have some limitations:
 
 . Interrupts will fire as usual. Debuggers that want to disable interrupts
 while stepping must disable them by changing `mstatus`, and specially handle
-instructions that read 'mstatus'.
+instructions that read `mstatus`.
 . `wfi` instructions are not treated specially and might take a very long
 time to complete.
 
