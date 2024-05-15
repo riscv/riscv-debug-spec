@@ -228,12 +228,9 @@ them as follows:
 The address is always available to trigger on, although the value loaded
 might not be, depending on the hardware implementation.
 . Each AMO instruction is a store for the write portion of the operation.
-The address is always available to trigger on, although the value stored
-might not be, depending on the hardware implementation.
-
-If the destination register of any load or AMO is `zero` then it is UNSPECIFIED whether a
-data load trigger will match. Whether data store triggers match on AMOs
-is UNSPECIFIED.
+The address is always available to trigger on. Whether data store triggers match on AMOs is UNSPECIFIED.
+. If the destination register of any load or AMO is `zero` then it is UNSPECIFIED whether a
+data load trigger will match.
 
 ==== Combined Accesses
 
