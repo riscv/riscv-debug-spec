@@ -526,7 +526,7 @@ while a hart is running to access system memory.
 To protect intellectual property it may be desirable to lock access to
 the Debug Module. To allow access during a manufacturing process and not
 afterwards, a reasonable solution could be to add a fuse bit to the
-Debug Module that can be used to be permanently disable it. Since this
+Debug Module that can be used to permanently disable it. Since this
 is technology specific, it is not further addressed in this spec.
 
 Another option is to allow the DM to be unlocked only by users who have
