@@ -621,7 +621,7 @@ same project unless stated otherwise.
       further specified in this document.
 
       The configuration structure itself is a data structure of the same format
-      as the data structure pointed to by mconfigptr as described in the
+      as the data structure pointed to by `mconfigptr` as described in the
       Privileged Spec.
       <field name="addr" bits="31:0" access="R" reset="Preset"/>
     </register>
