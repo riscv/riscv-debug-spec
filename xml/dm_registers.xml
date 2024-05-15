@@ -451,7 +451,7 @@ same project unless stated otherwise.
     <register name="Abstract Control and Status" short="abstractcs" address="0x16">
         Writing this register while an abstract command is executing causes
         {abstractcs-cmderr} to become 1 (busy) once the command completes
-        (busy becomes 0).
+        ({abstractcs-busy} becomes 0).
 
         [NOTE]
         ====
