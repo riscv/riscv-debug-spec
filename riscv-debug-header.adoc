@@ -3,8 +3,8 @@
 :description: RISC-V Debug Specification
 :company: RISC-V.org
 :authors: Tim Newsome, Paul Donahue (Ventana Micro Systems)
-:revdate: Revised 2024-01-25
-:revnumber: 1.0.0-rc2
+:revdate: Revised 2024-05-15
+:revnumber: 1.0.0-rc3
 :revremark: Frozen
 :url-riscv: http://riscv.org
 :doctype: book
