@@ -1086,7 +1086,7 @@ same project unless stated otherwise.
     </register>
 
     <register name="System Bus Data 63:32" short="sbdata1" address="0x3d">
-        If {sbcs-sbaccess} Sixtyfour and {sbcs-sbaccess}OneTwentyeight are 0, then this
+        If {sbcs-sbaccess64} and {sbcs-sbaccess128} are 0, then this
         register is not present.
 
         If the bus manager is busy then accesses set {sbcs-sbbusyerror}, and don't do
@@ -1099,7 +1099,7 @@ same project unless stated otherwise.
     </register>
 
     <register name="System Bus Data 95:64" short="sbdata2" address="0x3e">
-        This register only exists if {sbcs-sbaccess}OneTwentyeight is 1.
+        This register only exists if {sbcs-sbaccess128} is 1.
 
         If the bus manager is busy then accesses set {sbcs-sbbusyerror}, and don't do
         anything else.
@@ -1111,7 +1111,7 @@ same project unless stated otherwise.
     </register>
 
     <register name="System Bus Data 127:96" short="sbdata3" address="0x3f">
-        This register only exists if {sbcs-sbaccess}OneTwentyeight is 1.
+        This register only exists if {sbcs-sbaccess128} is 1.
 
         If the bus manager is busy then accesses set {sbcs-sbbusyerror}, and don't do
         anything else.
