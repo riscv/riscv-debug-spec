@@ -415,7 +415,7 @@ setting the {accessregister-postexec} bit in {dm-command}. The debugger can writ
 (including jumps out of the Program Buffer), but the program must end
 with `ebreak` or `c.ebreak`. An implementation may support an implicit
 `ebreak` that is executed when a hart runs off the end of the Program
-Buffer. This is indicated by . With this feature, a Program Buffer of
+Buffer. This is indicated by {dmstatus-impebreak}. With this feature, a Program Buffer of
 just 2 32-bit words can offer efficient debugging.
 
 While these programs are executed, the hart does not leave Debug Mode
