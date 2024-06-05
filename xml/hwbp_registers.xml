@@ -700,7 +700,9 @@ same project unless stated otherwise.
         are supported where stem:[{maskmax6} ≥ 1].  The value of maskmax6 can be determined
         by the debugger via the following sequence:
 
-        . Set {mcontrol6-match}=1.
+        . Write {csr-tdata1}=0, in case the current {csr-tdata2} value is not supported with mcontrol6 triggers.
+        . Write {csr-tdata2}=0, which is always supported with mcontrol6 triggers.
+        . Write {csr-tdata1} with {tdata1-type}=mcontrol6 and {mcontrol6-match}=1.
         . Read {mcontrol6-match}. If it is not 1 then NAPOT matching is not supported.
         . Write all ones to {csr-tdata2}.
         . Read {csr-tdata2}. The value of maskmax6 is the index of the most significant 0 bit plus 1.
