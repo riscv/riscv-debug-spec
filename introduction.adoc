@@ -79,7 +79,7 @@ current value of `mxl` in `misa`.
 
 *virtual address*:: An address as a hart sees it. If the hart is using address translation this may be different from the physical address. If there is no translation then it will be the same.
 
-*xepc*:: The exception program counter CSR (e.g. ) that is appropriate for the mode being trapped to.
+*xepc*:: The exception program counter CSR (e.g. `mepc`) that is appropriate for the mode being trapped to.
 
 === Context
 
