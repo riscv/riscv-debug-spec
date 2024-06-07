@@ -369,6 +369,8 @@ of {dm-data0}) or hart (e.g. contents of a register modified by a Program Buffe
 Before starting an abstract command, a debugger must ensure that {dmcontrol-haltreq}, {dmcontrol-resumereq}, and {dmcontrol-ackhavereset} are all 0.
 
 While an abstract command is executing ({abstractcs-busy} in {dm-abstractcs} is high), a debugger must not change {hartsel}, and must not write 1 to {dmcontrol-haltreq}, {dmcontrol-resumereq}, {dmcontrol-ackhavereset}, {dmcontrol-setresethaltreq}, or {dmcontrol-clrresethaltreq}.
+The exception to this rule is when 0 is written to {dmcontrol-dmactive}.
+In that case the DM is reset, and the other values written to {dm-dmcontrol} are ignored.
 
 If an abstract command does not complete in the expected time and
 appears to be hung, the debugger can try to reset the hart (using {dmcontrol-hartreset} or {dmcontrol-ndmreset}).
