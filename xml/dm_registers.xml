@@ -340,6 +340,7 @@ same project unless stated otherwise.
             state change has completed.  Hardware may
             take an arbitrarily long time to complete activation or deactivation and will
             indicate completion by setting {dmcontrol-dmactive} to the requested value.
+            During this time, the DM may ignore any register writes.
 
             <value v="0" name="inactive">
             The module's state, including authentication mechanism,
@@ -347,6 +348,9 @@ same project unless stated otherwise.
             be written to something other than its reset value). Any accesses
             to the module may fail. Specifically, {dmstatus-version} might not return
             correct data.
+
+            When this value is written, the DM may ignore any other bits written
+            to {dmcontrol} in the same write.
             </value>
 
             <value v="1" name="active">
@@ -356,7 +360,7 @@ same project unless stated otherwise.
             No other mechanism should exist that may result in resetting the
             Debug Module after power up.
 
-            To place the Debug Module into a known state, a debugger may write 0 to {dmcontrol-dmactive},
+            To place the Debug Module into a known state, a debugger should write 0 to {dmcontrol-dmactive},
             poll until {dmcontrol-dmactive} is observed 0, write 1 to {dmcontrol-dmactive}, and
             poll until {dmcontrol-dmactive} is observed 1.
 
