@@ -192,6 +192,11 @@ When a hart resumes:
 . The current privilege mode and virtualization mode are changed to that
 specified by {dcsr-prv} and {dcsr-v}.
 . If the new privilege mode is less privileged than M-mode, `MPRV` in `mstatus` is cleared.
+. If the Smdbltrp extension is implemented and the new privilege mode is not M,
+  then the `MDT` bit is set to 0.
+. If the Ssdbltrp extension is implemented and the new privilege mode is U, VS,
+  or VU, then `sstatus.SDT` is set to 0. Additionally, if it is VU, then
+  `vsstatus.SDT` is also set to 0.
 . The hart is no longer in debug mode.
 
 [[debreg]]
