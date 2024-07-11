@@ -177,7 +177,8 @@ same project unless stated otherwise.
         and at most 20. A debugger should discover `HARTSELLEN` by writing
         all ones to {hartsel} (assuming the maximum size) and reading back the
         value to see which bits were actually set. Debuggers must not change
-        {hartsel} while an abstract command is executing.
+        {hartsel} while an abstract command is executing. Hardware should enforce
+        this by ignoring changes to {hartsel} while {abstractcs-busy} is set.
 
         [NOTE]
         ====
@@ -219,6 +220,9 @@ same project unless stated otherwise.
             set.
 
             Writes apply to the new value of {hartsel} and {dmcontrol-hasel}.
+
+            Writes to this bit should be ignored while an abstract command is
+            executing.
         </field>
         <field name="resumereq" bits="30" access="W1" reset="-">
             Writing 1 causes the currently selected harts to resume once, if
@@ -228,6 +232,9 @@ same project unless stated otherwise.
             {dmcontrol-resumereq} is ignored if {dmcontrol-haltreq} is set.
 
             Writes apply to the new value of {hartsel} and {dmcontrol-hasel}.
+
+            Writes to this bit should be ignored while an abstract command is
+            executing.
         </field>
         <field name="hartreset" bits="29" access="WARL" reset="0">
             This optional field writes the reset bit for all the currently
@@ -253,6 +260,9 @@ same project unless stated otherwise.
             </value>
 
             Writes apply to the new value of {hartsel} and {dmcontrol-hasel}.
+
+            Writes to this bit should be ignored while an abstract command is
+            executing.
         </field>
         <field name="ackunavail" bits="27" access="W1" reset="-">
             <value v="0" name="nop">
@@ -315,12 +325,18 @@ same project unless stated otherwise.
             Writes apply to the new value of {hartsel} and {dmcontrol-hasel}.
 
             If {dmstatus-hasresethaltreq} is 0, this field is not implemented.
+
+            Writes to this bit should be ignored while an abstract command is
+            executing.
         </field>
         <field name="clrresethaltreq" bits="2" access="W1" reset="-">
             This optional field clears the halt-on-reset request bit for all
             currently selected harts.
 
             Writes apply to the new value of {hartsel} and {dmcontrol-hasel}.
+
+            Writes to this bit should be ignored while an abstract command is
+            executing.
         </field>
         <!-- Fields that apply to the entire DM. -->
         <field name="ndmreset" bits="1" access="R/W" reset="0">
