@@ -372,7 +372,7 @@ While an abstract command is executing ({abstractcs-busy} in {dm-abstractcs} is 
 The exception to this rule is when the debugger writes 0 to
 {dmcontrol-dmactive}. In that case {hartsel} may be written with a new value
 (which the hardware should ignore).
-The hardware should not rely on this debugger behavior, but enforce it by
+The hardware should not rely on this debugger behavior, but should enforce it by
 ignoring writes to these bits while {abstractcs-busy} is high.
 
 If an abstract command does not complete in the expected time and
