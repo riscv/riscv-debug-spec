@@ -156,7 +156,7 @@ same project unless stated otherwise.
             Ignore {sbdata0-data} and {sbaddress0-address}.
 
             Don't send anything over the DMI during Update-DR.
-            This operation should never result in a busy or error response.
+            This operation should never affect DMI busy or error status.
             The address and data reported in the following Capture-DR
             are undefined.
 
