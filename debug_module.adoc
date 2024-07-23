@@ -367,6 +367,8 @@ of {dm-data0}) or hart (e.g. contents of a register modified by a Program Buffe
 ====
 
 While an abstract command is executing ({abstractcs-busy} in {dm-abstractcs} is high), a debugger must not change {hartsel}, and must not write 1 to {dmcontrol-haltreq}, {dmcontrol-resumereq}, {dmcontrol-ackhavereset}, {dmcontrol-setresethaltreq}, or {dmcontrol-clrresethaltreq}.
+The hardware should not rely on this debugger behavior, but should enforce it by
+ignoring writes to these bits while {abstractcs-busy} is high.
 
 If an abstract command does not complete in the expected time and
 appears to be hung, the debugger can try to reset the hart (using {dmcontrol-hartreset} or {dmcontrol-ndmreset}).
