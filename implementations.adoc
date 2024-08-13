@@ -45,7 +45,7 @@ debugger wants it to execute the Program Buffer or perform a resume.
 
 To execute an abstract command, the DM first populates some internal
 words of program buffer according to {dm-command}. When {accessregister-transfer} is set, the DM populates
-these words with `lw <gpr>, 0x400(zero)` or `sw 0x400(zero), <gpr>`. 64-
+these words with `lw <gpr>, 0x400(zero)` or `sw <gpr>, 0x400(zero)`. 64-
 and 128-bit accesses use `ld`/`sd` and `lq`/`sq` respectively. If {accessregister-transfer} is not
 set, the DM populates these instructions as `nop's`. If {accessregister-postexec} is set, execution
 continues to the debugger-controlled Program Buffer, otherwise the DM
