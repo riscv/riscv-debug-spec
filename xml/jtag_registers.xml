@@ -99,7 +99,7 @@ same project unless stated otherwise.
             Read-only alias of {dmi-op}.
         </field>
         <field name="abits" bits="9:4" access="R" reset="Preset">
-            The size of {sbaddress0-address} in {dtm-dmi}.
+            The size of {dmi-address} in {dtm-dmi}.
         </field>
         <field name="version" bits="3:0" access="R" reset="1">
             <value v="0" name="0.11">
