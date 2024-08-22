@@ -179,10 +179,11 @@ same project unless stated otherwise.
 
     <register name="Access Memory">
         This command lets the debugger perform memory accesses,
-            with the exact same memory view and permissions as the selected
-            hart has. This includes access to hart-local memory-mapped
-            registers, etc. The command performs the following sequence of
-            operations:
+        with the exact same memory view and permissions as performing
+        loads/stores on the selected hart.
+        This includes access to hart-local memory-mapped
+        registers, etc.  The command performs the following sequence of
+        operations:
 
         . Copy data from the memory location specified in `arg1` into the
             `arg0` portion of `data`, if {accessregister-write} is clear.
