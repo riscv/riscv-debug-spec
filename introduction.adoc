@@ -94,14 +94,15 @@ in the following extensions:
 . F
 . H
 . Sm1p13
-. Ss1p13
 . Smstateen
+. Ss1p13
 . V
 . Zawrs
 . Zcmp
 . Zicbom
-. Zicboz
 . Zicbop
+. Zicboz
+. Zicsr
 
 ==== Versions
 
