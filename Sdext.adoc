@@ -175,7 +175,7 @@ instruction is executed.
 When a hart halts:
 
 . {dcsr-cause} is updated.
-. {dcsr-prv} and {dcsr-v} are set to reflect current privilege mode.
+. {dcsr-prv} and {dcsr-v} are set to reflect current privilege mode and virtualization mode.
 . {csr-dpc} is set to the next instruction that should be executed.
 . If the current instruction can be partially executed and should be
 restarted to complete, then the relevant state for that is updated. E.g.
