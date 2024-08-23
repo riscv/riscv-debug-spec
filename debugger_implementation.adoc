@@ -101,9 +101,9 @@ Write `mstatus` using abstract command:
 [[deb:regprogbuf]]
 ===== Using Program Buffer
 
-Abstract commands are used to exchange data with GPRs. Using this
-mechanism, other registers can be accessed by moving their value
-into/out of GPRs.
+Abstract commands are only required to support GPR access. To access non-GPR
+registers, the debugger can use the Program Buffer to move values to/from a GPR,
+and then access the GPR value using an abstract command.
 
 Write `mstatus` using program buffer:
 
