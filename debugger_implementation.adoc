@@ -162,9 +162,9 @@ Read block of memory using system bus access:
 [[deb:mrprogbuf]]
 ===== Using Program Buffer
 
-Through the Program Buffer, the hart performs the memory accesses.
-Addresses are physical or virtual (depending on and other system
-configuration).
+Memory can be accessed through the Program Buffer by having the hart
+perform loads/stores. Whether the addresses are physical or virtual
+depends on the system configuration.
 
 Read a word from memory using program buffer:
 
