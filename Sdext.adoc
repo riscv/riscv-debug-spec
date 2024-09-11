@@ -62,6 +62,9 @@ acts as an illegal instruction, all such instructions must act as
 illegal instructions.
 . Instructions that depend on the value of the PC (e.g. `auipc`) may act
 as illegal instructions.
+. When the Zicfilp extension is implemented, the `ELP` state is
+  `NO_LP_EXPECTED` and is not updated by any instructions. LPAD instruction
+  executes as a no-op.
 . Effective XLEN is DXLEN.
 . Forward progress is guaranteed.
 
@@ -176,6 +179,8 @@ When a hart halts:
 
 . {dcsr-cause} is updated.
 . {dcsr-prv} and {dcsr-v} are set to reflect current privilege mode and virtualization mode.
+. If the Zicfilp extension is implemented, {dcsr-pelp} is set to the current
+  `ELP` state and `ELP` is set to `NO_LP_EXPECTED`
 . {csr-dpc} is set to the next instruction that should be executed.
 . If the current instruction can be partially executed and should be
 restarted to complete, then the relevant state for that is updated. E.g.
@@ -191,6 +196,9 @@ When a hart resumes:
 . `pc` changes to the value stored in {csr-dpc}.
 . The current privilege mode and virtualization mode are changed to that
 specified by {dcsr-prv} and {dcsr-v}.
+. If the Zicfilp extension is enabled at the new privilege mode, the current
+  `ELP` state is changed to that specified by {dcsr-pelp} else it is set to
+  `NO_LP_EXPECTED`. {dcsr-pelp} is set to `NO_LP_EXPECTED`.
 . If the new privilege mode is less privileged than M-mode, `MPRV` in `mstatus` is cleared.
 . If the Smdbltrp extension is implemented and the new privilege mode is not M,
   then the `MDT` bit is set to 0.

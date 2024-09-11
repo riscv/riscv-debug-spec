@@ -65,7 +65,8 @@ To resume execution, the debug module sets a flag which causes the hart
 to execute a `dret`. `dret` is an instruction that only has meaning
 while in Debug Mode and not executing from the Program Buffer. Its
 recommended encoding is 0x7b200073. When `dret` is executed, is restored
-from {csr-dpc} and normal execution resumes at the privilege set by {dcsr-prv} and {dcsr-v}.
+from {csr-dpc} and normal execution resumes at the privilege set by {dcsr-prv} and {dcsr-v},
+and the ELP state set by {dcsr-pelp}.
 
 {dm-data0} etc. are mapped into regular memory at an address relative to with only
 a 12-bit `imm`. The exact address is an implementation detail that a

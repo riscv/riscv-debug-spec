@@ -43,6 +43,8 @@ functionality.
 *DXLEN*:: Debug XLEN, which is the widest XLEN a hart supports, ignoring the
 current value of `mxl` in `misa`.
 
+*ELP*:: Expected landing pad state, define by the Zicfilp extension.
+
 *essential feature*:: An essential feature must be present in order for debug to work correctly.
 
 *GPR*:: General Purpose Register.
