@@ -115,7 +115,16 @@ same project unless stated otherwise.
                 reset using the Debug Module reset control.
             ====
         </field>
-        <field name="0" bits="18" access="R" reset="0" />
+        <field name="pelp" bits="18" access="WARL" reset="0">
+            This bit is part of ((Zicfilp)) and only exists when that extension
+            is implemented.
+            <value v="0" name="NO_LP_EXPECTED">
+                No landing pad instruction expected.
+            </value>
+            <value v="1" name="LP_EXPECTED">
+                A landing pad instruction is expected.
+            </value>
+        </field>
         <field name="ebreakvs" bits="17" access="WARL" reset="0">
             <value v="0" name="exception">
             `ebreak` instructions in VS-mode behave as described in the
