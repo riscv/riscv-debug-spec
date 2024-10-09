@@ -9,8 +9,16 @@ You may be looking for one of the following pre-built PDFs:
 Build Instructions
 ------------------
 
-```
-sudo apt-get install git make python3 python3-sympy graphviz texlive-full
+```bash
+git clone https://github.com/riscv/riscv-debug-spec.git
+cd riscv-debug-spec
+
+# Optionally, check out a specific revision:
+# git checkout <rev>
+
+git submodule update --init --recursive
+
+cd build
 make
 ```
 
