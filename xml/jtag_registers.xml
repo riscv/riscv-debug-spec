@@ -208,7 +208,7 @@ same project unless stated otherwise.
             </value>
 
             <value v="3" name="busy" duplicate="1">
-            An operation was attempted while a DMI request is still in
+            A DMI operation was attempted while a prior DMI operation was still in
             progress. The data scanned into {dtm-dmi} in this access will be
             ignored. This status is sticky and can be cleared by writing
             {dtmcs-dmireset} in {dtm-dtmcs}. If a debugger sees this status, it
