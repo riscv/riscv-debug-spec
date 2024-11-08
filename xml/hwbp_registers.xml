@@ -177,6 +177,13 @@ same project unless stated otherwise.
         <field name="0" bits="XLEN-1:32" access="R" reset="0" />
         <field name="version" bits="31:24" access="R" reset="Preset">
             Contains the version of the Sdtrig extension implemented.
+
+            [NOTE]
+            ====
+            This field refers to the version of the whole Sdtrig extension.
+            For that reason, all triggers contain the same version number.
+            ====
+
             <value v="0" name="0">
                 Supports triggers as described in this spec at commit 5a5c078,
                 made on February 2, 2023.
@@ -195,9 +202,9 @@ same project unless stated otherwise.
         </field>
         <field name="0" bits="23:16" access="R" reset="0" />
         <field name="info" bits="15:0" access="R" reset="Preset">
-            One bit for each possible {tdata1-type} enumerated in {csr-tdata1}. Bit N
-            corresponds to type N. If the bit is set, then that type is
-            supported by the currently selected trigger.
+            One bit for each possible {tdata1-type} enumerated in {csr-tdata1}.
+            Bit N corresponds to type N. If the bit is set, then that type is
+            supported by the currently selected trigger (by {csr-tselect}).
 
             If the currently selected trigger doesn't exist, this field
             contains 1.
