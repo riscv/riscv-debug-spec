@@ -472,7 +472,22 @@ def sympy_to_c(expression, sym_to_c = lambda s: f"({s})", unsigned=True):
     elif isinstance(expression, sympy.Symbol):
         return sym_to_c(expression)
     elif isinstance(expression, sympy.Add):
-        return "(" + " + ".join(stc(t) for t in reversed(expression.args)) + ")"
+        args = list(reversed(expression.args))
+        result = ""
+        for i in range(len(args)):
+            arg = args[i]
+            is_first = (i == 0)
+            if is_first:
+                result += stc(arg)
+            else:
+                # Simplify additions of negative constants:
+                # Use (a - 1) instead of (a + -1)
+                negative_constant = arg.is_constant() and (arg < 0)
+                result += " - " if negative_constant else " + "
+                if negative_constant:
+                    arg = -arg  # flip to positive
+                result += stc(arg)
+        return "(" + result + ")"
     elif isinstance(expression, sympy.Mul):
         return "(" + " * ".join(stc(t) for t in expression.args) + ")"
     elif isinstance(expression, sympy.Pow):
