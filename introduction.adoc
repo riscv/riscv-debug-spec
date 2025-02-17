@@ -166,7 +166,7 @@ incompatible, but unlikely to be noticeable:
 
 . {dcsr-stopcount} only applies to hart-local counters.
 https://github.com/riscv/riscv-debug-spec/pull/405[#405]
-. {tinfo-version} may be invalid when {dmcontrol-dmactive}=0.
+. {dmstatus-version} may be invalid when {dmcontrol-dmactive}=0.
 https://github.com/riscv/riscv-debug-spec/pull/414[#414]
 . Address triggers ({csr-mcontrol}) may fire on any accessed address.
 https://github.com/riscv/riscv-debug-spec/pull/421[#421]
