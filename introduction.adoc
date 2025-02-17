@@ -144,17 +144,17 @@ https://github.com/riscv/riscv-debug-spec/pull/505[#505]
 . System bus autoincrement only happens if an access actually takes place.
 ({dm-sbdata0}) https://github.com/riscv/riscv-debug-spec/pull/507[#507]
 . Bump {tinfo-version} to 3. https://github.com/riscv/riscv-debug-spec/pull/512[#512]
-, Require debugger to poll {dmcontrol-dmactive} after lowering it.
+. Require debugger to poll {dmcontrol-dmactive} after lowering it.
 https://github.com/riscv/riscv-debug-spec/pull/566[#566]
 . Add {icount-pending} to {csr-icount} . https://github.com/riscv/riscv-debug-spec/pull/574[#574]
 . When a selected trigger is disabled, {csr-tdata2} and {csr-tdata3} can be written with any value supported by any of the types this trigger supports.
 https://github.com/riscv/riscv-debug-spec/pull/721[#721]
 . {csr-tcontrol} fields only apply to breakpoint traps, not any trap.
 https://github.com/riscv/riscv-debug-spec/pull/723[#723]
-. If {tinfo-version} is greater than 0, then {mcontrol6-hit0} (previously called {csr-mcontrol}.``hit``) now contains 0 when a trigger fires more than one instruction after the
-instruction that matched. (This information is now reflected in .)
+. If {tinfo-version} is greater than 0, then {mcontrol6-hit0} (previously called {csr-mcontrol6}.``hit``) now contains 0 when a trigger fires more than one instruction after the
+instruction that matched. (This information is now reflected in {mcontrol6-hit1}.)
 https://github.com/riscv/riscv-debug-spec/pull/795[#795]
-. If {tinfo-version} is greater than 0, then bit 20 of {csr-mcontrol6} is no longer used for timing information. (Previously the bit was called {csr-mcontrol}.``timing``.)
+. If {tinfo-version} is greater than 0, then bit 20 of {csr-mcontrol6} is no longer used for timing information. (Previously the bit was called {csr-mcontrol6}.``timing``.)
 https://github.com/riscv/riscv-debug-spec/pull/807[#807]
 . If {tinfo-version} is greater than 0, then the encodings of {mcontrol6-size} for sizes greater than 64 bit have changed.
 https://github.com/riscv/riscv-debug-spec/pull/807[#807]
@@ -193,7 +193,7 @@ https://github.com/riscv/riscv-debug-spec/pull/585[#585]
 . Writing 0 to {csr-tdata1} forces a state where {csr-tdata2} and {csr-tdata3} are writable.
 https://github.com/riscv/riscv-debug-spec/pull/598[#598]
 . Solutions to deal with reentrancy in <<nativetrigger>> prevent triggers from
-_matching_, not merely _firing_. This primarily affects behavior.
+_matching_, not merely _firing_. This primarily affects {csr-icount} behavior.
 https://github.com/riscv/riscv-debug-spec/pull/722[#722]
 . Attempts to access an unimplemented CSR raise an illegal instruction
 exception. https://github.com/riscv/riscv-debug-spec/pull/791[#791]
@@ -204,7 +204,7 @@ New backwards-compatible feature that did not exist before:
 
 . Add halt groups and external triggers in <<hrgroups>>.
 https://github.com/riscv/riscv-debug-spec/pull/404[#404]
-. Reserve some DMI space for non-standard use. See {dm-custom}, and {dm-custom0} through .
+. Reserve some DMI space for non-standard use. See {dm-custom}, and {dm-custom0} through `custom15`.
 https://github.com/riscv/riscv-debug-spec/pull/406[#406]
 . Reserve trigger {tdata1-type} values for non-standard use.
 https://github.com/riscv/riscv-debug-spec/pull/417[#417]

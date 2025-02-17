@@ -84,7 +84,7 @@ While the reset is on-going, harts are either in the running state,
 indicating it's possible to perform some abstract commands during this
 time, or in the unavailable state, indicating it's not possible to
 perform any abstract commands during this time. Once a hart's reset is
-complete, `havereset` becomes set. When a hart comes out of reset and {dmcontrol-haltreq} or {dmstatus-hasresethaltreq} 
+complete, `havereset` becomes set. When a hart comes out of reset and {dmcontrol-haltreq} or `resethaltreq` 
 are set, the hart will immediately enter Debug Mode (halted state).
 Otherwise, if the hart was initially running it will execute normally
 (running state) and if the hart was initially halted it should now be
@@ -190,7 +190,7 @@ Which states a hart that is reset goes through is implementation
 dependent. Harts may be unavailable while reset is asserted, and some
 time after reset is deasserted. They might transition to running for
 some time after reset is deasserted. Finally they end up either running
-or halted, depending on {dmcontrol-haltreq} and {dmstatus-hasresethaltreq}.
+or halted, depending on {dmcontrol-haltreq} and `resethaltreq`.
 
 [[runcontrol]]
 === Run Control

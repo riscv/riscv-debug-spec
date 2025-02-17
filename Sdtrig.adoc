@@ -358,7 +358,7 @@ that writing 0 to {csr-tdata1} disables the trigger, and leaves it in a state wh
 
 As a result, a debugger can write any supported trigger as follows:
 
-. Write 0 to {csr-tdata1}. (This will result in containing a non-zero value, since the register is *WARL*.)
+. Write 0 to {csr-tdata1}. (This will result in {csr-tdata1} containing a non-zero value, since the register is *WARL*.)
 . Write desired values to {csr-tdata2} and {csr-tdata3}.
 . Write desired value to {csr-tdata1}.
 
