@@ -3,7 +3,7 @@
 :description: RISC-V Debug Specification
 :company: RISC-V.org
 :authors: Tim Newsome, Paul Donahue (Ventana Micro Systems)
-:revdate: Revised 2025-02-21
+:revdate: Revised 2025-02-25
 :revnumber: 1.0
 :revremark: Ratified
 :url-riscv: http://riscv.org
@@ -48,16 +48,6 @@ endif::[]
 :hide-uri-scheme:
 :stem: latexmath
 :footnote:
-
-[WARNING]
-====
-*This specification is Frozen.*
-
-Change is extremely unlikely. A high threshold will be used, and a change
-will only occur because of some truly critical issue being identified during
-the public review cycle. Any other desired or needed changes can be the
-subject of a follow-on new extension.
-====
 
 Contributors to all versions of the spec in alphabetical order (please
 contact editors to suggest corrections): Bruce Ableidinger, Krste
