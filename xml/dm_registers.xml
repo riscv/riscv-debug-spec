@@ -471,7 +471,7 @@ same project unless stated otherwise.
     <register name="Abstract Control and Status" short="abstractcs" address="0x16">
         Writing this register while an abstract command is executing causes
         {abstractcs-cmderr} to become 1 (busy) once the command completes
-        ({abstractcs-busy} becomes 0).
+        (once {abstractcs-busy} becomes 0).
 
         [NOTE]
         ====
@@ -573,7 +573,7 @@ same project unless stated otherwise.
 
         Writing this register while an abstract command is executing causes
         {abstractcs-cmderr} to become 1 (busy) once the command completes
-        (busy becomes 0).
+        (once {abstractcs-busy} becomes 0).
 
         If {abstractcs-cmderr} is non-zero, writes to this register are ignored.
 
@@ -609,7 +609,7 @@ same project unless stated otherwise.
         If this register is written while an abstract command is executing
         then the write is ignored and
         {abstractcs-cmderr} becomes 1 (busy) once the command completes
-        (busy becomes 0).
+        (once {abstractcs-busy} becomes 0).
 
         <field name="autoexecprogbuf" bits="31:16" access="WARL" reset="0">
             When a bit in this field is 1, read or write accesses to the
@@ -677,7 +677,8 @@ same project unless stated otherwise.
         registers.
 
         Accessing these registers while an abstract command is executing causes
-        {abstractcs-cmderr} to be set to 1 (busy) if it is 0.
+        {abstractcs-cmderr} to become 1 (busy) once the command completes
+        (once {abstractcs-busy} becomes 0).
 
         Attempts to write them while {abstractcs-busy} is set does not change their value.
 
@@ -712,7 +713,8 @@ same project unless stated otherwise.
         implemented starting at {dm-progbuf0}, counting up.
 
         Accessing these registers while an abstract command is executing causes
-        {abstractcs-cmderr} to be set to 1 (busy) if it is 0.
+        {abstractcs-cmderr} to become 1 (busy) once the command completes
+        (once {abstractcs-busy} becomes 0).
 
         Attempts to write them while {abstractcs-busy} is set does not change their value.
 
