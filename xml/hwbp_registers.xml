@@ -1156,7 +1156,9 @@ same project unless stated otherwise.
 
         This register is accessible as {csr-tdata1} when {tdata1-type} is 4.
 
-        This trigger can fire when an interrupt trap is taken.
+        This trigger will fire when an interrupt trap is taken and the
+        corresponding {csr-tdata2} bit is set as described in the next
+        paragraph.
 
         It can be enabled for individual interrupt numbers by setting the bit
         corresponding to the interrupt number in {csr-tdata2}. The interrupt
@@ -1252,11 +1254,15 @@ same project unless stated otherwise.
 
         This register is accessible as {csr-tdata1} when {tdata1-type} is 5.
 
-        This trigger may fire on up to XLEN of the Exception Codes defined in
-        `mcause` (described in the Privileged Spec, with Interrupt=0). Those
-        causes are configured by writing the corresponding bit in {csr-tdata2}.
-        (E.g.  to trap on an illegal instruction, the debugger sets bit 2 in
-        {csr-tdata2}.)
+        This trigger will match when an exception trap is taken and the
+        corresponding {csr-tdata2} bit is set as described in the next
+        paragraph.
+
+        The trigger may be configured to match on up to XLEN of the Exception
+        Codes defined in `mcause` (described in the Privileged Spec, with
+        Interrupt=0). Those causes are configured by writing the corresponding
+        bit in {csr-tdata2}. (e.g. to have etrigger match on an illegal
+        instruction trap, the debugger sets bit 2 in {csr-tdata2}.)
 
         [NOTE]
         ====
