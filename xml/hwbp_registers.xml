@@ -166,8 +166,9 @@ same project unless stated otherwise.
     </register>
 
     <register name="Trigger Info" short="tinfo" address="0x7a4">
-        This register provides access to the trigger selected by {csr-tselect}.
-        The reset values listed here apply to every underlying trigger.
+        This register provides information about the implemented version of
+        the Sdtrig extension, and about the trigger types supported by
+        the trigger selected by {csr-tselect}.
 
         This register is optional if no triggers are implemented, or if
         {tdata1-type} is not writable and {tinfo-version} would be 0. In
@@ -176,7 +177,9 @@ same project unless stated otherwise.
 
         <field name="0" bits="XLEN-1:32" access="R" reset="0" />
         <field name="version" bits="31:24" access="R" reset="Preset">
-            Contains the version of the Sdtrig extension implemented.
+            Contains the version of the Sdtrig extension implemented. The read-only
+            value of this field refers to the implemented version of the whole
+            Sdtrig extension, and is unaffected by the value of {csr-tselect}.
             <value v="0" name="0">
                 Supports triggers as described in this spec at commit 5a5c078,
                 made on February 2, 2023.
@@ -195,9 +198,9 @@ same project unless stated otherwise.
         </field>
         <field name="0" bits="23:16" access="R" reset="0" />
         <field name="info" bits="15:0" access="R" reset="Preset">
-            One bit for each possible {tdata1-type} enumerated in {csr-tdata1}. Bit N
-            corresponds to type N. If the bit is set, then that type is
-            supported by the currently selected trigger.
+            One bit for each possible {tdata1-type} enumerated in {csr-tdata1}.
+            Bit N corresponds to type N. If the bit is set, then that type is
+            supported by the currently selected trigger (by {csr-tselect}).
 
             If the currently selected trigger doesn't exist, this field
             contains 1.
