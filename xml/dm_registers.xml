@@ -374,7 +374,8 @@ same project unless stated otherwise.
             </value>
 
             No other mechanism should exist that may result in resetting the
-            Debug Module after power up.
+            Debug Module after power up unless the mechanism also resets all
+            the harts accessible to the DM.
 
             To place the Debug Module into a known state, a debugger should write 0 to {dmcontrol-dmactive},
             poll until {dmcontrol-dmactive} is observed 0, write 1 to {dmcontrol-dmactive}, and
