@@ -480,13 +480,12 @@ def sympy_to_c(expression, sym_to_c = lambda s: f"({s})", unsigned=True):
             if is_first:
                 result += stc(arg)
             else:
-                # Simplify additions of negative constants:
-                # Use (a - 1) instead of (a + -1)
-                negative_constant = arg.is_constant() and (arg < 0)
-                result += " - " if negative_constant else " + "
-                if negative_constant:
-                    arg = -arg  # flip to positive
-                result += stc(arg)
+                if arg.is_constant() and (arg < 0):
+                    # Simplify additions of negative constants:
+                    # Use (a - 1) instead of (a + -1)
+                    result += " - %s" % stc(-arg)
+                else:
+                    result += " + %s" % stc(arg)
         return "(" + result + ")"
     elif isinstance(expression, sympy.Mul):
         return "(" + " * ".join(stc(t) for t in expression.args) + ")"
