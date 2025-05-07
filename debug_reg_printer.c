@@ -43,8 +43,7 @@ static unsigned int riscv_debug_reg_field_value_to_s(char *buf, unsigned int off
 }
 
 static unsigned int riscv_debug_reg_field_to_s(char *buf, unsigned int offset,
-		struct riscv_debug_reg_field_info field, struct riscv_debug_reg_ctx context,
-		uint64_t field_value)
+		struct riscv_debug_reg_field_info field, uint64_t field_value)
 {
 	const unsigned int name_len = get_len_or_sprintf(buf, offset, "%s=", field.name);
 
@@ -79,8 +78,7 @@ static unsigned int riscv_debug_reg_fields_to_s(char *buf, unsigned int offset,
 						(list.field.values && list.field.values[0]))) ||
 				(show == RISCV_DEBUG_REG_HIDE_ALL_0 && field_value != 0)) {
 			curr += get_len_or_sprintf(buf, curr, separator);
-			curr += riscv_debug_reg_field_to_s(buf, curr, list.field, context,
-							field_value);
+			curr += riscv_debug_reg_field_to_s(buf, curr, list.field, field_value);
 			separator = " ";
 		}
 	}
