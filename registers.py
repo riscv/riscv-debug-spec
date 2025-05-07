@@ -104,10 +104,14 @@ class Register( object ):
 
     @staticmethod
     def c_field_list_type():
-        return ("typedef struct riscv_debug_reg_field_list_t {\n" +
-                "\triscv_debug_reg_field_info_t field;\n" +
-                "\tstruct riscv_debug_reg_field_list_t (*get_next)(riscv_debug_reg_ctx_t context);\n" +
-                "} riscv_debug_reg_field_list_t;\n")
+        return ("struct riscv_debug_reg_field_list {\n" +
+                "\tstruct riscv_debug_reg_field_info field;\n" +
+                "\tstruct riscv_debug_reg_field_list (*get_next)(struct riscv_debug_reg_ctx context);\n" +
+                "};\n" +
+                "/* deprecated, prefer 'struct riscv_debug_reg_field_list' to 'struct riscv_debug_reg_field_list_t' */\n" +
+                "#define riscv_debug_reg_field_list_t riscv_debug_reg_field_list\n" +
+                "/* deprecated, prefer 'struct riscv_debug_reg_field_list' to 'riscv_debug_reg_field_list_t' */\n" +
+                "typedef struct riscv_debug_reg_field_list riscv_debug_reg_field_list_t;\n\n")
     def c_field_getter_names(self):
         fields = list(self.sorted_fields())
         if not len(fields):
@@ -122,10 +126,10 @@ class Register( object ):
             syms = f.symbols()
             all_valid = ' && '.join(map(is_valid, syms))
             field = f.c_info(to_c).replace('\n', '\n\t\t')
-            return (f"static riscv_debug_reg_field_list_t {getter_name}(riscv_debug_reg_ctx_t context)\n" +
+            return (f"static struct riscv_debug_reg_field_list {getter_name}(struct riscv_debug_reg_ctx context)\n" +
                     "{\n\t" +
                     add_indent((f"assert({all_valid});\n" if syms else "") +
-                               f"riscv_debug_reg_field_list_t result = {{\n" +
+                               f"struct riscv_debug_reg_field_list result = {{\n" +
                                f"\t.field = {{\n\t\t{field}\n\t}},\n" +
                                f"\t.get_next = {next_getter_name}\n" +
                                "};\n" +
@@ -141,10 +145,12 @@ class Register( object ):
 
     @staticmethod
     def c_info_type():
-        return ("typedef struct {\n" +
-                "\tconst char *name;\n"
-                "\tstruct riscv_debug_reg_field_list_t (* const get_fields_head)(riscv_debug_reg_ctx_t context);\n" +
-                "} riscv_debug_reg_info_t;\n")
+        return ("struct riscv_debug_reg_info {\n" +
+                "\tconst char *name;\n" +
+                "\tstruct riscv_debug_reg_field_list (* const get_fields_head)(struct riscv_debug_reg_ctx context);\n" +
+                "};\n" +
+                "/* deprecated, prefer 'struct riscv_debug_reg_info' to 'riscv_debug_reg_info_t' */\n" +
+                "typedef struct riscv_debug_reg_info riscv_debug_reg_info_t;\n\n")
 
     def c_info( self, to_c ):
         return (f'.name = "{self.short or self.label}",\n' +
@@ -287,12 +293,14 @@ class Field( object ):
 
     @staticmethod
     def c_info_type():
-        return ("typedef struct {\n" +
+        return ("struct riscv_debug_reg_field_info {\n" +
                 "\tconst char *name;\n" +
                 "\tunsigned int lsb; // inclusive\n" +
                 "\tunsigned int msb; // inclusive\n" +
                 "\tconst char **values; // If non-NULL, array of human-readable string for each possible value\n" +
-                "} riscv_debug_reg_field_info_t;\n")
+                "};\n" +
+                "/* deprecated, prefer 'struct riscv_debug_reg_field_info' to 'riscv_debug_reg_field_info_t' */\n" +
+                "typedef struct riscv_debug_reg_field_info riscv_debug_reg_field_info_t;\n\n")
 
     def c_info( self, to_c ):
         return f'.name = "{self.name}",\n.lsb = {to_c(self.lowBit)},\n.msb = {to_c(self.highBit)},\n.values = {self.c_values_array_name()}'
@@ -561,9 +569,11 @@ def print_cgetters( registers_list, fd_h, fd_c):
              for r in all_regs for f in r.fields if f.to_c_filter()))
 
     gen_sym_struct = lambda s: "struct {\n\t\tunsigned int value; int is_set;\n\t} " + s
-    fd_h.write("typedef struct {\n\t" +
+    fd_h.write("struct riscv_debug_reg_ctx {\n\t" +
                ";\n\t".join(gen_sym_struct(s) for s in sorted((map(lambda sym: str(sym), all_symbols)))) +
-               ";\n} riscv_debug_reg_ctx_t;\n\n")
+               ";\n};\n" +
+               "/* deprecated, prefer 'struct riscv_debug_reg_ctx' to 'riscv_debug_reg_ctx_t' */\n" +
+               "typedef struct riscv_debug_reg_ctx riscv_debug_reg_ctx_t;\n\n")
 
     fd_h.write(Field.c_info_type())
     fd_h.write(Register.c_field_list_type())
@@ -579,11 +589,11 @@ def print_cgetters( registers_list, fd_h, fd_c):
                     fd_c.write(f.c_values_array_def() + "\n");
             fd_c.write(r.c_field_getters(to_c, is_valid) + "\n");
 
-    get_info_func = "riscv_debug_reg_info_t get_riscv_debug_reg_info(enum riscv_debug_reg_ordinal reg_ordinal)"
+    get_info_func = "struct riscv_debug_reg_info get_riscv_debug_reg_info(enum riscv_debug_reg_ordinal reg_ordinal)"
     fd_h.write(get_info_func + ";\n")
     fd_c.write(get_info_func + "\n" +
                "{\n\t" +
-               add_indent("static const riscv_debug_reg_info_t debug_reg_info[] = {\n\t" +
+               add_indent("static const struct riscv_debug_reg_info debug_reg_info[] = {\n\t" +
                           add_indent("\n".join(f"[{r.ordinal_name()}] = {{\n\t{add_indent(r.c_info(to_c))}\n}},"
                                                for r in all_regs)) +
                           "\n};\n" +
