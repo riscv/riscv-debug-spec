@@ -49,7 +49,7 @@ set `vstart` appropriately.
 . Instructions that place the hart into a stalled state act as a `nop`.
 This includes `wfi`, `wrs.sto`, and `wrs.nto`.
 . Almost all instructions that change the privilege mode have UNSPECIFIED behavior.
-This includes `ecall`, `mret`, `sret`, and `uret`. (To change the
+This includes `ecall`, `mret`, and `sret`. (To change the
 privilege mode, the debugger can write {dcsr-prv} and {dcsr-v} in {csr-dcsr}). The only exception is
 `ebreak`, which ends execution of the Program Buffer when executed.
 . All control transfer instructions may act as illegal instructions if
