@@ -31,7 +31,7 @@ with {dmi-op} set to 1, and {dmi-address} set to the desired register address. I
 operation will start, and in Capture-DR its results will be captured
 into {dmi-data}. If the operation didn't complete in time, {dmi-op} will be 3 and the value
 in {dmi-data} must be ignored. The busy condition must be cleared by writing {dtmcs-dmireset} in {dtm-dtmcs},
-and then the second scan scan must be performed again. This process must
+and then the second scan must be performed again. This process must
 be repeated until {dmi-op} returns 0. In later operations the debugger should
 allow for more time between Update-DR and Capture-DR.
 
