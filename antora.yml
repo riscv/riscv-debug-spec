@@ -4,7 +4,7 @@ version: v1.0
 nav:
 - modules/ROOT/nav.adoc
 
-#asciidoc:
-#  attributes:
+asciidoc:
+  attributes:
 #    page-pdf_url: ../aia/_attachments/riscv-interrupts.pdf
-#    page-group: hardware
+    page-group: debug-trace-ras
