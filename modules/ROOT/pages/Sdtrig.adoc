@@ -1,1 +1,1 @@
-../../Sdtrig.adoc
+../../../Sdtrig.adoc

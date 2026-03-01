@@ -1,1 +1,1 @@
-../../dtm.adoc
+../../../dtm.adoc

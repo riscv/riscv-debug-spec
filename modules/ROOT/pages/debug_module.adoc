@@ -1,1 +1,1 @@
-../../debug_module.adoc
+../../../debug_module.adoc
