@@ -6,5 +6,6 @@ nav:
 
 asciidoc:
   attributes:
-#    page-pdf_url: ../aia/_attachments/riscv-interrupts.pdf
+    page-pdf_url: _attachments/riscv-debug-specification.pdf
+    more_details_url: https://riscv.atlassian.net/wiki/external/YTljNWI1NDgxMzE2NDIzOGEyYjMzMWRmZmRjOGEwNmE    
     page-group: debug-trace-ras
