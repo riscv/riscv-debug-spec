@@ -240,20 +240,20 @@ same project unless stated otherwise.
         This optional register may be implemented only if the H extension is
         implemented. If it is implemented, {csr-mcontext} must also be implemented.
 
-        This register is only accessible in HS-Mode, M-mode and Debug Mode. If
-        Smstateen is implemented, then accessibility of in HS-Mode is
-        controlled by `mstateenzero[57]`.
+        This register is only accessible in HS-mode, M-mode and Debug Mode. If
+        Smstateen is implemented, then accessibility of in HS-mode is
+        controlled by `mstateen0[57]`.
 
         This register is an alias of the {csr-mcontext} register, providing
-        access to the {mcontext-hcontext} field from HS-Mode.
+        access to the {mcontext-hcontext} field from HS-mode.
     </register>
 
     <register name="Supervisor Context" short="scontext" address="0x5a8">
         This optional register is only accessible in S/HS-mode, VS-mode,
         M-mode and Debug Mode.
 
-        Accessibility of this CSR is controlled by `mstateenzero[57]` and
-        `hstateenzero[57]` in the Smstateen extension.  Enabling {csr-scontext}
+        Accessibility of this CSR is controlled by `mstateen0[57]` and
+        `hstateen0[57]` in the Smstateen extension.  Enabling {csr-scontext}
         can be a security risk in a virtualized system with a hypervisor that
         does not swap {csr-scontext}.
         <field name="0" bits="XLEN-1:32" access="R" reset="0" />
@@ -276,13 +276,13 @@ same project unless stated otherwise.
         ====
             {mcontext-hcontext} is primarily useful to set triggers on
             hypervisor systems that only fire when a given VM is executing. It
-            is also useful in systems where M-Mode implements something like a
+            is also useful in systems where M-mode implements something like a
             hypervisor directly.
         ====
 
         <field name="0" bits="XLEN-1:14" access="R" reset="0" />
         <field name="hcontext" bits="13:0" access="WARL" reset="0">
-            M-Mode or HS-Mode (using {csr-hcontext}) software can write a context
+            M-mode or HS-mode (using {csr-hcontext}) software can write a context
             number to this register, which can be used to set triggers that only
             fire in that specific context.
 

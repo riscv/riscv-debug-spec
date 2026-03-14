@@ -159,9 +159,9 @@ instructions that read `mstatus`.
 time to complete.
 
 This mechanism cleanly supports a system which supports multiple
-privilege levels, where the OS or a debug stub runs in M-Mode while the
+privilege levels, where the OS or a debug stub runs in M-mode while the
 program being debugged runs in a less privileged mode. Systems that only
-support M-Mode can use {csr-icount} as well, but {icount-count} must be able to count
+support M-mode can use {csr-icount} as well, but {icount-count} must be able to count
 several instructions (depending on the software implementation). See
 xref:nativestep[].
 

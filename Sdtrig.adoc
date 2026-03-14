@@ -14,7 +14,7 @@ address/data in loads/stores.
 If Sdtrig is implemented, the Trigger Module must support at least one
 trigger. Accessing trigger CSRs that are not used by any of the
 implemented triggers must result in an illegal instruction exception.
-M-Mode and Debug Mode accesses to trigger CSRs that are used by any of
+M-mode and Debug Mode accesses to trigger CSRs that are used by any of
 the implemented triggers must succeed, regardless of the current type of
 the currently selected trigger.
 
@@ -61,7 +61,7 @@ This action is only legal when the trigger's {mcontrol-dmode} is 1.  Since
 {csr-tdata1} is WARL, hardware must prevent it from containing {tdata1-dmode}=0
 and action=1. +
 This action can only be supported if `Sdext` is implemented on the hart.
-| 2 | Trace on, described in the trace specification. 
+| 2 | Trace on, described in the trace specification.
 | 3 | Trace off, described in the trace specification.
 | 4 | Trace notify, described in the trace specification.
 | 5 | Reserved for use by the trace specification.
