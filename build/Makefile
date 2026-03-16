@@ -18,6 +18,7 @@ riscvintl/riscv-docs-base-container-image:latest
 
 HEADER_SOURCE := riscv-debug-header.adoc
 PDF_RESULT := ./build/riscv-debug-specification.pdf
+HTML_RESULT := ./build/riscv-debug-specification.html
 REGISTERS_ADOC = jtag_registers.adoc
 REGISTERS_ADOC += core_registers.adoc
 REGISTERS_ADOC += hwbp_registers.adoc
@@ -31,38 +32,65 @@ REGISTERS_CHISEL += dm_registers.scala
 REGISTERS_CHISEL += abstract_commands.scala
 
 ASCIIDOCTOR_PDF := asciidoctor-pdf
-OPTIONS := --trace \
-           -a compress \
-           -a mathematical-format=svg \
-           -a pdf-fontsdir=docs-resources/fonts \
-           -a pdf-theme=docs-resources/themes/riscv-pdf.yml \
-           --failure-level=ERROR
+ASCIIDOCTOR_HTML := asciidoctor
+PDF_OPTIONS := --trace \
+               -a compress \
+               -a mathematical-format=svg \
+               -a pdf-fontsdir=docs-resources/fonts \
+               -a pdf-theme=docs-resources/themes/riscv-pdf.yml \
+               --failure-level=ERROR
+HTML_OPTIONS := --trace \
+                -a compress \
+                -a mathematical-format=svg \
+                --failure-level=ERROR
 REQUIRES := --require=asciidoctor-diagram \
             --require=asciidoctor-mathematical
 
-.PHONY: all build clean build-container build-no-container
+.PHONY: all build clean build-container build-no-container build-pdf build-html
 
 all: build
 
-build: 
-	@echo "Checking if Docker is available..."
+build: build-pdf build-html
+
+build-pdf: 
+	@echo "Checking if Docker is available for PDF build..."
 	@if command -v docker >/dev/null 2>&1 ; then \
-		echo "Docker is available, building inside Docker container..."; \
-		$(MAKE) build-container; \
+		echo "Docker is available, building PDF inside Docker container..."; \
+		$(MAKE) build-container-pdf; \
 	else \
-		echo "Docker is not available, building without Docker..."; \
-		$(MAKE) build-no-container; \
+		echo "Docker is not available, building PDF without Docker..."; \
+		$(MAKE) build-no-container-pdf; \
 	fi
 
-build-container:	build-registers
-	@echo "Starting build inside Docker container..."
-	$(DOCKER_RUN) /bin/sh -c "$(ASCIIDOCTOR_PDF) $(OPTIONS) $(REQUIRES) --out-file=$(PDF_RESULT) $(HEADER_SOURCE)"
-	@echo "Build completed successfully inside Docker container."
+build-html: 
+	@echo "Checking if Docker is available for HTML build..."
+	@if command -v docker >/dev/null 2>&1 ; then \
+		echo "Docker is available, building HTML inside Docker container..."; \
+		$(MAKE) build-container-html; \
+	else \
+		echo "Docker is not available, building HTML without Docker..."; \
+		$(MAKE) build-no-container-html; \
+	fi
 
-build-no-container:	build-registers
-	@echo "Starting build..."
-	$(ASCIIDOCTOR_PDF) $(OPTIONS) $(REQUIRES) --out-file=$(PDF_RESULT) $(HEADER_SOURCE)
-	@echo "Build completed successfully."
+build-container-pdf:	build-registers
+	@echo "Starting PDF build inside Docker container..."
+	$(DOCKER_RUN) /bin/sh -c "$(ASCIIDOCTOR_PDF) $(PDF_OPTIONS) $(REQUIRES) --out-file=$(PDF_RESULT) $(HEADER_SOURCE)"
+	@echo "PDF build completed successfully inside Docker container."
+
+build-no-container-pdf:	build-registers
+	@echo "Starting PDF build..."
+	$(ASCIIDOCTOR_PDF) $(PDF_OPTIONS) $(REQUIRES) --out-file=$(PDF_RESULT) $(HEADER_SOURCE)
+	@echo "PDF build completed successfully."
+
+build-container-html:	build-registers
+	@echo "Starting HTML build inside Docker container..."
+	$(DOCKER_RUN) /bin/sh -c "$(ASCIIDOCTOR_HTML) $(HTML_OPTIONS) $(REQUIRES) --out-file=$(HTML_RESULT) $(HEADER_SOURCE)"
+	@echo "HTML build completed successfully inside Docker container."
+
+build-no-container-html:	build-registers
+	@echo "Starting HTML build..."
+	$(ASCIIDOCTOR_HTML) $(HTML_OPTIONS) $(REQUIRES) --out-file=$(HTML_RESULT) $(HEADER_SOURCE)
+	@echo "HTML build completed successfully."
 
 build-registers:	$(REGISTERS_ADOC)
 
@@ -81,5 +109,5 @@ chisel: $(REGISTERS_CHISEL)
 
 clean:
 	@echo "Cleaning up generated files..."
-	rm -f $(PDF_RESULT) $(REGISTERS_ADOC)
+	rm -f $(PDF_RESULT) $(HTML_RESULT) $(REGISTERS_ADOC)
 	@echo "Cleanup completed."

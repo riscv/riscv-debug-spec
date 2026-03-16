@@ -3,5 +3,6 @@ build/*.adoc
 build/images
 build/.asciidoctor
 build/*.pdf
+build/*.html
 
 .vscode
