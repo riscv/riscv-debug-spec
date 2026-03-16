@@ -309,9 +309,9 @@ same project unless stated otherwise.
             Mode was entered. The encoding is described in &lt;&lt;tab:privmode&gt;&gt;.  A debugger can change this value to change
             the hart's privilege mode when exiting Debug Mode.
 
-            Not all privilege modes are supported on all harts. If the
-            encoding written is not supported or the debugger is not allowed to
-            change to it, the hart may change to any supported privilege mode.
+			This field is WARL, capable of holding only supported privilege modes.
+			If the mode written to it is not supported or the debugger is not allowed to
+			change it, the field may change to any supported privilege mode.
         </field>
     </register>
 
