@@ -168,7 +168,7 @@ xref:nativestep[].
 === Reset
 
 If the halt signal (driven by the hart's halt request bit in the Debug
-Module) or {dmstatus-hasresethaltreq} are asserted when a hart comes out of reset, the hart must
+Module) or {resethaltreq} are asserted when a hart comes out of reset, the hart must
 enter Debug Mode before executing any instructions, but after performing
 any initialization that would usually happen before the first
 instruction is executed.
