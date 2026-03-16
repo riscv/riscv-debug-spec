@@ -263,7 +263,6 @@ same project unless stated otherwise.
 
             <value v="6" name="group">
             The hart halted because it's part of a halt group.
-            Harts may report 3 for this cause instead.
             </value>
 
             <value v="7" name="other">
