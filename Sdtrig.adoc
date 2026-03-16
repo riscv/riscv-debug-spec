@@ -187,7 +187,7 @@ Harts that support triggers with {mcontrol-action}=0 should implement one of the
 
 . The hardware prevents triggers with {mcontrol-action}=0 from matching or firing while in M-mode and while `MIE` in `mstatus` is 0. If `medeleg` [3]=1 then it prevents triggers with {mcontrol-action}=0 from
 matching or firing while in S-mode and while `SIE` in `sstatus` is 0. If `medeleg` [3]=1 and `hedeleg` [3]=1 then it
-prevents triggers with {mcontrol-action}=0 from matching or firing while in VS-mode and while `SIE` in `vstatus` is 0.
+prevents triggers with {mcontrol-action}=0 from matching or firing while in VS-mode and while `SIE` in `vsstatus` is 0.
 
 . {tcontrol-mte} and {tcontrol-mpte} in {csr-tcontrol} is implemented. `medeleg` [3] is hard-wired to 0.
 
