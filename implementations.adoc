@@ -86,7 +86,7 @@ traps and debug would not be possible.
 [[dmi_signals]]
 === Debug Module Interface Signals
 
-As stated in section <<dmi>> the details of the DMI are left to
+As stated in section xref:debug_module.adoc#dmi[] the details of the DMI are left to
 the system designer. It is quite often the case that only one DTM and
 one DM is implemented. In this case it might be useful to comply with
 the signals suggested in <<tab:dmi_signals>>, which is the

@@ -49,7 +49,7 @@ A single DM can debug up to latexmath:[2^{20}] harts.
 Debug Modules are subordinates on a bus called the Debug Module
 Interface (DMI). The bus manager is the Debug Transport Module(s). The
 Debug Module Interface can be a trivial bus with one manager and one
-subordinate (see <<tab:dmi_signals>>), or use a more
+subordinate (see xref:implementations.adoc#tab:dmi_signals[]), or use a more
 full-featured bus like TileLink or the AMBA Advanced Peripheral Bus. The
 details are left to the system designer.
 
@@ -419,7 +419,7 @@ Buffer. This is indicated by {dmstatus-impebreak}. With this feature, a Program 
 just 2 32-bit words can offer efficient debugging.
 
 While these programs are executed, the hart does not leave Debug Mode
-(see <<debugmode>>). If an exception is
+(see xref:Sdext.adoc#debugmode[]). If an exception is
 encountered during execution of the Program Buffer, no more instructions
 are executed, the hart remains in Debug Mode, and {abstractcs-cmderr} is set to 3
 (`exception error`). If the debugger executes a program that doesn’t

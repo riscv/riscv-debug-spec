@@ -32,13 +32,13 @@ functionality.
 
 *CSR*:: Control and Status Register.
 
-*DM*:: Debug Module (see <<dm>>).
+*DM*:: Debug Module (see xref:debug_module.adoc#dm[]).
 
-*DMI*:: Debug Module Interface (see <<dmi>>).
+*DMI*:: Debug Module Interface (see xref:debug_module.adoc#dmi[]).
 
 *DR*:: JTAG Data Register.
 
-*DTM*:: Debug Transport Module (see <<dtm>>).
+*DTM*:: Debug Transport Module (see xref:dtm.adoc#dtm[]).
 
 *DXLEN*:: Debug XLEN, which is the widest XLEN a hart supports, ignoring the
 current value of `mxl` in `misa`.
@@ -61,7 +61,7 @@ current value of `mxl` in `misa`.
 
 *legacy feature*:: A legacy feature should only be implemented to support legacy hardware that is present in a system.
 
-*Minimal RISC-V Debug Specification*:: A subset of the full Debug Specification that allows for very small implementations. See <<dm>>.
+*Minimal RISC-V Debug Specification*:: A subset of the full Debug Specification that allows for very small implementations. See xref:debug_module.adoc#dm[].
 
 *NAPOT*:: Naturally Aligned Power-Of-Two.
 
@@ -71,13 +71,13 @@ current value of `mxl` in `misa`.
 
 *recommended feature*:: A recommended feature is not required for debug to work correctly, but  it is so useful that it should not be omitted without good reason.
 
-*SBA*:: System Bus Access (see <<systembusaccess>>).
+*SBA*:: System Bus Access (see xref:debug_module.adoc#systembusaccess[]).
 
 *specialized feature*:: A specialized feature, that only makes sense in the context of some specific hardware.
 
 *TAP*:: Test Access Port, defined in IEEE 1149.1.
 
-*TM*:: Trigger Module (see <<trigger>>).
+*TM*:: Trigger Module (see xref:Sdtrig.adoc#trigger[]).
 
 *virtual address*:: An address as a hart sees it. If the hart is using address translation this may be different from the physical address. If there is no translation then it will be the same.
 
@@ -123,7 +123,7 @@ Changes that fix a bug in the spec:
 
 . Fix order of operations described in {dm-sbdata0}.
 https://github.com/riscv/riscv-debug-spec/pull/392[#392]
-. Resume ack is set after resume, in <<runcontrol>>.
+. Resume ack is set after resume, in xref:debug_module.adoc#runcontrol[].
 https://github.com/riscv/riscv-debug-spec/pull/400[#400]
 . {textra32-sselect} applies to {textra32-svalue} . https://github.com/riscv/riscv-debug-spec/pull/402[#402]
 . {tcontrol-mte} only applies when action=0.
@@ -178,7 +178,7 @@ https://github.com/riscv/riscv-debug-spec/pull/437[#437]
 https://github.com/riscv/riscv-debug-spec/pull/465[#465]
 . R/W1C fields should be cleared by writing every bit high.
 https://github.com/riscv/riscv-debug-spec/pull/472[#472]
-. Specify trigger priorities in <<tab:priority>> relative to exceptions.
+. Specify trigger priorities in xref:Sdtrig.adoc#tab:priority[] relative to exceptions.
 https://github.com/riscv/riscv-debug-spec/pull/478[#478]
 . Time may pass before {dmcontrol-dmactive} becomes high.
 https://github.com/riscv/riscv-debug-spec/pull/500[#500]
@@ -192,7 +192,7 @@ https://github.com/riscv/riscv-debug-spec/pull/501[#501]
 https://github.com/riscv/riscv-debug-spec/pull/585[#585]
 . Writing 0 to {csr-tdata1} forces a state where {csr-tdata2} and {csr-tdata3} are writable.
 https://github.com/riscv/riscv-debug-spec/pull/598[#598]
-. Solutions to deal with reentrancy in <<nativetrigger>> prevent triggers from
+. Solutions to deal with reentrancy in xref:Sdtrig.adoc#nativetrigger[] prevent triggers from
 _matching_, not merely _firing_. This primarily affects {csr-icount} behavior.
 https://github.com/riscv/riscv-debug-spec/pull/722[#722]
 . Attempts to access an unimplemented CSR raise an illegal instruction
@@ -202,7 +202,7 @@ exception. https://github.com/riscv/riscv-debug-spec/pull/791[#791]
 
 New backwards-compatible feature that did not exist before:
 
-. Add halt groups and external triggers in <<hrgroups>>.
+. Add halt groups and external triggers in xref:debug_module.adoc#hrgroups[].
 https://github.com/riscv/riscv-debug-spec/pull/404[#404]
 . Reserve some DMI space for non-standard use. See {dm-custom}, and {dm-custom0} through `custom15`.
 https://github.com/riscv/riscv-debug-spec/pull/406[#406]
@@ -212,7 +212,7 @@ https://github.com/riscv/riscv-debug-spec/pull/417[#417]
 and https://github.com/riscv/riscv-debug-spec/pull/709[#709]
 . Recommend matching on every accessed address.
 https://github.com/riscv/riscv-debug-spec/pull/449[#449]
-. Add resume groups in <<hrgroups>>.
+. Add resume groups in xref:debug_module.adoc#hrgroups[].
 https://github.com/riscv/riscv-debug-spec/pull/506[#506]
 . Add {abstractcs-relaxedpriv} . https://github.com/riscv/riscv-debug-spec/pull/536[#536]
 . Move {csr-scontext}, renaming original to {csr-mscontext}, and create {csr-hcontext}.
