@@ -772,13 +772,13 @@ equal to {csr-tdata2}.
 4 (mask low): Matches when latexmath:[$\frac{XLEN}{2}-{1:0}] of any compare value
 equals latexmath:[$\frac{XLEN}{2}-{1:0}] of {csr-tdata2} after
 latexmath:[$\frac{XLEN}{2}-{1:0}] of the compare value is ANDed with
-`XLEN-1`:latexmath:[$\frac{XLEN}{2}$] of {csr-tdata2}.
+`XLEN-1`:latexmath:[\frac{XLEN}{2}] of {csr-tdata2}.
 
 
-5 (mask high): Matches when `XLEN-1`:latexmath:[$\frac{XLEN}{2}$] of any compare
+5 (mask high): Matches when `XLEN-1`:latexmath:[\frac{XLEN}{2}] of any compare
 value equals latexmath:[$\frac{XLEN}{2}-{1:0}] of {csr-tdata2} after
-`XLEN-1`:latexmath:[$\frac{XLEN}{2}$] of the compare value is ANDed with
-`XLEN-1`:latexmath:[$\frac{XLEN}{2}$] of {csr-tdata2}.
+`XLEN-1`:latexmath:[\frac{XLEN}{2}] of the compare value is ANDed with
+`XLEN-1`:latexmath:[\frac{XLEN}{2}] of {csr-tdata2}.
 
 
 8 (not equal): Matches when {mcontrol-match}=0 would not match.
@@ -1173,13 +1173,13 @@ equal to {csr-tdata2}.
 4 (mask low): Matches when latexmath:[$\frac{XLEN}{2}-{1:0}] of any compare value
 equals latexmath:[$\frac{XLEN}{2}-{1:0}] of {csr-tdata2} after
 latexmath:[$\frac{XLEN}{2}-{1:0}] of the compare value is ANDed with
-`XLEN-1`:latexmath:[$\frac{XLEN}{2}$] of {csr-tdata2}.
+`XLEN-1`:latexmath:[\frac{XLEN}{2}] of {csr-tdata2}.
 
 
-5 (mask high): Matches when `XLEN-1`:latexmath:[$\frac{XLEN}{2}$] of any compare
+5 (mask high): Matches when `XLEN-1`:latexmath:[\frac{XLEN}{2}] of any compare
 value equals latexmath:[$\frac{XLEN}{2}-{1:0}] of {csr-tdata2} after
-`XLEN-1`:latexmath:[$\frac{XLEN}{2}$] of the compare value is ANDed with
-`XLEN-1`:latexmath:[$\frac{XLEN}{2}$] of {csr-tdata2}.
+`XLEN-1`:latexmath:[\frac{XLEN}{2}] of the compare value is ANDed with
+`XLEN-1`:latexmath:[\frac{XLEN}{2}] of {csr-tdata2}.
 
 
 8 (not equal): Matches when {mcontrol6-match} `=0` would not match.
