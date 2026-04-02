@@ -1,0 +1,26 @@
+// Auto-generated on 2026-04-02 13:25:53.377659 from ../xml/jtag_registers.xml
+:dtm-bypass: bypass
+:dtm-idcode: <<dtm-idcode,idcode>>
+:idcode-version: <<idcode-version,Version>>
+:idcode-partnumber: <<idcode-partnumber,PartNumber>>
+:idcode-manufid: <<idcode-manufid,ManufId>>
+:idcode-1: <<idcode-1,1>>
+:dtm-dtmcs: <<dtm-dtmcs,dtmcs>>
+:dtmcs-errinfo: <<dtmcs-errinfo,errinfo>>
+:dtmcs-dtmhardreset: <<dtmcs-dtmhardreset,dtmhardreset>>
+:dtmcs-dmireset: <<dtmcs-dmireset,dmireset>>
+:dtmcs-idle: <<dtmcs-idle,idle>>
+:dtmcs-dmistat: <<dtmcs-dmistat,dmistat>>
+:dtmcs-abits: <<dtmcs-abits,abits>>
+:dtmcs-version: <<dtmcs-version,version>>
+:dtm-dmi: <<dtm-dmi,dmi>>
+:dmi-address: <<dmi-address,address>>
+:dmi-data: <<dmi-data,data>>
+:dmi-op: <<dmi-op,op>>
+:dtm-reserved_bypass: reserved (bypass)
+:dtm-reserved_bypass: reserved (bypass)
+:dtm-reserved_bypass: reserved (bypass)
+:dtm-reserved_bypass: reserved (bypass)
+:dtm-reserved_bypass: reserved (bypass)
+:dtm-reserved_bypass: reserved (bypass)
+:dtm-bypass: <<dtm-bypass,bypass>>

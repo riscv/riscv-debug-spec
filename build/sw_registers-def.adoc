@@ -1,0 +1,4 @@
+// Auto-generated on 2026-04-02 13:25:57.940387 from ../xml/sw_registers.xml
+:virt-priv: <<virt-priv,priv>>
+:priv-v: <<priv-v,v>>
+:priv-prv: <<priv-prv,prv>>

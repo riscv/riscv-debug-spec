@@ -1,0 +1,1 @@
+../../../build/sw_registers.adoc

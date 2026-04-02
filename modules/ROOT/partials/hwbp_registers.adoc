@@ -1,0 +1,1 @@
+../../../build/hwbp_registers.adoc

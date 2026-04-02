@@ -1,0 +1,18 @@
+// Auto-generated on 2026-04-02 13:25:57.669669 from ../xml/abstract_commands.xml
+:ac-accessregister: <<ac-accessregister,access register>>
+:accessregister-cmdtype: <<accessregister-cmdtype,cmdtype>>
+:accessregister-aarsize: <<accessregister-aarsize,aarsize>>
+:accessregister-aarpostincrement: <<accessregister-aarpostincrement,aarpostincrement>>
+:accessregister-postexec: <<accessregister-postexec,postexec>>
+:accessregister-transfer: <<accessregister-transfer,transfer>>
+:accessregister-write: <<accessregister-write,write>>
+:accessregister-regno: <<accessregister-regno,regno>>
+:ac-quickaccess: <<ac-quickaccess,quick access>>
+:quickaccess-cmdtype: <<quickaccess-cmdtype,cmdtype>>
+:ac-accessmemory: <<ac-accessmemory,access memory>>
+:accessmemory-cmdtype: <<accessmemory-cmdtype,cmdtype>>
+:accessmemory-aamvirtual: <<accessmemory-aamvirtual,aamvirtual>>
+:accessmemory-aamsize: <<accessmemory-aamsize,aamsize>>
+:accessmemory-aampostincrement: <<accessmemory-aampostincrement,aampostincrement>>
+:accessmemory-write: <<accessmemory-write,write>>
+:accessmemory-target-specific: <<accessmemory-target-specific,target-specific>>

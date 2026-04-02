@@ -1,0 +1,3 @@
+// Auto-generated on 2026-04-02 13:25:57.344638 from ../xml/sample_registers.xml
+:shortname: <<shortname,shortname>>
+:shortname-field: <<shortname-field,field>>
