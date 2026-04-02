@@ -1,0 +1,18 @@
+[.space-below]
+image::common::risc-v_logo.svg[id="riscvlogo"xs,alt="RISCV"]
+
+
+
+[.space-below]
+== RISC-V Debug Specification
+
+
+RISC-V Debug Task Group
+
+Version v1.0, 2025-02-21: Ratified
+
+[WARNING]
+.This document is in the link:http://riscv.org/spec-state[Ratified state]
+====
+No changes are allowed.
+====
