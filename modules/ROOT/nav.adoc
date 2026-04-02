@@ -1,4 +1,4 @@
-# Debug Specification
+.Debug Specification
 * xref:index.adoc[Title Page]
 * xref:introduction.adoc[Introduction]
 * xref:overview.adoc[Overview]
