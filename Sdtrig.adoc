@@ -1,3 +1,5 @@
+include::partial$register-attrs.adoc[]
+
 [[trigger]]
 == Sdtrig (ISA Extension)
 

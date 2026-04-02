@@ -1,3 +1,5 @@
+include::partial$register-attrs.adoc[]
+
 [[core_debug]]
 == Sdext (ISA Extension)
 

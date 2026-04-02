@@ -1,3 +1,5 @@
+include::partial$register-attrs.adoc[]
+
 [appendix]
 [[sec:implementations]]
 == Hardware Implementations

@@ -1,3 +1,5 @@
+include::partial$register-attrs.adoc[]
+
 [[intro]]
 == Introduction
 
