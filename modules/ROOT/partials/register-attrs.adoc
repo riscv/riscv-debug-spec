@@ -1,0 +1,7 @@
+include::partial$abstract_commands-def.adoc[]
+include::partial$core_registers-def.adoc[]
+include::partial$dm_registers-def.adoc[]
+include::partial$hwbp_registers-def.adoc[]
+include::partial$jtag_registers-def.adoc[]
+include::partial$sample_registers-def.adoc[]
+include::partial$sw_registers-def.adoc[]
