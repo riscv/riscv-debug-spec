@@ -457,7 +457,7 @@ different fields of {dm-dmcontrol}, {dm-abstractcs}, {dm-abstractauto}, and {dm-
 
 [[abstract_sm]]
 .Run/Halt Debug State Machine for single-hart hardware platforms. As only a small amount of state is visible to the debugger, the states and transitions are conceptual.
-image::./fig/abstract_commands.png[]
+image::abstract_commands.png[]
 
 [[systembusaccess]]
 === System Bus Access
