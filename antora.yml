@@ -9,4 +9,5 @@ asciidoc:
     page-pdf_url: _attachments/riscv-debug-specification.pdf
     more_details_url: https://riscv.atlassian.net/wiki/external/YTljNWI1NDgxMzE2NDIzOGEyYjMzMWRmZmRjOGEwNmE
     page-group: debug-trace-ras
+    page-release-date: 'February 2025'
     page-card-description: 'The RISC-V Debug Specification defines the hardware and software interfaces for external debugging of RISC-V processors.'
