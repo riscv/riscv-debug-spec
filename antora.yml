@@ -11,3 +11,8 @@ asciidoc:
     page-group: debug-trace-ras
     page-release-date: 'February 2025'
     page-card-description: 'The Debug Specification defines the interfaces for external debugging of RISC-V processors.'
+    hartsel: '`hartsel`'
+    resethaltreq: '`resethaltreq`'
+    keepalive: '`keepalive`'
+    dmcontrol: '`dmcontrol`'
+    refrev: '1.0'
