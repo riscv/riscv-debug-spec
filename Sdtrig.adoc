@@ -48,7 +48,7 @@ The algorithm checks {csr-tinfo} and {tdata1-type} in case the implementation ha
 
 === Actions
 
-[#norm:Sdtrig_actions]#Triggers can be configured to take one of several actions when they fire.# <<tab:action>> lists all options.
+[#norm:Sdtrig_actions]#Triggers can be configured to take one of several actions when they fire. <<tab:action>> lists all options.#
 
 [[tab:action]]
 .{mcontrol-action} encoding
@@ -64,9 +64,9 @@ This action can only be supported if `Sdext` is implemented on the hart.#
 | 2 | [#norm:Sdtrig_action2]#Trace on, described in the trace specification.# 
 | 3 | [#norm:Sdtrig_action3]#Trace off, described in the trace specification.#
 | 4 | [#norm:Sdtrig_action4]#Trace notify, described in the trace specification.#
-| 5 | Reserved for use by the trace specification.
+| 5 | [#norm:Sdtrig_action5_rsv]#Reserved for use by the trace specification.#
 | 8 - 9 | [#norm:Sdtrig_action8_9]#Send a signal to TM external trigger output 0 or 1 (respectively).#
-| other | Reserved for future use.
+| other | [#norm:Sdtrig_action_rsv]#Reserved for future use.#
 |===
 
 [NOTE]
@@ -183,13 +183,13 @@ privileged mode than Y.
 any time.
 ====
 
-[norm:Sdtrig_native_reentry]#Harts that support triggers with {mcontrol-action}=0 should implement one of the following two solutions to solve the problem of reentrancy:#
+[#norm:Sdtrig_native_reentry]#Harts that support triggers with {mcontrol-action}=0 should implement one of the following two solutions to solve the problem of reentrancy:#
 
-. The hardware prevents triggers with {mcontrol-action}=0 from matching or firing while in M-mode and while `MIE` in `mstatus` is 0. If `medeleg` [3]=1 then it prevents triggers with {mcontrol-action}=0 from
+. [#norm:Sdtrig_reentry_inhibit]#The hardware prevents triggers with {mcontrol-action}=0 from matching or firing while in M-mode and while `MIE` in `mstatus` is 0. If `medeleg` [3]=1 then it prevents triggers with {mcontrol-action}=0 from
 matching or firing while in S-mode and while `SIE` in `sstatus` is 0. If `medeleg` [3]=1 and `hedeleg` [3]=1 then it
-prevents triggers with {mcontrol-action}=0 from matching or firing while in VS-mode and while `SIE` in `vstatus` is 0.
+prevents triggers with {mcontrol-action}=0 from matching or firing while in VS-mode and while `SIE` in `vstatus` is 0.#
 
-. {tcontrol-mte} and {tcontrol-mpte} in {csr-tcontrol} is implemented. `medeleg` [3] is hard-wired to 0.
+. [#norm:Sdtrig_reentry_tcontrol]#{tcontrol-mte} and {tcontrol-mpte} in {csr-tcontrol} is implemented. `medeleg` [3] is hard-wired to 0.#
 
 [NOTE]
 ====
@@ -226,14 +226,14 @@ them as follows:
 
 . [#norm:Sdtrig_Aext_lr_op]#`lr` instructions are loads.#
 . [#norm:Sdtrig_Aext_sc_op]#Successful `sc` instructions are stores.#
-. It is UNSPECIFIED whether failing `sc` instructions are stores or not.
+. [#norm:Sdtrig_Aext_sc_fail]#It is UNSPECIFIED whether failing `sc` instructions are stores or not.#
 . [#norm:Sdtrig_AMO_read]#Each AMO instruction is a load for the read portion of the operation.#
-The address is always available to trigger on, although the value loaded
+[#norm:Sdtrig_AMO_read_addr]#The address is always available to trigger on#, although the value loaded
 might not be, depending on the hardware implementation.
 . [#norm:Sdtrig_AMO_store]#Each AMO instruction is a store for the write portion of the operation.#
-The address is always available to trigger on. Whether data store triggers match on AMOs is UNSPECIFIED.
-. If the destination register of any load or AMO is `zero` then it is UNSPECIFIED whether a
-data load trigger will match.
+[#norm:Sdtrig_AMO_store_addr]#The address is always available to trigger on.# [#norm:Sdtrig_AMO_store_match]#Whether data store triggers match on AMOs is UNSPECIFIED.#
+. [#norm:Sdtrig_load_zero_rd]#If the destination register of any load or AMO is `zero` then it is UNSPECIFIED whether a
+data load trigger will match.#
 
 ==== Combined Accesses
 
@@ -261,6 +261,7 @@ multiple addresses, there are multiple possible values to compare
 against. Implementations must implement one of the following options.#
 From most desirable to least desirable, they are:
 
+[[norm:Sdtrig_cache_compare_opts]]
 . Every address from the effective address rounded down to the nearest
 cache block boundary (inclusive) to the effective address rounded up to
 the nearest cache block boundary (exclusive) is a compare value.
@@ -316,10 +317,9 @@ In addition, an implementation may choose to inhibit all trigger matching
 against invalid addresses, especially if there is no support for storage of any
 invalid address values in tdata2.
 
-[[multistate]]
 === Multiple State Change Instructions
 
-[[#norm:Sdtrig_multistate_change]] 
+[[norm:Sdtrig_multistate_change]] 
 An instruction that performs multiple architectural state changes (e.g.,
 register updates and/or memory accesses) might cause a trigger to fire
 at an intermediate point in its execution. As a result, architectural
