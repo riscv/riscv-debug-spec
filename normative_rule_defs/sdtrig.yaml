@@ -99,10 +99,6 @@ normative_rule_definitions:
     summary: "Breakpoint exception may be taken in M-mode or delegated lower."
     tags: ["norm:Sdtrig_breakpoint_delegated"]
 
-  - name: Sdtrig_native_reentry
-    summary: "Harts with action-0 triggers must implement one of two reentrancy solutions: inhibit M-mode matching, or implement tcontrol."
-    tags: ["norm:Sdtrig_native_reentry", "norm:Sdtrig_reentry_inhibit", "norm:Sdtrig_reentry_tcontrol"]
-
   - name: Sdtrig_Aext_lr_op
     summary: "lr instructions are treated as loads."
     tags: ["norm:Sdtrig_Aext_lr_op"]
