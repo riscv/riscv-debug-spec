@@ -139,17 +139,9 @@ normative_rule_definitions:
     summary: "Multi-access instructions should match as if each access happened individually."
     tags: ["norm:Sdtrig_mult_mem_access"]
 
-  - name: Sdtrig_caches_stores_1
+  - name: Sdtrig_caches_stores
     summary: "Two classes of cache operations must match as stores."
-    tags: ["norm:Sdtrig_caches_stores_1"]
-
-  - name: Sdtrig_caches_stores_2
-    summary: "Cache ops maintaining coherence between implicit and explicit accesses match as stores."
-    tags: ["norm:Sdtrig_caches_stores_2"]
-
-  - name: Sdtrig_caches_stores_3
-    summary: "Cache operations performing block writes of constant data match as stores."
-    tags: ["norm:Sdtrig_caches_stores_3"]
+    tags: ["norm:Sdtrig_caches_stores_1","norm:Sdtrig_caches_stores_2","norm:Sdtrig_caches_stores_3"]
 
   - name: Sdtrig_cache_compare
     summary: "Only size=0, select=0 triggers match; the compare value is one of three address options, most-to-least desirable."
