@@ -141,7 +141,7 @@ normative_rule_definitions:
 
   - name: Sdtrig_caches_stores
     summary: "Two classes of cache operations must match as stores."
-    tags: ["norm:Sdtrig_caches_stores_1","norm:Sdtrig_caches_stores_2","norm:Sdtrig_caches_stores_3"]
+    tags: ["norm:Sdtrig_caches_stores_1", "norm:Sdtrig_caches_stores_2", "norm:Sdtrig_caches_stores_3"]
 
   - name: Sdtrig_cache_compare
     summary: "Only size=0, select=0 triggers match; the compare value is one of three address options, most-to-least desirable."
@@ -1175,17 +1175,9 @@ normative_rule_definitions:
     summary: "Matches only if low scontext bits equal svalue."
     tags: ["norm:Sdtrig_textra32_sselect_scontext"]
 
-  - name: Sdtrig_textra32_sselect_asid1
-    summary: "The sselect ASID option matches based on ASID, per mode."
-    tags: ["norm:Sdtrig_textra32_sselect_asid1"]
-
-  - name: Sdtrig_textra32_sselect_asid2
-    summary: "In VS/VU-mode, matches if vsatp ASID equals svalue's ASIDMAX bits."
-    tags: ["norm:Sdtrig_textra32_sselect_asid2"]
-
-  - name: Sdtrig_textra32_sselect_asid3
-    summary: "In other modes, matches if satp ASID equals svalue's ASIDMAX bits."
-    tags: ["norm:Sdtrig_textra32_sselect_asid3"]
+  - name: Sdtrig_textra32_sselect_asid
+    summary: "The sselect ASID option matches when the current mode's ASID (vsatp in VS/VU-mode, else satp) equals svalue's ASIDMAX bits."
+    tags: ["norm:Sdtrig_textra32_sselect_asid1", "norm:Sdtrig_textra32_sselect_asid2", "norm:Sdtrig_textra32_sselect_asid3"]
 
   - name: Sdtrig_textra32_sselect_no_s
     summary: "sselect should be tied to 0 when S-mode is unsupported."
