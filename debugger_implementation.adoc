@@ -13,7 +13,7 @@ register/abstract command mentioned in this document.
 
 This section details how an external debugger might use the described
 debug interface to perform some common operations on RISC-V cores using
-the JTAG DTM described in <<sec:jtagdtm>>. All these
+the JTAG DTM described in xref:dtm.adoc#sec:jtagdtm[]. All these
 examples assume a 32-bit core but it should be easy to adapt the
 examples to 64- or 128-bit cores.
 
@@ -51,7 +51,7 @@ A user will want to know as quickly as possible when a hart is halted
 (e.g. due to a breakpoint). To efficiently determine which harts are
 halted when there are many harts, the debugger uses the `haltsum`
 registers. Assuming the maximum number of harts exist, first it checks {dm-haltsum3} .
-For each bit set there, it writes <<dm-dmcontrol, hartsel>>, and checks {dm-haltsum2}. This process repeats
+For each bit set there, it writes xref:debug_module.adoc#dm-dmcontrol[hartsel], and checks {dm-haltsum2}. This process repeats
 through {dm-haltsum1} and {dm-haltsum0}. Depending on how many harts exist, the process should
 start at one of the lower `haltsum` registers.
 
@@ -471,7 +471,7 @@ straightforward.
 
 If hardware automatically prevents {mcontrol6-action}=0 triggers from
 matching when entering a trap handler as described in
-<<nativetrigger>>, then a carefully written trap handler can
+xref:Sdtrig.adoc#nativetrigger[], then a carefully written trap handler can
 ensure that interrupts are disabled whenever the icount trigger must not match.
 
 If neither of these features exist, then single step is doable, but
