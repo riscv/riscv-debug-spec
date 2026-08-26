@@ -1,3 +1,5 @@
+include::{debug-partials}register-attrs.adoc[]
+
 [appendix]
 == Debugger Implementation
 
