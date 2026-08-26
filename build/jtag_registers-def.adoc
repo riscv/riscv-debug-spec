@@ -1,0 +1,26 @@
+// Auto-generated on 2026-04-02 13:25:53.377659 from ../xml/jtag_registers.xml
+:dtm-bypass: bypass
+:dtm-idcode: xref:dtm.adoc#dtm-idcode[idcode]
+:idcode-version: xref:dtm.adoc#idcode-version[Version]
+:idcode-partnumber: xref:dtm.adoc#idcode-partnumber[PartNumber]
+:idcode-manufid: xref:dtm.adoc#idcode-manufid[ManufId]
+:idcode-1: xref:dtm.adoc#idcode-1[1]
+:dtm-dtmcs: xref:dtm.adoc#dtm-dtmcs[dtmcs]
+:dtmcs-errinfo: xref:dtm.adoc#dtmcs-errinfo[errinfo]
+:dtmcs-dtmhardreset: xref:dtm.adoc#dtmcs-dtmhardreset[dtmhardreset]
+:dtmcs-dmireset: xref:dtm.adoc#dtmcs-dmireset[dmireset]
+:dtmcs-idle: xref:dtm.adoc#dtmcs-idle[idle]
+:dtmcs-dmistat: xref:dtm.adoc#dtmcs-dmistat[dmistat]
+:dtmcs-abits: xref:dtm.adoc#dtmcs-abits[abits]
+:dtmcs-version: xref:dtm.adoc#dtmcs-version[version]
+:dtm-dmi: xref:dtm.adoc#dtm-dmi[dmi]
+:dmi-address: xref:dtm.adoc#dmi-address[address]
+:dmi-data: xref:dtm.adoc#dmi-data[data]
+:dmi-op: xref:dtm.adoc#dmi-op[op]
+:dtm-reserved_bypass: reserved (bypass)
+:dtm-reserved_bypass: reserved (bypass)
+:dtm-reserved_bypass: reserved (bypass)
+:dtm-reserved_bypass: reserved (bypass)
+:dtm-reserved_bypass: reserved (bypass)
+:dtm-reserved_bypass: reserved (bypass)
+:dtm-bypass: xref:dtm.adoc#dtm-bypass[bypass]

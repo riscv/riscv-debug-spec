@@ -1,3 +1,5 @@
+include::{debug-partials}register-attrs.adoc[]
+
 [[core_debug]]
 == Sdext (ISA Extension)
 
@@ -217,9 +219,9 @@ opcodes and optionally also using abstract debug commands.
 Attempts to access an unimplemented Core Debug Register raise an illegal
 instruction exception.
 
-include::build/core_registers.adoc[]
+include::{debug-partials}core_registers.adoc[]
 
 [[virtreg]]
 === Virtual Debug Registers
 
-include::build/sw_registers.adoc[]
+include::{debug-partials}sw_registers.adoc[]

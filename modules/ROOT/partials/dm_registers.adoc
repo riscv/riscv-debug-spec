@@ -1,0 +1,1 @@
+../../../build/dm_registers.adoc

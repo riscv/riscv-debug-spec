@@ -1,3 +1,5 @@
+include::{debug-partials}register-attrs.adoc[]
+
 [[trigger]]
 == Sdtrig (ISA Extension)
 
@@ -40,10 +42,10 @@ list of all triggers and their features as follows:
 [NOTE]
 ====
 The above algorithm reads back {csr-tselect} so that implementations which have
-latexmath:[$2^n$] triggers only need to implement latexmath:[$n$] bits
+latexmath:[2^n] triggers only need to implement latexmath:[n] bits
 of {csr-tselect}.
 
-The algorithm checks {csr-tinfo} and {tdata1-type} in case the implementation has latexmath:[$m$] bits of {csr-tselect} but fewer than latexmath:[$2^m$] triggers.
+The algorithm checks {csr-tinfo} and {tdata1-type} in case the implementation has latexmath:[m] bits of {csr-tselect} but fewer than latexmath:[2^m] triggers.
 ====
 
 === Actions
@@ -370,4 +372,4 @@ trigger firing at a different time than is expected.
 Attempts to access an unimplemented Trigger Module Register raise an illegal
 instruction exception.
 
-include::build/hwbp_registers.adoc[]
+include::{debug-partials}hwbp_registers.adoc[]

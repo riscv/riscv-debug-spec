@@ -1,3 +1,5 @@
+include::{debug-partials}register-attrs.adoc[]
+
 [[dm]]
 == Debug Module (DM) (non-ISA extension)
 
@@ -41,7 +43,7 @@ hart and listed in xref:tab:regno[].
 .. Implement abstract access to at least all GPRs, {csr-dcsr}, and {csr-dpc}, and advertise the implementation as conforming to the "Minimal RISC-V Debug
 Specification", instead of the "RISC-V Debug Specification".
 
-A single DM can debug up to latexmath:[$2^{20}$] harts.
+A single DM can debug up to latexmath:[2^{20}] harts.
 
 [[dmi]]
 === Debug Module Interface (DMI)
@@ -49,7 +51,7 @@ A single DM can debug up to latexmath:[$2^{20}$] harts.
 Debug Modules are subordinates on a bus called the Debug Module
 Interface (DMI). The bus manager is the Debug Transport Module(s). The
 Debug Module Interface can be a trivial bus with one manager and one
-subordinate (see <<tab:dmi_signals>>), or use a more
+subordinate (see xref:implementations.adoc#tab:dmi_signals[]), or use a more
 full-featured bus like TileLink or the AMBA Advanced Peripheral Bus. The
 details are left to the system designer.
 
@@ -114,7 +116,7 @@ writing 1 to {dmcontrol-ackhavereset} in {dm-dmcontrol}. The `havereset` bits mi
 [[selectingharts]]
 === Selecting Harts
 
-Up to latexmath:[$2^{20}$] harts can be connected to a single DM.
+Up to latexmath:[2^{20}] harts can be connected to a single DM.
 Commands issued to the DM only apply to the currently selected harts.
 
 To enumerate all the harts, a debugger must first determine `HARTSELLEN`
@@ -136,8 +138,8 @@ contiguous until the final index.
 ==== Selecting Multiple Harts
 
 Debug Modules may implement a Hart Array Mask register to allow
-selecting multiple harts at once. The latexmath:[$n$]th bit in the Hart
-Array Mask register applies to the hart with index latexmath:[$n$]. If
+selecting multiple harts at once. The latexmath:[n]th bit in the Hart
+Array Mask register applies to the hart with index latexmath:[n]. If
 the bit is 1 then the hart is selected. Usually a DM will have a Hart
 Array Mask register exactly wide enough to select all the harts it
 supports, but it's allowed to tie any of these bits to 0.
@@ -399,7 +401,7 @@ determines the kind of command. <<tab:cmdtype>> lists all commands.
 | 2 | <<ac-accessmemory, Access Memory Command>>
 |===
 
-include::build/abstract_commands.adoc[]
+include::{debug-partials}abstract_commands.adoc[]
 
 [[programbuffer]]
 === Program Buffer
@@ -419,7 +421,7 @@ Buffer. This is indicated by {dmstatus-impebreak}. With this feature, a Program 
 just 2 32-bit words can offer efficient debugging.
 
 While these programs are executed, the hart does not leave Debug Mode
-(see <<debugmode>>). If an exception is
+(see xref:Sdext.adoc#debugmode[]). If an exception is
 encountered during execution of the Program Buffer, no more instructions
 are executed, the hart remains in Debug Mode, and {abstractcs-cmderr} is set to 3
 (`exception error`). If the debugger executes a program that doesn’t
@@ -455,7 +457,7 @@ different fields of {dm-dmcontrol}, {dm-abstractcs}, {dm-abstractauto}, and {dm-
 
 [[abstract_sm]]
 .Run/Halt Debug State Machine for single-hart hardware platforms. As only a small amount of state is visible to the debugger, the states and transitions are conceptual.
-image::./fig/abstract_commands.png[]
+image::{debug-images}abstract_commands.png[]
 
 [[systembusaccess]]
 === System Bus Access
@@ -578,4 +580,4 @@ addresses below are offsets from this base address.
 Debug Module DMI Registers that are unimplemented or not mentioned in
 the table below return 0 when read. Writing them has no effect.
 
-include::build/dm_registers.adoc[]
+include::{debug-partials}dm_registers.adoc[]

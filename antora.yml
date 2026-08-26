@@ -1,0 +1,22 @@
+name: debug
+title: Debug Specification
+version: v1.0
+nav:
+- modules/ROOT/nav.adoc
+
+asciidoc:
+  attributes:
+    # Path roots for the register partials and figures shared with the PDF build.
+    # riscv-debug-header.adoc sets these to real relative paths for Asciidoctor.
+    debug-partials: 'partial$'
+    debug-images: ''
+    page-pdf_url: _attachments/riscv-debug-specification.pdf
+    more_details_url: https://riscv.atlassian.net/wiki/external/YTljNWI1NDgxMzE2NDIzOGEyYjMzMWRmZmRjOGEwNmE
+    page-group: debug-trace-ras
+    page-release-date: 'February 2025'
+    page-card-description: 'Defines the interfaces for external debugging of RISC-V processors.'
+    hartsel: '`hartsel`'
+    resethaltreq: '`resethaltreq`'
+    keepalive: '`keepalive`'
+    dmcontrol: '`dmcontrol`'
+    refrev: '1.0'

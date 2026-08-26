@@ -1,3 +1,5 @@
+include::{debug-partials}register-attrs.adoc[]
+
 [appendix]
 == Debugger Implementation
 
@@ -11,7 +13,7 @@ register/abstract command mentioned in this document.
 
 This section details how an external debugger might use the described
 debug interface to perform some common operations on RISC-V cores using
-the JTAG DTM described in <<sec:jtagdtm>>. All these
+the JTAG DTM described in xref:dtm.adoc#sec:jtagdtm[]. All these
 examples assume a 32-bit core but it should be easy to adapt the
 examples to 64- or 128-bit cores.
 
@@ -49,7 +51,7 @@ A user will want to know as quickly as possible when a hart is halted
 (e.g. due to a breakpoint). To efficiently determine which harts are
 halted when there are many harts, the debugger uses the `haltsum`
 registers. Assuming the maximum number of harts exist, first it checks {dm-haltsum3} .
-For each bit set there, it writes <<dm-dmcontrol, hartsel>>, and checks {dm-haltsum2}. This process repeats
+For each bit set there, it writes xref:debug_module.adoc#dm-dmcontrol[hartsel], and checks {dm-haltsum2}. This process repeats
 through {dm-haltsum1} and {dm-haltsum0}. Depending on how many harts exist, the process should
 start at one of the lower `haltsum` registers.
 
@@ -85,7 +87,7 @@ Read `s0` using abstract command:
 [align="center",float="center",cols="^3,^3,^10,<10",options="header"]
 |===    
 | Op | Address | Value | Comment    
-| Write | {dm-command} | {accessregister-aarsize}latexmath:[$=2$], {accessregister-transfer}, {accessregister-regno} = 0x1008 | Read `s0`
+| Write | {dm-command} | {accessregister-aarsize}latexmath:[=2], {accessregister-transfer}, {accessregister-regno} = 0x1008 | Read `s0`
 | Read | {dm-data0} | - | Returns value that was in `s0` 
 |===
 
@@ -95,7 +97,7 @@ Write `mstatus` using abstract command:
 |===
 | Op | Address | Value | Comment 
 | Write | {dm-data0} | new value | 
-| Write | {dm-command} | {accessregister-aarsize}latexmath:[$=2$], {accessregister-transfer}, {accessregister-write}, {accessregister-regno} = 0x300 | Write `mstatus` 
+| Write | {dm-command} | {accessregister-aarsize}latexmath:[=2], {accessregister-transfer}, {accessregister-write}, {accessregister-regno} = 0x300 | Write `mstatus` 
 |===
 
 [[deb:regprogbuf]]
@@ -113,7 +115,7 @@ Write `mstatus` using program buffer:
 | Write | {dm-progbuf0} | `csrw s0, MSTATUS` |
 | Write | `progbuf1` | `ebreak` |
 | Write | {dm-data0} | new value |
-| Write | {dm-command} | {accessregister-aarsize}latexmath:[$=2$], {accessregister-postexec}, {accessregister-transfer}, {accessregister-write}, {accessregister-regno} = 0x1008 | Write `s0`, then execute program buffer
+| Write | {dm-command} | {accessregister-aarsize}latexmath:[=2], {accessregister-postexec}, {accessregister-transfer}, {accessregister-write}, {accessregister-regno} = 0x1008 | Write `s0`, then execute program buffer
 |===
 
 Read `f1` using program buffer:
@@ -140,7 +142,7 @@ Read a word from memory using system bus access:
 [align="center",float="center",cols="^3,^3,^10,<10",options="header"]
 |===
 | Op | Address | Value | Comment 
-| Write | {dm-sbcs} | {sbcs-sbaccess}latexmath:[$=2$], {sbcs-sbreadonaddr} | Setup 
+| Write | {dm-sbcs} | {sbcs-sbaccess}latexmath:[=2], {sbcs-sbreadonaddr} | Setup 
 | Write | {dm-sbaddress0} | address | 
 | Read | {dm-sbdata0} | - | Value read from memory 
 |===
@@ -150,7 +152,7 @@ Read block of memory using system bus access:
 [align="center",float="center",cols="^3,^3,^10,<10",options="header"]
 |===
 | Op | Address | Value | Comment 
-| Write | {dm-sbcs} | {sbcs-sbaccess}latexmath:[$=2$], {sbcs-sbreadonaddr}, {sbcs-sbreadondata}, {sbcs-sbautoincrement} | Turn on autoread and autoincrement 
+| Write | {dm-sbcs} | {sbcs-sbaccess}latexmath:[=2], {sbcs-sbreadonaddr}, {sbcs-sbreadondata}, {sbcs-sbautoincrement} | Turn on autoread and autoincrement 
 | Write | {dm-sbaddress0} | address | Writing address triggers read and increment 
 | Read | {dm-sbdata0} | - | Value read from memory 
 | Read | {dm-sbdata0} | - | Next value read from memory 
@@ -210,7 +212,7 @@ Read a word from memory using abstract memory access:
 |===
 | Op | Address | Value | Comment 
 | Write | `data1` | address | 
-| Write | {dm-command} | cmdtype=2, {accessmemory-aamsize}latexmath:[$=2$] | 
+| Write | {dm-command} | cmdtype=2, {accessmemory-aamsize}latexmath:[=2] | 
 | Read | {dm-data0} | - | Value read from memory 
 |===
 
@@ -221,7 +223,7 @@ Read block of memory using abstract memory access:
 | Op | Address | Value | Comment 
 | Write | {dm-abstractauto} | 1 | Re-execute the command when {dm-data0} is accessed 
 | Write | `data1` | address | 
-| Write | {dm-command} | cmdtype=2, {accessmemory-aamsize}latexmath:[$=2$], {accessmemory-aampostincrement}latexmath:[$=1$] | 
+| Write | {dm-command} | cmdtype=2, {accessmemory-aamsize}latexmath:[=2], {accessmemory-aampostincrement}latexmath:[=1] | 
 | Read | {dm-data0} | - | Read value, and trigger reading of next address 
 | ... | ... | ... | ... 
 | Write | {dm-abstractauto} | 0 | Disable auto-exec 
@@ -241,7 +243,7 @@ Write a word to memory using system bus access:
 [align="center",float="center",cols="^3,^3,^10,<10",options="header"]
 |===
 | Op | Address | Value | Comment 
-| Write | {dm-sbcs} | {sbcs-sbaccess}latexmath:[$=2$] | Configure access size 
+| Write | {dm-sbcs} | {sbcs-sbaccess}latexmath:[=2] | Configure access size 
 | Write | {dm-sbaddress0} | address | 
 | Write | {dm-sbdata0} | value | 
 |===
@@ -251,7 +253,7 @@ Write a block of memory using system bus access:
 [align="center",float="center",cols="^3,^3,^10,<10",options="header"]
 |===
 | Op | Address | Value | Comment 
-| Write | {dm-sbcs} | {sbcs-sbaccess}latexmath:[$=2$], {sbcs-sbautoincrement} | Turn on autoincrement 
+| Write | {dm-sbcs} | {sbcs-sbaccess}latexmath:[=2], {sbcs-sbautoincrement} | Turn on autoincrement 
 | Write | {dm-sbaddress0} | address | 
 | Write | {dm-sbdata0} | value0 | 
 | Write | {dm-sbdata0} | value1 | 
@@ -321,7 +323,7 @@ Write a block of memory using abstract memory access:
 | Op | Address | Value | Comment 
 | Write | `data1` | address | 
 | Write | {dm-data0} |  value0 | 
-| Write | {dm-command} | cmdtype=2, {accessmemory-aamsize}latexmath:[$=2$], writelatexmath:[$=1$], {accessmemory-aampostincrement}latexmath:[$=1$] | 
+| Write | {dm-command} | cmdtype=2, {accessmemory-aamsize}latexmath:[=2], writelatexmath:[=1], {accessmemory-aampostincrement}latexmath:[=1] | 
 | Write | {dm-abstractauto} | 1 | Re-execute the command when {dm-data0} is accessed 
 | Write | {dm-data0} |  value1 | 
 | Write | {dm-data0} |  value2 | 
@@ -469,7 +471,7 @@ straightforward.
 
 If hardware automatically prevents {mcontrol6-action}=0 triggers from
 matching when entering a trap handler as described in
-<<nativetrigger>>, then a carefully written trap handler can
+xref:Sdtrig.adoc#nativetrigger[], then a carefully written trap handler can
 ensure that interrupts are disabled whenever the icount trigger must not match.
 
 If neither of these features exist, then single step is doable, but

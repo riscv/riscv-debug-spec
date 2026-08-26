@@ -1,3 +1,5 @@
+include::{debug-partials}register-attrs.adoc[]
+
 [[dtm]]
 == Debug Transport Module (DTM) (non-ISA extension)
 
@@ -59,7 +61,7 @@ other standard JTAG instructions. Unimplemented instructions must select
 the BYPASS register.
 
 .JTAG DTM TAP Registers
-include::build/jtag_registers.adoc[]
+include::{debug-partials}jtag_registers.adoc[]
 
 ==== JTAG Connector
 
@@ -72,7 +74,7 @@ Recommendations, Version 1.20, 2 July 2021.
 
 The connector has .05 inch spacing, gold-plated male header with .016
 inch thick hardened copper or beryllium bronze square posts (SAMTEC FTSH
-or equivalent). Female connectors are compatible latexmath:[$20\mu m$]
+or equivalent). Female connectors are compatible latexmath:[20\mu m]
 gold connectors.
 
 Viewing the male header from above (the pins pointing at your eye), a

@@ -1,0 +1,1 @@
+../../../build/core_registers-def.adoc

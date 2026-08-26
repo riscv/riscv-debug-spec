@@ -1,0 +1,4 @@
+// Auto-generated on 2026-04-02 13:25:57.940387 from ../xml/sw_registers.xml
+:virt-priv: xref:Sdext.adoc#virt-priv[priv]
+:priv-v: xref:Sdext.adoc#priv-v[v]
+:priv-prv: xref:Sdext.adoc#priv-prv[prv]

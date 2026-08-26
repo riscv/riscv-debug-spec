@@ -67,6 +67,11 @@ Andy Wright, Bryan Wyatt, and Florian Zaruba.
 _This document is released under a Creative Commons Attribution 4.0 International License._
 
 // Include macros for registers and fields
+// Path roots for the register partials and figures shared with the Antora build.
+// Antora overrides these in antora.yml with the equivalent resource IDs.
+:debug-partials: modules/ROOT/partials/
+:debug-images: modules/ROOT/images/
+
 include::build/abstract_commands-def.adoc[]
 include::build/core_registers-def.adoc[]
 include::build/dm_registers-def.adoc[]
@@ -79,6 +84,8 @@ include::build/sw_registers-def.adoc[]
 :hartsel: <<hartsel,hartsel>>
 :keepalive: <<keepalive,keepalive>>
 :resethaltreq: <<resethaltreq,resethaltreq>>
+// Matches the antora.yml definition; without it the PDF printed a literal {dmcontrol}.
+:dmcontrol: `dmcontrol`
 
 include::introduction.adoc[]
 include::overview.adoc[]
