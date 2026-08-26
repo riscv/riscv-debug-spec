@@ -94,6 +94,8 @@ include::build/sw_registers-def.adoc[]
 :hartsel: <<hartsel,hartsel>>
 :keepalive: <<keepalive,keepalive>>
 :resethaltreq: <<resethaltreq,resethaltreq>>
+// Matches the antora.yml definition; without it the PDF printed a literal {dmcontrol}.
+:dmcontrol: `dmcontrol`
 
 include::introduction.adoc[]
 include::overview.adoc[]
