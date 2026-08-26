@@ -308,8 +308,11 @@ This behavior enables us to use those fields later without having to
 increase the values in the version fields.
 ====
 
-Names of registers and their fields are hyperlinks to their definition,
-and are also listed in the <<index>>.
+Names of registers and their fields are hyperlinks to their definition.
+// The index is generated only by the PDF build; Antora has no index page.
+ifdef::backend-pdf[]
+They are also listed in the <<index>>.
+endif::[]
 
 include::{debug-partials}sample_registers.adoc[]
 
