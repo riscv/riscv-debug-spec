@@ -1,4 +1,4 @@
-include::partial$register-attrs.adoc[]
+include::{debug-partials}register-attrs.adoc[]
 
 [[intro]]
 == Introduction
@@ -311,7 +311,7 @@ increase the values in the version fields.
 Names of registers and their fields are hyperlinks to their definition,
 and are also listed in the <<index>>.
 
-include::partial$sample_registers.adoc[]
+include::{debug-partials}sample_registers.adoc[]
 
 [[tab:access]]
 .Register Access Abbreviations

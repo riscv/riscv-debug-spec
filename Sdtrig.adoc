@@ -1,4 +1,4 @@
-include::partial$register-attrs.adoc[]
+include::{debug-partials}register-attrs.adoc[]
 
 [[trigger]]
 == Sdtrig (ISA Extension)
@@ -372,4 +372,4 @@ trigger firing at a different time than is expected.
 Attempts to access an unimplemented Trigger Module Register raise an illegal
 instruction exception.
 
-include::partial$hwbp_registers.adoc[]
+include::{debug-partials}hwbp_registers.adoc[]

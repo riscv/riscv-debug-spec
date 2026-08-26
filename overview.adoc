@@ -34,4 +34,4 @@ halted.
 
 [[systemoverview]]
 .RISC-V Debug System Overview
-image::overview.png[]
+image::{debug-images}overview.png[]

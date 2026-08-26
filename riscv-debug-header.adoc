@@ -77,6 +77,11 @@ Andy Wright, Bryan Wyatt, and Florian Zaruba.
 _This document is released under a Creative Commons Attribution 4.0 International License._
 
 // Include macros for registers and fields
+// Path roots for the register partials and figures shared with the Antora build.
+// Antora overrides these in antora.yml with the equivalent resource IDs.
+:debug-partials: modules/ROOT/partials/
+:debug-images: modules/ROOT/images/
+
 include::build/abstract_commands-def.adoc[]
 include::build/core_registers-def.adoc[]
 include::build/dm_registers-def.adoc[]

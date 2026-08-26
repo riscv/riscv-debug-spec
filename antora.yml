@@ -6,6 +6,10 @@ nav:
 
 asciidoc:
   attributes:
+    # Path roots for the register partials and figures shared with the PDF build.
+    # riscv-debug-header.adoc sets these to real relative paths for Asciidoctor.
+    debug-partials: 'partial$'
+    debug-images: ''
     page-pdf_url: _attachments/riscv-debug-specification.pdf
     more_details_url: https://riscv.atlassian.net/wiki/external/YTljNWI1NDgxMzE2NDIzOGEyYjMzMWRmZmRjOGEwNmE
     page-group: debug-trace-ras

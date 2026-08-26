@@ -1,4 +1,4 @@
-include::partial$register-attrs.adoc[]
+include::{debug-partials}register-attrs.adoc[]
 
 [[dtm]]
 == Debug Transport Module (DTM) (non-ISA extension)
@@ -61,7 +61,7 @@ other standard JTAG instructions. Unimplemented instructions must select
 the BYPASS register.
 
 .JTAG DTM TAP Registers
-include::partial$jtag_registers.adoc[]
+include::{debug-partials}jtag_registers.adoc[]
 
 ==== JTAG Connector
 

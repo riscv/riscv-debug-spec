@@ -1,4 +1,4 @@
-include::partial$register-attrs.adoc[]
+include::{debug-partials}register-attrs.adoc[]
 
 [appendix]
 [[sec:implementations]]
