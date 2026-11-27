@@ -13,7 +13,7 @@ Build Instructions
 # Install docker and python3-sympy, if not installed already.
 
 # Pull the latest RISC-V Docs container image:
-docker pull riscvintl/riscv-docs-base-container-image:latest
+docker pull ghcr.io/riscv/riscv-docs-base-container-image:latest
 
 git clone https://github.com/riscv/riscv-debug-spec.git
 cd riscv-debug-spec

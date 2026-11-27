@@ -14,7 +14,7 @@
 # for generating documentation in various formats (PDF, HTML).
 
 DOCKER_RUN := docker run --rm -v ${PWD}/..:/build -w /build \
-riscvintl/riscv-docs-base-container-image:latest
+ghcr.io/riscv/riscv-docs-base-container-image:latest
 
 HEADER_SOURCE := riscv-debug-header.adoc
 PDF_RESULT := ./build/riscv-debug-specification.pdf
